@@ -247,7 +247,7 @@ export function generateCubicSteps(
     }
   }
 
-  for (const candidate of candidates) {
+  for (const candidate of Array.from(candidates)) {
     const val = a * Math.pow(candidate, 3) + b * Math.pow(candidate, 2) + c * candidate + d;
     if (Math.abs(val) < 1e-8) {
       rationalRoot = candidate;

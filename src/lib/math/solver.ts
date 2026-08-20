@@ -347,12 +347,12 @@ export function solvePolynomial(equation: string): SolverResult {
 
     // Degree 4+ — use Nerdamer symbolic solver
     try {
-      const solutions = nerdamer.solve(standardExpr, variable);
-      const solStr = solutions.toString();
-      const cleanSols = solStr
+      const solutions = (nerdamer as any).solve(standardExpr, variable);
+      const solStr = String(solutions || '');
+      const cleanSols: string[] = solStr
         .replace(/^\[|\]$/g, '')
         .split(',')
-        .map((s) => s.trim())
+        .map((s: string) => s.trim())
         .filter(Boolean);
       const steps = generateHigherOrderSteps(standardExpr, cleanSols, variable);
       return {
@@ -367,12 +367,12 @@ export function solvePolynomial(equation: string): SolverResult {
 
   // Fallback: try Nerdamer for general/non-polynomial equations
   try {
-    const solutions = nerdamer.solve(standardExpr, variable);
-    const solStr = solutions.toString();
-    const cleanSols = solStr
+    const solutions = (nerdamer as any).solve(standardExpr, variable);
+    const solStr = String(solutions || '');
+    const cleanSols: string[] = solStr
       .replace(/^\[|\]$/g, '')
       .split(',')
-      .map((s) => s.trim())
+      .map((s: string) => s.trim())
       .filter(Boolean);
 
     if (cleanSols.length > 0) {
@@ -607,7 +607,7 @@ export function solveSymbolic(equation: string, solveFor: string): SolverResult 
   const standardExpr = `(${lhs}) - (${rhs})`;
 
   try {
-    const sol = nerdamer.solve(standardExpr, target).toString();
+    const sol = (nerdamer as any).solve(standardExpr, target).toString();
     const cleanSol = sol.replace(/^\[|\]$/g, '');
 
     return {

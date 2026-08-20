@@ -42,11 +42,11 @@ export function isImplicitEquation(expr: string): boolean {
   // If it starts with y = f(x) where RHS has no y, it's an explicit function
   if (/^y\s*=/.test(clean)) {
     const rhs = clean.replace(/^y\s*=\s*/, '');
-    const tokens = rhs.match(/[a-zA-Z]+/g) || [];
+    const tokens: string[] = rhs.match(/[a-zA-Z]+/g) || [];
     return tokens.includes('y');
   }
   // If there's a y anywhere in the expression
-  const tokens = clean.match(/[a-zA-Z]+/g) || [];
+  const tokens: string[] = clean.match(/[a-zA-Z]+/g) || [];
   return tokens.includes('y');
 }
 
