@@ -212,3 +212,71 @@ export function computeSmartAutoFitBounds(
     yMax: Number(clampedYHalf.toFixed(1)),
   };
 }
+
+/**
+ * Convert data points for an explicit function f(x) into an SVG path string.
+ * Automatically splits segments across vertical asymptotes to prevent vertical jump lines.
+ */
+export function pointsToSvgPath(
+  points: DataPoint[],
+  xMin: number,
+  xMax: number,
+  yMin: number,
+  yMax: number,
+  plotBox: { left: number; top: number; width: number; height: number },
+  yScale: 'linear' | 'log' = 'linear'
+): string {
+  if (!points || points.length < 2) return '';
+  const xSpan = Math.max(1e-9, xMax - xMin);
+
+  const symlog = (y: number) => (y === 0 ? 0 : Math.sign(y) * Math.log10(1 + Math.abs(y)));
+  const ySpan = Math.max(1e-9, yMax - yMin);
+  const logMin = symlog(yMin);
+  const logMax = symlog(yMax);
+  const logSpan = Math.max(1e-9, logMax - logMin);
+
+  const toPxX = (x: number) => plotBox.left + ((x - xMin) / xSpan) * plotBox.width;
+  const toPxY = (y: number) => {
+    if (yScale === 'log') {
+      const ly = symlog(y);
+      return plotBox.top + ((logMax - ly) / logSpan) * plotBox.height;
+    }
+    return plotBox.top + ((yMax - y) / ySpan) * plotBox.height;
+  };
+
+  const pathParts: string[] = [];
+  let isDrawing = false;
+  let prevY: number | null = null;
+  const yThreshold = ySpan * 1.5;
+
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i];
+    if (p.y === null || isNaN(p.y) || !isFinite(p.y)) {
+      isDrawing = false;
+      prevY = null;
+      continue;
+    }
+
+    // Detect asymptote jump: opposite signs and large jump
+    if (prevY !== null && Math.abs(p.y - prevY) > yThreshold && p.y * prevY < 0) {
+      isDrawing = false;
+    }
+
+    const px = toPxX(p.x);
+    const py = toPxY(p.y);
+
+    // Limit extreme pixel values to prevent renderer overflow
+    const clampedPy = Math.max(plotBox.top - 100, Math.min(plotBox.top + plotBox.height + 100, py));
+
+    if (!isDrawing) {
+      pathParts.push(`M ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);
+      isDrawing = true;
+    } else {
+      pathParts.push(`L ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);
+    }
+    prevY = p.y;
+  }
+
+  return pathParts.join(' ');
+}
+
