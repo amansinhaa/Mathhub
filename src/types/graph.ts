@@ -22,6 +22,21 @@ export interface RegressionResult {
 
 export type YScaleType = 'linear' | 'log';
 
+export interface SavedGraphSnapshot {
+  id: string;
+  title: string;
+  type: 'equation' | 'table' | 'file';
+  expressions?: string[];
+  equations?: GraphEquation[];
+  dataPoints?: DataPoint[];
+  bounds: { xMin: number; xMax: number; yMin: number; yMax: number };
+  yScale?: YScaleType;
+  chartType?: 'line' | 'scatter' | 'bar' | 'area';
+  createdAt: number;
+}
+
+export type CollageLayout = '1x2' | '2x1' | '2x2' | '2x3' | '3x2' | '3x3';
+
 export const GRAPH_COLORS = [
   '#3b82f6', // blue
   '#ef4444', // red
@@ -32,3 +47,4 @@ export const GRAPH_COLORS = [
   '#06b6d4', // cyan
   '#f97316', // orange
 ];
+
