@@ -8,7 +8,7 @@ import {
   exportCollageToPng,
   getLayoutDimensions,
   suggestLayout,
-  renderSnapshotToSvg,
+  getSheetDimensions,
 } from '@/lib/math/collageRenderer';
 import { CollageLayout, SavedGraphSnapshot } from '@/types/graph';
 import {
@@ -27,10 +27,14 @@ import {
   Layers,
   HelpCircle,
   Eye,
+  Maximize2,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
 } from 'lucide-react';
 
 export default function CollageExport() {
-  const { savedGraphs, saveCurrentGraphSnapshot, setInputMode } = useGraphStore();
+  const { savedGraphs, saveCurrentGraphSnapshot } = useGraphStore();
 
   // Selected graphs state (defaults to selecting up to the first 4 saved graphs)
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -43,6 +47,7 @@ export default function CollageExport() {
   const [sheetTitle, setSheetTitle] = useState('MathHub Function Study Sheet');
   const [customTitles, setCustomTitles] = useState<Record<string, string>>({});
   const [isExporting, setIsExporting] = useState(false);
+  const [previewZoom, setPreviewZoom] = useState<number>(100); // percentage
 
   // Initialize selection with saved graphs
   useEffect(() => {
@@ -100,20 +105,16 @@ export default function CollageExport() {
 
   // Generate full collage SVG string for live preview and exports
   const collageSvgString = useMemo(() => {
-    const isPortrait = orientation === 'portrait';
-    const width = isPortrait ? 900 : 1200;
-    const height = isPortrait ? 1200 : 900;
-
     return generateCollageSvg(selectedGraphsWithData, layout, {
       sheetTitle,
-      sheetWidth: width,
-      sheetHeight: height,
+      pageSize,
+      orientation,
       showCutLines,
       showTitles,
       showRanges,
       theme: 'light',
     });
-  }, [selectedGraphsWithData, layout, sheetTitle, showCutLines, showTitles, showRanges, orientation]);
+  }, [selectedGraphsWithData, layout, sheetTitle, pageSize, orientation, showCutLines, showTitles, showRanges]);
 
   // Export handlers
   const handleExportPDF = async () => {
@@ -135,9 +136,7 @@ export default function CollageExport() {
   const handleExportPNG = async () => {
     try {
       setIsExporting(true);
-      const isPortrait = orientation === 'portrait';
-      const width = isPortrait ? 900 : 1200;
-      const height = isPortrait ? 1200 : 900;
+      const { width, height } = getSheetDimensions(pageSize, orientation);
       const pngUrl = await exportCollageToPng(collageSvgString, width, height, 2.5);
 
       const a = document.createElement('a');
@@ -171,8 +170,12 @@ export default function CollageExport() {
     setSelectedIds((prev) => [...prev, snap.id]);
   };
 
+  // Sheet aspect ratio style calculation
+  const { width: sheetWidth, height: sheetHeight } = getSheetDimensions(pageSize, orientation);
+  const aspectRatio = sheetWidth / sheetHeight;
+
   return (
-    <div className="flex flex-col space-y-6">
+    <div className="flex flex-col space-y-6 animate-fade-in">
       {/* Collage Builder Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-5 rounded-2xl border border-[var(--card-border)] shadow-sm">
         <div>
@@ -183,7 +186,7 @@ export default function CollageExport() {
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1">
-            Arrange multiple function graphs on a single printable sheet with scissor cut-lines for notebooks & revision.
+            Fit multiple graphs cleanly onto an A4 or Letter page with scissor cut-lines for notebooks & revision.
           </p>
         </div>
 
@@ -203,7 +206,7 @@ export default function CollageExport() {
             className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Printer size={15} />
-            <span>{isExporting ? 'Generating...' : 'Export PDF (Print-Ready)'}</span>
+            <span>{isExporting ? 'Generating PDF...' : 'Export PDF (Print-Ready)'}</span>
           </button>
           <button
             onClick={handleExportPNG}
@@ -252,7 +255,7 @@ export default function CollageExport() {
             </div>
 
             {/* List of selectables */}
-            <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-[200px] overflow-y-auto pr-1">
               {savedGraphs.map((graph) => {
                 const isSelected = selectedIds.includes(graph.id);
                 return (
@@ -261,7 +264,7 @@ export default function CollageExport() {
                     onClick={() => toggleSelect(graph.id)}
                     className={`flex items-center justify-between p-2 rounded-xl border text-xs cursor-pointer select-none transition-all ${
                       isSelected
-                        ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-400 dark:border-blue-700 text-blue-900 dark:text-blue-200'
+                        ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-400 dark:border-blue-700 text-blue-900 dark:text-blue-200 font-semibold'
                         : 'bg-gray-50 dark:bg-gray-900/40 border-[var(--card-border)] text-gray-700 dark:text-gray-300 hover:bg-gray-100'
                     }`}
                   >
@@ -271,7 +274,7 @@ export default function CollageExport() {
                       ) : (
                         <Square size={15} className="text-gray-400 shrink-0" />
                       )}
-                      <span className="font-semibold truncate">{graph.title}</span>
+                      <span className="truncate">{graph.title}</span>
                     </div>
                     <span className="font-mono text-[10px] text-[var(--muted)] shrink-0">
                       x:[{graph.bounds.xMin},{graph.bounds.xMax}]
@@ -289,8 +292,8 @@ export default function CollageExport() {
                 <Grid size={15} className="text-blue-500" />
                 Grid Arrangement
               </span>
-              <span className="text-[11px] font-mono text-blue-600 dark:text-blue-400">
-                {getLayoutDimensions(layout).cols} × {getLayoutDimensions(layout).rows} Cells
+              <span className="text-[11px] font-mono text-blue-600 dark:text-blue-400 font-bold">
+                {getLayoutDimensions(layout).cols} Cols × {getLayoutDimensions(layout).rows} Rows
               </span>
             </div>
 
@@ -343,9 +346,9 @@ export default function CollageExport() {
                 <select
                   value={pageSize}
                   onChange={(e) => setPageSize(e.target.value as any)}
-                  className="math-input py-1.5 text-xs w-full"
+                  className="math-input py-1.5 text-xs w-full font-semibold"
                 >
-                  <option value="a4">A4 Paper (210×297mm)</option>
+                  <option value="a4">A4 (210×297 mm)</option>
                   <option value="letter">US Letter (8.5×11")</option>
                 </select>
               </div>
@@ -355,16 +358,16 @@ export default function CollageExport() {
                 <select
                   value={orientation}
                   onChange={(e) => setOrientation(e.target.value as any)}
-                  className="math-input py-1.5 text-xs w-full"
+                  className="math-input py-1.5 text-xs w-full font-semibold"
                 >
-                  <option value="landscape">Landscape (Horizontal)</option>
-                  <option value="portrait">Portrait (Vertical)</option>
+                  <option value="landscape">Landscape (Wide)</option>
+                  <option value="portrait">Portrait (Tall)</option>
                 </select>
               </div>
             </div>
 
             <div className="pt-2 border-t border-[var(--card-border)] space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={showCutLines}
@@ -377,17 +380,17 @@ export default function CollageExport() {
                 </span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={showTitles}
                   onChange={(e) => setShowTitles(e.target.checked)}
                   className="rounded text-blue-600 focus:ring-blue-500"
                 />
-                <span className="font-medium">Show Graph Titles</span>
+                <span className="font-medium">Show Individual Graph Titles</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={showRanges}
@@ -406,10 +409,10 @@ export default function CollageExport() {
                 Cell Titles & Order
               </span>
               <p className="text-[11px] text-[var(--muted)]">
-                Reorder or rename individual cells before printing:
+                Reorder or rename individual cells on the sheet:
               </p>
 
-              <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
                 {selectedGraphsWithData.map((item, idx) => (
                   <div
                     key={item.snapshot.id}
@@ -459,14 +462,42 @@ export default function CollageExport() {
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
               <Eye size={15} className="text-blue-500" />
-              Live Print-Ready Preview
+              Live Print-Ready Sheet Preview
             </span>
-            <span className="text-[11px] font-mono text-[var(--muted)]">
-              {pageSize.toUpperCase()} • {orientation}
-            </span>
+            <div className="flex items-center gap-2 text-[11px] font-mono text-[var(--muted)]">
+              <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded-md font-semibold">
+                {pageSize.toUpperCase()} • {orientation}
+              </span>
+              <span>•</span>
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-md px-1.5 py-0.5">
+                <button
+                  onClick={() => setPreviewZoom((z) => Math.max(50, z - 15))}
+                  className="hover:text-blue-500 font-bold px-1"
+                  title="Zoom Out"
+                >
+                  -
+                </button>
+                <span>{previewZoom}%</span>
+                <button
+                  onClick={() => setPreviewZoom((z) => Math.min(150, z + 15))}
+                  className="hover:text-blue-500 font-bold px-1"
+                  title="Zoom In"
+                >
+                  +
+                </button>
+                <button
+                  onClick={() => setPreviewZoom(100)}
+                  className="hover:text-blue-500 text-[10px] ml-1 text-blue-600"
+                  title="Fit to Frame"
+                >
+                  Fit
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="w-full bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 border border-[var(--card-border)] shadow-md overflow-x-auto flex justify-center items-center min-h-[560px]">
+          {/* Full Page Fit Sheet Container */}
+          <div className="w-full bg-gray-100 dark:bg-gray-900 rounded-2xl p-4 sm:p-6 border border-[var(--card-border)] shadow-inner flex justify-center items-center min-h-[600px] overflow-auto">
             {selectedGraphsWithData.length === 0 ? (
               <div className="text-center py-16 px-4 max-w-md text-xs text-[var(--muted)] space-y-2">
                 <Printer size={36} className="mx-auto text-gray-300 dark:text-gray-600 mb-2" />
@@ -477,7 +508,12 @@ export default function CollageExport() {
               </div>
             ) : (
               <div
-                className="w-full max-w-[850px] shadow-lg rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 bg-white"
+                className="transition-all duration-200 shadow-2xl rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 bg-white"
+                style={{
+                  width: `${(previewZoom / 100) * (orientation === 'portrait' ? 560 : 720)}px`,
+                  maxWidth: '100%',
+                  aspectRatio: `${sheetWidth} / ${sheetHeight}`,
+                }}
                 dangerouslySetInnerHTML={{ __html: collageSvgString }}
               />
             )}

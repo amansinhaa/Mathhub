@@ -36,12 +36,29 @@ export function suggestLayout(count: number): CollageLayout {
 }
 
 /**
- * Render a single mathematical graph snapshot into an SVG string with origin-centric axes.
+ * Get standard sheet pixel dimensions based on page size and orientation
  */
-export function renderSnapshotToSvg(
+export function getSheetDimensions(
+  pageSize: 'a4' | 'letter' = 'a4',
+  orientation: 'landscape' | 'portrait' = 'landscape'
+): { width: number; height: number } {
+  const isPortrait = orientation === 'portrait';
+  if (pageSize === 'letter') {
+    // 8.5 x 11 inches -> ratio 1 : 1.294
+    return isPortrait ? { width: 1000, height: 1294 } : { width: 1294, height: 1000 };
+  }
+  // A4: 210 x 297 mm -> ratio 1 : 1.4142
+  return isPortrait ? { width: 1000, height: 1414 } : { width: 1414, height: 1000 };
+}
+
+/**
+ * Render a single mathematical graph snapshot into an SVG group with origin-centric axes.
+ */
+export function renderSnapshotToSvgGroup(
   snapshot: SavedGraphSnapshot,
   cellWidth: number,
   cellHeight: number,
+  uniqueClipId: string,
   options: {
     showTitle?: boolean;
     showRanges?: boolean;
@@ -52,20 +69,19 @@ export function renderSnapshotToSvg(
   const { showTitle = true, showRanges = true, customTitle, theme = 'light' } = options;
 
   const isDark = theme === 'dark';
-  const bgColor = isDark ? '#111827' : '#ffffff';
   const axisColor = isDark ? '#f3f4f6' : '#1f2937';
   const gridColor = isDark ? '#1f2937' : '#e5e7eb';
   const textColor = isDark ? '#d1d5db' : '#374151';
   const mutedColor = isDark ? '#9ca3af' : '#6b7280';
 
-  const headerHeight = showTitle ? (showRanges ? 34 : 22) : 10;
-  const padding = { top: headerHeight + 10, right: 18, bottom: 20, left: 22 };
+  const headerHeight = showTitle ? (showRanges ? 36 : 24) : 8;
+  const padding = { top: headerHeight + 10, right: 30, bottom: 26, left: 34 };
 
   const plotBox = {
     left: padding.left,
     top: padding.top,
-    width: Math.max(1, cellWidth - padding.left - padding.right),
-    height: Math.max(1, cellHeight - padding.top - padding.bottom),
+    width: Math.max(10, cellWidth - padding.left - padding.right),
+    height: Math.max(10, cellHeight - padding.top - padding.bottom),
   };
 
   const bounds = snapshot.bounds || { xMin: -8, xMax: 8, yMin: -8, yMax: 8 };
@@ -84,22 +100,22 @@ export function renderSnapshotToSvg(
   const xTicks = generateNiceTicks(bounds.xMin, bounds.xMax, 6);
   const yTicks = generateNiceTicks(bounds.yMin, bounds.yMax, 6);
 
-  // Generate Grid lines SVG
+  // Grid lines SVG
   let gridLinesSvg = '';
   xTicks.forEach((xVal) => {
     const px = toPxX(xVal);
     if (px >= plotBox.left && px <= plotBox.left + plotBox.width) {
-      gridLinesSvg += `<line x1="${px.toFixed(1)}" y1="${plotBox.top}" x2="${px.toFixed(1)}" y2="${(plotBox.top + plotBox.height).toFixed(1)}" stroke="${gridColor}" stroke-width="1" stroke-dasharray="2 2" />`;
+      gridLinesSvg += `<line x1="${px.toFixed(1)}" y1="${plotBox.top.toFixed(1)}" x2="${px.toFixed(1)}" y2="${(plotBox.top + plotBox.height).toFixed(1)}" stroke="${gridColor}" stroke-width="1" stroke-dasharray="2 2" />`;
     }
   });
   yTicks.forEach((yVal) => {
     const py = toPxY(yVal);
     if (py >= plotBox.top && py <= plotBox.top + plotBox.height) {
-      gridLinesSvg += `<line x1="${plotBox.left}" y1="${py.toFixed(1)}" x2="${(plotBox.left + plotBox.width).toFixed(1)}" y2="${py.toFixed(1)}" stroke="${gridColor}" stroke-width="1" stroke-dasharray="2 2" />`;
+      gridLinesSvg += `<line x1="${plotBox.left.toFixed(1)}" y1="${py.toFixed(1)}" x2="${(plotBox.left + plotBox.width).toFixed(1)}" y2="${py.toFixed(1)}" stroke="${gridColor}" stroke-width="1" stroke-dasharray="2 2" />`;
     }
   });
 
-  // Generate Curves SVG
+  // Curves SVG
   let curvesSvg = '';
   const expressions = snapshot.expressions || (snapshot.equations ? snapshot.equations.map((e) => e.expression) : ['x^2']);
   const equations = snapshot.equations || expressions.map((expr, i) => ({
@@ -115,26 +131,26 @@ export function renderSnapshotToSvg(
       const segments = generateImplicitContour(eq.expression, bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax, 90);
       const d = segmentsToSvgPath(segments, bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax, plotBox);
       if (d) {
-        curvesSvg += `<path d="${d}" fill="none" stroke="${eq.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />`;
+        curvesSvg += `<path d="${d}" fill="none" stroke="${eq.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />`;
       }
     } else {
       const pts = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, 300);
       const d = pointsToSvgPath(pts, bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax, plotBox, snapshot.yScale || 'linear');
       if (d) {
-        curvesSvg += `<path d="${d}" fill="none" stroke="${eq.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />`;
+        curvesSvg += `<path d="${d}" fill="none" stroke="${eq.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />`;
       }
     }
   });
 
-  // Generate Ticks SVG
+  // Ticks SVG
   let ticksSvg = '';
   xTicks.forEach((xVal) => {
     if (Math.abs(xVal) < 1e-6) return;
     const px = toPxX(xVal);
-    if (px >= plotBox.left + 10 && px <= plotBox.left + plotBox.width - 10) {
+    if (px >= plotBox.left + 5 && px <= plotBox.left + plotBox.width - 5) {
       ticksSvg += `
-        <line x1="${px.toFixed(1)}" y1="${(axisLineY - 3).toFixed(1)}" x2="${px.toFixed(1)}" y2="${(axisLineY + 3).toFixed(1)}" stroke="${axisColor}" stroke-width="1.2" />
-        <text x="${px.toFixed(1)}" y="${(axisLineY + 12).toFixed(1)}" text-anchor="middle" fill="${textColor}" font-family="monospace, sans-serif" font-size="9px" font-weight="600">${formatAxisNumber(xVal)}</text>
+        <line x1="${px.toFixed(1)}" y1="${(axisLineY - 3.5).toFixed(1)}" x2="${px.toFixed(1)}" y2="${(axisLineY + 3.5).toFixed(1)}" stroke="${axisColor}" stroke-width="1.2" />
+        <text x="${px.toFixed(1)}" y="${(axisLineY + 13).toFixed(1)}" text-anchor="middle" fill="${textColor}" font-family="monospace, sans-serif" font-size="9.5px" font-weight="600">${formatAxisNumber(xVal)}</text>
       `;
     }
   });
@@ -142,10 +158,10 @@ export function renderSnapshotToSvg(
   yTicks.forEach((yVal) => {
     if (Math.abs(yVal) < 1e-6) return;
     const py = toPxY(yVal);
-    if (py >= plotBox.top + 10 && py <= plotBox.top + plotBox.height - 10) {
+    if (py >= plotBox.top + 5 && py <= plotBox.top + plotBox.height - 5) {
       ticksSvg += `
-        <line x1="${(axisLineX - 3).toFixed(1)}" y1="${py.toFixed(1)}" x2="${(axisLineX + 3).toFixed(1)}" y2="${py.toFixed(1)}" stroke="${axisColor}" stroke-width="1.2" />
-        <text x="${(axisLineX - 5).toFixed(1)}" y="${(py + 3).toFixed(1)}" text-anchor="end" fill="${textColor}" font-family="monospace, sans-serif" font-size="9px" font-weight="600">${formatAxisNumber(yVal)}</text>
+        <line x1="${(axisLineX - 3.5).toFixed(1)}" y1="${py.toFixed(1)}" x2="${(axisLineX + 3.5).toFixed(1)}" y2="${py.toFixed(1)}" stroke="${axisColor}" stroke-width="1.2" />
+        <text x="${(axisLineX - 6).toFixed(1)}" y="${(py + 3.5).toFixed(1)}" text-anchor="end" fill="${textColor}" font-family="monospace, sans-serif" font-size="9.5px" font-weight="600">${formatAxisNumber(yVal)}</text>
       `;
     }
   });
@@ -153,22 +169,20 @@ export function renderSnapshotToSvg(
   // Check if (0,0) label should be drawn
   const isOriginVisible = bounds.xMin <= 0 && bounds.xMax >= 0 && bounds.yMin <= 0 && bounds.yMax >= 0;
   if (isOriginVisible) {
-    ticksSvg += `<text x="${(originPxX - 5).toFixed(1)}" y="${(originPxY + 11).toFixed(1)}" text-anchor="end" fill="${mutedColor}" font-family="monospace, sans-serif" font-size="9px" font-weight="600">0</text>`;
+    ticksSvg += `<text x="${(originPxX - 6).toFixed(1)}" y="${(originPxY + 12).toFixed(1)}" text-anchor="end" fill="${mutedColor}" font-family="monospace, sans-serif" font-size="9.5px" font-weight="600">0</text>`;
   }
 
   const titleText = customTitle || snapshot.title || 'Function Plot';
   const rangeSubtitle = `x: [${bounds.xMin}, ${bounds.xMax}], y: [${bounds.yMin}, ${bounds.yMax}]`;
 
   return `
-    <svg width="${cellWidth}" height="${cellHeight}" viewBox="0 0 ${cellWidth} ${cellHeight}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${cellWidth}" height="${cellHeight}" fill="${bgColor}" />
-      
+    <g class="graph-cell">
       <!-- Card Header -->
       ${showTitle ? `
-        <text x="${cellWidth / 2}" y="16" text-anchor="middle" fill="${isDark ? '#f9fafb' : '#111827'}" font-family="system-ui, -apple-system, sans-serif" font-size="13px" font-weight="bold">${escapeXml(titleText)}</text>
+        <text x="${(cellWidth / 2).toFixed(1)}" y="16" text-anchor="middle" fill="${isDark ? '#f9fafb' : '#111827'}" font-family="system-ui, -apple-system, sans-serif" font-size="12.5px" font-weight="bold">${escapeXml(titleText)}</text>
       ` : ''}
       ${showRanges ? `
-        <text x="${cellWidth / 2}" y="28" text-anchor="middle" fill="${mutedColor}" font-family="monospace, sans-serif" font-size="9px">${escapeXml(rangeSubtitle)}</text>
+        <text x="${(cellWidth / 2).toFixed(1)}" y="29" text-anchor="middle" fill="${mutedColor}" font-family="monospace, sans-serif" font-size="9px">${escapeXml(rangeSubtitle)}</text>
       ` : ''}
 
       <!-- Grid -->
@@ -177,23 +191,50 @@ export function renderSnapshotToSvg(
       </g>
 
       <!-- Axes -->
-      <line x1="${(plotBox.left - 6).toFixed(1)}" y1="${axisLineY.toFixed(1)}" x2="${(plotBox.left + plotBox.width + 6).toFixed(1)}" y2="${axisLineY.toFixed(1)}" stroke="${axisColor}" stroke-width="1.8" />
-      <line x1="${axisLineX.toFixed(1)}" y1="${(plotBox.top + plotBox.height + 6).toFixed(1)}" x2="${axisLineX.toFixed(1)}" y2="${(plotBox.top - 6).toFixed(1)}" stroke="${axisColor}" stroke-width="1.8" />
+      <line x1="${(plotBox.left - 6).toFixed(1)}" y1="${axisLineY.toFixed(1)}" x2="${(plotBox.left + plotBox.width + 8).toFixed(1)}" y2="${axisLineY.toFixed(1)}" stroke="${axisColor}" stroke-width="1.8" />
+      <line x1="${axisLineX.toFixed(1)}" y1="${(plotBox.top + plotBox.height + 6).toFixed(1)}" x2="${axisLineX.toFixed(1)}" y2="${(plotBox.top - 8).toFixed(1)}" stroke="${axisColor}" stroke-width="1.8" />
       
       <!-- Axis End Labels -->
-      <text x="${(plotBox.left + plotBox.width + 12).toFixed(1)}" y="${(axisLineY + 3).toFixed(1)}" fill="${axisColor}" font-family="serif" font-style="italic" font-size="11px" font-weight="bold">x</text>
-      <text x="${axisLineX.toFixed(1)}" y="${(plotBox.top - 9).toFixed(1)}" text-anchor="middle" fill="${axisColor}" font-family="serif" font-style="italic" font-size="11px" font-weight="bold">y</text>
+      <text x="${(plotBox.left + plotBox.width + 12).toFixed(1)}" y="${(axisLineY + 3.5).toFixed(1)}" fill="${axisColor}" font-family="serif" font-style="italic" font-size="12px" font-weight="bold">x</text>
+      <text x="${axisLineX.toFixed(1)}" y="${(plotBox.top - 10).toFixed(1)}" text-anchor="middle" fill="${axisColor}" font-family="serif" font-style="italic" font-size="12px" font-weight="bold">y</text>
 
       <!-- Ticks -->
       ${ticksSvg}
 
       <!-- Graph Curves -->
-      <g clip-path="url(#clip-${snapshot.id})">
-        <clipPath id="clip-${snapshot.id}">
-          <rect x="${plotBox.left}" y="${plotBox.top}" width="${plotBox.width}" height="${plotBox.height}" />
+      <g clip-path="url(#${uniqueClipId})">
+        <clipPath id="${uniqueClipId}">
+          <rect x="${plotBox.left.toFixed(1)}" y="${plotBox.top.toFixed(1)}" width="${plotBox.width.toFixed(1)}" height="${plotBox.height.toFixed(1)}" />
         </clipPath>
         ${curvesSvg}
       </g>
+    </g>
+  `;
+}
+
+/**
+ * Standalone snapshot SVG generator for individual thumbnail/card rendering.
+ */
+export function renderSnapshotToSvg(
+  snapshot: SavedGraphSnapshot,
+  cellWidth: number,
+  cellHeight: number,
+  options: {
+    showTitle?: boolean;
+    showRanges?: boolean;
+    customTitle?: string;
+    theme?: 'light' | 'dark';
+  } = {}
+): string {
+  const isDark = options.theme === 'dark';
+  const bgColor = isDark ? '#111827' : '#ffffff';
+  const clipId = `clip-single-${snapshot.id || Math.random().toString(36).slice(2, 6)}`;
+  const groupContent = renderSnapshotToSvgGroup(snapshot, cellWidth, cellHeight, clipId, options);
+
+  return `
+    <svg width="${cellWidth}" height="${cellHeight}" viewBox="0 0 ${cellWidth} ${cellHeight}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${cellWidth}" height="${cellHeight}" fill="${bgColor}" />
+      ${groupContent}
     </svg>
   `;
 }
@@ -212,15 +253,16 @@ function escapeXml(unsafe: string): string {
 }
 
 /**
- * Compose multiple graph snapshots into a full sheet SVG with optional scissor cut-lines.
+ * Compose multiple graph snapshots into a full printable sheet SVG with scissor cut-lines.
+ * Formatted to fit all cells within exact sheet boundaries.
  */
 export function generateCollageSvg(
   graphs: { snapshot: SavedGraphSnapshot; customTitle?: string }[],
   layout: CollageLayout,
   options: {
     sheetTitle?: string;
-    sheetWidth?: number;
-    sheetHeight?: number;
+    pageSize?: 'a4' | 'letter';
+    orientation?: 'landscape' | 'portrait';
     showCutLines?: boolean;
     showTitles?: boolean;
     showRanges?: boolean;
@@ -229,19 +271,21 @@ export function generateCollageSvg(
 ): string {
   const { cols, rows } = getLayoutDimensions(layout);
   const {
-    sheetTitle = 'MathHub Graph Collage',
-    sheetWidth = 1200,
-    sheetHeight = 900,
+    sheetTitle = 'MathHub Function Study Sheet',
+    pageSize = 'a4',
+    orientation = 'landscape',
     showCutLines = true,
     showTitles = true,
     showRanges = true,
     theme = 'light',
   } = options;
 
+  const { width: sheetWidth, height: sheetHeight } = getSheetDimensions(pageSize, orientation);
+
   const isDark = theme === 'dark';
   const bgColor = isDark ? '#0f172a' : '#ffffff';
   const sheetHeaderHeight = sheetTitle ? 55 : 20;
-  const margin = 25;
+  const margin = 28;
 
   const gridWidth = sheetWidth - margin * 2;
   const gridHeight = sheetHeight - sheetHeaderHeight - margin;
@@ -249,7 +293,7 @@ export function generateCollageSvg(
   const cellWidth = gridWidth / cols;
   const cellHeight = gridHeight / rows;
 
-  let cellSvgs = '';
+  let cellElementsSvg = '';
   let cutLinesSvg = '';
 
   // Render cells
@@ -259,26 +303,34 @@ export function generateCollageSvg(
       const item = graphs[idx];
       const cellX = margin + c * cellWidth;
       const cellY = sheetHeaderHeight + r * cellHeight;
+      const uniqueClipId = `clip-${r}-${c}-${Math.random().toString(36).slice(2, 6)}`;
 
       if (item && item.snapshot) {
-        const innerSvg = renderSnapshotToSvg(item.snapshot, cellWidth - 12, cellHeight - 12, {
-          customTitle: item.customTitle,
-          showTitle: showTitles,
-          showRanges: showRanges,
-          theme,
-        });
+        const cellGroup = renderSnapshotToSvgGroup(
+          item.snapshot,
+          cellWidth - 10,
+          cellHeight - 10,
+          uniqueClipId,
+          {
+            customTitle: item.customTitle,
+            showTitle: showTitles,
+            showRanges: showRanges,
+            theme,
+          }
+        );
 
-        cellSvgs += `
-          <g transform="translate(${cellX + 6}, ${cellY + 6})">
-            ${innerSvg}
+        cellElementsSvg += `
+          <g transform="translate(${(cellX + 5).toFixed(1)}, ${(cellY + 5).toFixed(1)})">
+            <rect width="${(cellWidth - 10).toFixed(1)}" height="${(cellHeight - 10).toFixed(1)}" fill="${isDark ? '#111827' : '#ffffff'}" rx="4" />
+            ${cellGroup}
           </g>
         `;
       } else {
-        // Empty cell placeholder
-        cellSvgs += `
-          <g transform="translate(${cellX + 6}, ${cellY + 6})">
-            <rect width="${cellWidth - 12}" height="${cellHeight - 12}" fill="${isDark ? '#1e293b' : '#f8fafc'}" stroke="${isDark ? '#334155' : '#e2e8f0'}" stroke-dasharray="4 4" rx="8" />
-            <text x="${(cellWidth - 12) / 2}" y="${(cellHeight - 12) / 2}" text-anchor="middle" fill="${isDark ? '#64748b' : '#94a3b8'}" font-family="sans-serif" font-size="12px">Empty Graph Slot</text>
+        // Empty cell slot placeholder
+        cellElementsSvg += `
+          <g transform="translate(${(cellX + 5).toFixed(1)}, ${(cellY + 5).toFixed(1)})">
+            <rect width="${(cellWidth - 10).toFixed(1)}" height="${(cellHeight - 10).toFixed(1)}" fill="${isDark ? '#1e293b' : '#f8fafc'}" stroke="${isDark ? '#334155' : '#e2e8f0'}" stroke-dasharray="4 4" rx="8" />
+            <text x="${((cellWidth - 10) / 2).toFixed(1)}" y="${((cellHeight - 10) / 2).toFixed(1)}" text-anchor="middle" fill="${isDark ? '#64748b' : '#94a3b8'}" font-family="sans-serif" font-size="12px">Empty Graph Slot</text>
           </g>
         `;
       }
@@ -287,41 +339,41 @@ export function generateCollageSvg(
 
   // Render Scissor Cut Lines between cells if enabled
   if (showCutLines) {
-    const cutColor = isDark ? '#475569' : '#cbd5e1';
+    const cutColor = isDark ? '#475569' : '#94a3b8';
 
-    // Vertical cut lines
+    // Vertical cut lines between columns
     for (let c = 1; c < cols; c++) {
       const x = margin + c * cellWidth;
       cutLinesSvg += `
-        <line x1="${x}" y1="${sheetHeaderHeight}" x2="${x}" y2="${sheetHeaderHeight + gridHeight}" stroke="${cutColor}" stroke-width="1.5" stroke-dasharray="6 6" />
-        <text x="${x}" y="${sheetHeaderHeight + 14}" text-anchor="middle" font-size="14px">✂</text>
-        <text x="${x}" y="${sheetHeaderHeight + gridHeight - 6}" text-anchor="middle" font-size="14px">✂</text>
+        <line x1="${x.toFixed(1)}" y1="${sheetHeaderHeight}" x2="${x.toFixed(1)}" y2="${(sheetHeaderHeight + gridHeight).toFixed(1)}" stroke="${cutColor}" stroke-width="1.2" stroke-dasharray="5 5" />
+        <text x="${x.toFixed(1)}" y="${sheetHeaderHeight + 14}" text-anchor="middle" font-size="13px" fill="${cutColor}">✂</text>
+        <text x="${x.toFixed(1)}" y="${(sheetHeaderHeight + gridHeight - 6).toFixed(1)}" text-anchor="middle" font-size="13px" fill="${cutColor}">✂</text>
       `;
     }
 
-    // Horizontal cut lines
+    // Horizontal cut lines between rows
     for (let r = 1; r < rows; r++) {
       const y = sheetHeaderHeight + r * cellHeight;
       cutLinesSvg += `
-        <line x1="${margin}" y1="${y}" x2="${margin + gridWidth}" y2="${y}" stroke="${cutColor}" stroke-width="1.5" stroke-dasharray="6 6" />
-        <text x="${margin + 12}" y="${y + 4}" text-anchor="middle" font-size="14px">✂</text>
-        <text x="${margin + gridWidth - 12}" y="${y + 4}" text-anchor="middle" font-size="14px">✂</text>
+        <line x1="${margin}" y1="${y.toFixed(1)}" x2="${(margin + gridWidth).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${cutColor}" stroke-width="1.2" stroke-dasharray="5 5" />
+        <text x="${margin + 12}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="13px" fill="${cutColor}">✂</text>
+        <text x="${(margin + gridWidth - 12).toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="13px" fill="${cutColor}">✂</text>
       `;
     }
   }
 
   return `
-    <svg width="${sheetWidth}" height="${sheetHeight}" viewBox="0 0 ${sheetWidth} ${sheetHeight}" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 ${sheetWidth} ${sheetHeight}" style="max-width: 100%; max-height: 100%; display: block; margin: auto;" xmlns="http://www.w3.org/2000/svg">
       <rect width="${sheetWidth}" height="${sheetHeight}" fill="${bgColor}" />
       
       ${sheetTitle ? `
         <!-- Sheet Header -->
-        <text x="${sheetWidth / 2}" y="32" text-anchor="middle" fill="${isDark ? '#f8fafc' : '#0f172a'}" font-family="system-ui, -apple-system, sans-serif" font-size="20px" font-weight="bold">${escapeXml(sheetTitle)}</text>
-        <text x="${sheetWidth / 2}" y="48" text-anchor="middle" fill="${isDark ? '#94a3b8' : '#64748b'}" font-family="sans-serif" font-size="11px">MathHub Multi-Graph Printable Notebook Sheet • ${graphs.length} graphs (${cols}×${rows} grid)</text>
+        <text x="${(sheetWidth / 2).toFixed(1)}" y="30" text-anchor="middle" fill="${isDark ? '#f8fafc' : '#0f172a'}" font-family="system-ui, -apple-system, sans-serif" font-size="18px" font-weight="bold">${escapeXml(sheetTitle)}</text>
+        <text x="${(sheetWidth / 2).toFixed(1)}" y="46" text-anchor="middle" fill="${isDark ? '#94a3b8' : '#64748b'}" font-family="sans-serif" font-size="10.5px">MathHub Multi-Graph Printable Notebook Sheet • ${graphs.length} graphs (${cols}×${rows} grid • ${pageSize.toUpperCase()} ${orientation})</text>
       ` : ''}
 
-      <!-- Cells -->
-      ${cellSvgs}
+      <!-- Grid Cells -->
+      ${cellElementsSvg}
 
       <!-- Scissor Cut Lines -->
       ${cutLinesSvg}
@@ -336,7 +388,7 @@ export async function exportCollageToPng(
   svgString: string,
   width: number,
   height: number,
-  scale = 2
+  scale = 2.5
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
@@ -392,13 +444,15 @@ export async function exportCollageToPdf(
 
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const marginMm = 10;
+  const marginMm = 8;
 
   const targetWidth = pageWidth - marginMm * 2;
   const targetHeight = pageHeight - marginMm * 2;
 
+  const { width: sheetWidth, height: sheetHeight } = getSheetDimensions(pageSize, orientation);
+
   // Convert SVG string to high-res image data
-  const pngDataUrl = await exportCollageToPng(svgString, 1200, 900, 2);
+  const pngDataUrl = await exportCollageToPng(svgString, sheetWidth, sheetHeight, 2.5);
 
   // Add high-resolution image to PDF page
   pdf.addImage(pngDataUrl, 'PNG', marginMm, marginMm, targetWidth, targetHeight, undefined, 'FAST');
