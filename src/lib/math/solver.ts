@@ -326,10 +326,30 @@ export function solvePolynomial(equation: string): SolverResult {
       // Quadratic: a*x^2 + b*x + c = 0
       const [a, b, c] = coeffs;
       const steps = generateQuadraticSteps(a, b, c, variable);
+      const delta = b * b - 4 * a * c;
+      let finalAnswer = '';
+      const fmtNum = (n: number) =>
+        Number.isInteger(n) ? n.toString() : Number(n.toFixed(4)).toString();
+
+      if (delta >= 0) {
+        const rootDelta = Math.sqrt(delta);
+        const x1 = (-b + rootDelta) / (2 * a);
+        const x2 = (-b - rootDelta) / (2 * a);
+        if (Math.abs(delta) < 1e-8) {
+          finalAnswer = `${variable} = ${fmtNum(x1)}`;
+        } else {
+          finalAnswer = `${variable}_1 = ${fmtNum(x1)}, \\quad ${variable}_2 = ${fmtNum(x2)}`;
+        }
+      } else {
+        const realPart = -b / (2 * a);
+        const imagPart = Math.sqrt(-delta) / (2 * a);
+        finalAnswer = `${variable} = ${fmtNum(realPart)} \\pm ${fmtNum(imagPart)}\\,i`;
+      }
+
       return {
         type: 'polynomial',
         steps,
-        finalAnswer: steps[steps.length - 1]?.math || `${variable} = 0`,
+        finalAnswer,
       };
     }
 

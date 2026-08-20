@@ -22,28 +22,61 @@ describe('MathHub Equation Solver — Accuracy Audit', () => {
 
   // ─── Quadratic Equations ────────────────────────────────────────────────
   describe('Quadratic equations', () => {
-    it('solves x^2 - 5x + 6 = 0 → x = 2, 3', () => {
+    it('solves x^2 - 5x + 6 = 0 using integer factoring with verification', () => {
       const res = solvePolynomial('x^2 - 5x + 6 = 0');
       expect(res.type).toBe('polynomial');
-      expect(res.steps.length).toBeGreaterThanOrEqual(4);
+      // Must use factoring explanation
+      const factoringStep = res.steps.find((s) => s.explanation.includes('multiply to'));
+      expect(factoringStep).toBeDefined();
+      expect(factoringStep?.math).toContain('(-2) \\times (-3) = 6');
+
+      // Factored form step
+      const formStep = res.steps.find((s) => s.explanation.includes('factored form'));
+      expect(formStep?.math).toContain('(x - 2)(x - 3) = 0');
+
+      // Verification step
+      const verifyStep = res.steps.find((s) => s.explanation.includes('Verify'));
+      expect(verifyStep).toBeDefined();
+      expect(verifyStep?.math).toContain('\\text{Check } x = 2');
+      expect(verifyStep?.math).toContain('\\text{Check } x = 3');
+
       expect(res.finalAnswer).toContain('2');
       expect(res.finalAnswer).toContain('3');
     });
 
-    it('solves x^2 + 4 = 0 → complex roots with i', () => {
+    it('solves 2x^2 + 5x + 3 = 0 using AC factoring method', () => {
+      const res = solvePolynomial('2x^2 + 5x + 3 = 0');
+      expect(res.type).toBe('polynomial');
+      const acStep = res.steps.find((s) => s.explanation.includes('ac'));
+      expect(acStep).toBeDefined();
+      expect(res.finalAnswer).toContain('-1');
+    });
+
+    it('solves x^2 + 4 = 0 using quadratic formula fallback (complex roots)', () => {
       const res = solvePolynomial('x^2 + 4 = 0');
-      expect(res.finalAnswer).toContain('i');
+      expect(res.finalAnswer).toContain('2\\,i');
+      // Should have merged discriminant step
+      const discStep = res.steps.find((s) => s.explanation.includes('discriminant'));
+      expect(discStep).toBeDefined();
+      expect(discStep?.explanation).toContain('complex conjugate');
+      // Should have verification
+      const verifyStep = res.steps.find((s) => s.explanation.includes('Verification'));
+      expect(verifyStep).toBeDefined();
     });
 
-    it('solves x^2 - 4 = 0 → x = ±2', () => {
-      const res = solvePolynomial('x^2 - 4 = 0');
-      expect(res.finalAnswer).toContain('2');
-      expect(res.finalAnswer).toContain('-2');
+    it('solves x^2 - 2 = 0 using quadratic formula fallback (irrational roots)', () => {
+      const res = solvePolynomial('x^2 - 2 = 0');
+      const formulaStep = res.steps.find((s) => s.explanation.includes('quadratic formula'));
+      expect(formulaStep).toBeDefined();
+      expect(res.finalAnswer).toContain('1.4142');
+      expect(res.finalAnswer).toContain('-1.4142');
     });
 
-    it('solves x^2 - 2x + 1 = 0 → x = 1 (repeated root)', () => {
+    it('solves x^2 - 2x + 1 = 0 as perfect square trinomial (repeated root)', () => {
       const res = solvePolynomial('x^2 - 2x + 1 = 0');
-      expect(res.finalAnswer).toContain('1');
+      const formStep = res.steps.find((s) => s.explanation.includes('factored form'));
+      expect(formStep?.math).toContain('(x - 1)^2 = 0');
+      expect(res.finalAnswer).toBe('x = 1');
     });
   });
 
