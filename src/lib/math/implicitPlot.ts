@@ -227,8 +227,16 @@ export function generateImplicitContour(
   return segments;
 }
 
+export interface PlotBox {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
 /**
  * Convert coordinate-space line segments into an SVG path string for a given SVG pixel bounding box.
+ * Accurately aligns with Recharts Cartesian coordinates.
  */
 export function segmentsToSvgPath(
   segments: LineSegment[],
@@ -236,25 +244,53 @@ export function segmentsToSvgPath(
   xMax: number,
   yMin: number,
   yMax: number,
-  width: number,
-  height: number,
-  margin = { top: 20, right: 35, left: 65, bottom: 20 }
+  widthOrPlotBox: number | PlotBox,
+  height?: number,
+  margin = { top: 20, right: 35, left: 65, bottom: 50 }
 ): string {
-  if (segments.length === 0) return '';
+  if (!segments || segments.length === 0) return '';
 
-  const plotWidth = width - margin.left - margin.right;
-  const plotHeight = height - margin.top - margin.bottom;
+  let plotLeft: number;
+  let plotTop: number;
+  let plotWidth: number;
+  let plotHeight: number;
 
-  const toPxX = (x: number) => margin.left + ((x - xMin) / (xMax - xMin)) * plotWidth;
-  const toPxY = (y: number) => margin.top + ((yMax - y) / (yMax - yMin)) * plotHeight;
+  if (typeof widthOrPlotBox === 'object') {
+    plotLeft = widthOrPlotBox.left;
+    plotTop = widthOrPlotBox.top;
+    plotWidth = widthOrPlotBox.width;
+    plotHeight = widthOrPlotBox.height;
+  } else {
+    const totalWidth = widthOrPlotBox;
+    const totalHeight = height || 410;
+    plotLeft = margin.left;
+    plotTop = margin.top;
+    plotWidth = Math.max(1, totalWidth - margin.left - margin.right);
+    plotHeight = Math.max(1, totalHeight - margin.top - margin.bottom);
+  }
+
+  const xSpan = Math.max(1e-9, xMax - xMin);
+  const ySpan = Math.max(1e-9, yMax - yMin);
+
+  const toPxX = (x: number) => plotLeft + ((x - xMin) / xSpan) * plotWidth;
+  const toPxY = (y: number) => plotTop + ((yMax - y) / ySpan) * plotHeight;
 
   const pathParts: string[] = [];
   for (const seg of segments) {
+    // Only include valid finite numbers
+    if (
+      !isFinite(seg.x1) ||
+      !isFinite(seg.y1) ||
+      !isFinite(seg.x2) ||
+      !isFinite(seg.y2)
+    ) {
+      continue;
+    }
     const px1 = toPxX(seg.x1);
     const py1 = toPxY(seg.y1);
     const px2 = toPxX(seg.x2);
     const py2 = toPxY(seg.y2);
-    pathParts.push(`M ${px1.toFixed(1)} ${py1.toFixed(1)} L ${px2.toFixed(1)} ${py2.toFixed(1)}`);
+    pathParts.push(`M ${px1.toFixed(2)} ${py1.toFixed(2)} L ${px2.toFixed(2)} ${py2.toFixed(2)}`);
   }
 
   return pathParts.join(' ');

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import {
   LineChart,
   Line,
@@ -22,6 +22,7 @@ import {
   isImplicitEquation,
   generateImplicitContour,
   segmentsToSvgPath,
+  PlotBox,
 } from '@/lib/math/implicitPlot';
 import {
   Eye,
@@ -43,6 +44,7 @@ import {
   Grid,
   Pencil,
   Check,
+  Scale,
 } from 'lucide-react';
 
 /**
@@ -57,6 +59,12 @@ function invSymlog(z: number): number {
   if (z === 0) return 0;
   return Math.sign(z) * (Math.pow(10, Math.abs(z)) - 1);
 }
+
+// Chart layout constants matching Recharts plot box
+const CHART_MARGIN = { top: 20, right: 35, left: 65, bottom: 20 };
+const X_AXIS_HEIGHT = 30;
+const Y_AXIS_WIDTH = 65;
+const TOTAL_HEIGHT = 410;
 
 export default function FunctionPlotter() {
   const {
@@ -83,7 +91,8 @@ export default function FunctionPlotter() {
   const [showRangeInputs, setShowRangeInputs] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState(chartTitle);
-  const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: 410 });
+  const [isSquareAspect, setIsSquareAspect] = useState(false);
+  const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: TOTAL_HEIGHT });
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   // Sync temp title
@@ -96,20 +105,19 @@ export default function FunctionPlotter() {
     setIsEditingTitle(false);
   };
 
-  // Track container dimensions for SVG overlay alignment
+  // Measure container dimensions for SVG overlay alignment
+  const updateDims = useCallback(() => {
+    if (chartContainerRef.current) {
+      const w = chartContainerRef.current.clientWidth || 800;
+      setContainerDimensions({ width: w, height: TOTAL_HEIGHT });
+    }
+  }, []);
+
   useEffect(() => {
-    const updateDims = () => {
-      if (chartContainerRef.current) {
-        setContainerDimensions({
-          width: chartContainerRef.current.clientWidth || 800,
-          height: chartContainerRef.current.clientHeight || 410,
-        });
-      }
-    };
     updateDims();
     window.addEventListener('resize', updateDims);
     return () => window.removeEventListener('resize', updateDims);
-  }, []);
+  }, [updateDims]);
 
   // Keep a ref to bounds for non-passive touch listeners
   const boundsRef = useRef(bounds);
@@ -169,7 +177,7 @@ export default function FunctionPlotter() {
       if (e.cancelable) e.preventDefault();
 
       const width = container.clientWidth || 600;
-      const height = container.clientHeight || 400;
+      const height = TOTAL_HEIGHT;
 
       if (e.touches.length === 1 && touchState.current.initialDist === 0) {
         const dx = e.touches[0].clientX - touchState.current.startX;
@@ -226,6 +234,15 @@ export default function FunctionPlotter() {
     };
   }, [setBounds]);
 
+  // Accurate Plot Box calculation matching Recharts layout
+  const plotBox: PlotBox = useMemo(() => {
+    const left = CHART_MARGIN.left;
+    const top = CHART_MARGIN.top;
+    const width = Math.max(1, containerDimensions.width - CHART_MARGIN.left - CHART_MARGIN.right);
+    const height = Math.max(1, TOTAL_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom - X_AXIS_HEIGHT);
+    return { left, top, width, height };
+  }, [containerDimensions.width]);
+
   // Separate explicit f(x) functions and implicit F(x, y) = 0 equations
   const { explicitEquations, implicitEquations } = useMemo(() => {
     const explicit: typeof equations = [];
@@ -278,7 +295,6 @@ export default function FunctionPlotter() {
 
   // Generate Marching Squares implicit contour SVG paths
   const implicitPaths = useMemo(() => {
-    const margin = { top: 20, right: 35, left: 65, bottom: 20 };
     return implicitEquations.map((eq) => {
       const segments = generateImplicitContour(
         eq.expression,
@@ -286,7 +302,7 @@ export default function FunctionPlotter() {
         bounds.xMax,
         bounds.yMin,
         bounds.yMax,
-        110
+        120
       );
       const svgPath = segmentsToSvgPath(
         segments,
@@ -294,9 +310,7 @@ export default function FunctionPlotter() {
         bounds.xMax,
         bounds.yMin,
         bounds.yMax,
-        containerDimensions.width,
-        containerDimensions.height,
-        margin
+        plotBox
       );
       return {
         id: eq.id,
@@ -306,7 +320,7 @@ export default function FunctionPlotter() {
         segmentCount: segments.length,
       };
     });
-  }, [implicitEquations, bounds, containerDimensions]);
+  }, [implicitEquations, bounds, plotBox]);
 
   // Transform data points for Recharts
   const chartData = useMemo(() => {
@@ -453,6 +467,25 @@ export default function FunctionPlotter() {
     };
   }, [bounds.yMin, bounds.yMax, yScale]);
 
+  // Toggle 1:1 Square Aspect Ratio for circles and isometric graphing
+  const handleToggleSquareAspect = () => {
+    const nextState = !isSquareAspect;
+    setIsSquareAspect(nextState);
+    if (nextState) {
+      const ratio = plotBox.width / plotBox.height;
+      const ySpan = bounds.yMax - bounds.yMin;
+      const yCenter = (bounds.yMin + bounds.yMax) / 2;
+      const newXHalf = (ySpan * ratio) / 2;
+      const xCenter = (bounds.xMin + bounds.xMax) / 2;
+      setBounds({
+        xMin: Number((xCenter - newXHalf).toFixed(2)),
+        xMax: Number((xCenter + newXHalf).toFixed(2)),
+        yMin: bounds.yMin,
+        yMax: bounds.yMax,
+      });
+    }
+  };
+
   // Mouse Drag to Pan
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
@@ -472,7 +505,7 @@ export default function FunctionPlotter() {
     if (!container) return;
 
     const width = container.clientWidth || 600;
-    const height = container.clientHeight || 400;
+    const height = TOTAL_HEIGHT;
 
     const dx = e.clientX - touchState.current.startX;
     const dy = e.clientY - touchState.current.startY;
@@ -524,7 +557,7 @@ export default function FunctionPlotter() {
     img.onload = () => {
       const scaleFactor = 2;
       const width = (svg.clientWidth || 800) * scaleFactor;
-      const height = (svg.clientHeight || 450) * scaleFactor;
+      const height = (svg.clientHeight || TOTAL_HEIGHT) * scaleFactor;
       const topPadding = 70;
 
       const canvas = document.createElement('canvas');
@@ -629,7 +662,7 @@ export default function FunctionPlotter() {
 
         {/* Graph Header: Legend, Scale, Zoom, and Export */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3 pb-3 border-b border-[var(--card-border)]">
-          {/* Legend Items */}
+          {/* Legend Items — Single Source of Truth matching current input */}
           <div className="flex flex-wrap items-center gap-2">
             {equations.map((eq) => {
               const isPlotted = eq.expression.trim() !== '';
@@ -667,7 +700,7 @@ export default function FunctionPlotter() {
 
           {/* Right Toolbar: Zoom + Scale + Quick Download */}
           <div className="flex flex-wrap items-center gap-2 ml-auto">
-            {/* Zoom Controls */}
+            {/* Zoom & Pan Controls */}
             <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
               <button
                 onClick={() => zoomIn(0.7)}
@@ -728,8 +761,20 @@ export default function FunctionPlotter() {
               </button>
             </div>
 
-            {/* Line Labels & Quadrants Toggles */}
+            {/* Line Labels & Quadrants & 1:1 Aspect Ratio Toggles */}
             <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
+              <button
+                onClick={handleToggleSquareAspect}
+                className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  isSquareAspect
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+                title="Lock 1:1 Aspect Ratio (Perfect Circle & Isometric Grid)"
+              >
+                <Scale size={12} />
+                <span>1:1 Ratio</span>
+              </button>
               <button
                 onClick={() => setShowLineLabels(!showLineLabels)}
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
@@ -862,6 +907,7 @@ export default function FunctionPlotter() {
         <div className="flex justify-between items-center text-[11px] text-[var(--muted)] px-1 mb-1 font-mono">
           <span>
             4 Quadrants: X ∈ [{bounds.xMin}, {bounds.xMax}], Y ∈ [{bounds.yMin}, {bounds.yMax}]
+            {isSquareAspect && ' • 1:1 Aspect Ratio'}
           </span>
           <span className="text-blue-500 font-medium">
             🖐️ Drag with mouse/finger to pan • ✌️ 2-finger pinch or scroll to zoom
@@ -877,7 +923,7 @@ export default function FunctionPlotter() {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
           style={{ touchAction: 'none' }}
-          className={`flex-1 w-full min-h-[410px] relative select-none touch-none ${
+          className={`flex-1 w-full min-h-[${TOTAL_HEIGHT}px] relative select-none touch-none ${
             isMouseDown ? 'cursor-grabbing' : 'cursor-grab'
           }`}
         >
@@ -903,12 +949,12 @@ export default function FunctionPlotter() {
           {implicitPaths.length > 0 && (
             <svg
               className="absolute inset-0 pointer-events-none z-10 w-full h-full"
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: `${TOTAL_HEIGHT}px` }}
             >
               {implicitPaths.map((imp) =>
                 imp.svgPath ? (
                   <path
-                    key={`implicit-${imp.id}`}
+                    key={`implicit-${imp.id}-${imp.expression}`}
                     d={imp.svgPath}
                     fill="none"
                     stroke={imp.color}
@@ -921,10 +967,10 @@ export default function FunctionPlotter() {
             </svg>
           )}
 
-          <ResponsiveContainer width="100%" height={410}>
+          <ResponsiveContainer width="100%" height={TOTAL_HEIGHT}>
             <LineChart
               data={chartData}
-              margin={{ top: 20, right: 35, left: 65, bottom: 20 }}
+              margin={CHART_MARGIN}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:opacity-20" />
               <XAxis
@@ -934,6 +980,7 @@ export default function FunctionPlotter() {
                 ticks={xTicks}
                 tickFormatter={(val) => Number(val.toFixed(2)).toString()}
                 stroke="#9ca3af"
+                height={X_AXIS_HEIGHT}
                 tick={{ fill: '#9ca3af', fontSize: 11 }}
                 allowDataOverflow={true}
               />
@@ -942,7 +989,7 @@ export default function FunctionPlotter() {
                 ticks={yTicksConfig.ticks}
                 tickFormatter={yTicksConfig.tickFormatter}
                 stroke="#9ca3af"
-                width={65}
+                width={Y_AXIS_WIDTH}
                 tick={{ fill: '#9ca3af', fontSize: 11 }}
                 allowDataOverflow={true}
               />
@@ -983,29 +1030,6 @@ export default function FunctionPlotter() {
               {/* Prominent Crosshair Cartesian Axes */}
               <ReferenceLine x={0} stroke="#6b7280" strokeWidth={1.75} />
               <ReferenceLine y={0} stroke="#6b7280" strokeWidth={1.75} />
-
-              {/* Key Intersection Point Dots: (0,0), (1,1), (-1,-1) */}
-              <ReferenceDot x={0} y={0} r={4} fill="#3b82f6" stroke="#ffffff" strokeWidth={2} />
-              {bounds.xMin <= 1 && bounds.xMax >= 1 && bounds.yMin <= 1 && bounds.yMax >= 1 && (
-                <ReferenceDot
-                  x={1}
-                  y={yScale === 'log' ? symlog(1) : 1}
-                  r={3.5}
-                  fill="#10b981"
-                  stroke="#ffffff"
-                  strokeWidth={1.5}
-                />
-              )}
-              {bounds.xMin <= -1 && bounds.xMax >= -1 && bounds.yMin <= -1 && bounds.yMax >= -1 && (
-                <ReferenceDot
-                  x={-1}
-                  y={yScale === 'log' ? symlog(-1) : -1}
-                  r={3.5}
-                  fill="#10b981"
-                  stroke="#ffffff"
-                  strokeWidth={1.5}
-                />
-              )}
 
               {/* Render Explicit Curves */}
               {explicitEquations.map((eq) => {
