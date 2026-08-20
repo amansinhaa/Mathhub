@@ -1,0 +1,19 @@
+{
+  "name": "MathHub",
+  "short_name": "MathHub",
+  "description": "All-round mathematics workspace: calculator, equation solver, graphing tool, and formula reference library.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["education", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

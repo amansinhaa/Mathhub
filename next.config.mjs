@@ -1,0 +1,31 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Transpile packages that need it (nerdamer is CommonJS)
+  transpilePackages: ['nerdamer'],
+
+  // Optimize images
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+
+  // Headers for PWA
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;
