@@ -68,9 +68,71 @@ export default function StepByStep() {
                   </button>
                 </div>
 
-                {isExpanded && step.math && (
-                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 overflow-x-auto">
-                    <MathDisplay math={step.math} block />
+                {isExpanded && (
+                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-4">
+                    {step.divisionDetails ? (
+                      <div className="space-y-4">
+                        {/* Two-Column Side-by-Side on Desktop, Stacked on Mobile */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Method 1: Long Division (NCERT Method) */}
+                          <div className="bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/50 rounded-xl p-4 flex flex-col justify-between shadow-xs">
+                            <div>
+                              <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-blue-200/60 dark:border-blue-800/40">
+                                <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+                                  Method 1: Long Division
+                                </span>
+                                <span className="text-[10px] font-semibold px-2 py-0.5 bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 rounded-full">
+                                  NCERT method
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                Standard step-by-step division (divide, multiply, subtract, bring down).
+                              </p>
+                              <div className="overflow-x-auto py-2 flex justify-center">
+                                <MathDisplay math={step.divisionDetails.longDivisionMath} block />
+                              </div>
+                            </div>
+                            <div className="mt-3 pt-2.5 border-t border-blue-200/50 dark:border-blue-900/40 text-xs font-mono text-blue-950 dark:text-blue-200 flex justify-between items-center">
+                              <span>Quotient: <span className="font-bold">{step.divisionDetails.quotientMath}</span></span>
+                              <span>Remainder: <span className="font-bold">{step.divisionDetails.remainderMath}</span></span>
+                            </div>
+                          </div>
+
+                          {/* Method 2: Synthetic Division (Shortcut) */}
+                          <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50 rounded-xl p-4 flex flex-col justify-between shadow-xs">
+                            <div>
+                              <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-emerald-200/60 dark:border-emerald-800/40">
+                                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                                  Method 2: Synthetic Division
+                                </span>
+                                <span className="text-[10px] font-semibold px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 rounded-full">
+                                  Shortcut
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                {step.divisionDetails.explainer || 'A faster shortcut version of long division — same result, fewer written steps.'}
+                              </p>
+                              <div className="overflow-x-auto py-2 flex justify-center">
+                                <MathDisplay math={step.divisionDetails.syntheticMath} block />
+                              </div>
+                            </div>
+                            <div className="mt-3 pt-2.5 border-t border-emerald-200/50 dark:border-emerald-900/40 text-xs font-mono text-emerald-950 dark:text-emerald-200 flex justify-between items-center">
+                              <span>Quotient: <span className="font-bold">{step.divisionDetails.quotientMath}</span></span>
+                              <span>Remainder: <span className="font-bold">{step.divisionDetails.remainderMath}</span></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Agreement Note */}
+                        <div className="text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800 text-center font-mono">
+                          Both methods agree: <span className="font-semibold text-gray-800 dark:text-gray-200">({step.divisionDetails.dividendMath}) ÷ ({step.divisionDetails.divisorMath}) = {step.divisionDetails.quotientMath}</span> (Remainder: {step.divisionDetails.remainderMath})
+                        </div>
+                      </div>
+                    ) : step.math ? (
+                      <div className="overflow-x-auto">
+                        <MathDisplay math={step.math} block />
+                      </div>
+                    ) : null}
                   </div>
                 )}
               </div>

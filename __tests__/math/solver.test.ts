@@ -120,6 +120,43 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(res.finalAnswer).toContain('3');
     });
 
+    it('solves x^3 - 2x^2 - x + 2 = 0 — renders both Long Division (NCERT) and Synthetic Division arriving at quotient x^2 - x - 2', () => {
+      const res = solvePolynomial('x^3 - 2x^2 - x + 2 = 0');
+      expect(res.type).toBe('polynomial');
+
+      // Find division step
+      const divStep = res.steps.find((s) => s.divisionDetails !== undefined);
+      expect(divStep).toBeDefined();
+      expect(divStep?.divisionDetails).toBeDefined();
+
+      const details = divStep!.divisionDetails!;
+      expect(details.dividendMath).toContain('x^3 - 2x^2 - x + 2');
+      expect(details.divisorMath).toContain('x - 1');
+      expect(details.quotientMath).toContain('x^2 - x - 2');
+      expect(details.remainderMath).toBe('0');
+
+      // Long Division Math checks (NCERT format)
+      expect(details.longDivisionMath).toContain('\\begin{array}{r}');
+      expect(details.longDivisionMath).toContain('x^2 - x - 2');
+      expect(details.longDivisionMath).toContain('x - 1');
+      expect(details.longDivisionMath).toContain('x^3 - 2x^2 - x + 2');
+      expect(details.longDivisionMath).toContain('\\underline{-(x^3 - x^2)');
+      expect(details.longDivisionMath).toContain('-x^2 - x');
+      expect(details.longDivisionMath).toContain('\\underline{-(-x^2 + x)');
+      expect(details.longDivisionMath).toContain('-2x + 2');
+      expect(details.longDivisionMath).toContain('\\underline{-(-2x + 2)');
+
+      // Synthetic Division Math checks
+      expect(details.syntheticMath).toContain('\\begin{array}{c|rrrr}');
+      expect(details.syntheticMath).toContain('1 & -2 & -1 & 2');
+      expect(details.syntheticMath).toContain('1 & -1 & -2 & 0');
+
+      // Final roots: -1, 1, 2
+      expect(res.finalAnswer).toContain('-1');
+      expect(res.finalAnswer).toContain('1');
+      expect(res.finalAnswer).toContain('2');
+    });
+
     it('solves 72t^3 + 4t - 76 = 0 — verifies candidate test, synthetic division, and complex roots', () => {
       const res = solvePolynomial('72t^3 + 4t - 76 = 0');
       expect(res.type).toBe('polynomial');

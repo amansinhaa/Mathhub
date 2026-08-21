@@ -1,4 +1,4 @@
-import { SolutionStep } from '@/types/solver';
+import { SolutionStep, DivisionDetails } from '@/types/solver';
 
 /** Format a signed coefficient term for display, handling +/- gracefully. */
 function signedTerm(coeff: number, varPart: string, isFirst: boolean): string {
@@ -126,6 +126,104 @@ function formatPolyEvaluation(coeffs: number[], x0: number, variable: string): s
   const isRoot = Math.abs(evalPoly(coeffs, x0)) < 1e-6;
   const checkMark = isRoot ? ' = 0 \\;\\checkmark' : ` = ${fmt(evalPoly(coeffs, x0))}`;
   return `f(${fmt(x0)}) = ${terms.join(' ')} = ${evalTerms.join(' ')}${checkMark}`;
+}
+
+// ─── POLYNOMIAL DIVISION GENERATORS (LONG DIVISION & SYNTHETIC DIVISION) ────
+
+/**
+ * Generate full polynomial long division LaTeX (NCERT/CBSE style bracket array).
+ * Renders the divisor, dividend, building quotient, step-by-step subtraction, and remainder.
+ */
+export function generatePolynomialLongDivisionLatex(
+  dividendCoeffs: number[],
+  root: number,
+  variable: string = 'x'
+): string {
+  const n = dividendCoeffs.length - 1;
+  const quotient: number[] = [dividendCoeffs[0]];
+  for (let i = 1; i < n; i++) {
+    quotient.push(dividendCoeffs[i] + quotient[i - 1] * root);
+  }
+  const remainder = dividendCoeffs[n] + quotient[n - 1] * root;
+
+  const rSign = root >= 0 ? `- ${fmt(Math.abs(root))}` : `+ ${fmt(Math.abs(root))}`;
+  const divisorStr = `${variable} ${rSign}`;
+  const quotientStr = formatPolynomial(quotient, variable);
+  const dividendStr = formatPolynomial(dividendCoeffs, variable);
+
+  const lines: string[] = [];
+  lines.push(`${quotientStr} \\\\`);
+  lines.push(`${divisorStr}{\\overline{\\smash{\\big)}\\, ${dividendStr}}} \\\\`);
+
+  for (let step = 0; step < n; step++) {
+    const qCoeff = quotient[step];
+    const power = n - 1 - step;
+
+    // Subtracted term 1: qCoeff * x^(power + 1)
+    const term1Var = power + 1 >= 2 ? `${variable}^${power + 1}` : power + 1 === 1 ? variable : '';
+    const term1Str = `${qCoeff === 1 && term1Var ? '' : qCoeff === -1 && term1Var ? '-' : fmt(qCoeff)}${term1Var}`;
+
+    // Subtracted term 2: -qCoeff * root * x^power
+    const subConst = -qCoeff * root;
+    const term2Var = power >= 2 ? `${variable}^${power}` : power === 1 ? variable : '';
+    const term2Sign = subConst >= 0 ? '+ ' : '- ';
+    const term2Abs = Math.abs(subConst);
+    const term2Str = `${term2Sign}${term2Abs === 1 && term2Var ? '' : fmt(term2Abs)}${term2Var}`;
+
+    const ph = '\\phantom{' + '-'.repeat(Math.max(2, (n - 1 - step) * 6)) + '}';
+    lines.push(`\\underline{-(${term1Str} ${term2Str})${ph}} \\\\`);
+
+    // Next term brought down
+    if (step < n - 1) {
+      const remCoeff = quotient[step + 1];
+      const remPower = n - 1 - step;
+      const remVar = remPower >= 2 ? `${variable}^${remPower}` : remPower === 1 ? variable : '';
+
+      const broughtDownCoeff = dividendCoeffs[step + 2];
+      const bdPower = n - 2 - step;
+      const bdVar = bdPower >= 2 ? `${variable}^${bdPower}` : bdPower === 1 ? variable : '';
+      const bdSign = broughtDownCoeff >= 0 ? '+ ' : '- ';
+      const bdAbs = Math.abs(broughtDownCoeff);
+      const bdStr = `${bdSign}${bdAbs === 1 && bdVar ? '' : fmt(bdAbs)}${bdVar}`;
+
+      const remLeadStr = `${remCoeff === 1 && remVar ? '' : remCoeff === -1 && remVar ? '-' : fmt(remCoeff)}${remVar}`;
+      const nextPh = '\\phantom{' + '-'.repeat(Math.max(2, (n - 2 - step) * 6)) + '}';
+      lines.push(`${remLeadStr} ${bdStr}${nextPh} \\\\`);
+    } else {
+      lines.push(`${fmt(remainder)}`);
+    }
+  }
+
+  return `\\begin{array}{r}\n${lines.join('\n')}\n\\end{array}`;
+}
+
+/**
+ * Generate synthetic division array LaTeX.
+ */
+export function generateSyntheticDivisionLatex(
+  dividendCoeffs: number[],
+  root: number,
+  variable: string = 'x'
+): string {
+  const n = dividendCoeffs.length - 1;
+  const quotient: number[] = [dividendCoeffs[0]];
+  const mults: number[] = [0];
+
+  for (let i = 1; i < n; i++) {
+    const mult = quotient[i - 1] * root;
+    mults.push(mult);
+    quotient.push(dividendCoeffs[i] + mult);
+  }
+  const lastMult = quotient[n - 1] * root;
+  mults.push(lastMult);
+  const remainder = dividendCoeffs[n] + lastMult;
+
+  const colAlign = 'c|' + 'r'.repeat(dividendCoeffs.length);
+  const row1 = `${fmt(root)} & ` + dividendCoeffs.map((c) => fmt(c)).join(' & ');
+  const row2 = '& & ' + mults.slice(1).map((m) => fmt(m)).join(' & ');
+  const row3 = quotient.map((q) => fmt(q)).join(' & ') + ` & ${fmt(remainder)}`;
+
+  return `\\begin{array}{${colAlign}} ${row1} \\\\ ${row2} \\\\ \\hline & ${row3} \\end{array}`;
 }
 
 // ─── DEGREE 1: LINEAR STEPS ──────────────────────────────────────────────────
@@ -602,18 +700,34 @@ export function generateCubicSteps(
       math: testTrail.join(' \\\\[4pt] '),
     });
 
-    // Step 3: Synthetic Division
+    // Step 3: Polynomial Division (Long Division + Synthetic Division side-by-side)
     const qA = a;
     const qB = b + a * r0;
     const qC = c + qB * r0;
 
     const polyFull = formatPolyWithZeros([a, b, c, d], variable);
     const quotientPoly = formatPolynomial([qA, qB, qC], variable);
+    const divisorStr = `${variable} ${r0Sign}`;
+    const dividendStr = formatPolynomial([a, b, c, d], variable);
+
+    const longDivisionMath = generatePolynomialLongDivisionLatex([a, b, c, d], r0, variable);
+    const syntheticMath = generateSyntheticDivisionLatex([a, b, c, d], r0, variable);
+
+    const divisionDetails: DivisionDetails = {
+      longDivisionMath,
+      syntheticMath,
+      quotientMath: quotientPoly,
+      divisorMath: divisorStr,
+      dividendMath: dividendStr,
+      remainderMath: '0',
+      explainer: 'A faster shortcut version of long division — same result, fewer written steps.',
+    };
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Perform synthetic division of $${polyFull}$ by the factor $(${variable} ${r0Sign})$ to obtain the reduced quadratic quotient.`,
-      math: `\\begin{array}{c|rrrr} ${fmt(r0)} & ${fmt(a)} & ${fmt(b)} & ${fmt(c)} & ${fmt(d)} \\\\ & & ${fmt(a * r0)} & ${fmt(qB * r0)} & ${fmt(qC * r0)} \\\\ \\hline & ${fmt(qA)} & ${fmt(qB)} & ${fmt(qC)} & 0 \\end{array} \\implies \\frac{${polyFull}}{${variable} ${r0Sign}} = ${quotientPoly}`,
+      explanation: `Perform polynomial division (long division / synthetic division) of $${dividendStr}$ by the factor $(${divisorStr})$ to obtain the reduced quotient $${quotientPoly}$. Both Long Division (NCERT standard) and Synthetic Division (shortcut) are shown below:`,
+      math: `\\begin{aligned} &\\textbf{Method 1: Long Division (NCERT)} \\\\[4pt] &${longDivisionMath} \\\\[10pt] &\\textbf{Method 2: Synthetic Division (Shortcut)} \\\\[4pt] &${syntheticMath} \\end{aligned}`,
+      divisionDetails,
     });
 
     // Step 4: Factored Form & GCD Simplification
@@ -840,11 +954,25 @@ export function generateQuarticSteps(
       q3.push(coeffs[i] + q3[i - 1] * r1);
     }
     const q3Poly = formatPolynomial(q3, variable);
+    const divisor1Str = `${variable} ${r1Sign}`;
+    const dividend1Str = formatPolynomial(coeffs, variable);
+
+    const longDiv1Math = generatePolynomialLongDivisionLatex(coeffs, r1, variable);
+    const synth1Math = generateSyntheticDivisionLatex(coeffs, r1, variable);
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Divide the quartic polynomial by $(${variable} ${r1Sign})$ via synthetic division to obtain the depressed cubic factor.`,
-      math: `\\frac{${formatPolynomial(coeffs, variable)}}{${variable} ${r1Sign}} = ${q3Poly}`,
+      explanation: `Divide the quartic polynomial by $(${divisor1Str})$ to obtain the depressed cubic factor $${q3Poly}$. Both Long Division (NCERT standard) and Synthetic Division (shortcut) are shown:`,
+      math: `\\begin{aligned} &\\textbf{Method 1: Long Division (NCERT)} \\\\[4pt] &${longDiv1Math} \\\\[10pt] &\\textbf{Method 2: Synthetic Division (Shortcut)} \\\\[4pt] &${synth1Math} \\end{aligned}`,
+      divisionDetails: {
+        longDivisionMath: longDiv1Math,
+        syntheticMath: synth1Math,
+        quotientMath: q3Poly,
+        divisorMath: divisor1Str,
+        dividendMath: dividend1Str,
+        remainderMath: '0',
+        explainer: 'A faster shortcut version of long division — same result, fewer written steps.',
+      },
     });
 
     // Try finding second rational root in q3
@@ -870,11 +998,25 @@ export function generateQuarticSteps(
         q2.push(q3[i] + q2[i - 1] * r2);
       }
       const q2Poly = formatPolynomial(q2, variable);
+      const divisor2Str = `${variable} ${r2Sign}`;
+      const dividend2Str = q3Poly;
+
+      const longDiv2Math = generatePolynomialLongDivisionLatex(q3, r2, variable);
+      const synth2Math = generateSyntheticDivisionLatex(q3, r2, variable);
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Divide the cubic by $(${variable} ${r2Sign})$ to obtain the quadratic factor $${q2Poly} = 0$.`,
-        math: `(${variable} ${r1Sign})(${variable} ${r2Sign})(${q2Poly}) = 0`,
+        explanation: `Divide the cubic factor by $(${divisor2Str})$ to obtain the quadratic factor $${q2Poly}$. Both Long Division and Synthetic Division methods:`,
+        math: `\\begin{aligned} &\\textbf{Method 1: Long Division (NCERT)} \\\\[4pt] &${longDiv2Math} \\\\[10pt] &\\textbf{Method 2: Synthetic Division (Shortcut)} \\\\[4pt] &${synth2Math} \\end{aligned}`,
+        divisionDetails: {
+          longDivisionMath: longDiv2Math,
+          syntheticMath: synth2Math,
+          quotientMath: q2Poly,
+          divisorMath: divisor2Str,
+          dividendMath: dividend2Str,
+          remainderMath: '0',
+          explainer: 'A faster shortcut version of long division — same result, fewer written steps.',
+        },
       });
 
       // Solve remaining quadratic
