@@ -7,6 +7,7 @@ import {
   generateNiceTicks,
   formatAxisNumber,
   pointsToSvgPath,
+  findVerticalAsymptotes,
 } from '@/lib/math/graphData';
 import {
   isImplicitEquation,
@@ -35,6 +36,7 @@ import {
   Pencil,
   Check,
   Scale,
+  Split,
 } from 'lucide-react';
 
 /**
@@ -294,11 +296,15 @@ export default function FunctionPlotter() {
     return { explicitEquations: explicit, implicitEquations: implicit };
   }, [equations]);
 
+  // Show Asymptotes toggle state
+  const [showAsymptotes, setShowAsymptotes] = useState(true);
+
   // Generate continuous SVG paths for explicit functions with asymptote splitting
   const explicitPaths = useMemo(() => {
-    const numPoints = 600;
+    const numPoints = 650;
     return explicitEquations.map((eq) => {
       const data = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, numPoints);
+      const asyms = findVerticalAsymptotes(eq.expression, bounds.xMin, bounds.xMax);
       const pathD = pointsToSvgPath(
         data,
         bounds.xMin,
@@ -306,7 +312,8 @@ export default function FunctionPlotter() {
         bounds.yMin,
         bounds.yMax,
         plotBox,
-        yScale
+        yScale,
+        asyms
       );
 
       // Find label anchor point
@@ -336,10 +343,29 @@ export default function FunctionPlotter() {
         expression: eq.expression,
         color: eq.color,
         pathD,
+        asymptotes: asyms,
         labelPoint,
       };
     });
   }, [explicitEquations, bounds, plotBox, yScale, toPxX, toPxY]);
+
+  // Compute all unique vertical asymptotes for dashed guide line rendering
+  const allAsymptotes = useMemo(() => {
+    if (!showAsymptotes) return [];
+    const list: { x: number; label: string; color: string }[] = [];
+    explicitPaths.forEach((path) => {
+      path.asymptotes.forEach((a) => {
+        if (!list.some((item) => Math.abs(item.x - a) < 0.05)) {
+          list.push({
+            x: a,
+            label: `x = ${formatAxisNumber(a)}`,
+            color: path.color,
+          });
+        }
+      });
+    });
+    return list;
+  }, [explicitPaths, showAsymptotes]);
 
   // Detect scale disparity among explicit functions
   const scaleDisparityDetected = useMemo(() => {
@@ -755,6 +781,18 @@ export default function FunctionPlotter() {
                 <Grid size={12} />
                 <span>4 Quadrants</span>
               </button>
+              <button
+                onClick={() => setShowAsymptotes(!showAsymptotes)}
+                className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  showAsymptotes
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+                title="Toggle Dashed Vertical Asymptote Guide Lines"
+              >
+                <Split size={12} />
+                <span>Asymptotes</span>
+              </button>
             </div>
 
             {/* Linear / Log Toggle */}
@@ -986,6 +1024,47 @@ export default function FunctionPlotter() {
                 );
               })}
             </g>
+
+            {/* 1.5 Vertical Asymptote Dashed Guide Lines */}
+            {allAsymptotes.map((asym, idx) => {
+              const px = toPxX(asym.x);
+              if (px < plotBox.left || px > plotBox.left + plotBox.width) return null;
+              return (
+                <g key={`asym-guide-${idx}-${asym.x}`} className="asymptote-guide">
+                  <line
+                    x1={px}
+                    y1={plotBox.top}
+                    x2={px}
+                    y2={plotBox.top + plotBox.height}
+                    stroke="#94a3b8"
+                    strokeWidth={1.5}
+                    strokeDasharray="6 4"
+                    opacity={0.8}
+                    className="dark:stroke-gray-500"
+                  />
+                  <rect
+                    x={px - 22}
+                    y={plotBox.top + 6}
+                    width={44}
+                    height={18}
+                    rx={4}
+                    fill="#ffffff"
+                    stroke="#cbd5e1"
+                    strokeWidth={1}
+                    className="dark:fill-gray-900 dark:stroke-gray-700"
+                  />
+                  <text
+                    x={px}
+                    y={plotBox.top + 19}
+                    textAnchor="middle"
+                    fill="#475569"
+                    className="dark:fill-gray-300 font-mono text-[9.5px] font-bold select-none"
+                  >
+                    {asym.label}
+                  </text>
+                </g>
+              );
+            })}
 
             {/* 2. Central Origin-Centric Coordinate Axes (Crosshairs through Origin) */}
             <g className="central-axes">

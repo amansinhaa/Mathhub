@@ -1,5 +1,11 @@
 import { SavedGraphSnapshot, CollageLayout } from '@/types/graph';
-import { generatePlotData, generateNiceTicks, formatAxisNumber, pointsToSvgPath } from './graphData';
+import {
+  generatePlotData,
+  generateNiceTicks,
+  formatAxisNumber,
+  pointsToSvgPath,
+  findVerticalAsymptotes,
+} from './graphData';
 import { isImplicitEquation, generateImplicitContour, segmentsToSvgPath } from './implicitPlot';
 import { jsPDF } from 'jspdf';
 
@@ -115,8 +121,9 @@ export function renderSnapshotToSvgGroup(
     }
   });
 
-  // Curves SVG
+  // Curves SVG & Asymptotes
   let curvesSvg = '';
+  let asymptotesSvg = '';
   const expressions = snapshot.expressions || (snapshot.equations ? snapshot.equations.map((e) => e.expression) : ['x^2']);
   const equations = snapshot.equations || expressions.map((expr, i) => ({
     id: `eq-${i}`,
@@ -134,11 +141,20 @@ export function renderSnapshotToSvgGroup(
         curvesSvg += `<path d="${d}" fill="none" stroke="${eq.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />`;
       }
     } else {
-      const pts = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, 300);
-      const d = pointsToSvgPath(pts, bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax, plotBox, snapshot.yScale || 'linear');
+      const asyms = findVerticalAsymptotes(eq.expression, bounds.xMin, bounds.xMax);
+      const pts = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, 400);
+      const d = pointsToSvgPath(pts, bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax, plotBox, snapshot.yScale || 'linear', asyms);
       if (d) {
         curvesSvg += `<path d="${d}" fill="none" stroke="${eq.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />`;
       }
+
+      // Add dashed asymptote lines in snapshot
+      asyms.forEach((a) => {
+        const px = toPxX(a);
+        if (px >= plotBox.left && px <= plotBox.left + plotBox.width) {
+          asymptotesSvg += `<line x1="${px.toFixed(1)}" y1="${plotBox.top.toFixed(1)}" x2="${px.toFixed(1)}" y2="${(plotBox.top + plotBox.height).toFixed(1)}" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.8" />`;
+        }
+      });
     }
   });
 
@@ -188,6 +204,11 @@ export function renderSnapshotToSvgGroup(
       <!-- Grid -->
       <g opacity="0.85">
         ${gridLinesSvg}
+      </g>
+
+      <!-- Vertical Asymptotes -->
+      <g opacity="0.85">
+        ${asymptotesSvg}
       </g>
 
       <!-- Axes -->

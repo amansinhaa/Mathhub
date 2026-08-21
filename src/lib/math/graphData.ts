@@ -57,15 +57,113 @@ export function parseExpression(input: string): string {
   return expr;
 }
 
+/**
+ * Find vertical asymptotes of an expression in the domain [xMin, xMax].
+ * Uses zero-crossing and singularity detection of 1/f(x) = 0.
+ */
+export function findVerticalAsymptotes(
+  expression: string,
+  xMin: number,
+  xMax: number
+): number[] {
+  const asymptotes: number[] = [];
+  const expr = parseExpression(expression);
+  if (!expr || expr === '0') return asymptotes;
+
+  let compiled: any = null;
+  try {
+    compiled = math.compile(expr);
+  } catch {
+    return asymptotes;
+  }
+
+  const evalF = (xVal: number): number | null => {
+    try {
+      const res = compiled.evaluate({ x: xVal });
+      if (typeof res === 'number' && !isNaN(res)) return res;
+      if (res && typeof res.re === 'number' && Math.abs(res.im || 0) < 1e-9) return res.re;
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  const evalInv = (xVal: number): number | null => {
+    const val = evalF(xVal);
+    if (val === null || !isFinite(val)) return 0;
+    if (Math.abs(val) < 1e-15) return 1e15;
+    return 1 / val;
+  };
+
+  // Numerical search by scanning 1/f(x) over fine intervals
+  const scanSteps = Math.min(1500, Math.max(350, Math.round((xMax - xMin) * 60)));
+  const dx = (xMax - xMin) / scanSteps;
+
+  let prevX = xMin;
+  let prevInv = evalInv(prevX);
+
+  for (let i = 1; i <= scanSteps; i++) {
+    const currX = xMin + i * dx;
+    const currInv = evalInv(currX);
+
+    // If 1/f(x) is zero or changes sign across the interval
+    if (
+      currInv !== null &&
+      prevInv !== null &&
+      ((prevInv * currInv <= 0 && (prevInv !== 0 || currInv !== 0)) ||
+        (Math.abs(currInv) < 1e-5 && Math.abs(prevInv) < 1e-5))
+    ) {
+      // Binary search root of 1/f(x) = 0
+      let lo = prevX;
+      let hi = currX;
+      for (let iter = 0; iter < 24; iter++) {
+        const mid = (lo + hi) / 2;
+        const midInv = evalInv(mid);
+        if (midInv === null || midInv === 0 || Math.abs(midInv) < 1e-14) {
+          lo = mid;
+          hi = mid;
+          break;
+        }
+        if (prevInv * midInv <= 0) {
+          hi = mid;
+        } else {
+          lo = mid;
+        }
+      }
+      const root = Number(((lo + hi) / 2).toFixed(5));
+      // Verify that near this root, |f(x)| actually blows up
+      const testLeft = evalF(root - 1e-4);
+      const testRight = evalF(root + 1e-4);
+      const isBlowup =
+        testLeft === null ||
+        testRight === null ||
+        !isFinite(testLeft) ||
+        !isFinite(testRight) ||
+        Math.abs(testLeft) > 15 ||
+        Math.abs(testRight) > 15;
+
+      if (isBlowup) {
+        if (!asymptotes.some((a) => Math.abs(a - root) < 0.015)) {
+          asymptotes.push(root);
+        }
+      }
+    }
+
+    prevX = currX;
+    prevInv = currInv;
+  }
+
+  return asymptotes.sort((a, b) => a - b);
+}
+
 export function generatePlotData(
   expression: string,
   xMin: number,
   xMax: number,
-  numPoints: number = 400
+  numPoints: number = 450
 ): DataPoint[] {
   const data: DataPoint[] = [];
   if (xMin >= xMax) return data;
-  const step = (xMax - xMin) / numPoints;
   const expr = parseExpression(expression);
 
   let compiled: any = null;
@@ -75,21 +173,61 @@ export function generatePlotData(
     return data;
   }
 
-  for (let i = 0; i <= numPoints; i++) {
-    const x = xMin + i * step;
+  const evalAt = (x: number): number | null => {
     try {
       const y = compiled.evaluate({ x });
-      if (typeof y === 'number' && !isNaN(y) && isFinite(y)) {
-        data.push({ x, y });
-      } else if (y && typeof y.re === 'number' && Math.abs(y.im || 0) < 1e-10) {
-        data.push({ x, y: y.re });
-      } else {
-        data.push({ x, y: null as any });
-      }
+      if (typeof y === 'number' && !isNaN(y) && isFinite(y)) return y;
+      if (y && typeof y.re === 'number' && Math.abs(y.im || 0) < 1e-9) return y.re;
+      return null;
     } catch {
-      data.push({ x, y: null as any });
+      return null;
+    }
+  };
+
+  const asymptotes = findVerticalAsymptotes(expression, xMin, xMax);
+  const step = (xMax - xMin) / numPoints;
+
+  // Collect all critical x coordinates
+  const xSamples: number[] = [];
+  for (let i = 0; i <= numPoints; i++) {
+    xSamples.push(xMin + i * step);
+  }
+
+  // Insert fine samples and exact null breaks around asymptotes
+  asymptotes.forEach((asym) => {
+    if (asym > xMin && asym < xMax) {
+      xSamples.push(asym - 0.01);
+      xSamples.push(asym - 0.001);
+      xSamples.push(asym); // Exact asymptote
+      xSamples.push(asym + 0.001);
+      xSamples.push(asym + 0.01);
+    }
+  });
+
+  // Sort and deduplicate
+  xSamples.sort((a, b) => a - b);
+  const uniqueX: number[] = [];
+  for (let i = 0; i < xSamples.length; i++) {
+    if (i === 0 || Math.abs(xSamples[i] - xSamples[i - 1]) > 1e-7) {
+      uniqueX.push(xSamples[i]);
     }
   }
+
+  uniqueX.forEach((x) => {
+    // If x is at an exact asymptote, insert null gap
+    if (asymptotes.some((a) => Math.abs(a - x) < 1e-4)) {
+      data.push({ x, y: null as any });
+      return;
+    }
+
+    const y = evalAt(x);
+    if (y !== null && Math.abs(y) < 1e9) {
+      data.push({ x, y });
+    } else {
+      data.push({ x, y: null as any });
+    }
+  });
+
   return data;
 }
 
@@ -118,33 +256,18 @@ export function generateNiceTicks(min: number, max: number, maxTicks: number = 6
   const endTick = Math.floor(max / niceStep) * niceStep;
 
   const ticks: number[] = [];
-  const precision = Math.max(0, -exponent + 2);
-
-  for (let t = startTick; t <= endTick + niceStep * 0.5; t += niceStep) {
-    const rounded = Number(t.toFixed(precision));
-    if (ticks.length === 0 || Math.abs(ticks[ticks.length - 1] - rounded) > niceStep * 0.1) {
-      ticks.push(rounded);
-    }
+  for (let t = startTick; t <= endTick + 1e-9; t += niceStep) {
+    ticks.push(Number(t.toFixed(4)));
   }
 
-  // Ensure 0 is included if domain spans across 0
-  if (min < 0 && max > 0 && !ticks.some((t) => Math.abs(t) < niceStep * 0.1)) {
-    ticks.push(0);
-    ticks.sort((a, b) => a - b);
-  }
-
-  if (ticks.length < 2) {
-    return [Number(min.toFixed(1)), 0, Number(max.toFixed(1))];
-  }
-
-  return ticks;
+  return ticks.length >= 2 ? ticks : [min, (min + max) / 2, max];
 }
 
 /**
- * Format a number cleanly for graph axes using Intl.NumberFormat and compact SI symbols.
+ * Clean compact number formatter for axis labels.
  */
 export function formatAxisNumber(val: number): string {
-  if (val === 0) return '0';
+  if (Math.abs(val) < 1e-10) return '0';
   const abs = Math.abs(val);
 
   if (abs >= 1e9) {
@@ -215,7 +338,7 @@ export function computeSmartAutoFitBounds(
 
 /**
  * Convert data points for an explicit function f(x) into an SVG path string.
- * Automatically splits segments across vertical asymptotes to prevent vertical jump lines.
+ * Automatically splits segments across vertical asymptotes to prevent false connector lines.
  */
 export function pointsToSvgPath(
   points: DataPoint[],
@@ -224,13 +347,14 @@ export function pointsToSvgPath(
   yMin: number,
   yMax: number,
   plotBox: { left: number; top: number; width: number; height: number },
-  yScale: 'linear' | 'log' = 'linear'
+  yScale: 'linear' | 'log' = 'linear',
+  knownAsymptotes: number[] = []
 ): string {
   if (!points || points.length < 2) return '';
   const xSpan = Math.max(1e-9, xMax - xMin);
+  const ySpan = Math.max(1e-9, yMax - yMin);
 
   const symlog = (y: number) => (y === 0 ? 0 : Math.sign(y) * Math.log10(1 + Math.abs(y)));
-  const ySpan = Math.max(1e-9, yMax - yMin);
   const logMin = symlog(yMin);
   const logMax = symlog(yMax);
   const logSpan = Math.max(1e-9, logMax - logMin);
@@ -246,27 +370,48 @@ export function pointsToSvgPath(
 
   const pathParts: string[] = [];
   let isDrawing = false;
-  let prevY: number | null = null;
-  const yThreshold = ySpan * 1.5;
+  let prevPoint: DataPoint | null = null;
 
   for (let i = 0; i < points.length; i++) {
     const p = points[i];
     if (p.y === null || isNaN(p.y) || !isFinite(p.y)) {
       isDrawing = false;
-      prevY = null;
+      prevPoint = null;
       continue;
     }
 
-    // Detect asymptote jump: opposite signs and large jump
-    if (prevY !== null && Math.abs(p.y - prevY) > yThreshold && p.y * prevY < 0) {
-      isDrawing = false;
+    if (prevPoint && prevPoint.y !== null) {
+      const dx = Math.abs(p.x - prevPoint.x);
+      const dy = Math.abs(p.y - prevPoint.y);
+      const minX = Math.min(prevPoint.x, p.x);
+      const maxX = Math.max(prevPoint.x, p.x);
+
+      // Check 1: Known asymptote crossing in [prevX, currX]
+      const hasAsymptoteCrossing = knownAsymptotes.some(
+        (a) => a >= minX - 1e-4 && a <= maxX + 1e-4
+      );
+
+      // Check 2: Steep jump with opposite signs
+      const isOppositeSignJump =
+        prevPoint.y * p.y < 0 &&
+        dy / Math.max(1e-6, dx) > (ySpan / xSpan) * 6 &&
+        (Math.abs(prevPoint.y) > ySpan * 0.3 || Math.abs(p.y) > ySpan * 0.3);
+
+      // Check 3: Huge same-sign spike (like 1/x^2)
+      const isExtremeSpike =
+        (Math.abs(prevPoint.y) > ySpan * 1.8 && Math.abs(p.y) > ySpan * 1.8) ||
+        dy > ySpan * 2.5;
+
+      if (hasAsymptoteCrossing || isOppositeSignJump || isExtremeSpike) {
+        isDrawing = false;
+      }
     }
 
     const px = toPxX(p.x);
     const py = toPxY(p.y);
 
     // Limit extreme pixel values to prevent renderer overflow
-    const clampedPy = Math.max(plotBox.top - 100, Math.min(plotBox.top + plotBox.height + 100, py));
+    const clampedPy = Math.max(plotBox.top - 120, Math.min(plotBox.top + plotBox.height + 120, py));
 
     if (!isDrawing) {
       pathParts.push(`M ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);
@@ -274,9 +419,8 @@ export function pointsToSvgPath(
     } else {
       pathParts.push(`L ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);
     }
-    prevY = p.y;
+    prevPoint = p;
   }
 
   return pathParts.join(' ');
 }
-
