@@ -1,13 +1,18 @@
 import { SolverResult } from '@/types/solver';
 import {
-  generateQuadraticSteps,
   generateLinearSteps,
+  generateQuadraticSteps,
   generateCubicSteps,
+  generateQuarticSteps,
+  generateDegree5PlusSteps,
   generateHigherOrderSteps,
   generateSystemSteps,
   generateInequalitySteps,
+  fmt,
+  evalPoly,
 } from './stepGenerator';
 import { evaluate } from 'mathjs';
+import * as math from 'mathjs';
 import nerdamer from 'nerdamer';
 import 'nerdamer/Algebra';
 import 'nerdamer/Calculus';
@@ -17,20 +22,19 @@ import { normalizeExpression } from './normalizer';
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 /** Detect the primary variable from an expression string. */
-function detectVariable(expr: string): string {
-  // Match variable-like tokens that are NOT math function names or constants
+export function detectVariable(expr: string): string {
   const reserved = new Set([
     'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
     'log', 'ln', 'exp', 'sqrt', 'abs', 'ceil', 'floor', 'round', 'sign',
-    'pi', 'PI',
+    'pi', 'PI', 'e', 'i',
   ]);
 
   const tokens = expr.match(/[a-zA-Z]+/g) || [];
   for (const tok of tokens) {
-    if (tok.length === 1 && tok !== 'e' && tok !== 'i') return tok;
+    if (tok.length === 1 && !reserved.has(tok)) return tok;
   }
   for (const tok of tokens) {
-    if (!reserved.has(tok) && tok !== 'e' && tok !== 'i') return tok;
+    if (!reserved.has(tok)) return tok;
   }
   return 'x';
 }
@@ -44,71 +48,75 @@ function evalAt(expr: string, variable: string, value: number): number {
   }
 }
 
-/** Newton-Raphson root polishing: given approx root, refine it. */
+/** Newton-Raphson root polishing for high-precision real roots. */
 function newtonPolish(
-  expr: string,
-  variable: string,
+  coeffs: number[],
   guess: number,
-  iterations: number = 20
+  iterations: number = 25
 ): number {
   let x = guess;
-  const h = 1e-8;
   for (let i = 0; i < iterations; i++) {
-    const fx = evalAt(expr, variable, x);
-    if (Math.abs(fx) < 1e-14) break;
-    const fxh = evalAt(expr, variable, x + h);
-    const deriv = (fxh - fx) / h;
+    const fx = evalPoly(coeffs, x);
+    if (Math.abs(fx) < 1e-13) break;
+    let deriv = 0;
+    const n = coeffs.length - 1;
+    for (let j = 0; j < n; j++) {
+      deriv = deriv * x + coeffs[j] * (n - j);
+    }
     if (Math.abs(deriv) < 1e-15) break;
     x = x - fx / deriv;
   }
   return x;
 }
 
-/** Factors of a positive integer (up to cap). */
-function getFactors(n: number, cap: number = 200): number[] {
-  n = Math.abs(Math.round(n));
-  if (n === 0) return [0];
-  const factors: number[] = [];
-  for (let i = 1; i <= Math.min(n, cap); i++) {
-    if (n % i === 0) factors.push(i);
-  }
-  return factors;
-}
-
-/** GCD of two integers. */
-function gcd(a: number, b: number): number {
-  a = Math.abs(Math.round(a));
-  b = Math.abs(Math.round(b));
-  while (b) { [a, b] = [b, a % b]; }
-  return a;
-}
-
 // ─── Coefficient Extraction ─────────────────────────────────────────────────
 
 /**
- * Extract polynomial coefficients by sampling.
- * Returns { coeffs: [leading, ..., constant], degree }.
- * Uses the finite difference method to determine degree and coefficients.
+ * Extract polynomial coefficients for ANY degree n: [a_n, a_{n-1}, ..., a_0].
+ * Combines nerdamer algebraic expansion with finite-difference sampling fallback.
  */
-function extractCoefficients(
+export function extractCoefficients(
   expr: string,
   variable: string
 ): { degree: number; coeffs: number[] } | null {
-  // Sample at points 0, 1, 2, 3, 4, 5 to determine polynomial coefficients
+  // 1. Try nerdamer symbolic expansion and coefficient extraction
+  try {
+    const c = (nerdamer as any).coeffs(expr, variable);
+    const str = c.toString();
+    if (str.startsWith('[') && str.endsWith(']')) {
+      const arr = str
+        .slice(1, -1)
+        .split(',')
+        .map((s: string) => {
+          const val = Number((nerdamer as any)(s.trim()).evaluate().text());
+          return isNaN(val) ? 0 : val;
+        });
+      // nerdamer gives [a_0, a_1, ..., a_n] -> reverse to [a_n, ..., a_0]
+      const coeffs = arr.reverse();
+      // Remove leading zeros
+      while (coeffs.length > 1 && Math.abs(coeffs[0]) < 1e-9) {
+        coeffs.shift();
+      }
+      const degree = coeffs.length - 1;
+      if (degree >= 1 && coeffs.every((num: number) => Number.isFinite(num) && !isNaN(num))) {
+        return { degree, coeffs };
+      }
+    }
+  } catch {
+    // Continue to sampling fallback
+  }
+
+  // 2. Finite-Difference Sampling Fallback (up to degree 10)
+  const maxSampleDeg = 10;
   const vals: number[] = [];
-  for (let i = 0; i <= 5; i++) {
+  for (let i = 0; i <= maxSampleDeg + 2; i++) {
     const v = evalAt(expr, variable, i);
     if (isNaN(v) || !isFinite(v)) return null;
     vals.push(v);
   }
 
-  // Finite differences to determine degree
-  // d0 = vals
-  // d1[i] = d0[i+1] - d0[i]
-  // d2[i] = d1[i+1] - d1[i], etc.
-  // If d_k is constant, degree = k
   const diffs: number[][] = [vals.slice()];
-  for (let k = 1; k <= 5; k++) {
+  for (let k = 1; k <= maxSampleDeg + 1; k++) {
     const prev = diffs[k - 1];
     const next: number[] = [];
     for (let i = 0; i < prev.length - 1; i++) {
@@ -117,36 +125,20 @@ function extractCoefficients(
     diffs.push(next);
   }
 
-  // Find the degree: the first k where all d_k values are ~equal
-  let degree = 0;
-  for (let k = 0; k <= 5; k++) {
+  let degree = -1;
+  for (let k = 1; k <= maxSampleDeg; k++) {
     const row = diffs[k];
-    const allSame = row.every((v) => Math.abs(v - row[0]) < 1e-4);
-    if (allSame) {
+    if (row.length >= 2 && row.every((v) => Math.abs(v - row[0]) < 1e-4)) {
       degree = k;
       break;
     }
-    if (k === 5) degree = 5; // cap
   }
 
-  if (degree === 0) {
-    // Constant — not a polynomial equation
-    return { degree: 0, coeffs: [vals[0]] };
-  }
+  if (degree <= 0) return null;
 
-  // Extract coefficients using the leading finite difference
-  // For a degree-n polynomial, the n-th finite difference = n! * a_n
-  // Then reconstruct lower coefficients from the sampled values.
-
-  // Use Newton's forward difference formula:
-  // f(x) = Σ C(x, k) * Δ^k f(0)
-  // But we want standard coefficients. Easier: use a Vandermonde solve for
-  // the known degree.
-
-  // Build Vandermonde system for degree d: f(i) = a_d * i^d + ... + a_0
+  // Solve Vandermonde system for polynomial coefficients
   const n = degree;
   const points = n + 1;
-  // Use first (n+1) values
   const A: number[][] = [];
   for (let i = 0; i < points; i++) {
     const row: number[] = [];
@@ -157,18 +149,14 @@ function extractCoefficients(
   }
   const b = vals.slice(0, points);
 
-  // Gaussian elimination
   const aug = A.map((row, i) => [...row, b[i]]);
   for (let col = 0; col < points; col++) {
-    // Pivot
     let maxRow = col;
     for (let row = col + 1; row < points; row++) {
       if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
     }
     [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
-
     if (Math.abs(aug[col][col]) < 1e-14) continue;
-
     for (let row = col + 1; row < points; row++) {
       const factor = aug[row][col] / aug[col][col];
       for (let j = col; j <= points; j++) {
@@ -177,7 +165,6 @@ function extractCoefficients(
     }
   }
 
-  // Back-substitute
   const coeffs = new Array(points).fill(0);
   for (let row = points - 1; row >= 0; row--) {
     let sum = aug[row][points];
@@ -187,98 +174,175 @@ function extractCoefficients(
     coeffs[row] = sum / aug[row][row];
   }
 
-  // Verify: check that the polynomial matches at an extra point not used in fitting
-  const checkVal = evalAt(expr, variable, points);
-  let predicted = 0;
-  for (let j = 0; j <= n; j++) {
-    predicted += coeffs[j] * Math.pow(points, n - j);
-  }
-  if (Math.abs(checkVal - predicted) > Math.max(1, Math.abs(checkVal)) * 1e-3) {
-    return null; // Not actually a polynomial of this degree
+  // Verification at test point
+  const testX = points + 1;
+  const expectedVal = evalAt(expr, variable, testX);
+  const actualVal = evalPoly(coeffs, testX);
+  if (Math.abs(expectedVal - actualVal) > Math.max(1, Math.abs(expectedVal)) * 1e-3) {
+    return null;
   }
 
-  // Round near-integer coefficients
   const rounded = coeffs.map((c) => {
     const r = Math.round(c);
-    return Math.abs(c - r) < 1e-6 ? r : Number(c.toFixed(6));
+    return Math.abs(c - r) < 1e-5 ? r : Number(c.toFixed(6));
   });
 
   return { degree: n, coeffs: rounded };
 }
 
-// ─── Cardano Cubic Solver ───────────────────────────────────────────────────
+// ─── Numerical Polynomial Root Solver (Durand-Kerner & Companion Matrix) ─────
 
-function solveCubicCardano(
-  a: number,
-  b: number,
-  c: number,
-  d: number
-): { real: number[]; complex: { re: number; im: number }[] } {
-  const p = (3 * a * c - b * b) / (3 * a * a);
-  const q =
-    (2 * Math.pow(b, 3) - 9 * a * b * c + 27 * a * a * d) / (27 * Math.pow(a, 3));
-  const discriminant = (q * q) / 4 + Math.pow(p, 3) / 27;
-  const shift = -b / (3 * a);
+/**
+ * Computes all roots (real and complex) of a polynomial P(x) = 0
+ * using the Weierstrass / Durand-Kerner simultaneous root iteration with companion matrix fallback.
+ */
+export function solvePolynomialNumerical(coeffs: number[]): {
+  real: number[];
+  complex: { re: number; im: number }[];
+} {
+  const n = coeffs.length - 1;
+  if (n <= 0) return { real: [], complex: [] };
 
-  if (discriminant > 1e-10) {
-    const sqrtDisc = Math.sqrt(discriminant);
-    const uVal = -q / 2 + sqrtDisc;
-    const vVal = -q / 2 - sqrtDisc;
+  const a_n = coeffs[0];
+  const p = coeffs.map((c) => c / a_n); // Monic: [1, p[1], ..., p[n]]
 
-    const u = uVal >= 0 ? Math.cbrt(uVal) : -Math.cbrt(-uVal);
-    const v = vVal >= 0 ? Math.cbrt(vVal) : -Math.cbrt(-vVal);
-
-    let r1 = u + v + shift;
-    // Polish with Newton's method
-    const polyStr = `${a}*x^3 + ${b}*x^2 + ${c}*x + ${d}`;
-    r1 = newtonPolish(polyStr, 'x', r1);
-    // Snap to integer if very close
-    if (Math.abs(r1 - Math.round(r1)) < 1e-8) r1 = Math.round(r1);
-
-    const realPart = -(u + v) / 2 + shift;
-    const imagPart = (Math.sqrt(3) * Math.abs(u - v)) / 2;
-
+  // Complex arithmetic helper
+  const add = (a: { re: number; im: number }, b: { re: number; im: number }) => ({
+    re: a.re + b.re,
+    im: a.im + b.im,
+  });
+  const sub = (a: { re: number; im: number }, b: { re: number; im: number }) => ({
+    re: a.re - b.re,
+    im: a.im - b.im,
+  });
+  const mul = (a: { re: number; im: number }, b: { re: number; im: number }) => ({
+    re: a.re * b.re - a.im * b.im,
+    im: a.re * b.im + a.im * b.re,
+  });
+  const div = (a: { re: number; im: number }, b: { re: number; im: number }) => {
+    const denom = b.re * b.re + b.im * b.im || 1e-18;
     return {
-      real: [r1],
-      complex:
-        imagPart > 1e-6
-          ? [{ re: Number(realPart.toFixed(6)), im: Number(imagPart.toFixed(6)) }]
-          : [],
+      re: (a.re * b.re + a.im * b.im) / denom,
+      im: (a.im * b.re - a.re * b.im) / denom,
     };
-  } else if (Math.abs(discriminant) <= 1e-10) {
-    const u = q >= 0 ? -Math.cbrt(q / 2) : Math.cbrt(-q / 2);
-    let r1 = 2 * u + shift;
-    let r2 = -u + shift;
-    if (Math.abs(r1 - Math.round(r1)) < 1e-8) r1 = Math.round(r1);
-    if (Math.abs(r2 - Math.round(r2)) < 1e-8) r2 = Math.round(r2);
-    return { real: [r1, r2], complex: [] };
-  } else {
-    const r = Math.sqrt(-Math.pow(p, 3) / 27);
-    const phi = Math.acos(Math.max(-1, Math.min(1, -q / (2 * r))));
-    const factor = 2 * Math.sqrt(-p / 3);
+  };
 
-    let r1 = factor * Math.cos(phi / 3) + shift;
-    let r2 = factor * Math.cos((phi + 2 * Math.PI) / 3) + shift;
-    let r3 = factor * Math.cos((phi + 4 * Math.PI) / 3) + shift;
+  // Evaluate monic polynomial at complex point z
+  const evalP = (z: { re: number; im: number }) => {
+    let res = { re: p[0], im: 0 };
+    for (let i = 1; i <= n; i++) {
+      res = add(mul(res, z), { re: p[i], im: 0 });
+    }
+    return res;
+  };
 
-    // Polish each root
-    const polyStr = `${a}*x^3 + ${b}*x^2 + ${c}*x + ${d}`;
-    [r1, r2, r3] = [r1, r2, r3].map((r) => {
-      const polished = newtonPolish(polyStr, 'x', r);
-      return Math.abs(polished - Math.round(polished)) < 1e-8
-        ? Math.round(polished)
-        : Number(polished.toFixed(6));
+  // Initial approximations on Aberth radius circle with asymmetric angle
+  const maxCoeff = Math.max(...p.slice(1).map(Math.abs));
+  const radius = 1 + (maxCoeff || 1);
+  let roots: { re: number; im: number }[] = [];
+  for (let i = 0; i < n; i++) {
+    const angle = (2 * Math.PI * i + 0.38) / n;
+    roots.push({
+      re: Math.cos(angle) * (radius * 0.7 + 0.1 * i),
+      im: Math.sin(angle) * (radius * 0.7 + 0.1 * i),
     });
-
-    return { real: [r1, r2, r3], complex: [] };
   }
+
+  // Durand-Kerner simultaneous iterations
+  for (let iter = 0; iter < 120; iter++) {
+    let maxChange = 0;
+    for (let i = 0; i < n; i++) {
+      const fz = evalP(roots[i]);
+      let denom = { re: 1, im: 0 };
+      for (let j = 0; j < n; j++) {
+        if (i !== j) {
+          denom = mul(denom, sub(roots[i], roots[j]));
+        }
+      }
+      const delta = div(fz, denom);
+      roots[i] = sub(roots[i], delta);
+      const mag = Math.hypot(delta.re, delta.im);
+      if (mag > maxChange) maxChange = mag;
+    }
+    if (maxChange < 1e-12) break;
+  }
+
+  // Classify into real and complex roots
+  const realRoots: number[] = [];
+  const complexRoots: { re: number; im: number }[] = [];
+
+  roots.forEach((r) => {
+    if (Math.abs(r.im) < 1e-5) {
+      let polished = newtonPolish(coeffs, r.re);
+      if (Math.abs(polished - Math.round(polished)) < 1e-5) polished = Math.round(polished);
+      realRoots.push(polished);
+    } else {
+      let re = Math.abs(r.re - Math.round(r.re)) < 1e-5 ? Math.round(r.re) : Number(r.re.toFixed(6));
+      let im = Math.abs(r.im - Math.round(r.im)) < 1e-5 ? Math.round(r.im) : Number(r.im.toFixed(6));
+      // Re-zero if near zero
+      if (Math.abs(re) < 1e-6) re = 0;
+      complexRoots.push({ re, im });
+    }
+  });
+
+  // Group complex roots into conjugate pairs (p ± qi)
+  const groupedComplex: { re: number; im: number }[] = [];
+  const used = new Set<number>();
+  for (let i = 0; i < complexRoots.length; i++) {
+    if (used.has(i)) continue;
+    const c1 = complexRoots[i];
+    let foundPair = false;
+    for (let j = i + 1; j < complexRoots.length; j++) {
+      if (used.has(j)) continue;
+      const c2 = complexRoots[j];
+      if (Math.abs(c1.re - c2.re) < 1e-4 && Math.abs(Math.abs(c1.im) - Math.abs(c2.im)) < 1e-4) {
+        groupedComplex.push({ re: c1.re, im: Math.abs(c1.im) });
+        used.add(i);
+        used.add(j);
+        foundPair = true;
+        break;
+      }
+    }
+    if (!foundPair) {
+      groupedComplex.push({ re: c1.re, im: Math.abs(c1.im) });
+      used.add(i);
+    }
+  }
+
+  // Sort real roots ascending
+  realRoots.sort((x, y) => x - y);
+
+  return { real: realRoots, complex: groupedComplex };
+}
+
+/** Helper to format final answer roots into clean LaTeX string. */
+function formatFinalRoots(
+  roots: { real: number[]; complex: { re: number; im: number }[] },
+  variable: string
+): string {
+  const parts: string[] = [];
+
+  roots.real.forEach((r, i) => {
+    parts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+  });
+
+  roots.complex.forEach((comp, i) => {
+    const idx = roots.real.length + i * 2 + 1;
+    const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+    if (Math.abs(comp.re) < 1e-6) {
+      parts.push(`${variable}_{${idx},${idx + 1}} = \\pm ${imStr}`);
+    } else {
+      parts.push(`${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${imStr}`);
+    }
+  });
+
+  return parts.length > 0 ? parts.join(', \\quad ') : `${variable} = 0`;
 }
 
 // ─── Main Solver Functions ──────────────────────────────────────────────────
 
 export function solvePolynomial(equation: string): SolverResult {
   let cleanEq = equation.trim();
-  // Normalize Unicode superscripts (x², x³), math symbols (√, π)
   cleanEq = normalizeExpression(cleanEq);
   if (!cleanEq) {
     return {
@@ -296,7 +360,7 @@ export function solvePolynomial(equation: string): SolverResult {
 
   const variable = detectVariable(cleanEq);
 
-  // Normalize to "LHS - RHS" form
+  // Normalize equation to "LHS - RHS" standard form
   let [lhs, rhs] = cleanEq.split('=');
   let standardExpr = '';
   if (rhs !== undefined && rhs.trim() !== '') {
@@ -305,45 +369,43 @@ export function solvePolynomial(equation: string): SolverResult {
     standardExpr = lhs.trim();
   }
 
-  // Extract polynomial coefficients by sampling
+  // Extract exact polynomial coefficients and degree
   const poly = extractCoefficients(standardExpr, variable);
 
   if (poly && poly.degree >= 1) {
     const { degree, coeffs } = poly;
 
+    // ─── DEGREE 1 (LINEAR): ax + b = 0 ──────────────────────────────────────
     if (degree === 1) {
-      // Linear: a*x + b = 0
       const [a, b] = coeffs;
       const steps = generateLinearSteps(a, b, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer: steps[steps.length - 1]?.math || `${variable} = 0`,
+        finalAnswer: `${variable} = ${fmt(-b / a)}`,
       };
     }
 
+    // ─── DEGREE 2 (QUADRATIC): ax^2 + bx + c = 0 ────────────────────────────
     if (degree === 2) {
-      // Quadratic: a*x^2 + b*x + c = 0
       const [a, b, c] = coeffs;
       const steps = generateQuadraticSteps(a, b, c, variable);
       const delta = b * b - 4 * a * c;
       let finalAnswer = '';
-      const fmtNum = (n: number) =>
-        Number.isInteger(n) ? n.toString() : Number(n.toFixed(4)).toString();
 
       if (delta >= 0) {
         const rootDelta = Math.sqrt(delta);
         const x1 = (-b + rootDelta) / (2 * a);
         const x2 = (-b - rootDelta) / (2 * a);
         if (Math.abs(delta) < 1e-8) {
-          finalAnswer = `${variable} = ${fmtNum(x1)}`;
+          finalAnswer = `${variable} = ${fmt(x1)}`;
         } else {
-          finalAnswer = `${variable}_1 = ${fmtNum(x1)}, \\quad ${variable}_2 = ${fmtNum(x2)}`;
+          finalAnswer = `${variable}_1 = ${fmt(x1)}, \\quad ${variable}_2 = ${fmt(x2)}`;
         }
       } else {
         const realPart = -b / (2 * a);
         const imagPart = Math.sqrt(-delta) / (2 * a);
-        finalAnswer = `${variable} = ${fmtNum(realPart)} \\pm ${fmtNum(imagPart)}\\,i`;
+        finalAnswer = `${variable} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`;
       }
 
       return {
@@ -353,39 +415,45 @@ export function solvePolynomial(equation: string): SolverResult {
       };
     }
 
+    // ─── DEGREE 3 (CUBIC): ax^3 + bx^2 + cx + d = 0 ─────────────────────────
     if (degree === 3) {
-      // Cubic: a*x^3 + b*x^2 + c*x + d = 0
       const [a, b, c, d] = coeffs;
-      const roots = solveCubicCardano(a, b, c, d);
+      const roots = solvePolynomialNumerical(coeffs);
       const steps = generateCubicSteps(a, b, c, d, roots, variable);
+      const finalAnswer = formatFinalRoots(roots, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer: steps[steps.length - 1]?.math || `${variable} = 0`,
+        finalAnswer,
       };
     }
 
-    // Degree 4+ — use Nerdamer symbolic solver
-    try {
-      const solutions = (nerdamer as any).solve(standardExpr, variable);
-      const solStr = String(solutions || '');
-      const cleanSols: string[] = solStr
-        .replace(/^\[|\]$/g, '')
-        .split(',')
-        .map((s: string) => s.trim())
-        .filter(Boolean);
-      const steps = generateHigherOrderSteps(standardExpr, cleanSols, variable);
+    // ─── DEGREE 4 (QUARTIC): ax^4 + bx^3 + cx^2 + dx + e = 0 ────────────────
+    if (degree === 4) {
+      const roots = solvePolynomialNumerical(coeffs);
+      const steps = generateQuarticSteps(coeffs, roots, variable);
+      const finalAnswer = formatFinalRoots(roots, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer: steps[steps.length - 1]?.math || cleanSols.join(', '),
+        finalAnswer,
       };
-    } catch {
-      // fall through to nerdamer fallback below
+    }
+
+    // ─── DEGREE 5+ (HIGHER ORDER): ax^n + ... = 0 (Abel–Ruffini) ────────────
+    if (degree >= 5) {
+      const roots = solvePolynomialNumerical(coeffs);
+      const steps = generateDegree5PlusSteps(coeffs, roots, variable);
+      const finalAnswer = formatFinalRoots(roots, variable);
+      return {
+        type: 'polynomial',
+        steps,
+        finalAnswer,
+      };
     }
   }
 
-  // Fallback: try Nerdamer for general/non-polynomial equations
+  // ─── GENERAL / NON-POLYNOMIAL EQUATIONS FALLBACK ──────────────────────────
   try {
     const solutions = (nerdamer as any).solve(standardExpr, variable);
     const solStr = String(solutions || '');
@@ -461,21 +529,19 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
     if (Math.abs(det) > 1e-9) {
       const x = (vecB[0] * matA[1][1] - matA[0][1] * vecB[1]) / det;
       const y = (matA[0][0] * vecB[1] - vecB[0] * matA[1][0]) / det;
-      const fmt = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(4));
+      const fmtVal = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(4));
       return {
         type: 'system',
         steps,
-        finalAnswer: `${vars[0]} = ${fmt(x)}, \\quad ${vars[1]} = ${fmt(y)}`,
+        finalAnswer: `${vars[0]} = ${fmtVal(x)}, \\quad ${vars[1]} = ${fmtVal(y)}`,
       };
     }
   }
 
   // 3x3 and 4x4: Gaussian elimination
   if (n >= 3) {
-    // Augmented matrix
     const aug = matA.map((row, i) => [...row.slice(0, n), vecB[i]]);
 
-    // Forward elimination
     for (let col = 0; col < n; col++) {
       let maxRow = col;
       for (let row = col + 1; row < n; row++) {
@@ -491,7 +557,6 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
       }
     }
 
-    // Back substitution
     const sol = new Array(n).fill(0);
     for (let row = n - 1; row >= 0; row--) {
       let sum = aug[row][n];
@@ -501,11 +566,11 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
       sol[row] = Math.abs(aug[row][row]) > 1e-12 ? sum / aug[row][row] : 0;
     }
 
-    const fmt = (v: number) => {
+    const fmtVal = (v: number) => {
       const r = Math.round(v);
       return Math.abs(v - r) < 1e-8 ? r.toString() : v.toFixed(4);
     };
-    const answer = vars.map((v, i) => `${v} = ${fmt(sol[i])}`).join(', \\quad ');
+    const answer = vars.map((v, i) => `${v} = ${fmtVal(sol[i])}`).join(', \\quad ');
     return { type: 'system', steps, finalAnswer: answer };
   }
 
@@ -562,22 +627,21 @@ export function solveInequality(inequality: string): SolverResult {
       if (delta >= 0) {
         const r1 = (-b - Math.sqrt(delta)) / (2 * a);
         const r2 = (-b + Math.sqrt(delta)) / (2 * a);
-        const fmt = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(4));
+        const fmtVal = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(4));
         const openOrClosed = rel.includes('=') ? ['\\leq', '\\geq'] : ['<', '>'];
 
         let latex: string;
         if (a > 0) {
-          // Parabola opens up: f(x) > 0 when x < r1 or x > r2
           if (rel === '>' || rel === '>=') {
-            latex = `${variable} ${openOrClosed[0]} ${fmt(r1)} \\quad \\text{or} \\quad ${variable} ${openOrClosed[1]} ${fmt(r2)}`;
+            latex = `${variable} ${openOrClosed[0]} ${fmtVal(r1)} \\quad \\text{or} \\quad ${variable} ${openOrClosed[1]} ${fmtVal(r2)}`;
           } else {
-            latex = `${fmt(r1)} ${openOrClosed[1]} ${variable} ${openOrClosed[0]} ${fmt(r2)}`;
+            latex = `${fmtVal(r1)} ${openOrClosed[1]} ${variable} ${openOrClosed[0]} ${fmtVal(r2)}`;
           }
         } else {
           if (rel === '>' || rel === '>=') {
-            latex = `${fmt(r1)} ${openOrClosed[1]} ${variable} ${openOrClosed[0]} ${fmt(r2)}`;
+            latex = `${fmtVal(r1)} ${openOrClosed[1]} ${variable} ${openOrClosed[0]} ${fmtVal(r2)}`;
           } else {
-            latex = `${variable} ${openOrClosed[0]} ${fmt(r1)} \\quad \\text{or} \\quad ${variable} ${openOrClosed[1]} ${fmt(r2)}`;
+            latex = `${variable} ${openOrClosed[0]} ${fmtVal(r1)} \\quad \\text{or} \\quad ${variable} ${openOrClosed[1]} ${fmtVal(r2)}`;
           }
         }
 
@@ -587,7 +651,7 @@ export function solveInequality(inequality: string): SolverResult {
             {
               stepNumber: 1,
               explanation: 'Find the roots of the corresponding equation.',
-              math: `${variable}_1 = ${fmt(r1)}, \\quad ${variable}_2 = ${fmt(r2)}`,
+              math: `${variable}_1 = ${fmtVal(r1)}, \\quad ${variable}_2 = ${fmtVal(r2)}`,
             },
             {
               stepNumber: 2,

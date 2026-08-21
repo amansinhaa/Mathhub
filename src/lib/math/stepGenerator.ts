@@ -5,13 +5,12 @@ function signedTerm(coeff: number, varPart: string, isFirst: boolean): string {
   if (coeff === 0) return '';
   const absC = Math.abs(coeff);
   const sign = coeff > 0 ? (isFirst ? '' : '+ ') : '- ';
-  const num = absC === 1 && varPart ? '' : `${absC}`;
+  const num = absC === 1 && varPart ? '' : `${fmt(absC)}`;
   return `${sign}${num}${varPart}`;
 }
 
-/** Format a polynomial expression like "72t^3 + 4t - 76" from coefficients. */
-function formatPolynomial(coeffs: number[], variable: string): string {
-  // coeffs[0] = highest degree, last = constant
+/** Format a polynomial expression from coefficients [a_n, ..., a_0]. */
+export function formatPolynomial(coeffs: number[], variable: string): string {
   const degree = coeffs.length - 1;
   const parts: string[] = [];
   for (let i = 0; i <= degree; i++) {
@@ -27,7 +26,7 @@ function formatPolynomial(coeffs: number[], variable: string): string {
 }
 
 /** Format a polynomial including 0 coefficients (e.g. "72t^3 + 0t^2 + 4t - 76"). */
-function formatPolyWithZeros(coeffs: number[], variable: string): string {
+export function formatPolyWithZeros(coeffs: number[], variable: string): string {
   const degree = coeffs.length - 1;
   const parts: string[] = [];
   for (let i = 0; i <= degree; i++) {
@@ -50,57 +49,86 @@ function formatPolyWithZeros(coeffs: number[], variable: string): string {
   return parts.length > 0 ? parts.join(' ') : '0';
 }
 
-/** Format evaluation of f(r0) showing substituted values and arithmetic. */
-function formatRootEvaluation(
-  a: number,
-  b: number,
-  c: number,
-  d: number,
-  r0: number,
-  variable: string
-): string {
-  const terms: string[] = [];
-  const evalTerms: string[] = [];
-
-  const addTerm = (coeff: number, power: number) => {
-    if (coeff === 0) return;
-    const absC = Math.abs(coeff);
-    const sign = coeff > 0 ? (terms.length === 0 ? '' : '+ ') : '- ';
-    const termVal = coeff * Math.pow(r0, power);
-    const evalSign = termVal >= 0 ? (evalTerms.length === 0 ? '' : '+ ') : '- ';
-
-    let varStr = '';
-    if (power >= 2) varStr = `(${fmt(r0)})^${power}`;
-    else if (power === 1) varStr = `(${fmt(r0)})`;
-
-    const coeffStr = absC === 1 && power > 0 ? '' : `${absC}`;
-    terms.push(`${sign}${coeffStr}${varStr}`);
-    evalTerms.push(`${evalSign}${fmt(Math.abs(termVal))}`);
-  };
-
-  addTerm(a, 3);
-  addTerm(b, 2);
-  addTerm(c, 1);
-  addTerm(d, 0);
-
-  return `f(${fmt(r0)}) = ${terms.join(' ')} = ${evalTerms.join(' ')} = 0 \\;\\checkmark`;
-}
-
-/** Format a number for clean display: strip trailing zeros, round to 6 sig digits. */
-function fmt(n: number): string {
-  if (Number.isInteger(n)) return n.toString();
-  // Use at most 6 decimal places, strip trailing zeros
-  const s = n.toFixed(6).replace(/\.?0+$/, '');
+/** Format a number for clean display: strip trailing zeros, round near-integers. */
+export function fmt(n: number): string {
+  if (!Number.isFinite(n) || isNaN(n)) return '0';
+  const rounded = Math.round(n);
+  if (Math.abs(n - rounded) < 1e-6) return rounded.toString();
+  // Round to at most 6 decimal places, remove trailing zeros
+  const s = Number(n.toFixed(6)).toString();
   return s;
 }
 
 /** Compute GCD of two integers. */
-function gcd(a: number, b: number): number {
+export function gcd(a: number, b: number): number {
   a = Math.abs(Math.round(a));
   b = Math.abs(Math.round(b));
-  while (b) { [a, b] = [b, a % b]; }
-  return a;
+  while (b) {
+    [a, b] = [b, a % b];
+  }
+  return a || 1;
 }
+
+/** Check if a number is a non-negative perfect square integer. */
+function isPerfectSquare(n: number): boolean {
+  if (n < 0 || !Number.isFinite(n)) return false;
+  const rounded = Math.round(n);
+  if (Math.abs(n - rounded) > 1e-6) return false;
+  if (rounded < 0) return false;
+  const s = Math.round(Math.sqrt(rounded));
+  return s * s === rounded;
+}
+
+/** Find all positive integer factors of n up to cap. */
+export function getFactors(n: number, cap: number = 100): number[] {
+  n = Math.abs(Math.round(n));
+  if (n === 0) return [0];
+  const factors: number[] = [];
+  for (let i = 1; i <= Math.min(n, cap); i++) {
+    if (n % i === 0) factors.push(i);
+  }
+  return factors;
+}
+
+/** Evaluate polynomial value P(x) from coefficients [a_n, ..., a_0]. */
+export function evalPoly(coeffs: number[], x: number): number {
+  let res = 0;
+  for (let i = 0; i < coeffs.length; i++) {
+    res = res * x + coeffs[i];
+  }
+  return res;
+}
+
+/** Format evaluation of f(x0) showing substituted terms and result. */
+function formatPolyEvaluation(coeffs: number[], x0: number, variable: string): string {
+  const degree = coeffs.length - 1;
+  const terms: string[] = [];
+  const evalTerms: string[] = [];
+
+  for (let i = 0; i <= degree; i++) {
+    const c = coeffs[i];
+    if (c === 0) continue;
+    const power = degree - i;
+    const absC = Math.abs(c);
+    const sign = c > 0 ? (terms.length === 0 ? '' : '+ ') : '- ';
+    const termVal = c * Math.pow(x0, power);
+    const evalSign = termVal >= 0 ? (evalTerms.length === 0 ? '' : '+ ') : '- ';
+
+    let varStr = '';
+    if (power >= 2) varStr = `(${fmt(x0)})^${power}`;
+    else if (power === 1) varStr = `(${fmt(x0)})`;
+
+    const coeffStr = absC === 1 && power > 0 ? '' : `${fmt(absC)}`;
+    terms.push(`${sign}${coeffStr}${varStr}`);
+    evalTerms.push(`${evalSign}${fmt(Math.abs(termVal))}`);
+  }
+
+  const isRoot = Math.abs(evalPoly(coeffs, x0)) < 1e-6;
+  const checkMark = isRoot ? ' = 0 \\;\\checkmark' : ` = ${fmt(evalPoly(coeffs, x0))}`;
+  return `f(${fmt(x0)}) = ${terms.join(' ')} = ${evalTerms.join(' ')}${checkMark}`;
+}
+
+// ─── DEGREE 1: LINEAR STEPS ──────────────────────────────────────────────────
 
 export function generateLinearSteps(a: number, b: number, variable: string = 'x'): SolutionStep[] {
   const steps: SolutionStep[] = [];
@@ -114,36 +142,23 @@ export function generateLinearSteps(a: number, b: number, variable: string = 'x'
 
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Move the constant to the right side.`,
+    explanation: `Move the constant term to the right side of the equation.`,
     math: `${fmt(a)}${variable} = ${fmt(-b)}`,
   });
 
   const root = -b / a;
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Divide both sides by the coefficient $a = ${fmt(a)}$.`,
+    explanation: `Divide both sides by the leading coefficient $a = ${fmt(a)}$ to isolate $${variable}$.`,
     math: `${variable} = \\frac{${fmt(-b)}}{${fmt(a)}} = ${fmt(root)}`,
   });
 
   return steps;
 }
 
-/**
- * Check if a number is a non-negative perfect square integer.
- */
-function isPerfectSquare(n: number): boolean {
-  if (n < 0 || !Number.isFinite(n)) return false;
-  const rounded = Math.round(n);
-  if (Math.abs(n - rounded) > 1e-6) return false;
-  if (rounded < 0) return false;
-  const s = Math.round(Math.sqrt(rounded));
-  return s * s === rounded;
-}
+// ─── DEGREE 2: QUADRATIC STEPS ───────────────────────────────────────────────
 
-/**
- * Find integer factors m, n such that m * n = c and m + n = b.
- * For monic quadratic x^2 + bx + c = (x + m)(x + n) = 0.
- */
+/** Find integer factors m, n such that m * n = c and m + n = b. */
 function findMonicFactors(b: number, c: number): { m: number; n: number } | null {
   const roundB = Math.round(b);
   const roundC = Math.round(c);
@@ -170,7 +185,6 @@ function findMonicFactors(b: number, c: number): { m: number; n: number } | null
     }
   }
 
-  // Also test using quadratic root directly
   const sqrtD = Math.round(Math.sqrt(delta));
   const r1 = (-roundB + sqrtD) / 2;
   const r2 = (-roundB - sqrtD) / 2;
@@ -181,10 +195,7 @@ function findMonicFactors(b: number, c: number): { m: number; n: number } | null
   return null;
 }
 
-/**
- * Find integer factors for non-monic quadratics ax^2 + bx + c = 0 via the AC method.
- * Finds m, n such that m * n = a * c and m + n = b, then factors by grouping.
- */
+/** Find integer factors for non-monic quadratics ax^2 + bx + c = 0 via AC method. */
 function findACFactors(
   a: number,
   b: number,
@@ -239,10 +250,6 @@ function findACFactors(
   if (!matched) return null;
   const { m, n } = matched;
 
-  // Factor by grouping:
-  // ax^2 + mx + nx + c
-  // Group 1: gcd(a, m)x * ( (a/g1)x + (m/g1) )
-  // Group 2: gcd(n, c) * ( (n/g2)x + (c/g2) )
   const g1 = gcd(roundA, m) * (roundA < 0 ? -1 : 1);
   const r1 = roundA / g1;
   const s1 = m / g1;
@@ -293,7 +300,7 @@ export function generateQuadraticSteps(
   // 1. Write the equation in standard form
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the equation in standard form $ax^2 + bx + c = 0$.`,
+    explanation: `Write the equation in standard quadratic form $ax^2 + bx + c = 0$.`,
     math: `${formatPolynomial([a, b, c], variable)} = 0`,
   });
 
@@ -307,14 +314,12 @@ export function generateQuadraticSteps(
       const x1 = -m;
       const x2 = -n;
 
-      // Explain factoring search
       steps.push({
         stepNumber: stepCount++,
         explanation: `Find two numbers that multiply to $c = ${fmt(c)}$ and add up to $b = ${fmt(b)}$.`,
         math: `(${fmt(m)}) \\times (${fmt(n)}) = ${fmt(c)}, \\quad (${fmt(m)}) + (${fmt(n)}) = ${fmt(b)}`,
       });
 
-      // Factored form
       const mSign = m >= 0 ? `+ ${fmt(m)}` : `- ${fmt(Math.abs(m))}`;
       const nSign = n >= 0 ? `+ ${fmt(n)}` : `- ${fmt(Math.abs(n))}`;
 
@@ -331,7 +336,6 @@ export function generateQuadraticSteps(
           math: `${variable} ${mSign} = 0 \\implies ${variable} = ${fmt(x1)}`,
         });
 
-        // Verification
         steps.push({
           stepNumber: stepCount++,
           explanation: `Verify the solution by substituting back into the original equation.`,
@@ -350,7 +354,6 @@ export function generateQuadraticSteps(
           math: `${variable} ${mSign} = 0 \\implies ${variable}_1 = ${fmt(x1)} \\quad \\text{or} \\quad ${variable} ${nSign} = 0 \\implies ${variable}_2 = ${fmt(x2)}`,
         });
 
-        // Verification
         steps.push({
           stepNumber: stepCount++,
           explanation: `Verify each root by substituting back into the original equation.`,
@@ -397,7 +400,6 @@ export function generateQuadraticSteps(
           math: `${r1Str}${variable} ${s1Sign} = 0 \\implies ${variable} = ${fmt(x1)}`,
         });
 
-        // Verification
         steps.push({
           stepNumber: stepCount++,
           explanation: `Verify the solution by substituting back into the original equation.`,
@@ -410,7 +412,6 @@ export function generateQuadraticSteps(
           math: `(${r1Str}${variable} ${s1Sign}) = 0 \\implies ${variable}_1 = ${fmt(x1)} \\quad \\text{or} \\quad (${r2Str}${variable} ${s2Sign}) = 0 \\implies ${variable}_2 = ${fmt(x2)}`,
         });
 
-        // Verification
         steps.push({
           stepNumber: stepCount++,
           explanation: `Verify each root by substituting back into the original equation.`,
@@ -422,7 +423,7 @@ export function generateQuadraticSteps(
     }
   }
 
-  // ─── PATH 3: Quadratic Formula Fallback (Irrational or Complex Roots) ───
+  // ─── PATH 3: Quadratic Formula Fallback ──────────────────────────────────
   steps.push({
     stepNumber: stepCount++,
     explanation: 'Identify the coefficients $a$, $b$, and $c$.',
@@ -435,13 +436,12 @@ export function generateQuadraticSteps(
   } else if (Math.abs(delta) < 1e-8) {
     deltaInterpretation = 'Since $\\Delta = 0$, the equation has one repeated real root.';
   } else {
-    deltaInterpretation = 'Since $\\Delta < 0$, the equation has two complex conjugate roots.';
+    deltaInterpretation = 'Since $\\Delta < 0$ is negative, there are no real roots; the equation has two complex conjugate roots.';
   }
 
-  // Merged Calculate & Interpret Discriminant step
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Calculate the discriminant $\\Delta = b^2 - 4ac$. ${deltaInterpretation}`,
+    explanation: `Calculate the discriminant $\\Delta = b^2 - 4ac$ (tells us how many real roots exist). ${deltaInterpretation}`,
     math: `\\Delta = (${fmt(b)})^2 - 4(${fmt(a)})(${fmt(c)}) = ${fmt(b * b)} - (${fmt(4 * a * c)}) = ${fmt(delta)}`,
   });
 
@@ -501,6 +501,8 @@ export function generateQuadraticSteps(
   return steps;
 }
 
+// ─── DEGREE 3: CUBIC STEPS ───────────────────────────────────────────────────
+
 export function generateCubicSteps(
   a: number,
   b: number,
@@ -519,42 +521,73 @@ export function generateCubicSteps(
     math: `${formatPolynomial([a, b, c, d], variable)} = 0`,
   });
 
-  // Try to find a rational root by direct evaluation
-  let rationalRoot: number | null = null;
-  // Gather candidate rational roots: ±(factors of |d|) / (factors of |a|)
-  const factorsOf = (n: number): number[] => {
-    n = Math.abs(Math.round(n));
-    if (n === 0) return [0];
-    const factors: number[] = [];
-    for (let i = 1; i <= Math.min(n, 100); i++) {
-      if (n % i === 0) factors.push(i);
-    }
-    return factors;
-  };
+  // Candidate rational roots: ±(factors of |d|) / (factors of |a|)
+  const dFactors = getFactors(d, 100);
+  const aFactors = getFactors(a, 50);
 
-  const dFactors = factorsOf(d);
-  const aFactors = factorsOf(a);
-  const candidates = new Set<number>();
+  const candidateFractions: { p: number; q: number; val: number; str: string }[] = [];
+  const seenVals = new Set<number>();
+
   for (const p of dFactors) {
     for (const q of aFactors) {
-      candidates.add(p / q);
-      candidates.add(-p / q);
+      const g = gcd(p, q);
+      const sp = p / g;
+      const sq = q / g;
+      const vPos = sp / sq;
+      const vNeg = -sp / sq;
+
+      if (!seenVals.has(vPos)) {
+        seenVals.add(vPos);
+        candidateFractions.push({
+          p: sp,
+          q: sq,
+          val: vPos,
+          str: sq === 1 ? `${sp}` : `\\frac{${sp}}{${sq}}`,
+        });
+      }
+      if (!seenVals.has(vNeg)) {
+        seenVals.add(vNeg);
+        candidateFractions.push({
+          p: -sp,
+          q: sq,
+          val: vNeg,
+          str: sq === 1 ? `-${sp}` : `-\\frac{${sp}}{${sq}}`,
+        });
+      }
     }
   }
 
-  for (const candidate of Array.from(candidates)) {
-    const val = a * Math.pow(candidate, 3) + b * Math.pow(candidate, 2) + c * candidate + d;
-    if (Math.abs(val) < 1e-8) {
-      rationalRoot = candidate;
+  // Sort candidate list nicely: 1, -1, 2, -2, etc.
+  candidateFractions.sort((f1, f2) => Math.abs(f1.val) - Math.abs(f2.val) || f2.val - f1.val);
+
+  const candidatesDisplay = candidateFractions
+    .slice(0, 12)
+    .map((c) => c.str)
+    .join(', ') + (candidateFractions.length > 12 ? ', \\dots' : '');
+
+  // Test candidates sequentially
+  let rationalRoot: number | null = null;
+  const testTrail: string[] = [];
+
+  for (const cand of candidateFractions) {
+    const val = a * Math.pow(cand.val, 3) + b * Math.pow(cand.val, 2) + c * cand.val + d;
+    if (Math.abs(val) < 1e-7) {
+      rationalRoot = cand.val;
+      testTrail.push(`\\text{Testing } ${variable} = ${cand.str}: \\; ${formatPolyEvaluation([a, b, c, d], cand.val, variable)}`);
       break;
+    } else {
+      if (testTrail.length < 3) {
+        testTrail.push(`\\text{Testing } ${variable} = ${cand.str}: \\; f(${cand.str}) = ${fmt(val)} \\ne 0 \\text{ (not a root)}`);
+      }
     }
   }
 
-  // If Cardano found a root close to an integer, use that
+  // Fallback: check if roots contains clean integer
   if (rationalRoot === null) {
     const integerRoot = roots.real.find((r) => Math.abs(r - Math.round(r)) < 1e-4);
     if (integerRoot !== undefined) {
       rationalRoot = Math.round(integerRoot);
+      testTrail.push(`\\text{Testing } ${variable} = ${rationalRoot}: \\; ${formatPolyEvaluation([a, b, c, d], rationalRoot, variable)}`);
     }
   }
 
@@ -562,14 +595,14 @@ export function generateCubicSteps(
     const r0 = rationalRoot;
     const r0Sign = r0 >= 0 ? `- ${fmt(Math.abs(r0))}` : `+ ${fmt(Math.abs(r0))}`;
 
-    // Step 2: Rational Root Test
+    // Step 2: Rational Root Theorem testing
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Test potential rational roots using the Rational Root Theorem (factors of $d = ${fmt(d)}$ divided by factors of $a = ${fmt(a)}$). We find $${variable} = ${fmt(r0)}$ is a root since $f(${fmt(r0)}) = 0$.`,
-      math: formatRootEvaluation(a, b, c, d, r0, variable),
+      explanation: `Use the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). Candidate rational roots are $\\pm \\frac{\\text{factors of } |d = ${fmt(d)}|}{\\text{factors of } |a = ${fmt(a)}|}$: $${candidatesDisplay}$. We test candidates and find $${variable} = ${fmt(r0)}$ is a root, so $(${variable} ${r0Sign})$ is a factor.`,
+      math: testTrail.join(' \\\\[4pt] '),
     });
 
-    // Step 3: Synthetic Division Process
+    // Step 3: Synthetic Division
     const qA = a;
     const qB = b + a * r0;
     const qC = c + qB * r0;
@@ -579,7 +612,7 @@ export function generateCubicSteps(
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Perform synthetic division of $${polyFull}$ by the factor $(${variable} ${r0Sign})$ to find the depressed quadratic quotient.`,
+      explanation: `Perform synthetic division of $${polyFull}$ by the factor $(${variable} ${r0Sign})$ to obtain the reduced quadratic quotient.`,
       math: `\\begin{array}{c|rrrr} ${fmt(r0)} & ${fmt(a)} & ${fmt(b)} & ${fmt(c)} & ${fmt(d)} \\\\ & & ${fmt(a * r0)} & ${fmt(qB * r0)} & ${fmt(qC * r0)} \\\\ \\hline & ${fmt(qA)} & ${fmt(qB)} & ${fmt(qC)} & 0 \\end{array} \\implies \\frac{${polyFull}}{${variable} ${r0Sign}} = ${quotientPoly}`,
     });
 
@@ -593,13 +626,13 @@ export function generateCubicSteps(
     if (g > 1) {
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Express the cubic in factored form, factoring out the common factor $${fmt(g)}$ from the quadratic polynomial.`,
+        explanation: `Express the cubic equation in factored form and factor out the common constant $${fmt(g)}$.`,
         math: `(${variable} ${r0Sign})(${quotientPoly}) = 0 \\implies ${fmt(g)}(${variable} ${r0Sign})(${simplifiedQuadratic}) = 0`,
       });
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Divide both sides by $${fmt(g)}$ since constant non-zero factors do not affect the roots. This isolates the simplified quadratic equation.`,
+        explanation: `Divide both sides by $${fmt(g)}$ since non-zero constant factors do not affect the roots. This isolates the quadratic factor.`,
         math: `(${variable} ${r0Sign})(${simplifiedQuadratic}) = 0 \\implies ${simplifiedQuadratic} = 0`,
       });
     } else {
@@ -610,16 +643,15 @@ export function generateCubicSteps(
       });
     }
 
-    // Step 5: Solve Quadratic Factor (Discriminant)
+    // Step 5: Solve Quadratic Factor
     const deltaQ = sB * sB - 4 * sA * sC;
-
     let deltaExplanation = '';
     if (deltaQ > 0) {
-      deltaExplanation = `Calculate the discriminant $\\Delta = b^2 - 4ac$ for the quadratic $${simplifiedQuadratic} = 0$ with $a = ${fmt(sA)}$, $b = ${fmt(sB)}$, $c = ${fmt(sC)}$. Since $\\Delta > 0$, there are two distinct real roots.`;
+      deltaExplanation = `Calculate the discriminant $\\Delta = b^2 - 4ac$ (tells us how many real roots exist) for $${simplifiedQuadratic} = 0$. Since $\\Delta > 0$, there are two distinct real roots.`;
     } else if (Math.abs(deltaQ) < 1e-8) {
-      deltaExplanation = `Calculate the discriminant $\\Delta = b^2 - 4ac$ for the quadratic $${simplifiedQuadratic} = 0$ with $a = ${fmt(sA)}$, $b = ${fmt(sB)}$, $c = ${fmt(sC)}$. Since $\\Delta = 0$, there is a repeated real root.`;
+      deltaExplanation = `Calculate the discriminant $\\Delta = b^2 - 4ac$ (tells us how many real roots exist) for $${simplifiedQuadratic} = 0$. Since $\\Delta = 0$, there is one repeated real root.`;
     } else {
-      deltaExplanation = `Calculate the discriminant $\\Delta = b^2 - 4ac$ for the quadratic $${simplifiedQuadratic} = 0$ with $a = ${fmt(sA)}$, $b = ${fmt(sB)}$, $c = ${fmt(sC)}$. Since $\\Delta < 0$, there are two complex conjugate roots.`;
+      deltaExplanation = `Calculate the discriminant $\\Delta = b^2 - 4ac$ (tells us how many real roots exist) for $${simplifiedQuadratic} = 0$. Since $\\Delta < 0$ is negative, there are no real roots; there are two complex conjugate roots.`;
     }
 
     steps.push({
@@ -628,7 +660,6 @@ export function generateCubicSteps(
       math: `\\Delta = (${fmt(sB)})^2 - 4(${fmt(sA)})(${fmt(sC)}) = ${fmt(sB * sB)} - (${fmt(4 * sA * sC)}) = ${fmt(deltaQ)}`,
     });
 
-    // Step 6: Quadratic Formula Computation
     if (deltaQ > 0) {
       const sqrtDelta = Math.sqrt(deltaQ);
       const r2 = (-sB + sqrtDelta) / (2 * sA);
@@ -636,20 +667,19 @@ export function generateCubicSteps(
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Substitute $a = ${fmt(sA)}$, $b = ${fmt(sB)}$, and $\\Delta = ${fmt(deltaQ)}$ into the quadratic formula $${variable} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.`,
+        explanation: `Apply the quadratic formula $${variable} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.`,
         math: `${variable} = \\frac{-(${fmt(sB)}) \\pm \\sqrt{${fmt(deltaQ)}}}{2(${fmt(sA)})} = \\frac{${fmt(-sB)} \\pm ${fmt(sqrtDelta)}}{${fmt(2 * sA)}}`,
       });
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: 'Compute the two individual real roots from the quadratic formula.',
+        explanation: 'Compute the two roots from the quadratic factor:',
         math: `${variable}_2 = \\frac{${fmt(-sB)} + ${fmt(sqrtDelta)}}{${fmt(2 * sA)}} = ${fmt(r2)}, \\quad ${variable}_3 = \\frac{${fmt(-sB)} - ${fmt(sqrtDelta)}}{${fmt(2 * sA)}} = ${fmt(r3)}`,
       });
 
-      // Final Step: Root Summary
       steps.push({
         stepNumber: stepCount++,
-        explanation: 'Final summary and verification: All three real roots of the cubic equation are:',
+        explanation: 'Final summary: All three real roots of the cubic equation are:',
         math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_2 = ${fmt(r2)}, \\quad ${variable}_3 = ${fmt(r3)}`,
       });
     } else if (Math.abs(deltaQ) < 1e-8) {
@@ -657,14 +687,13 @@ export function generateCubicSteps(
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Substitute $a = ${fmt(sA)}$, $b = ${fmt(sB)}$, and $\\Delta = 0$ into the quadratic formula $${variable} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.`,
+        explanation: `Apply the quadratic formula $${variable} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.`,
         math: `${variable} = \\frac{-(${fmt(sB)}) \\pm 0}{2(${fmt(sA)})} = \\frac{${fmt(-sB)}}{${fmt(2 * sA)}} = ${fmt(r2)}`,
       });
 
-      // Final Step: Root Summary
       steps.push({
         stepNumber: stepCount++,
-        explanation: 'Final summary and verification: All roots of the cubic equation (including repeated root) are:',
+        explanation: 'Final summary: All roots of the cubic equation (including repeated root):',
         math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_2 = ${fmt(r2)}, \\quad ${variable}_3 = ${fmt(r2)}`,
       });
     } else {
@@ -673,39 +702,28 @@ export function generateCubicSteps(
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Substitute $a = ${fmt(sA)}$, $b = ${fmt(sB)}$, and $\\Delta = ${fmt(deltaQ)}$ into the quadratic formula $${variable} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.`,
+        explanation: `Apply the quadratic formula $${variable} = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.`,
         math: `${variable} = \\frac{-(${fmt(sB)}) \\pm \\sqrt{${fmt(deltaQ)}}}{2(${fmt(sA)})} = \\frac{${fmt(-sB)} \\pm \\sqrt{${fmt(-deltaQ)}}\\,i}{${fmt(2 * sA)}} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`,
       });
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: 'Evaluate the two distinct complex conjugate roots.',
+        explanation: 'Evaluate the two complex conjugate roots:',
         math: `${variable}_2 = ${fmt(realPart)} + ${fmt(imagPart)}\\,i, \\quad ${variable}_3 = ${fmt(realPart)} - ${fmt(imagPart)}\\,i`,
       });
 
-      // Final Step: Root Summary
       steps.push({
         stepNumber: stepCount++,
-        explanation: 'Final summary and verification: All roots of the cubic equation (one real, two complex conjugate):',
+        explanation: 'Final summary: All roots of the cubic equation (one real root and two complex conjugate roots):',
         math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_{2,3} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`,
       });
     }
   } else {
-    // No rational root found — use Cardano's method
+    // No rational roots exist — Clean numerical output without raw Cardano clutter
     steps.push({
       stepNumber: stepCount++,
-      explanation: "No rational root found. Apply Cardano's formula by depressing the cubic equation.",
-      math: `\\text{Substitute } ${variable} = u - \\frac{b}{3a} = u - \\frac{${fmt(b)}}{${fmt(3 * a)}} \\text{ to eliminate the quadratic term}`,
-    });
-
-    const p = (3 * a * c - b * b) / (3 * a * a);
-    const q = (2 * Math.pow(b, 3) - 9 * a * b * c + 27 * a * a * d) / (27 * Math.pow(a, 3));
-    const cardanoDelta = (q * q) / 4 + Math.pow(p, 3) / 27;
-
-    steps.push({
-      stepNumber: stepCount++,
-      explanation: `Transform to the depressed cubic $u^3 + pu + q = 0$ and compute parameters $p$, $q$, and Cardano discriminant $\\Delta_C = \\frac{q^2}{4} + \\frac{p^3}{27}$.`,
-      math: `p = ${fmt(p)}, \\quad q = ${fmt(q)}, \\quad \\Delta_C = ${fmt(cardanoDelta)}`,
+      explanation: `Test candidate rational roots using the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). None of the potential candidates satisfy $f(${variable}) = 0$. No simple rational root found.`,
+      math: `\\text{Candidates tested: } ${candidatesDisplay} \\implies \\text{No rational roots}`,
     });
 
     const rootStrs: string[] = [];
@@ -720,13 +738,221 @@ export function generateCubicSteps(
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: "Final summary and verification: All roots obtained via Cardano's formula:",
+      explanation: 'Solved numerically. All roots of the cubic equation are:',
       math: rootStrs.join(', \\quad '),
     });
   }
 
   return steps;
 }
+
+// ─── DEGREE 4: QUARTIC STEPS ─────────────────────────────────────────────────
+
+export function generateQuarticSteps(
+  coeffs: number[],
+  roots: { real: number[]; complex: { re: number; im: number }[] },
+  variable: string = 'x'
+): SolutionStep[] {
+  const steps: SolutionStep[] = [];
+  let stepCount = 1;
+  const [a, b, c, d, e] = coeffs;
+
+  // Step 1: Standard form
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Write the quartic equation in standard form $a${variable}^4 + b${variable}^3 + c${variable}^2 + d${variable} + e = 0$.`,
+    math: `${formatPolynomial(coeffs, variable)} = 0`,
+  });
+
+  // Special Case: Bi-quadratic ax^4 + cx^2 + e = 0 (b = 0 and d = 0)
+  if (Math.abs(b) < 1e-6 && Math.abs(d) < 1e-6) {
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Notice that only even powers of $${variable}$ appear. Substitute $u = ${variable}^2$ to transform into a quadratic equation in $u$.`,
+      math: `${fmt(a)}u^2 ${c >= 0 ? `+ ${fmt(c)}` : `- ${fmt(Math.abs(c))}`}u ${e >= 0 ? `+ ${fmt(e)}` : `- ${fmt(Math.abs(e))}`} = 0`,
+    });
+
+    const deltaU = c * c - 4 * a * e;
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Solve the quadratic in $u$ using the quadratic formula with discriminant $\\Delta = ${fmt(deltaU)}$.`,
+      math: `u = \\frac{${fmt(-c)} \\pm \\sqrt{${fmt(deltaU)}}}{${fmt(2 * a)}}`,
+    });
+
+    const rootStrs: string[] = [];
+    roots.real.forEach((r, i) => rootStrs.push(`${variable}_${i + 1} = ${fmt(r)}`));
+    roots.complex.forEach((comp) =>
+      rootStrs.push(`${variable} = ${fmt(comp.re)} \\pm ${fmt(comp.im)}\\,i`)
+    );
+
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Take the square roots $${variable} = \\pm \\sqrt{u}$ to find all 4 roots:`,
+      math: rootStrs.join(', \\quad '),
+    });
+
+    return steps;
+  }
+
+  // General Quartic: Try Rational Root Theorem
+  const eFactors = getFactors(e, 100);
+  const aFactors = getFactors(a, 50);
+  const candidates: number[] = [];
+  const seen = new Set<number>();
+
+  for (const p of eFactors) {
+    for (const q of aFactors) {
+      const v1 = p / q;
+      const v2 = -p / q;
+      if (!seen.has(v1)) {
+        seen.add(v1);
+        candidates.push(v1);
+      }
+      if (!seen.has(v2)) {
+        seen.add(v2);
+        candidates.push(v2);
+      }
+    }
+  }
+
+  candidates.sort((x1, x2) => Math.abs(x1) - Math.abs(x2) || x2 - x1);
+
+  // Find first rational root
+  let r1: number | null = null;
+  for (const cand of candidates) {
+    if (Math.abs(evalPoly(coeffs, cand)) < 1e-7) {
+      r1 = cand;
+      break;
+    }
+  }
+
+  if (r1 !== null) {
+    const r1Sign = r1 >= 0 ? `- ${fmt(Math.abs(r1))}` : `+ ${fmt(Math.abs(r1))}`;
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). We find $${variable} = ${fmt(r1)}$ is a root, so $(${variable} ${r1Sign})$ is a factor.`,
+      math: formatPolyEvaluation(coeffs, r1, variable),
+    });
+
+    // Synthetic division to degree 3
+    const q3: number[] = [coeffs[0]];
+    for (let i = 1; i < coeffs.length - 1; i++) {
+      q3.push(coeffs[i] + q3[i - 1] * r1);
+    }
+    const q3Poly = formatPolynomial(q3, variable);
+
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Divide the quartic polynomial by $(${variable} ${r1Sign})$ via synthetic division to obtain the depressed cubic factor.`,
+      math: `\\frac{${formatPolynomial(coeffs, variable)}}{${variable} ${r1Sign}} = ${q3Poly}`,
+    });
+
+    // Try finding second rational root in q3
+    let r2: number | null = null;
+    for (const cand of candidates) {
+      if (Math.abs(evalPoly(q3, cand)) < 1e-7) {
+        r2 = cand;
+        break;
+      }
+    }
+
+    if (r2 !== null) {
+      const r2Sign = r2 >= 0 ? `- ${fmt(Math.abs(r2))}` : `+ ${fmt(Math.abs(r2))}`;
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Test rational candidates on the cubic factor $${q3Poly} = 0$. We find $${variable} = ${fmt(r2)}$ is another root, so $(${variable} ${r2Sign})$ is a factor.`,
+        math: formatPolyEvaluation(q3, r2, variable),
+      });
+
+      // Synthetic division to degree 2
+      const q2: number[] = [q3[0]];
+      for (let i = 1; i < q3.length - 1; i++) {
+        q2.push(q3[i] + q2[i - 1] * r2);
+      }
+      const q2Poly = formatPolynomial(q2, variable);
+
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Divide the cubic by $(${variable} ${r2Sign})$ to obtain the quadratic factor $${q2Poly} = 0$.`,
+        math: `(${variable} ${r1Sign})(${variable} ${r2Sign})(${q2Poly}) = 0`,
+      });
+
+      // Solve remaining quadratic
+      const [qa, qb, qc] = q2;
+      const deltaQ = qb * qb - 4 * qa * qc;
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Solve the quadratic equation $${q2Poly} = 0$ using the quadratic formula with discriminant $\\Delta = ${fmt(deltaQ)}$ (tells us how many real roots exist).`,
+        math: `${variable} = \\frac{${fmt(-qb)} \\pm \\sqrt{${fmt(deltaQ)}}}{${fmt(2 * qa)}}`,
+      });
+    }
+  } else {
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Test potential rational roots using the Rational Root Theorem. No simple rational root found.`,
+      math: `\\text{Rational root test: No simple rational factors found}`,
+    });
+  }
+
+  // Summary
+  const rootStrs: string[] = [];
+  roots.real.forEach((r, i) => rootStrs.push(`${variable}_${i + 1} = ${fmt(r)}`));
+  roots.complex.forEach((comp, i) =>
+    rootStrs.push(
+      `${variable}_${roots.real.length + i + 1} = ${fmt(comp.re)} \\pm ${fmt(comp.im)}\\,i`
+    )
+  );
+
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: r1 !== null ? 'Final summary: All roots of the quartic equation are:' : 'Solved numerically. All roots of the quartic equation are:',
+    math: rootStrs.join(', \\quad '),
+  });
+
+  return steps;
+}
+
+// ─── DEGREE 5+: HIGHER ORDER POLYNOMIAL STEPS ────────────────────────────────
+
+export function generateDegree5PlusSteps(
+  coeffs: number[],
+  roots: { real: number[]; complex: { re: number; im: number }[] },
+  variable: string = 'x'
+): SolutionStep[] {
+  const steps: SolutionStep[] = [];
+  let stepCount = 1;
+  const degree = coeffs.length - 1;
+
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Write the degree-${degree} polynomial equation in standard form $f(${variable}) = 0$.`,
+    math: `${formatPolynomial(coeffs, variable)} = 0`,
+  });
+
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Degree 5+ polynomials have no general algebraic solution (Abel–Ruffini theorem) — roots shown are computed numerically.`,
+    math: `\\text{Degree } n = ${degree} \\ge 5 \\implies \\text{No general radical formula (Abel–Ruffini Theorem)}`,
+  });
+
+  const rootStrs: string[] = [];
+  roots.real.forEach((r, i) => rootStrs.push(`${variable}_${i + 1} = ${fmt(r)}`));
+  roots.complex.forEach((comp, i) =>
+    rootStrs.push(
+      `${variable}_${roots.real.length + i + 1} = ${fmt(comp.re)} \\pm ${fmt(comp.im)}\\,i`
+    )
+  );
+
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Extracted all ${degree} roots (real and complex) using numerical eigenvalue computation:`,
+    math: rootStrs.join(', \\quad '),
+  });
+
+  return steps;
+}
+
+// ─── SYSTEM & INEQUALITY STEPS ───────────────────────────────────────────────
 
 export function generateHigherOrderSteps(
   equation: string,
@@ -738,19 +964,13 @@ export function generateHigherOrderSteps(
 
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Set the polynomial equation to standard form $f(${variable}) = 0$.`,
+    explanation: `Set the equation in standard form $f(${variable}) = 0$.`,
     math: `${equation} = 0`,
   });
 
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Apply algebraic factorization and root extraction for variable $${variable}$.`,
-    math: `\\text{Solve } f(${variable}) = 0`,
-  });
-
-  steps.push({
-    stepNumber: stepCount++,
-    explanation: 'Extracted polynomial roots:',
+    explanation: 'Solved roots for the equation:',
     math: roots.map((r, i) => `${variable}_${i + 1} = ${r}`).join(', \\quad '),
   });
 
@@ -765,13 +985,13 @@ export function generateSystemSteps(
   const steps: SolutionStep[] = [];
   let stepCount = 1;
 
-  const latexMatrix = matrix.map((row) => row.join(' & ')).join(' \\\\ ');
-  const latexConstants = constants.map((c) => c.toString()).join(' \\\\ ');
+  const latexMatrix = matrix.map((row) => row.map((c) => fmt(c)).join(' & ')).join(' \\\\ ');
+  const latexConstants = constants.map((c) => fmt(c)).join(' \\\\ ');
   const latexVars = variables.join(' \\\\ ');
 
   steps.push({
     stepNumber: stepCount++,
-    explanation: 'Set up the system in augmented matrix form $[A|b]$.',
+    explanation: 'Set up the system in matrix form $A\\mathbf{x} = \\mathbf{b}$.',
     math: `\\begin{bmatrix} ${latexMatrix} \\end{bmatrix} \\begin{bmatrix} ${latexVars} \\end{bmatrix} = \\begin{bmatrix} ${latexConstants} \\end{bmatrix}`,
   });
 
@@ -780,7 +1000,7 @@ export function generateSystemSteps(
     steps.push({
       stepNumber: stepCount++,
       explanation: "Compute the determinant of the coefficient matrix using Cramer's rule.",
-      math: `\\det(A) = (${matrix[0][0]})(${matrix[1][1]}) - (${matrix[0][1]})(${matrix[1][0]}) = ${fmt(det)}`,
+      math: `\\det(A) = (${fmt(matrix[0][0])})(${fmt(matrix[1][1])}) - (${fmt(matrix[0][1])})(${fmt(matrix[1][0])}) = ${fmt(det)}`,
     });
 
     if (Math.abs(det) > 1e-9) {
@@ -801,8 +1021,8 @@ export function generateSystemSteps(
   } else {
     steps.push({
       stepNumber: stepCount++,
-      explanation: 'Solve using Gaussian elimination or matrix inversion.',
-      math: `x = A^{-1}b`,
+      explanation: 'Solve using Gaussian elimination and back-substitution.',
+      math: `\\mathbf{x} = A^{-1}\\mathbf{b}`,
     });
   }
 
@@ -816,13 +1036,13 @@ export function generateInequalitySteps(coefficients: number[], type: string): S
   steps.push({
     stepNumber: stepCount++,
     explanation: 'Identify the inequality coefficients.',
-    math: `\\text{Coefficients: } ${coefficients.map(c => fmt(c)).join(', ')}`,
+    math: `\\text{Coefficients: } ${coefficients.map((c) => fmt(c)).join(', ')}`,
   });
 
   steps.push({
     stepNumber: stepCount++,
-    explanation: 'Find the critical points by solving the corresponding equation $f(x) = 0$.',
-    math: `\\text{Critical roots computed}`,
+    explanation: 'Find the critical boundary points by solving $f(x) = 0$.',
+    math: `\\text{Critical boundary points computed}`,
   });
 
   return steps;
