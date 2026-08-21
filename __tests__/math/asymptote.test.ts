@@ -113,5 +113,21 @@ describe('Vertical Asymptote & Discontinuity Detection Engine', () => {
       const moveCount = (pathD.match(/M /g) || []).length;
       expect(moveCount).toBeGreaterThanOrEqual(3);
     });
+
+    it('remains robust under extreme wide zoom-out [-344, 384] and Y in [-644, 84]', () => {
+      const expr = '(x+1)/((x^2)-4)';
+      const xMin = -344;
+      const xMax = 384;
+      const yMin = -644;
+      const yMax = 84;
+
+      const data = generatePlotData(expr, xMin, xMax, 650);
+      const asyms = findVerticalAsymptotes(expr, xMin, xMax);
+      const pathD = pointsToSvgPath(data, xMin, xMax, yMin, yMax, plotBox, 'linear', asyms);
+
+      // Verify path is split across both asymptotes (-2 and 2)
+      const moveCount = (pathD.match(/M /g) || []).length;
+      expect(moveCount).toBeGreaterThanOrEqual(3);
+    });
   });
 });

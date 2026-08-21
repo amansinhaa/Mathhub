@@ -394,15 +394,20 @@ export function pointsToSvgPath(
       // Check 2: Steep jump with opposite signs
       const isOppositeSignJump =
         prevPoint.y * p.y < 0 &&
-        dy / Math.max(1e-6, dx) > (ySpan / xSpan) * 6 &&
-        (Math.abs(prevPoint.y) > ySpan * 0.3 || Math.abs(p.y) > ySpan * 0.3);
+        (dy / Math.max(1e-6, dx) > (ySpan / xSpan) * 4 ||
+          (Math.abs(prevPoint.y) > ySpan * 0.25 && Math.abs(p.y) > ySpan * 0.25));
 
       // Check 3: Huge same-sign spike (like 1/x^2)
       const isExtremeSpike =
-        (Math.abs(prevPoint.y) > ySpan * 1.8 && Math.abs(p.y) > ySpan * 1.8) ||
-        dy > ySpan * 2.5;
+        (Math.abs(prevPoint.y) > ySpan * 1.5 && Math.abs(p.y) > ySpan * 1.5) ||
+        dy > ySpan * 2.0;
 
-      if (hasAsymptoteCrossing || isOppositeSignJump || isExtremeSpike) {
+      // Check 4: Cross-viewport jump (one point below yMin, other above yMax)
+      const isCrossViewportJump =
+        (prevPoint.y < yMin && p.y > yMax) ||
+        (prevPoint.y > yMax && p.y < yMin);
+
+      if (hasAsymptoteCrossing || isOppositeSignJump || isExtremeSpike || isCrossViewportJump) {
         isDrawing = false;
       }
     }
@@ -411,7 +416,7 @@ export function pointsToSvgPath(
     const py = toPxY(p.y);
 
     // Limit extreme pixel values to prevent renderer overflow
-    const clampedPy = Math.max(plotBox.top - 120, Math.min(plotBox.top + plotBox.height + 120, py));
+    const clampedPy = Math.max(plotBox.top - 10, Math.min(plotBox.top + plotBox.height + 10, py));
 
     if (!isDrawing) {
       pathParts.push(`M ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);

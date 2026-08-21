@@ -139,6 +139,75 @@ export default function FunctionPlotter() {
     isDragging: false,
   });
 
+  // Origin-Centric Mathematical Plot Box
+  const plotBox: PlotBox = useMemo(() => {
+    const left = PADDING.left;
+    const top = PADDING.top;
+    const width = Math.max(1, containerDimensions.width - PADDING.left - PADDING.right);
+    const height = Math.max(1, TOTAL_HEIGHT - PADDING.top - PADDING.bottom);
+    return { left, top, width, height };
+  }, [containerDimensions.width]);
+
+  // Coordinate transforms
+  const xSpan = Math.max(1e-9, bounds.xMax - bounds.xMin);
+  const ySpan = Math.max(1e-9, bounds.yMax - bounds.yMin);
+
+  const symlog = useCallback((y: number) => (y === 0 ? 0 : Math.sign(y) * Math.log10(1 + Math.abs(y))), []);
+  const invSymlog = useCallback((v: number) => (v === 0 ? 0 : Math.sign(v) * (Math.pow(10, Math.abs(v)) - 1)), []);
+
+  const toPxX = useCallback(
+    (x: number) => {
+      return plotBox.left + ((x - bounds.xMin) / xSpan) * plotBox.width;
+    },
+    [bounds.xMin, xSpan, plotBox]
+  );
+
+  const toPxY = useCallback(
+    (y: number) => {
+      if (yScale === 'log') {
+        const logMin = symlog(bounds.yMin);
+        const logMax = symlog(bounds.yMax);
+        const logSpan = Math.max(1e-9, logMax - logMin);
+        const ly = symlog(y);
+        return plotBox.top + ((logMax - ly) / logSpan) * plotBox.height;
+      }
+      return plotBox.top + ((bounds.yMax - y) / ySpan) * plotBox.height;
+    },
+    [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox, symlog]
+  );
+
+  const fromPxX = useCallback(
+    (px: number) => {
+      return bounds.xMin + ((px - plotBox.left) / plotBox.width) * xSpan;
+    },
+    [bounds.xMin, xSpan, plotBox]
+  );
+
+  const fromPxY = useCallback(
+    (py: number) => {
+      if (yScale === 'log') {
+        const logMin = symlog(bounds.yMin);
+        const logMax = symlog(bounds.yMax);
+        const logSpan = Math.max(1e-9, logMax - logMin);
+        const ly = logMax - ((py - plotBox.top) / plotBox.height) * logSpan;
+        return invSymlog(ly);
+      }
+      return bounds.yMax - ((py - plotBox.top) / plotBox.height) * ySpan;
+    },
+    [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox, symlog, invSymlog]
+  );
+
+  // Pixel Position of the Origin (0,0)
+  const originPxX = toPxX(0);
+  const originPxY = toPxY(0);
+
+  // Clamped positions for axis lines so ticks remain visible when panned off screen
+  const axisLineY = Math.max(plotBox.top, Math.min(plotBox.top + plotBox.height, originPxY));
+  const axisLineX = Math.max(plotBox.left, Math.min(plotBox.left + plotBox.width, originPxX));
+
+  const isOriginOnScreen =
+    bounds.xMin <= 0 && bounds.xMax >= 0 && bounds.yMin <= 0 && bounds.yMax >= 0;
+
   // Non-passive Touch Drag/Pinch listeners
   useEffect(() => {
     const container = chartContainerRef.current;
@@ -179,11 +248,11 @@ export default function FunctionPlotter() {
         const dy = e.touches[0].clientY - touchState.current.startY;
 
         const init = touchState.current.initialBounds;
-        const xSpan = init.xMax - init.xMin;
-        const ySpan = init.yMax - init.yMin;
+        const xSpanCur = init.xMax - init.xMin;
+        const ySpanCur = init.yMax - init.yMin;
 
-        const shiftX = (dx / width) * xSpan;
-        const shiftY = (dy / height) * ySpan;
+        const shiftX = (dx / width) * xSpanCur;
+        const shiftY = (dy / height) * ySpanCur;
 
         setBounds({
           xMin: Number((init.xMin - shiftX).toFixed(4)),
@@ -229,74 +298,54 @@ export default function FunctionPlotter() {
     };
   }, [setBounds]);
 
-  // Origin-Centric Mathematical Plot Box
-  const plotBox: PlotBox = useMemo(() => {
-    const left = PADDING.left;
-    const top = PADDING.top;
-    const width = Math.max(1, containerDimensions.width - PADDING.left - PADDING.right);
-    const height = Math.max(1, TOTAL_HEIGHT - PADDING.top - PADDING.bottom);
-    return { left, top, width, height };
-  }, [containerDimensions.width]);
+  // Non-passive Native Mouse Wheel & Pinch-to-Zoom Listener (Stops Browser Page Zoom Leak)
+  useEffect(() => {
+    const container = chartContainerRef.current;
+    if (!container) return;
 
-  // Coordinate transforms
-  const xSpan = Math.max(1e-9, bounds.xMax - bounds.xMin);
-  const ySpan = Math.max(1e-9, bounds.yMax - bounds.yMin);
+    const onWheel = (e: WheelEvent) => {
+      // Prevent browser native page zoom and page scroll when hovering graph canvas
+      e.preventDefault();
+      e.stopPropagation();
 
-  const symlog = (y: number) => (y === 0 ? 0 : Math.sign(y) * Math.log10(1 + Math.abs(y)));
-  const invSymlog = (v: number) => (v === 0 ? 0 : Math.sign(v) * (Math.pow(10, Math.abs(v)) - 1));
+      const rect = container.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
 
-  const toPxX = useCallback(
-    (x: number) => {
-      return plotBox.left + ((x - bounds.xMin) / xSpan) * plotBox.width;
-    },
-    [bounds.xMin, xSpan, plotBox]
-  );
+      const mouseMathX = fromPxX(px);
+      const mouseMathY = fromPxY(py);
 
-  const toPxY = useCallback(
-    (y: number) => {
-      if (yScale === 'log') {
-        const logMin = symlog(bounds.yMin);
-        const logMax = symlog(bounds.yMax);
-        const logSpan = Math.max(1e-9, logMax - logMin);
-        const ly = symlog(y);
-        return plotBox.top + ((logMax - ly) / logSpan) * plotBox.height;
+      // Handle trackpad pinch-to-zoom (ctrlKey) vs standard mouse wheel (deltaY)
+      let zoomFactor = 1;
+      if (e.ctrlKey) {
+        // Continuous smooth zoom for trackpad pinch
+        zoomFactor = Math.exp(e.deltaY * 0.01);
+      } else {
+        zoomFactor = e.deltaY < 0 ? 0.88 : 1.14;
       }
-      return plotBox.top + ((bounds.yMax - y) / ySpan) * plotBox.height;
-    },
-    [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox]
-  );
 
-  const fromPxX = useCallback(
-    (px: number) => {
-      return bounds.xMin + ((px - plotBox.left) / plotBox.width) * xSpan;
-    },
-    [bounds.xMin, xSpan, plotBox]
-  );
+      const curBounds = boundsRef.current;
+      const newXMin = mouseMathX - (mouseMathX - curBounds.xMin) * zoomFactor;
+      const newXMax = mouseMathX + (curBounds.xMax - mouseMathX) * zoomFactor;
+      const newYMin = mouseMathY - (mouseMathY - curBounds.yMin) * zoomFactor;
+      const newYMax = mouseMathY + (curBounds.yMax - mouseMathY) * zoomFactor;
 
-  const fromPxY = useCallback(
-    (py: number) => {
-      if (yScale === 'log') {
-        const logMin = symlog(bounds.yMin);
-        const logMax = symlog(bounds.yMax);
-        const logSpan = Math.max(1e-9, logMax - logMin);
-        const ly = logMax - ((py - plotBox.top) / plotBox.height) * logSpan;
-        return invSymlog(ly);
-      }
-      return bounds.yMax - ((py - plotBox.top) / plotBox.height) * ySpan;
-    },
-    [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox]
-  );
+      if (newXMax - newXMin < 1e-4 || newYMax - newYMin < 1e-4) return;
+      if (newXMax - newXMin > 1e7 || newYMax - newYMin > 1e7) return;
 
-  // Pixel Position of the Origin (0,0)
-  const originPxX = toPxX(0);
-  const originPxY = toPxY(0);
+      setBounds({
+        xMin: Number(newXMin.toFixed(4)),
+        xMax: Number(newXMax.toFixed(4)),
+        yMin: Number(newYMin.toFixed(4)),
+        yMax: Number(newYMax.toFixed(4)),
+      });
+    };
 
-  // Clamped positions for axis lines so ticks remain visible when panned off screen
-  const axisLineY = Math.max(plotBox.top, Math.min(plotBox.top + plotBox.height, originPxY));
-  const axisLineX = Math.max(plotBox.left, Math.min(plotBox.left + plotBox.width, originPxX));
-
-  const isOriginOnScreen =
-    bounds.xMin <= 0 && bounds.xMax >= 0 && bounds.yMin <= 0 && bounds.yMax >= 0;
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', onWheel);
+    };
+  }, [fromPxX, fromPxY, setBounds]);
 
   // Separate explicit and implicit equations
   const { explicitEquations, implicitEquations } = useMemo(() => {
@@ -654,36 +703,6 @@ export default function FunctionPlotter() {
     setMousePos(null);
   };
 
-  // Cursor-Centered Mouse Wheel Zoom (Desmos-Style)
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const container = chartContainerRef.current;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-
-    const mouseMathX = fromPxX(px);
-    const mouseMathY = fromPxY(py);
-
-    const zoomFactor = e.deltaY < 0 ? 0.88 : 1.14;
-
-    const newXMin = mouseMathX - (mouseMathX - bounds.xMin) * zoomFactor;
-    const newXMax = mouseMathX + (bounds.xMax - mouseMathX) * zoomFactor;
-    const newYMin = mouseMathY - (mouseMathY - bounds.yMin) * zoomFactor;
-    const newYMax = mouseMathY + (bounds.yMax - mouseMathY) * zoomFactor;
-
-    if (newXMax - newXMin < 1e-4 || newYMax - newYMin < 1e-4) return;
-    if (newXMax - newXMin > 1e6 || newYMax - newYMin > 1e6) return;
-
-    setBounds({
-      xMin: Number(newXMin.toFixed(4)),
-      xMax: Number(newXMax.toFixed(4)),
-      yMin: Number(newYMin.toFixed(4)),
-      yMax: Number(newYMax.toFixed(4)),
-    });
-  };
-
   // Export current graph view as High-Resolution PNG with Title & Origin-Centric Axes
   const handleExportPNG = () => {
     const svg = svgRef.current;
@@ -1020,7 +1039,6 @@ export default function FunctionPlotter() {
         {/* Origin-Centric Mathematical SVG Canvas */}
         <div
           ref={chartContainerRef}
-          onWheel={handleWheel}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -1186,35 +1204,35 @@ export default function FunctionPlotter() {
             })}
 
             {/* 2. Central Origin-Centric Coordinate Axes (Desmos-Style Crisp Vectors) */}
-            <g className="central-axes">
+            <g className="central-axes" stroke="#404040" fill="#404040">
               {/* Horizontal X-Axis Line through y = 0 */}
               <line
-                x1={plotBox.left - 6}
+                x1={plotBox.left}
                 y1={axisLineY}
-                x2={plotBox.left + plotBox.width + 6}
+                x2={plotBox.left + plotBox.width}
                 y2={axisLineY}
-                stroke="#333333"
+                stroke="#404040"
                 strokeWidth={1.5}
-                className="dark:stroke-[#e2e8f0]"
+                className="dark:stroke-gray-300"
               />
               {/* Right Arrowhead */}
               <polygon
-                points={`${plotBox.left + plotBox.width + 8},${axisLineY} ${plotBox.left + plotBox.width + 1},${axisLineY - 4} ${plotBox.left + plotBox.width + 1},${axisLineY + 4}`}
-                fill="#333333"
-                className="dark:fill-[#e2e8f0]"
+                points={`${plotBox.left + plotBox.width + 6},${axisLineY} ${plotBox.left + plotBox.width},${axisLineY - 3.5} ${plotBox.left + plotBox.width},${axisLineY + 3.5}`}
+                fill="#404040"
+                className="dark:fill-gray-300"
               />
               {/* Left Arrowhead */}
               <polygon
-                points={`${plotBox.left - 8},${axisLineY} ${plotBox.left - 1},${axisLineY - 4} ${plotBox.left - 1},${axisLineY + 4}`}
-                fill="#333333"
-                className="dark:fill-[#e2e8f0]"
+                points={`${plotBox.left - 6},${axisLineY} ${plotBox.left},${axisLineY - 3.5} ${plotBox.left},${axisLineY + 3.5}`}
+                fill="#404040"
+                className="dark:fill-gray-300"
               />
               {/* X-Axis Label */}
               <text
-                x={plotBox.left + plotBox.width + 16}
+                x={plotBox.left + plotBox.width + 14}
                 y={axisLineY + 4}
-                fill="#333333"
-                className="dark:fill-[#e2e8f0] font-serif italic text-sm font-bold select-none"
+                fill="#404040"
+                className="dark:fill-gray-300 font-serif italic text-sm font-bold select-none"
               >
                 x
               </text>
@@ -1222,32 +1240,32 @@ export default function FunctionPlotter() {
               {/* Vertical Y-Axis Line through x = 0 */}
               <line
                 x1={axisLineX}
-                y1={plotBox.top + plotBox.height + 6}
+                y1={plotBox.top + plotBox.height}
                 x2={axisLineX}
-                y2={plotBox.top - 6}
-                stroke="#333333"
+                y2={plotBox.top}
+                stroke="#404040"
                 strokeWidth={1.5}
-                className="dark:stroke-[#e2e8f0]"
+                className="dark:stroke-gray-300"
               />
               {/* Top Arrowhead */}
               <polygon
-                points={`${axisLineX},${plotBox.top - 8} ${axisLineX - 4},${plotBox.top - 1} ${axisLineX + 4},${plotBox.top - 1}`}
-                fill="#333333"
-                className="dark:fill-[#e2e8f0]"
+                points={`${axisLineX},${plotBox.top - 6} ${axisLineX - 3.5},${plotBox.top} ${axisLineX + 3.5},${plotBox.top}`}
+                fill="#404040"
+                className="dark:fill-gray-300"
               />
               {/* Bottom Arrowhead */}
               <polygon
-                points={`${axisLineX},${plotBox.top + plotBox.height + 8} ${axisLineX - 4},${plotBox.top + plotBox.height + 1} ${axisLineX + 4},${plotBox.top + plotBox.height + 1}`}
-                fill="#333333"
-                className="dark:fill-[#e2e8f0]"
+                points={`${axisLineX},${plotBox.top + plotBox.height + 6} ${axisLineX - 3.5},${plotBox.top + plotBox.height} ${axisLineX + 3.5},${plotBox.top + plotBox.height}`}
+                fill="#404040"
+                className="dark:fill-gray-300"
               />
               {/* Y-Axis Label */}
               <text
                 x={axisLineX}
-                y={plotBox.top - 14}
+                y={plotBox.top - 12}
                 textAnchor="middle"
-                fill="#333333"
-                className="dark:fill-[#e2e8f0] font-serif italic text-sm font-bold select-none"
+                fill="#404040"
+                className="dark:fill-gray-300 font-serif italic text-sm font-bold select-none"
               >
                 y
               </text>
@@ -1278,9 +1296,9 @@ export default function FunctionPlotter() {
                       y1={axisLineY - 3.5}
                       x2={px}
                       y2={axisLineY + 3.5}
-                      stroke="#333333"
+                      stroke="#404040"
                       strokeWidth={1.2}
-                      className="dark:stroke-gray-300"
+                      className="dark:stroke-gray-400"
                     />
                     {/* Tick number directly below axis */}
                     <text
@@ -1308,9 +1326,9 @@ export default function FunctionPlotter() {
                       x1={axisLineX - 3.5}
                       y1={py}
                       x2={axisLineX + 3.5}
-                      stroke="#333333"
+                      stroke="#404040"
                       strokeWidth={1.2}
-                      className="dark:stroke-gray-300"
+                      className="dark:stroke-gray-400"
                     />
                     {/* Tick number directly to the left of axis */}
                     <text
