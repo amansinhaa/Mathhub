@@ -8,6 +8,7 @@ import {
   formatAxisNumber,
   pointsToSvgPath,
   findVerticalAsymptotes,
+  parseExpression,
 } from '@/lib/math/graphData';
 import {
   isImplicitEquation,
@@ -38,55 +39,62 @@ import {
   Scale,
   Split,
 } from 'lucide-react';
+import * as math from 'mathjs';
 
-/**
- * Symmetric Log Transformation (symlog).
- */
-function symlog(y: number): number {
-  if (y === 0) return 0;
-  return Math.sign(y) * Math.log10(1 + Math.abs(y));
+interface SnappedPoint {
+  x: number;
+  y: number;
+  px: number;
+  py: number;
+  color: string;
+  expression: string;
+  distPx: number;
 }
 
-function invSymlog(z: number): number {
-  if (z === 0) return 0;
-  return Math.sign(z) * (Math.pow(10, Math.abs(z)) - 1);
-}
-
-const TOTAL_HEIGHT = 480;
-const PADDING = { top: 25, right: 30, bottom: 25, left: 30 };
+const TOTAL_HEIGHT = 520;
+const PADDING = { top: 38, right: 38, bottom: 42, left: 42 };
 
 export default function FunctionPlotter() {
   const {
-    chartTitle,
-    setChartTitle,
     equations,
     bounds,
     setBounds,
+    resetBounds,
     yScale,
     setYScale,
-    showLineLabels,
-    setShowLineLabels,
-    showQuadrants,
-    setShowQuadrants,
-    updateEquation,
-    zoomIn,
-    zoomOut,
-    pan,
+    chartTitle,
+    setChartTitle,
     autoFitView,
-    resetBounds,
+    pan,
   } = useGraphStore();
 
   const [hoveredEqId, setHoveredEqId] = useState<string | null>(null);
-  const [showRangeInputs, setShowRangeInputs] = useState(false);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [tempTitle, setTempTitle] = useState(chartTitle);
-  const [isSquareAspect, setIsSquareAspect] = useState(false);
-  const [containerDimensions, setContainerDimensions] = useState({ width: 800, height: TOTAL_HEIGHT });
-  const [mousePos, setMousePos] = useState<{ x: number; y: number; px: number; py: number } | null>(null);
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Sync temp title
+  const [containerDimensions, setContainerDimensions] = useState({
+    width: 800,
+    height: TOTAL_HEIGHT,
+  });
+
+  const [mousePos, setMousePos] = useState<{
+    px: number;
+    py: number;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [showRangeInputs, setShowRangeInputs] = useState(false);
+  const [showLineLabels, setShowLineLabels] = useState(true);
+  const [showQuadrants, setShowQuadrants] = useState(false);
+  const [isSquareAspect, setIsSquareAspect] = useState(false);
+  const [showAsymptotes, setShowAsymptotes] = useState(true);
+
+  // Editable title state
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [tempTitle, setTempTitle] = useState(chartTitle);
+
   useEffect(() => {
     setTempTitle(chartTitle);
   }, [chartTitle]);
@@ -131,16 +139,12 @@ export default function FunctionPlotter() {
     isDragging: false,
   });
 
-  const [isMouseDown, setIsMouseDown] = useState(false);
-
-  // Non-passive Touch Listener for gesture isolation
+  // Non-passive Touch Drag/Pinch listeners
   useEffect(() => {
     const container = chartContainerRef.current;
     if (!container) return;
 
     const onTouchStart = (e: TouchEvent) => {
-      if (e.cancelable) e.preventDefault();
-
       if (e.touches.length === 1) {
         touchState.current = {
           startX: e.touches[0].clientX,
@@ -182,10 +186,10 @@ export default function FunctionPlotter() {
         const shiftY = (dy / height) * ySpan;
 
         setBounds({
-          xMin: Number((init.xMin - shiftX).toFixed(2)),
-          xMax: Number((init.xMax - shiftX).toFixed(2)),
-          yMin: Number((init.yMin + shiftY).toFixed(2)),
-          yMax: Number((init.yMax + shiftY).toFixed(2)),
+          xMin: Number((init.xMin - shiftX).toFixed(4)),
+          xMax: Number((init.xMax - shiftX).toFixed(4)),
+          yMin: Number((init.yMin + shiftY).toFixed(4)),
+          yMax: Number((init.yMax + shiftY).toFixed(4)),
         });
       } else if (e.touches.length === 2 && touchState.current.initialDist > 0) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -200,10 +204,10 @@ export default function FunctionPlotter() {
         const yHalf = ((init.yMax - init.yMin) * scale) / 2;
 
         setBounds({
-          xMin: Number((xCenter - xHalf).toFixed(2)),
-          xMax: Number((xCenter + xHalf).toFixed(2)),
-          yMin: Number((yCenter - yHalf).toFixed(2)),
-          yMax: Number((yCenter + yHalf).toFixed(2)),
+          xMin: Number((xCenter - xHalf).toFixed(4)),
+          xMax: Number((xCenter + xHalf).toFixed(4)),
+          yMin: Number((yCenter - yHalf).toFixed(4)),
+          yMax: Number((yCenter + yHalf).toFixed(4)),
         });
       }
     };
@@ -238,35 +242,50 @@ export default function FunctionPlotter() {
   const xSpan = Math.max(1e-9, bounds.xMax - bounds.xMin);
   const ySpan = Math.max(1e-9, bounds.yMax - bounds.yMin);
 
-  const toPxX = useCallback((x: number) => {
-    return plotBox.left + ((x - bounds.xMin) / xSpan) * plotBox.width;
-  }, [bounds.xMin, xSpan, plotBox]);
+  const symlog = (y: number) => (y === 0 ? 0 : Math.sign(y) * Math.log10(1 + Math.abs(y)));
+  const invSymlog = (v: number) => (v === 0 ? 0 : Math.sign(v) * (Math.pow(10, Math.abs(v)) - 1));
 
-  const toPxY = useCallback((y: number) => {
-    if (yScale === 'log') {
-      const logMin = symlog(bounds.yMin);
-      const logMax = symlog(bounds.yMax);
-      const logSpan = Math.max(1e-9, logMax - logMin);
-      const ly = symlog(y);
-      return plotBox.top + ((logMax - ly) / logSpan) * plotBox.height;
-    }
-    return plotBox.top + ((bounds.yMax - y) / ySpan) * plotBox.height;
-  }, [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox]);
+  const toPxX = useCallback(
+    (x: number) => {
+      return plotBox.left + ((x - bounds.xMin) / xSpan) * plotBox.width;
+    },
+    [bounds.xMin, xSpan, plotBox]
+  );
 
-  const fromPxX = useCallback((px: number) => {
-    return bounds.xMin + ((px - plotBox.left) / plotBox.width) * xSpan;
-  }, [bounds.xMin, xSpan, plotBox]);
+  const toPxY = useCallback(
+    (y: number) => {
+      if (yScale === 'log') {
+        const logMin = symlog(bounds.yMin);
+        const logMax = symlog(bounds.yMax);
+        const logSpan = Math.max(1e-9, logMax - logMin);
+        const ly = symlog(y);
+        return plotBox.top + ((logMax - ly) / logSpan) * plotBox.height;
+      }
+      return plotBox.top + ((bounds.yMax - y) / ySpan) * plotBox.height;
+    },
+    [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox]
+  );
 
-  const fromPxY = useCallback((py: number) => {
-    if (yScale === 'log') {
-      const logMin = symlog(bounds.yMin);
-      const logMax = symlog(bounds.yMax);
-      const logSpan = Math.max(1e-9, logMax - logMin);
-      const ly = logMax - ((py - plotBox.top) / plotBox.height) * logSpan;
-      return invSymlog(ly);
-    }
-    return bounds.yMax - ((py - plotBox.top) / plotBox.height) * ySpan;
-  }, [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox]);
+  const fromPxX = useCallback(
+    (px: number) => {
+      return bounds.xMin + ((px - plotBox.left) / plotBox.width) * xSpan;
+    },
+    [bounds.xMin, xSpan, plotBox]
+  );
+
+  const fromPxY = useCallback(
+    (py: number) => {
+      if (yScale === 'log') {
+        const logMin = symlog(bounds.yMin);
+        const logMax = symlog(bounds.yMax);
+        const logSpan = Math.max(1e-9, logMax - logMin);
+        const ly = logMax - ((py - plotBox.top) / plotBox.height) * logSpan;
+        return invSymlog(ly);
+      }
+      return bounds.yMax - ((py - plotBox.top) / plotBox.height) * ySpan;
+    },
+    [bounds.yMin, bounds.yMax, ySpan, yScale, plotBox]
+  );
 
   // Pixel Position of the Origin (0,0)
   const originPxX = toPxX(0);
@@ -295,9 +314,6 @@ export default function FunctionPlotter() {
 
     return { explicitEquations: explicit, implicitEquations: implicit };
   }, [equations]);
-
-  // Show Asymptotes toggle state
-  const [showAsymptotes, setShowAsymptotes] = useState(true);
 
   // Generate continuous SVG paths for explicit functions with asymptote splitting
   const explicitPaths = useMemo(() => {
@@ -418,7 +434,7 @@ export default function FunctionPlotter() {
     });
   }, [implicitEquations, bounds, plotBox]);
 
-  // Compute D3-style Nice Ticks for X and Y axes
+  // Compute Major D3-style Nice Ticks for X and Y axes
   const xTicks = useMemo(
     () => generateNiceTicks(bounds.xMin, bounds.xMax, 8),
     [bounds.xMin, bounds.xMax]
@@ -428,6 +444,127 @@ export default function FunctionPlotter() {
     () => generateNiceTicks(bounds.yMin, bounds.yMax, 8),
     [bounds.yMin, bounds.yMax]
   );
+
+  // Compute Minor Sub-grid Ticks (Desmos style 5 subdivisions between major ticks)
+  const { minorXTicks, minorYTicks } = useMemo(() => {
+    const minorX: number[] = [];
+    if (xTicks.length >= 2) {
+      const step = (xTicks[1] - xTicks[0]) / 5;
+      const first = xTicks[0] - step * 5;
+      const last = xTicks[xTicks.length - 1] + step * 5;
+      for (let t = first; t <= last + 1e-9; t += step) {
+        if (t >= bounds.xMin && t <= bounds.xMax) {
+          if (!xTicks.some((maj) => Math.abs(maj - t) < step * 0.2)) {
+            minorX.push(t);
+          }
+        }
+      }
+    }
+
+    const minorY: number[] = [];
+    if (yTicks.length >= 2) {
+      const step = (yTicks[1] - yTicks[0]) / 5;
+      const first = yTicks[0] - step * 5;
+      const last = yTicks[yTicks.length - 1] + step * 5;
+      for (let t = first; t <= last + 1e-9; t += step) {
+        if (t >= bounds.yMin && t <= bounds.yMax) {
+          if (!yTicks.some((maj) => Math.abs(maj - t) < step * 0.2)) {
+            minorY.push(t);
+          }
+        }
+      }
+    }
+
+    return { minorXTicks: minorX, minorYTicks: minorY };
+  }, [xTicks, yTicks, bounds]);
+
+  // Desmos-Style Curve Snapping & Trace Dot
+  const snappedPoint: SnappedPoint | null = useMemo(() => {
+    if (!mousePos || isMouseDown || explicitEquations.length === 0) return null;
+    const mouseMathX = fromPxX(mousePos.px);
+
+    let closest: SnappedPoint | null = null;
+
+    explicitEquations.forEach((eq) => {
+      try {
+        const compiled = math.compile(parseExpression(eq.expression));
+        const evalY = compiled.evaluate({ x: mouseMathX });
+        let yVal: number | null = null;
+        if (typeof evalY === 'number' && !isNaN(evalY) && isFinite(evalY)) {
+          yVal = evalY;
+        } else if (evalY && typeof evalY.re === 'number' && Math.abs(evalY.im || 0) < 1e-9) {
+          yVal = evalY.re;
+        }
+
+        if (
+          yVal !== null &&
+          yVal >= bounds.yMin - (bounds.yMax - bounds.yMin) * 0.25 &&
+          yVal <= bounds.yMax + (bounds.yMax - bounds.yMin) * 0.25
+        ) {
+          const px = toPxX(mouseMathX);
+          const py = toPxY(yVal);
+          const dist = Math.abs(mousePos.py - py);
+          if (dist < 32 && (!closest || dist < closest.distPx)) {
+            closest = {
+              x: mouseMathX,
+              y: yVal,
+              px,
+              py,
+              color: eq.color,
+              expression: eq.expression,
+              distPx: dist,
+            };
+          }
+        }
+      } catch {
+        // Ignore evaluation errors for trace snapping
+      }
+    });
+
+    return closest;
+  }, [mousePos, isMouseDown, explicitEquations, fromPxX, toPxX, toPxY, bounds]);
+
+  // Smooth Animated Zoom for Toolbar Buttons
+  const animateZoom = useCallback(
+    (factor: number) => {
+      const cx = (bounds.xMin + bounds.xMax) / 2;
+      const cy = (bounds.yMin + bounds.yMax) / 2;
+
+      const start = { ...bounds };
+      const target = {
+        xMin: cx - (cx - start.xMin) * factor,
+        xMax: cx + (start.xMax - cx) * factor,
+        yMin: cy - (cy - start.yMin) * factor,
+        yMax: cy + (start.yMax - cy) * factor,
+      };
+
+      const startTime = performance.now();
+      const duration = 150; // ms
+
+      const step = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+
+        setBounds({
+          xMin: Number((start.xMin + (target.xMin - start.xMin) * ease).toFixed(4)),
+          xMax: Number((start.xMax + (target.xMax - start.xMax) * ease).toFixed(4)),
+          yMin: Number((start.yMin + (target.yMin - start.yMin) * ease).toFixed(4)),
+          yMax: Number((start.yMax + (target.yMax - start.yMax) * ease).toFixed(4)),
+        });
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      };
+
+      requestAnimationFrame(step);
+    },
+    [bounds, setBounds]
+  );
+
+  const zoomIn = (factor = 0.75) => animateZoom(factor);
+  const zoomOut = (factor = 1.33) => animateZoom(factor);
 
   // Toggle 1:1 Square Aspect Ratio for circles and isometric graphing
   const handleToggleSquareAspect = () => {
@@ -467,12 +604,17 @@ export default function FunctionPlotter() {
     const px = e.clientX - rect.left;
     const py = e.clientY - rect.top;
 
-    if (px >= plotBox.left && px <= plotBox.left + plotBox.width && py >= plotBox.top && py <= plotBox.top + plotBox.height) {
+    if (
+      px >= plotBox.left &&
+      px <= plotBox.left + plotBox.width &&
+      py >= plotBox.top &&
+      py <= plotBox.top + plotBox.height
+    ) {
       setMousePos({
         px,
         py,
-        x: Number(fromPxX(px).toFixed(2)),
-        y: Number(fromPxY(py).toFixed(2)),
+        x: Number(fromPxX(px).toFixed(3)),
+        y: Number(fromPxY(py).toFixed(3)),
       });
     } else {
       setMousePos(null);
@@ -494,10 +636,10 @@ export default function FunctionPlotter() {
     const shiftY = (dy / height) * initYSpan;
 
     setBounds({
-      xMin: Number((init.xMin - shiftX).toFixed(2)),
-      xMax: Number((init.xMax - shiftX).toFixed(2)),
-      yMin: Number((init.yMin + shiftY).toFixed(2)),
-      yMax: Number((init.yMax + shiftY).toFixed(2)),
+      xMin: Number((init.xMin - shiftX).toFixed(4)),
+      xMax: Number((init.xMax - shiftX).toFixed(4)),
+      yMin: Number((init.yMin + shiftY).toFixed(4)),
+      yMax: Number((init.yMax + shiftY).toFixed(4)),
     });
   };
 
@@ -512,14 +654,34 @@ export default function FunctionPlotter() {
     setMousePos(null);
   };
 
-  // Mouse Wheel / Trackpad Pinch Zoom
+  // Cursor-Centered Mouse Wheel Zoom (Desmos-Style)
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    if (e.deltaY < 0) {
-      zoomIn(0.85);
-    } else {
-      zoomOut(1.2);
-    }
+    const container = chartContainerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+
+    const mouseMathX = fromPxX(px);
+    const mouseMathY = fromPxY(py);
+
+    const zoomFactor = e.deltaY < 0 ? 0.88 : 1.14;
+
+    const newXMin = mouseMathX - (mouseMathX - bounds.xMin) * zoomFactor;
+    const newXMax = mouseMathX + (bounds.xMax - mouseMathX) * zoomFactor;
+    const newYMin = mouseMathY - (mouseMathY - bounds.yMin) * zoomFactor;
+    const newYMax = mouseMathY + (bounds.yMax - mouseMathY) * zoomFactor;
+
+    if (newXMax - newXMin < 1e-4 || newYMax - newYMin < 1e-4) return;
+    if (newXMax - newXMin > 1e6 || newYMax - newYMin > 1e6) return;
+
+    setBounds({
+      xMin: Number(newXMin.toFixed(4)),
+      xMax: Number(newXMax.toFixed(4)),
+      yMin: Number(newYMin.toFixed(4)),
+      yMax: Number(newYMax.toFixed(4)),
+    });
   };
 
   // Export current graph view as High-Resolution PNG with Title & Origin-Centric Axes
@@ -604,95 +766,44 @@ export default function FunctionPlotter() {
                 type="text"
                 value={tempTitle}
                 onChange={(e) => setTempTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSaveTitle();
-                  if (e.key === 'Escape') setIsEditingTitle(false);
-                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
                 autoFocus
+                className="math-input py-1 px-2.5 text-base font-bold flex-1"
                 placeholder="Enter chart title..."
-                className="math-input py-1 px-2.5 text-sm font-semibold flex-1"
               />
               <button
                 onClick={handleSaveTitle}
-                className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-sm"
+                className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs"
                 title="Save Title"
               >
                 <Check size={14} />
               </button>
             </div>
           ) : (
-            <div
-              onClick={() => setIsEditingTitle(true)}
-              className="group flex items-center gap-2 cursor-pointer select-none py-0.5 px-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/60 transition-colors"
-              title="Click to edit chart title"
-            >
-              <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+            <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
+              <h2 className="font-bold text-gray-800 dark:text-gray-100 text-base sm:text-lg select-none">
                 {chartTitle}
               </h2>
               <Pencil
                 size={13}
-                className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-gray-400 group-hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
               />
             </div>
           )}
 
-          {/* Quick status pill */}
-          <span className="text-[11px] font-mono text-[var(--muted)] hidden sm:inline-block">
-            Origin-Centric (0,0) Cartesian Plane
-          </span>
-        </div>
-
-        {/* Graph Header: Legend, Scale, Zoom, and Export */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-3 pb-3 border-b border-[var(--card-border)]">
-          {/* Legend Items */}
-          <div className="flex flex-wrap items-center gap-2">
-            {equations.map((eq) => {
-              const isPlotted = eq.expression.trim() !== '';
-              const isImplicit = isImplicitEquation(eq.expression);
-              return (
-                <button
-                  key={eq.id}
-                  onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
-                  onMouseEnter={() => setHoveredEqId(eq.id)}
-                  onMouseLeave={() => setHoveredEqId(null)}
-                  disabled={!isPlotted}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
-                    !isPlotted
-                      ? 'opacity-40 cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400'
-                      : eq.visible
-                      ? 'bg-gray-100 dark:bg-gray-700/80 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      : 'opacity-50 line-through bg-gray-50 dark:bg-gray-800 text-gray-400'
-                  }`}
-                  title={eq.visible ? 'Click to hide curve' : 'Click to show curve'}
-                >
-                  <span
-                    className="w-2.5 h-2.5 rounded-full inline-block shrink-0 shadow-sm"
-                    style={{ backgroundColor: eq.visible ? eq.color : '#9ca3af' }}
-                  />
-                  <span>{isImplicit ? eq.expression : `f(x) = ${eq.expression || '...'}`}</span>
-                  {isPlotted && (
-                    <span className="text-[10px] text-gray-400 ml-0.5">
-                      {eq.visible ? <Eye size={12} /> : <EyeOff size={12} />}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Right Toolbar: Zoom + Scale + Quick Download */}
-          <div className="flex flex-wrap items-center gap-2 ml-auto">
-            {/* Zoom Controls */}
+          {/* Controls Bar */}
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            {/* Zoom / Pan Group */}
             <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
               <button
-                onClick={() => zoomIn(0.7)}
+                onClick={() => zoomIn()}
                 className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
-                title="Zoom In"
+                title="Zoom In (Centered on Origin/Cursor)"
               >
                 <ZoomIn size={14} />
               </button>
               <button
-                onClick={() => zoomOut(1.4)}
+                onClick={() => zoomOut()}
                 className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
                 title="Zoom Out"
               >
@@ -743,7 +854,7 @@ export default function FunctionPlotter() {
               </button>
             </div>
 
-            {/* Line Labels & Quadrants & 1:1 Aspect Ratio Toggles */}
+            {/* Line Labels & Quadrants & 1:1 Aspect Ratio & Asymptotes Toggles */}
             <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
               <button
                 onClick={handleToggleSquareAspect}
@@ -837,27 +948,25 @@ export default function FunctionPlotter() {
             <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
               <button
                 onClick={handleExportPNG}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 transition-colors"
-                title="Download this exact view as PNG with Title"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                title="Download as HD PNG"
               >
-                <Download size={13} />
-                <span>PNG</span>
+                <Download size={14} />
               </button>
               <button
                 onClick={handleExportSVG}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 transition-colors"
-                title="Download this exact view as SVG with Title"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                title="Download as Vector SVG"
               >
-                <FileCode size={13} />
-                <span>SVG</span>
+                <FileCode size={14} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Manual Range Adjustment Panel */}
+        {/* Manual Range Adjustment Expandable Inputs */}
         {showRangeInputs && (
-          <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-900/60 rounded-xl border border-[var(--card-border)] grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="animate-fade-in grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 p-3 bg-gray-50 dark:bg-gray-900/60 rounded-xl border border-[var(--card-border)] text-xs">
             <div>
               <label className="text-[var(--muted)] font-mono block mb-1">X Min</label>
               <input
@@ -900,11 +1009,11 @@ export default function FunctionPlotter() {
         {/* Viewport Range Info Badge */}
         <div className="flex justify-between items-center text-[11px] text-[var(--muted)] px-1 mb-1 font-mono">
           <span>
-            Origin-Centric 4-Quadrant Plane: X ∈ [{bounds.xMin}, {bounds.xMax}], Y ∈ [{bounds.yMin}, {bounds.yMax}]
+            Origin-Centric 4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}], Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}]
             {isSquareAspect && ' • 1:1 Aspect Ratio'}
           </span>
           <span className="text-blue-500 font-medium">
-            🖐️ Drag to pan • ✌️ Pinch or scroll to zoom
+            🖐️ Drag to pan • ✌️ Pinch/scroll to cursor-zoom • Hover curve to trace
           </span>
         </div>
 
@@ -917,7 +1026,7 @@ export default function FunctionPlotter() {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
           style={{ touchAction: 'none' }}
-          className={`flex-1 w-full min-h-[${TOTAL_HEIGHT}px] relative select-none touch-none bg-[#fdfdfd] dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700/80 ${
+          className={`flex-1 w-full min-h-[${TOTAL_HEIGHT}px] relative select-none touch-none bg-[#ffffff] dark:bg-[#0b1120] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-inner ${
             isMouseDown ? 'cursor-grabbing' : 'cursor-crosshair'
           }`}
         >
@@ -947,30 +1056,6 @@ export default function FunctionPlotter() {
             preserveAspectRatio="none"
           >
             <defs>
-              {/* Arrow Markers for X and Y Axes */}
-              <marker
-                id="axis-arrow-x"
-                viewBox="0 0 10 10"
-                refX="7"
-                refY="5"
-                markerWidth="6"
-                markerHeight="6"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#374151" className="dark:fill-gray-200" />
-              </marker>
-              <marker
-                id="axis-arrow-y"
-                viewBox="0 0 10 10"
-                refX="7"
-                refY="5"
-                markerWidth="6"
-                markerHeight="6"
-                orient="auto"
-              >
-                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#374151" className="dark:fill-gray-200" />
-              </marker>
-
               {/* Clip path for curves to stay inside plot box */}
               <clipPath id="plot-clip">
                 <rect
@@ -982,13 +1067,49 @@ export default function FunctionPlotter() {
               </clipPath>
             </defs>
 
-            {/* 1. Grid Lines (Centered on ticks) */}
-            <g className="grid-lines" opacity="0.85">
-              {/* Vertical Grid Lines (X-ticks) */}
-              {xTicks.map((xVal) => {
+            {/* 1. Grid Lines (Desmos Solid Clean Style) */}
+            <g className="grid-lines">
+              {/* Minor Vertical Grid Lines */}
+              {minorXTicks.map((xVal, i) => {
                 const px = toPxX(xVal);
                 if (px < plotBox.left || px > plotBox.left + plotBox.width) return null;
-                const isOrigin = Math.abs(xVal) < 1e-6;
+                return (
+                  <line
+                    key={`minor-grid-x-${i}-${xVal}`}
+                    x1={px}
+                    y1={plotBox.top}
+                    x2={px}
+                    y2={plotBox.top + plotBox.height}
+                    stroke="#f1f5f9"
+                    strokeWidth={0.75}
+                    className="dark:stroke-[#172033]"
+                  />
+                );
+              })}
+
+              {/* Minor Horizontal Grid Lines */}
+              {minorYTicks.map((yVal, i) => {
+                const py = toPxY(yVal);
+                if (py < plotBox.top || py > plotBox.top + plotBox.height) return null;
+                return (
+                  <line
+                    key={`minor-grid-y-${i}-${yVal}`}
+                    x1={plotBox.left}
+                    y1={py}
+                    x2={plotBox.left + plotBox.width}
+                    y2={py}
+                    stroke="#f1f5f9"
+                    strokeWidth={0.75}
+                    className="dark:stroke-[#172033]"
+                  />
+                );
+              })}
+
+              {/* Major Vertical Grid Lines */}
+              {xTicks.map((xVal) => {
+                if (Math.abs(xVal) < 1e-6) return null; // Avoid doubling with Y-axis
+                const px = toPxX(xVal);
+                if (px < plotBox.left || px > plotBox.left + plotBox.width) return null;
                 return (
                   <line
                     key={`grid-x-${xVal}`}
@@ -996,19 +1117,18 @@ export default function FunctionPlotter() {
                     y1={plotBox.top}
                     x2={px}
                     y2={plotBox.top + plotBox.height}
-                    stroke={isOrigin ? '#9ca3af' : '#e5e7eb'}
-                    strokeWidth={isOrigin ? 1.5 : 1}
-                    strokeDasharray={isOrigin ? 'none' : '3 3'}
-                    className="dark:stroke-gray-800"
+                    stroke="#e2e8f0"
+                    strokeWidth={1}
+                    className="dark:stroke-[#252f44]"
                   />
                 );
               })}
 
-              {/* Horizontal Grid Lines (Y-ticks) */}
+              {/* Major Horizontal Grid Lines */}
               {yTicks.map((yVal) => {
+                if (Math.abs(yVal) < 1e-6) return null; // Avoid doubling with X-axis
                 const py = toPxY(yVal);
                 if (py < plotBox.top || py > plotBox.top + plotBox.height) return null;
-                const isOrigin = Math.abs(yVal) < 1e-6;
                 return (
                   <line
                     key={`grid-y-${yVal}`}
@@ -1016,10 +1136,9 @@ export default function FunctionPlotter() {
                     y1={py}
                     x2={plotBox.left + plotBox.width}
                     y2={py}
-                    stroke={isOrigin ? '#9ca3af' : '#e5e7eb'}
-                    strokeWidth={isOrigin ? 1.5 : 1}
-                    strokeDasharray={isOrigin ? 'none' : '3 3'}
-                    className="dark:stroke-gray-800"
+                    stroke="#e2e8f0"
+                    strokeWidth={1}
+                    className="dark:stroke-[#252f44]"
                   />
                 );
               })}
@@ -1051,7 +1170,7 @@ export default function FunctionPlotter() {
                     fill="#ffffff"
                     stroke="#cbd5e1"
                     strokeWidth={1}
-                    className="dark:fill-gray-900 dark:stroke-gray-700"
+                    className="dark:fill-gray-900 dark:stroke-gray-700 shadow-sm"
                   />
                   <text
                     x={px}
@@ -1066,25 +1185,36 @@ export default function FunctionPlotter() {
               );
             })}
 
-            {/* 2. Central Origin-Centric Coordinate Axes (Crosshairs through Origin) */}
+            {/* 2. Central Origin-Centric Coordinate Axes (Desmos-Style Crisp Vectors) */}
             <g className="central-axes">
               {/* Horizontal X-Axis Line through y = 0 */}
               <line
-                x1={plotBox.left - 10}
+                x1={plotBox.left - 6}
                 y1={axisLineY}
-                x2={plotBox.left + plotBox.width + 12}
+                x2={plotBox.left + plotBox.width + 6}
                 y2={axisLineY}
-                stroke="#1f2937"
-                strokeWidth={2}
-                markerEnd="url(#axis-arrow-x)"
-                className="dark:stroke-gray-100"
+                stroke="#333333"
+                strokeWidth={1.5}
+                className="dark:stroke-[#e2e8f0]"
+              />
+              {/* Right Arrowhead */}
+              <polygon
+                points={`${plotBox.left + plotBox.width + 8},${axisLineY} ${plotBox.left + plotBox.width + 1},${axisLineY - 4} ${plotBox.left + plotBox.width + 1},${axisLineY + 4}`}
+                fill="#333333"
+                className="dark:fill-[#e2e8f0]"
+              />
+              {/* Left Arrowhead */}
+              <polygon
+                points={`${plotBox.left - 8},${axisLineY} ${plotBox.left - 1},${axisLineY - 4} ${plotBox.left - 1},${axisLineY + 4}`}
+                fill="#333333"
+                className="dark:fill-[#e2e8f0]"
               />
               {/* X-Axis Label */}
               <text
-                x={plotBox.left + plotBox.width + 20}
+                x={plotBox.left + plotBox.width + 16}
                 y={axisLineY + 4}
-                fill="#1f2937"
-                className="dark:fill-gray-100 font-serif italic text-sm font-bold select-none"
+                fill="#333333"
+                className="dark:fill-[#e2e8f0] font-serif italic text-sm font-bold select-none"
               >
                 x
               </text>
@@ -1092,21 +1222,32 @@ export default function FunctionPlotter() {
               {/* Vertical Y-Axis Line through x = 0 */}
               <line
                 x1={axisLineX}
-                y1={plotBox.top + plotBox.height + 10}
+                y1={plotBox.top + plotBox.height + 6}
                 x2={axisLineX}
-                y2={plotBox.top - 12}
-                stroke="#1f2937"
-                strokeWidth={2}
-                markerEnd="url(#axis-arrow-y)"
-                className="dark:stroke-gray-100"
+                y2={plotBox.top - 6}
+                stroke="#333333"
+                strokeWidth={1.5}
+                className="dark:stroke-[#e2e8f0]"
+              />
+              {/* Top Arrowhead */}
+              <polygon
+                points={`${axisLineX},${plotBox.top - 8} ${axisLineX - 4},${plotBox.top - 1} ${axisLineX + 4},${plotBox.top - 1}`}
+                fill="#333333"
+                className="dark:fill-[#e2e8f0]"
+              />
+              {/* Bottom Arrowhead */}
+              <polygon
+                points={`${axisLineX},${plotBox.top + plotBox.height + 8} ${axisLineX - 4},${plotBox.top + plotBox.height + 1} ${axisLineX + 4},${plotBox.top + plotBox.height + 1}`}
+                fill="#333333"
+                className="dark:fill-[#e2e8f0]"
               />
               {/* Y-Axis Label */}
               <text
                 x={axisLineX}
-                y={plotBox.top - 18}
+                y={plotBox.top - 14}
                 textAnchor="middle"
-                fill="#1f2937"
-                className="dark:fill-gray-100 font-serif italic text-sm font-bold select-none"
+                fill="#333333"
+                className="dark:fill-[#e2e8f0] font-serif italic text-sm font-bold select-none"
               >
                 y
               </text>
@@ -1114,11 +1255,11 @@ export default function FunctionPlotter() {
               {/* Origin Label "0" */}
               {isOriginOnScreen && (
                 <text
-                  x={originPxX - 7}
+                  x={originPxX - 8}
                   y={originPxY + 14}
                   textAnchor="end"
-                  fill="#4b5563"
-                  className="dark:fill-gray-400 font-mono text-[11px] font-semibold select-none"
+                  fill="#64748b"
+                  className="dark:fill-gray-400 font-mono text-[10.5px] font-semibold select-none"
                 >
                   0
                 </text>
@@ -1134,20 +1275,20 @@ export default function FunctionPlotter() {
                     {/* Tick notch */}
                     <line
                       x1={px}
-                      y1={axisLineY - 4}
+                      y1={axisLineY - 3.5}
                       x2={px}
-                      y2={axisLineY + 4}
-                      stroke="#1f2937"
-                      strokeWidth={1.5}
-                      className="dark:stroke-gray-200"
+                      y2={axisLineY + 3.5}
+                      stroke="#333333"
+                      strokeWidth={1.2}
+                      className="dark:stroke-gray-300"
                     />
                     {/* Tick number directly below axis */}
                     <text
                       x={px}
-                      y={axisLineY + 16}
+                      y={axisLineY + 15}
                       textAnchor="middle"
-                      fill="#4b5563"
-                      className="dark:fill-gray-300 font-mono text-[10px] font-semibold select-none"
+                      fill="#475569"
+                      className="dark:fill-gray-300 font-mono text-[10px] font-medium select-none"
                     >
                       {formatAxisNumber(xVal)}
                     </text>
@@ -1164,20 +1305,20 @@ export default function FunctionPlotter() {
                   <g key={`ytick-${yVal}`}>
                     {/* Tick notch */}
                     <line
-                      x1={axisLineX - 4}
+                      x1={axisLineX - 3.5}
                       y1={py}
-                      x2={axisLineX + 4}
-                      stroke="#1f2937"
-                      strokeWidth={1.5}
-                      className="dark:stroke-gray-200"
+                      x2={axisLineX + 3.5}
+                      stroke="#333333"
+                      strokeWidth={1.2}
+                      className="dark:stroke-gray-300"
                     />
                     {/* Tick number directly to the left of axis */}
                     <text
                       x={axisLineX - 7}
                       y={py + 3.5}
                       textAnchor="end"
-                      fill="#4b5563"
-                      className="dark:fill-gray-300 font-mono text-[10px] font-semibold select-none"
+                      fill="#475569"
+                      className="dark:fill-gray-300 font-mono text-[10px] font-medium select-none"
                     >
                       {formatAxisNumber(yVal)}
                     </text>
@@ -1266,43 +1407,99 @@ export default function FunctionPlotter() {
                 );
               })}
 
-            {/* 5. Interactive Mouse Crosshair Tracker */}
-            {mousePos && (
-              <g className="crosshair-tracker pointer-events-none">
-                <line
-                  x1={mousePos.px}
-                  y1={plotBox.top}
-                  x2={mousePos.px}
-                  y2={plotBox.top + plotBox.height}
-                  stroke="#3b82f6"
-                  strokeWidth={1}
-                  strokeDasharray="3 3"
-                  opacity={0.7}
-                />
-                <line
-                  x1={plotBox.left}
-                  y1={mousePos.py}
-                  x2={plotBox.left + plotBox.width}
-                  y2={mousePos.py}
-                  stroke="#3b82f6"
-                  strokeWidth={1}
-                  strokeDasharray="3 3"
-                  opacity={0.7}
-                />
-                <circle cx={mousePos.px} cy={mousePos.py} r={3} fill="#3b82f6" />
-              </g>
-            )}
+            {/* 5. Desmos-Style Interactive Trace Dot & Snapped Coordinate Tooltip */}
+            {(() => {
+              if (!snappedPoint || isMouseDown) return null;
+              const pt = snappedPoint as SnappedPoint;
+              const tipX = pt.px + 14 > plotBox.left + plotBox.width - 100 ? pt.px - 106 : pt.px + 12;
+              const tipY = pt.py - 26 < plotBox.top + 10 ? pt.py + 12 : pt.py - 24;
+
+              return (
+                <g className="trace-point pointer-events-none">
+                  {/* Outer glow ring */}
+                  <circle cx={pt.px} cy={pt.py} r={8} fill={pt.color} opacity={0.3} />
+                  {/* Solid center dot */}
+                  <circle
+                    cx={pt.px}
+                    cy={pt.py}
+                    r={5}
+                    fill={pt.color}
+                    stroke="#ffffff"
+                    strokeWidth={2}
+                    className="dark:stroke-gray-900"
+                  />
+                  {/* Coordinate Pill Tooltip */}
+                  <g transform={`translate(${tipX}, ${tipY})`}>
+                    <rect
+                      width={100}
+                      height={22}
+                      rx={6}
+                      fill="#1e293b"
+                      className="dark:fill-gray-100 shadow-lg"
+                    />
+                    <text
+                      x={50}
+                      y={15}
+                      textAnchor="middle"
+                      fill="#ffffff"
+                      className="dark:fill-gray-900 font-mono text-[10.5px] font-bold select-none"
+                    >
+                      ({Number(pt.x.toFixed(2))}, {Number(pt.y.toFixed(2))})
+                    </text>
+                  </g>
+                </g>
+              );
+            })()}
+
+            {/* Subtle Crosshairs when NOT snapped */}
+            {(() => {
+              if (!mousePos || snappedPoint || isMouseDown) return null;
+              return (
+                <g className="mouse-crosshair pointer-events-none" opacity={0.5}>
+                  <line
+                    x1={mousePos.px}
+                    y1={plotBox.top}
+                    x2={mousePos.px}
+                    y2={plotBox.top + plotBox.height}
+                    stroke="#94a3b8"
+                    strokeWidth={1}
+                    strokeDasharray="3 3"
+                  />
+                  <line
+                    x1={plotBox.left}
+                    y1={mousePos.py}
+                    x2={plotBox.left + plotBox.width}
+                    y2={mousePos.py}
+                    stroke="#94a3b8"
+                    strokeWidth={1}
+                    strokeDasharray="3 3"
+                  />
+                </g>
+              );
+            })()}
           </svg>
 
-          {/* Interactive Floating Coordinate Pill */}
-          {mousePos && (
-            <div
-              className="absolute pointer-events-none z-30 bg-gray-900/90 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-[11px] font-mono shadow-lg border border-gray-700/80 -translate-x-1/2 -translate-y-full -mt-2 animate-fade-in"
-              style={{ left: mousePos.px, top: mousePos.py }}
-            >
-              ({mousePos.x}, {mousePos.y})
-            </div>
-          )}
+          {/* Interactive Floating Cursor Coordinate Pill (Bottom Right Corner of Canvas) */}
+          {(() => {
+            if (!mousePos) return null;
+            return (
+              <div className="absolute bottom-3 right-3 pointer-events-none z-30 bg-gray-900/85 dark:bg-gray-100/90 text-white dark:text-gray-900 px-2.5 py-1 rounded-lg text-[11px] font-mono shadow-md border border-gray-700/50 dark:border-gray-300 select-none animate-fade-in">
+                {snappedPoint ? (
+                  <span className="font-bold flex items-center gap-1">
+                    <span
+                      className="w-2 h-2 rounded-full inline-block"
+                      style={{ backgroundColor: (snappedPoint as SnappedPoint).color }}
+                    />
+                    ({Number((snappedPoint as SnappedPoint).x.toFixed(3))}, {Number((snappedPoint as SnappedPoint).y.toFixed(3))})
+                  </span>
+                ) : (
+                  <span>
+                    ({mousePos.x}, {mousePos.y})
+                  </span>
+                )}
+              </div>
+            );
+          })()}
         </div>
       </div>
 
