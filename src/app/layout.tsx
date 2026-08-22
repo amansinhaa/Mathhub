@@ -49,10 +49,10 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <ThemeProvider>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex h-dvh min-h-screen flex-col overflow-hidden">
             {/* Main content area — takes remaining space above navbar */}
-            <main className="flex-1 overflow-y-auto pb-20 lg:pb-4 lg:pl-20">
-              <div className="mx-auto max-w-6xl px-4 py-4">
+            <main className="flex-1 overflow-y-auto pb-16 lg:pb-3 lg:pl-20 min-h-0">
+              <div className="mx-auto max-w-6xl px-3 sm:px-4 py-2 sm:py-3 h-full">
                 {children}
               </div>
             </main>

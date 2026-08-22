@@ -43,7 +43,7 @@ export function MathDisplay({
 
   if (!html) {
     return (
-      <span className={`font-mono text-sm text-red-500 ${className}`}>
+      <span className={`font-mono text-xs sm:text-sm text-red-500 max-w-full overflow-x-auto ${className}`}>
         {errorFallback || math}
       </span>
     );
@@ -52,7 +52,7 @@ export function MathDisplay({
   if (block) {
     return (
       <div
-        className={`katex-block overflow-x-auto my-1 ${className}`}
+        className={`katex-block max-w-full overflow-x-auto scrollbar-none my-1 ${className}`}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     );
@@ -60,7 +60,7 @@ export function MathDisplay({
 
   return (
     <span
-      className={`katex-inline ${className}`}
+      className={`katex-inline max-w-full overflow-x-auto scrollbar-none inline-block align-middle ${className}`}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

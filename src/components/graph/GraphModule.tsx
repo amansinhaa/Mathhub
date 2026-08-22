@@ -17,11 +17,11 @@ export default function GraphModule() {
   const { inputMode, setInputMode, chartType, setChartType, regressionType, setRegressionType } = useGraphStore();
 
   return (
-    <div className="flex flex-col h-full space-y-6 animate-fade-in">
+    <div className="flex flex-col h-full space-y-4 sm:space-y-6 animate-fade-in">
       {/* Top Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[var(--card-border)] pb-4 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[var(--card-border)] pb-3 sm:pb-4 gap-3 sm:gap-4">
         <div>
-          <h1 className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-2xl sm:text-3xl font-bold text-transparent">
+          <h1 className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-xl sm:text-3xl font-bold text-transparent">
             Graphing Tool
           </h1>
           <p className="text-xs sm:text-sm text-[var(--muted)]">
@@ -29,8 +29,8 @@ export default function GraphModule() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+        <div className="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto">
+          <div className="flex overflow-x-auto scrollbar-none space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl w-full sm:w-auto">
             {(
               [
                 { id: 'equation', label: 'From Equation' },
@@ -41,12 +41,14 @@ export default function GraphModule() {
             ).map((item) => (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => setInputMode(item.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                className={`flex-1 sm:flex-none px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap min-h-[34px] ${
                   inputMode === item.id
-                    ? 'bg-blue-600 text-white shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-xs font-bold'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
+                aria-label={`Switch to ${item.label} mode`}
               >
                 {item.id === 'collage' && <Printer size={13} />}
                 <span>{item.label}</span>
@@ -61,9 +63,9 @@ export default function GraphModule() {
       {inputMode === 'collage' ? (
         <CollageExport />
       ) : (
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-5 sm:gap-6">
           {/* Left Panel - Inputs & Saved Graphs */}
-          <div className="w-full lg:w-1/3 flex flex-col space-y-5">
+          <div className="w-full lg:w-1/3 flex flex-col space-y-4 sm:space-y-5">
             <div className="math-card">
               {inputMode === 'equation' && <EquationInput />}
               {inputMode === 'table' && <DataTableInput />}
@@ -112,7 +114,7 @@ export default function GraphModule() {
           </div>
 
           {/* Right Panel - Chart */}
-          <div className="w-full lg:w-2/3">
+          <div className="w-full lg:w-2/3 min-w-0">
             {inputMode === 'equation' ? <FunctionPlotter /> : <DataChart />}
           </div>
         </div>

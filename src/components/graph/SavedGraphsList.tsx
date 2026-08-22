@@ -149,33 +149,39 @@ export default function SavedGraphsList({
                     )}
                   </div>
 
-                  {/* Action Icons */}
-                  <div className="flex items-center gap-1 shrink-0 text-gray-400">
+                  {/* Action Icons with comfortable touch targets */}
+                  <div className="flex items-center gap-0.5 shrink-0 text-gray-400">
                     {!isEditing && (
                       <button
+                        type="button"
                         onClick={() => startRename(graph)}
-                        className="p-1 hover:text-blue-500 rounded transition-colors"
+                        className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors"
                         title="Rename"
+                        aria-label={`Rename ${graph.title}`}
                       >
-                        <Pencil size={12} />
+                        <Pencil size={13} />
                       </button>
                     )}
                     <button
+                      type="button"
                       onClick={() => {
                         loadSavedGraph(graph.id);
                         setInputMode(graph.type);
                       }}
-                      className="p-1 hover:text-green-500 rounded transition-colors"
+                      className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-950/40 rounded-lg transition-colors"
                       title="Load into Main Graph view"
+                      aria-label={`Load ${graph.title} into graph view`}
                     >
-                      <Play size={12} />
+                      <Play size={13} />
                     </button>
                     <button
+                      type="button"
                       onClick={() => deleteSavedGraph(graph.id)}
-                      className="p-1 hover:text-red-500 rounded transition-colors"
+                      className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors"
                       title="Delete"
+                      aria-label={`Delete ${graph.title}`}
                     >
-                      <Trash2 size={12} />
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
