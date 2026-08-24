@@ -256,32 +256,38 @@ export default function CollageExport() {
 
             {/* List of selectables */}
             <div className="space-y-1.5 max-h-[200px] overflow-y-auto pr-1">
-              {savedGraphs.map((graph) => {
-                const isSelected = selectedIds.includes(graph.id);
-                return (
-                  <div
-                    key={graph.id}
-                    onClick={() => toggleSelect(graph.id)}
-                    className={`flex items-center justify-between p-2 rounded-xl border text-xs cursor-pointer select-none transition-all ${
-                      isSelected
-                        ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-400 dark:border-blue-700 text-blue-900 dark:text-blue-200 font-semibold'
-                        : 'bg-gray-50 dark:bg-gray-900/40 border-[var(--card-border)] text-gray-700 dark:text-gray-300 hover:bg-gray-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      {isSelected ? (
-                        <CheckSquare size={15} className="text-blue-600 shrink-0" />
-                      ) : (
-                        <Square size={15} className="text-gray-400 shrink-0" />
-                      )}
-                      <span className="truncate">{graph.title}</span>
+              {savedGraphs.length === 0 ? (
+                <div className="text-center py-6 text-xs text-[var(--muted)]">
+                  No saved graphs yet. Plot equations or data and click &ldquo;Snapshot Current&rdquo; or save from the sidebar.
+                </div>
+              ) : (
+                savedGraphs.map((graph) => {
+                  const isSelected = selectedIds.includes(graph.id);
+                  return (
+                    <div
+                      key={graph.id}
+                      onClick={() => toggleSelect(graph.id)}
+                      className={`flex items-center justify-between p-2 rounded-xl border text-xs cursor-pointer select-none transition-all ${
+                        isSelected
+                          ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-400 dark:border-blue-700 text-blue-900 dark:text-blue-200 font-semibold'
+                          : 'bg-gray-50 dark:bg-gray-900/40 border-[var(--card-border)] text-gray-700 dark:text-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        {isSelected ? (
+                          <CheckSquare size={15} className="text-blue-600 shrink-0" />
+                        ) : (
+                          <Square size={15} className="text-gray-400 shrink-0" />
+                        )}
+                        <span className="truncate">{graph.title}</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-[var(--muted)] shrink-0">
+                        x:[{graph.bounds.xMin},{graph.bounds.xMax}]
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] text-[var(--muted)] shrink-0">
-                      x:[{graph.bounds.xMin},{graph.bounds.xMax}]
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
 

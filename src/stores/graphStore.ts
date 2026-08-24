@@ -53,19 +53,11 @@ export const useGraphStore = create<GraphState>()(
   persist(
     (set, get) => ({
       inputMode: 'equation',
-      chartTitle: '4-Quadrant Function Plot',
+      chartTitle: '',
       equations: [
-        { id: 'eq-1', expression: 'x^(1/3)', color: GRAPH_COLORS[0], visible: true },
-        { id: 'eq-2', expression: 'x^(1/5)', color: GRAPH_COLORS[1], visible: true },
-        { id: 'eq-3', expression: 'x^(1/11)', color: GRAPH_COLORS[2], visible: true },
+        { id: 'eq-1', expression: '', color: GRAPH_COLORS[0], visible: true },
       ],
-      dataPoints: [
-        { x: 1, y: 2 },
-        { x: 2, y: 3.8 },
-        { x: 3, y: 6.1 },
-        { x: 4, y: 7.9 },
-        { x: 5, y: 10.2 },
-      ],
+      dataPoints: [],
       chartType: 'line',
       bounds: { ...DEFAULT_BOUNDS },
       yScale: 'linear',
@@ -204,44 +196,7 @@ export const useGraphStore = create<GraphState>()(
       setRegressionType: (type) => set({ regressionType: type }),
       setFileData: (data) => set({ fileData: data }),
 
-      savedGraphs: [
-        {
-          id: 'snap-x2',
-          title: 'f(x) = x²',
-          type: 'equation',
-          expressions: ['x^2'],
-          equations: [{ id: 'eq-x2', expression: 'x^2', color: '#3b82f6', visible: true }],
-          bounds: { xMin: -5, xMax: 5, yMin: -2, yMax: 12 },
-          createdAt: Date.now() - 3600000,
-        },
-        {
-          id: 'snap-x4',
-          title: 'f(x) = x⁴',
-          type: 'equation',
-          expressions: ['x^4'],
-          equations: [{ id: 'eq-x4', expression: 'x^4', color: '#ef4444', visible: true }],
-          bounds: { xMin: -3, xMax: 3, yMin: -2, yMax: 16 },
-          createdAt: Date.now() - 2400000,
-        },
-        {
-          id: 'snap-x10',
-          title: 'f(x) = x¹⁰',
-          type: 'equation',
-          expressions: ['x^10'],
-          equations: [{ id: 'eq-x10', expression: 'x^10', color: '#8b5cf6', visible: true }],
-          bounds: { xMin: -2, xMax: 2, yMin: -2, yMax: 16 },
-          createdAt: Date.now() - 1200000,
-        },
-        {
-          id: 'snap-circle',
-          title: 'Circle: x² + y² = 25',
-          type: 'equation',
-          expressions: ['x^2 + y^2 = 25'],
-          equations: [{ id: 'eq-circle', expression: 'x^2 + y^2 = 25', color: '#10b981', visible: true }],
-          bounds: { xMin: -8, xMax: 8, yMin: -8, yMax: 8 },
-          createdAt: Date.now() - 600000,
-        },
-      ],
+      savedGraphs: [],
 
       saveCurrentGraphSnapshot: (customTitle) => {
         const state = get();

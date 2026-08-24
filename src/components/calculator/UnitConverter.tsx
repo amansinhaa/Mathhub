@@ -15,7 +15,7 @@ export default function UnitConverter() {
   const [category, setCategory] = useState<string>('length');
   const [fromUnit, setFromUnit] = useState<string>('m');
   const [toUnit, setToUnit] = useState<string>('ft');
-  const [inputValue, setInputValue] = useState<string>('1');
+  const [inputValue, setInputValue] = useState<string>('');
   const [outputValue, setOutputValue] = useState<string>('');
   const [currencyRates, setCurrencyRates] = useState<Record<string, number>>({});
   const [isLoadingRates, setIsLoadingRates] = useState<boolean>(false);

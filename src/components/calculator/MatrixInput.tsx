@@ -15,12 +15,12 @@ export default function MatrixInput() {
   const [operation, setOperation] = useState<'add' | 'multiply' | 'determinant' | 'inverse' | 'transpose'>('add');
 
   const [matrixA, setMatrixA] = useState<number[][]>([
-    [1, 2],
-    [3, 4],
+    [0, 0],
+    [0, 0],
   ]);
   const [matrixB, setMatrixB] = useState<number[][]>([
-    [5, 6],
-    [7, 8],
+    [0, 0],
+    [0, 0],
   ]);
 
   const [resultLatex, setResultLatex] = useState<string>('');

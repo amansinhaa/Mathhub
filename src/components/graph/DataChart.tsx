@@ -1,9 +1,25 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { LineChart, ScatterChart, BarChart, AreaChart, Line, Scatter, Bar, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart,
+  ScatterChart,
+  BarChart,
+  AreaChart,
+  Line,
+  Scatter,
+  Bar,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 import { useGraphStore } from '@/stores/graphStore';
 import { linearRegression } from '@/lib/utils/regression';
+import { BarChart3 } from 'lucide-react';
 
 export default function DataChart() {
   const { dataPoints, chartType, regressionType } = useGraphStore();
@@ -13,11 +29,25 @@ export default function DataChart() {
       const res = linearRegression(dataPoints);
       return {
         ...res,
-        data: dataPoints.map(p => ({ x: p.x, yPred: res.predict(p.x) }))
+        data: dataPoints.map((p) => ({ x: p.x, yPred: res.predict(p.x) })),
       };
     }
     return null;
   }, [dataPoints, regressionType]);
+
+  if (dataPoints.length === 0) {
+    return (
+      <div className="w-full h-full min-h-[420px] bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xs border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400">
+        <BarChart3 size={40} className="text-gray-300 dark:text-gray-600 mb-3" />
+        <p className="font-semibold text-gray-800 dark:text-gray-200 text-sm sm:text-base mb-1">
+          No Data Points Entered
+        </p>
+        <p className="text-xs text-[var(--muted)] max-w-sm">
+          Add (X, Y) rows in the Data Table or upload a CSV file on the left to plot your chart.
+        </p>
+      </div>
+    );
+  }
 
   const renderChart = () => {
     switch (chartType) {
@@ -31,7 +61,15 @@ export default function DataChart() {
             <Legend />
             <Scatter name="Data" data={dataPoints} fill="#3b82f6" />
             {regression && (
-              <Line data={regression.data} dataKey="yPred" stroke="#ef4444" dot={false} strokeWidth={2} activeDot={false} legendType="none" />
+              <Line
+                data={regression.data}
+                dataKey="yPred"
+                stroke="#ef4444"
+                dot={false}
+                strokeWidth={2}
+                activeDot={false}
+                legendType="none"
+              />
             )}
           </ScatterChart>
         );
@@ -68,7 +106,14 @@ export default function DataChart() {
             <Legend />
             <Line type="monotone" dataKey="y" stroke="#3b82f6" activeDot={{ r: 8 }} />
             {regression && (
-              <Line data={regression.data} type="linear" dataKey="yPred" stroke="#ef4444" dot={false} strokeWidth={2} />
+              <Line
+                data={regression.data}
+                type="linear"
+                dataKey="yPred"
+                stroke="#ef4444"
+                dot={false}
+                strokeWidth={2}
+              />
             )}
           </LineChart>
         );
@@ -76,7 +121,7 @@ export default function DataChart() {
   };
 
   return (
-    <div className="w-full h-full min-h-[400px] bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="w-full h-full min-h-[400px] bg-white dark:bg-gray-800 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
       <ResponsiveContainer width="100%" height="100%">
         {renderChart()}
       </ResponsiveContainer>
