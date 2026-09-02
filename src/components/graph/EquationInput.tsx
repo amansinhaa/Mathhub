@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
 import { Eye, EyeOff, Trash2, Plus, HelpCircle, X, Info } from 'lucide-react';
-import { SYNTAX_HELP } from '@/lib/math/normalizer';
 import { isImplicitEquation } from '@/lib/math/implicitPlot';
 
 export default function EquationInput() {
@@ -13,50 +12,57 @@ export default function EquationInput() {
   return (
     <div className="flex flex-col space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">Equations to Plot</h3>
+        <h3 className="font-bold text-[#131313] dark:text-white text-xs sm:text-sm font-mono uppercase tracking-wider">
+          Equations ({equations.length})
+        </h3>
         <button
+          type="button"
           onClick={() => setShowHelp(!showHelp)}
-          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg transition-colors ${
+          className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg transition-colors border ${
             showHelp
-              ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300'
-              : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+              ? 'bg-[#5D4037] text-white border-[#795548]'
+              : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
           }`}
           title="Syntax Guide"
         >
-          <HelpCircle size={14} />
+          <HelpCircle size={13} />
           <span>Guide</span>
         </button>
       </div>
 
       {/* Syntax Guide Panel */}
       {showHelp && (
-        <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-xl p-3 text-xs space-y-2 animate-fade-in">
+        <div className="bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-3 text-xs space-y-2 animate-fade-in shadow-xs">
           <div className="flex justify-between items-center mb-1">
-            <span className="font-bold text-blue-800 dark:text-blue-200">
-              📐 Plot Functions & 2D Implicit Curves
+            <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+              Plot Functions & 2D Implicit Curves
             </span>
-            <button onClick={() => setShowHelp(false)} className="text-blue-400 hover:text-blue-600">
+            <button
+              type="button"
+              onClick={() => setShowHelp(false)}
+              className="text-[#757575] hover:text-[#131313] dark:text-[#8D827A] dark:hover:text-white"
+            >
               <X size={14} />
             </button>
           </div>
 
-          <div className="space-y-1 text-blue-800 dark:text-blue-200">
-            <p className="font-semibold text-[11px]">🔵 1. Explicit Functions $y = f(x)$:</p>
+          <div className="space-y-1 text-[#616161] dark:text-[#A19891]">
+            <p className="font-semibold text-[11px] text-[#5D4037] dark:text-[#D7CCC8]">1. Explicit Functions y = f(x):</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px]">
-              <div>• <code className="bg-white dark:bg-gray-800 px-1 rounded">x³ + 3x + 5</code></div>
-              <div>• <code className="bg-white dark:bg-gray-800 px-1 rounded">sin(x)</code> or <code className="bg-white dark:bg-gray-800 px-1 rounded">cos(2x)</code></div>
-              <div>• <code className="bg-white dark:bg-gray-800 px-1 rounded">sqrt(x)</code> or <code className="bg-white dark:bg-gray-800 px-1 rounded">x^(1/3)</code></div>
-              <div>• <code className="bg-white dark:bg-gray-800 px-1 rounded">x² - 4</code></div>
+              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x³ + 3x + 5</code></div>
+              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">sin(x)</code> or <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">cos(2x)</code></div>
+              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">sqrt(x)</code> or <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x^(1/3)</code></div>
+              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x² - 4</code></div>
             </div>
           </div>
 
-          <div className="space-y-1 text-blue-800 dark:text-blue-200 pt-1 border-t border-blue-200 dark:border-blue-800/50">
-            <p className="font-semibold text-[11px]">🟢 2. Implicit 2D Curves $F(x, y) = 0$:</p>
+          <div className="space-y-1 text-[#616161] dark:text-[#A19891] pt-1 border-t border-[#E0E0E0] dark:border-[#2E2825]">
+            <p className="font-semibold text-[11px] text-[#5D4037] dark:text-[#D7CCC8]">2. Implicit 2D Curves F(x, y) = 0:</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px]">
-              <div>• <strong>Circle:</strong> <code className="bg-white dark:bg-gray-800 px-1 rounded">x² + y² = 25</code></div>
-              <div>• <strong>Ellipse:</strong> <code className="bg-white dark:bg-gray-800 px-1 rounded">x²/16 + y²/9 = 1</code></div>
-              <div>• <strong>Hyperbola:</strong> <code className="bg-white dark:bg-gray-800 px-1 rounded">x² - y² = 4</code></div>
-              <div>• <strong>Parabola:</strong> <code className="bg-white dark:bg-gray-800 px-1 rounded">y² = 4x</code></div>
+              <div>• Circle: <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x² + y² = 25</code></div>
+              <div>• Ellipse: <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x²/16 + y²/9 = 1</code></div>
+              <div>• Hyperbola: <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x² - y² = 4</code></div>
+              <div>• Parabola: <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">y² = 4x</code></div>
             </div>
           </div>
         </div>
@@ -71,10 +77,10 @@ export default function EquationInput() {
 
         return (
           <div key={eq.id} className="space-y-1">
-            <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-900/50 p-2.5 rounded-xl border border-[var(--card-border)]">
+            <div className="flex items-center space-x-2 bg-[#F5F5F5] dark:bg-[#131313] p-2 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] transition-colors">
               {/* Color pill */}
               <div
-                className="w-4 h-4 rounded-full flex-shrink-0 cursor-pointer shadow-sm"
+                className="w-4 h-4 rounded-full shrink-0 cursor-pointer shadow-xs"
                 style={{
                   backgroundColor: eq.visible ? eq.color : 'transparent',
                   border: `2px solid ${eq.color}`,
@@ -85,16 +91,16 @@ export default function EquationInput() {
               />
 
               {/* Equation Input */}
-              <div className="flex-grow flex items-center bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-[var(--card-border)]">
-                <span className="text-gray-400 dark:text-gray-500 font-mono text-xs mr-1.5 select-none font-semibold">
+              <div className="flex-1 flex items-center bg-white dark:bg-[#1B1B1B] px-2.5 py-1.5 rounded-lg border border-[#E0E0E0] dark:border-[#332D2A]">
+                <span className="text-[#5D4037] dark:text-[#8D827A] font-mono text-xs mr-1.5 select-none font-semibold">
                   {isImplicit ? '2D:' : 'f(x)='}
                 </span>
                 <input
                   type="text"
                   value={eq.expression}
                   onChange={(e) => updateEquation(eq.id, e.target.value)}
-                  className="bg-transparent border-none outline-none w-full font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400"
-                  placeholder="e.g. x² + y² = 25, sin(x), x³ + 3x + 5"
+                  className="bg-transparent border-none outline-none w-full font-mono text-xs sm:text-sm text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
+                  placeholder="e.g. x² + y² = 25, sin(x)"
                 />
               </div>
 
@@ -103,8 +109,8 @@ export default function EquationInput() {
                 <span
                   className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
                     isImplicit
-                      ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'
-                      : 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                      ? 'bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50'
+                      : 'bg-white text-[#757575] border border-[#E0E0E0] dark:bg-[#24201E] dark:text-[#BCAAA4] dark:border-[#3E2723]'
                   }`}
                   title={isImplicit ? 'Implicit 2D curve F(x, y) = 0' : 'Explicit function y = f(x)'}
                 >
@@ -114,34 +120,37 @@ export default function EquationInput() {
 
               {/* Visibility toggle button */}
               <button
+                type="button"
                 onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
-                className="text-gray-400 hover:text-blue-500 p-1 transition-colors"
+                className="text-[#757575] hover:text-[#131313] dark:text-[#8D827A] dark:hover:text-white p-1 transition-colors"
                 title={eq.visible ? 'Hide' : 'Show'}
               >
-                {eq.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+                {eq.visible ? <Eye size={15} /> : <EyeOff size={15} />}
               </button>
 
               {/* Delete button */}
               <button
+                type="button"
                 onClick={() => removeEquation(eq.id)}
-                className="text-gray-400 hover:text-red-500 p-1 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="text-[#757575] hover:text-red-500 dark:text-[#8D827A] dark:hover:text-[#FFAB91] p-1 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 disabled={equations.length === 1}
                 title="Remove"
               >
-                <Trash2 size={16} />
+                <Trash2 size={15} />
               </button>
             </div>
 
             {/* Smart tip if user typed x^2 + y^2 without an = value */}
             {needsConstant && (
-              <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 rounded-lg text-[11px] text-blue-700 dark:text-blue-300">
+              <div className="flex items-center justify-between px-3 py-1.5 bg-[#EFEBE9] dark:bg-[#1B1B1B] border border-[#D7CCC8] dark:border-[#5D4037]/50 rounded-lg text-[11px] text-[#5D4037] dark:text-[#D7CCC8]">
                 <div className="flex items-center gap-1.5">
                   <Info size={12} className="shrink-0" />
                   <span>Tip: Set circle radius (e.g. <code className="font-bold">x² + y² = 25</code>)</span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => updateEquation(eq.id, `${eq.expression.trim()} = 25`)}
-                  className="px-2 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold"
+                  className="px-2 py-0.5 bg-[#5D4037] hover:bg-[#6D4C41] text-white rounded text-[10px] font-bold"
                 >
                   Set = 25
                 </button>
@@ -153,11 +162,12 @@ export default function EquationInput() {
 
       {equations.length < 8 && (
         <button
+          type="button"
           onClick={addEquation}
-          className="mt-2 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 w-fit transition-colors"
+          className="mt-1 text-xs font-mono font-semibold text-[#5D4037] hover:text-white bg-[#F5F5F5] hover:bg-[#5D4037] dark:bg-[#131313] dark:hover:bg-[#262220] dark:text-[#D7CCC8] dark:hover:text-white border border-[#E0E0E0] dark:border-[#2E2825] flex items-center gap-1 py-1.5 px-3 rounded-xl w-fit transition-all active:scale-95 shadow-2xs"
         >
-          <Plus size={14} />
-          <span>Add Equation</span>
+          <Plus size={13} />
+          <span>Add Function</span>
         </button>
       )}
     </div>

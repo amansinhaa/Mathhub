@@ -17,33 +17,48 @@ export default function CategoryFilter({ groups, activeCategory, onSelect }: Cat
       <button
         type="button"
         onClick={() => onSelect('all')}
-        className={`flex-shrink-0 flex items-center justify-between px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors min-h-[36px] ${
+        className={`shrink-0 flex items-center justify-between px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[36px] border ${
           activeCategory === 'all'
-            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+            : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
         }`}
         aria-label="All Formulas"
       >
         <span>All Formulas</span>
-        <span className="ml-2 bg-gray-200 dark:bg-gray-700 text-[11px] px-2 py-0.5 rounded-full">{totalCount}</span>
+        <span
+          className={`ml-2 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+            activeCategory === 'all' ? 'bg-[#3E2723] text-white' : 'bg-white text-[#5D4037] border border-[#E0E0E0] dark:bg-[#131313] dark:text-[#8D827A] dark:border-[#2E2825]'
+          }`}
+        >
+          {totalCount}
+        </span>
       </button>
 
-      {groups.map((group) => (
-        <button
-          key={group.category}
-          type="button"
-          onClick={() => onSelect(group.category)}
-          className={`flex-shrink-0 flex items-center justify-between px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors min-h-[36px] ${
-            activeCategory === group.category
-              ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-semibold shadow-2xs'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-          }`}
-          aria-label={`Category ${group.label}`}
-        >
-          <span>{group.label}</span>
-          <span className="ml-2 bg-gray-200 dark:bg-gray-700 text-[11px] px-2 py-0.5 rounded-full">{group.count}</span>
-        </button>
-      ))}
+      {groups.map((group) => {
+        const isActive = activeCategory === group.category;
+        return (
+          <button
+            key={group.category}
+            type="button"
+            onClick={() => onSelect(group.category)}
+            className={`shrink-0 flex items-center justify-between px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[36px] border ${
+              isActive
+                ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+                : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
+            }`}
+            aria-label={`Category ${group.label}`}
+          >
+            <span>{group.label}</span>
+            <span
+              className={`ml-2 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                isActive ? 'bg-[#3E2723] text-white' : 'bg-white text-[#5D4037] border border-[#E0E0E0] dark:bg-[#131313] dark:text-[#8D827A] dark:border-[#2E2825]'
+              }`}
+            >
+              {group.count}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -5,6 +5,8 @@
  * - Support sqrt, cbrt shorthand
  * - Support common symbols (×, ÷, −, π)
  * - Validate for multi-variable expressions (y in an f(x) context)
+ * - Auto-balance parentheses
+ * - Auto-interpret expressions without = as = 0
  */
 
 /** Map of Unicode superscript characters to their digit values. */
@@ -25,6 +27,7 @@ const SUBSCRIPT_MAP: Record<string, string> = {
  * - Unicode superscripts → ^n
  * - Unicode math symbols → ASCII equivalents
  * - Common shorthand expansions
+ * - Implicit multiplication (4t, x(, )(, )2)
  */
 export function normalizeExpression(input: string): string {
   let expr = input.trim();
@@ -67,17 +70,109 @@ export function normalizeExpression(input: string): string {
     expr = expr.replace(new RegExp(sub, 'g'), digit);
   }
 
-  // 4. Handle implicit multiplication: "2x" → "2*x", "x(..." → "x*("
-  // Letter preceded by digit: 3x → 3*x
+  // 4. Handle implicit multiplication
+  // Known function names to preserve before opening parenthesis
+  const reservedFuncs = [
+    'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh',
+    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs',
+    'ceil', 'floor', 'round', 'sign', 'min', 'max',
+    'nthRoot', 'pow', 'mod'
+  ];
+
+  // Digit followed by letter: 3x → 3*x
   expr = expr.replace(/(\d)([a-zA-Z])/g, '$1*$2');
-  // Closing paren followed by letter or opening paren: )(  → )*(
+
+  // Letter followed by opening paren (exclude known function names like sin(, cos(, etc.)
+  // Match a word preceding '(' and check if it's a known function
+  expr = expr.replace(/\b([a-zA-Z]+)\s*\(/g, (match, word) => {
+    if (reservedFuncs.includes(word.toLowerCase())) {
+      return `${word}(`;
+    }
+    // E.g. x(x+1) -> x*(x+1) or 2a(b) -> 2a*(b)
+    return `${word}*(`;
+  });
+
+  // Closing paren followed by letter or opening paren: )(  → )*(, )x → )*x
   expr = expr.replace(/\)([a-zA-Z(])/g, ')*$1');
+  // Closing paren followed by digit: )2 → )*2
+  expr = expr.replace(/\)(\d)/g, ')*$1');
+  // Digit followed by opening paren: 2(x+1) → 2*(x+1)
+  expr = expr.replace(/(\d)(\()/g, '$1*$2');
 
   // 5. Replace common function shorthand
   // "√(expr)" is already handled by step 1 (√ → sqrt)
   // "cbrt(expr)" works natively in mathjs
 
   return expr;
+}
+
+/**
+ * Auto-balance unmatched parentheses by appending or prepending as needed.
+ */
+export function autoBalanceParens(expr: string): string {
+  if (!expr) return expr;
+
+  let depth = 0;
+  let prependCount = 0;
+
+  for (const ch of expr) {
+    if (ch === '(') {
+      depth++;
+    } else if (ch === ')') {
+      if (depth > 0) {
+        depth--;
+      } else {
+        // Unmatched closing paren
+        prependCount++;
+      }
+    }
+  }
+
+  // depth = unmatched opening parens → append closing
+  // prependCount = unmatched closing parens → prepend opening
+  return '('.repeat(prependCount) + expr + ')'.repeat(depth);
+}
+
+/**
+ * Auto-interpret an expression without an = sign as = 0.
+ * Returns the (possibly modified) expression and metadata about interpretation.
+ */
+export function autoInterpretEquals(expr: string): {
+  expr: string;
+  interpreted: boolean;
+  interpretedAs?: string;
+} {
+  const trimmed = expr.trim();
+  if (!trimmed) return { expr: trimmed, interpreted: false };
+
+  // If there's already an = sign, no interpretation needed
+  if (trimmed.includes('=')) {
+    return { expr: trimmed, interpreted: false };
+  }
+
+  // Check if it contains a variable (not just a number)
+  const reserved = new Set([
+    'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh',
+    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs',
+    'ceil', 'floor', 'round', 'sign', 'min', 'max',
+    'pi', 'PI', 'e', 'i',
+    'nthRoot', 'pow', 'mod',
+  ]);
+
+  const tokens = trimmed.match(/[a-zA-Z]+/g) || [];
+  const hasVariable = tokens.some(tok => tok.length === 1 && !reserved.has(tok));
+
+  if (!hasVariable) {
+    return { expr: trimmed, interpreted: false };
+  }
+
+  return {
+    expr: `${trimmed} = 0`,
+    interpreted: true,
+    interpretedAs: `${trimmed} = 0`,
+  };
 }
 
 /**
@@ -125,4 +220,5 @@ export const SYNTAX_HELP = [
   { input: 'abs(x)', description: 'absolute value' },
   { input: 'pi  or  π', description: '3.14159...' },
   { input: '2x  →  2*x', description: 'implicit multiplication' },
+  { input: '(x+1)(x-1)', description: 'auto-multiplied' },
 ];

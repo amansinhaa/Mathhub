@@ -12,6 +12,16 @@ export type FormulaCategory =
   | 'numberTheory'
   | 'setsAndFunctions';
 
+/** Curriculum / educational level filter */
+export type CurriculumLevel = 'all' | 'class10' | 'class12' | 'higher_ed';
+
+export const CURRICULUM_LABELS: Record<CurriculumLevel, string> = {
+  all: 'All Levels',
+  class10: 'Class 10 / GCSE',
+  class12: 'Class 12 / A-Level',
+  higher_ed: 'Higher Education / Calculus',
+};
+
 /** Human-readable labels for each category. */
 export const CATEGORY_LABELS: Record<FormulaCategory, string> = {
   algebra: 'Algebra',
@@ -41,6 +51,8 @@ export interface FormulaEntry {
   category: FormulaCategory;
   /** Searchable keywords/tags */
   tags: string[];
+  /** Optional: curriculum level */
+  level?: 'class10' | 'class12' | 'higher_ed';
   /** Optional: expression that can be loaded into the calculator */
   calculatorExpression?: string;
   /** Optional: equation that can be loaded into the solver */

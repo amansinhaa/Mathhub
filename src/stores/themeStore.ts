@@ -16,7 +16,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: null,
+      theme: 'light',
       setTheme: (theme: Theme) => set({ theme }),
       toggleTheme: () => {
         const current = get().theme;

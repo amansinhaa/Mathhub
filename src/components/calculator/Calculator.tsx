@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Display from './Display';
 import Keypad from './Keypad';
 import HistoryPanel from './HistoryPanel';
@@ -11,6 +12,20 @@ import MatrixInput from './MatrixInput';
 import { useCalculatorStore } from '@/stores/calculatorStore';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { FlaskConical, History, Calculator as CalcIcon, ArrowRightLeft, Grid3X3, X } from 'lucide-react';
+
+function CalculatorQuerySync() {
+  const searchParams = useSearchParams();
+  const { setExpression } = useCalculatorStore();
+
+  useEffect(() => {
+    const formula = searchParams.get('formula') || searchParams.get('expr');
+    if (formula) {
+      setExpression(formula);
+    }
+  }, [searchParams, setExpression]);
+
+  return null;
+}
 
 export default function Calculator() {
   const [activeTab, setActiveTab] = useState<'calc' | 'units' | 'matrix'>('calc');
@@ -56,32 +71,43 @@ export default function Calculator() {
   }, [activeTab, appendToExpression, evaluate, clear, clearEntry]);
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-6.5rem)] lg:h-[calc(100dvh-3rem)] max-h-[100dvh] overflow-hidden justify-between animate-fade-in">
-      {/* Top Header Bar */}
-      <header className="flex items-center justify-between gap-2 pb-1.5 shrink-0">
-        <div>
-          <h1 className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-xl sm:text-2xl font-bold text-transparent">
-            Scientific Calculator
-          </h1>
-          <p className="text-[11px] sm:text-xs text-[var(--muted)] hidden sm:block">
-            Trigonometry, complex numbers, matrices, and unit conversions
-          </p>
+    <div className="flex flex-col h-[calc(100dvh-6.5rem)] lg:h-[calc(100dvh-3.2rem)] max-h-[100dvh] overflow-hidden justify-between animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
+      <Suspense fallback={null}>
+        <CalculatorQuerySync />
+      </Suspense>
+      {/* Top App Bar — Material 3 / Instrument-Grade Header */}
+      <header className="flex items-center justify-between gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+                Scientific Workspace
+              </h1>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
+                PRO
+              </span>
+            </div>
+            <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block">
+              Precision arithmetic, trigonometry, matrices, and conversions
+            </p>
+          </div>
         </div>
 
+        {/* Action Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {activeTab === 'calc' && (
             <button
               type="button"
               onClick={toggleScientificMode}
-              className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs font-semibold transition-all duration-150 ${
+              className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs font-semibold transition-all duration-150 border ${
                 isScientificMode
-                  ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                  ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+                  : 'bg-white text-[#616161] border-[#E0E0E0] hover:bg-[#F5F5F5] hover:text-[#131313] dark:bg-[#1B1B1B] dark:text-[#D7CCC8] dark:border-[#2E2825] dark:hover:bg-[#2A2827]'
               }`}
               title={isScientificMode ? 'Standard Mode' : 'Scientific Mode'}
               aria-label={isScientificMode ? 'Switch to Standard Mode' : 'Switch to Scientific Mode'}
             >
-              <FlaskConical size={15} />
+              <FlaskConical size={14} />
               <span className="hidden xs:inline">{isScientificMode ? 'Scientific' : 'Standard'}</span>
             </button>
           )}
@@ -90,30 +116,30 @@ export default function Calculator() {
             <button
               type="button"
               onClick={() => setShowHistory(!showHistory)}
-              className={`rounded-xl p-2 sm:p-2.5 transition-all duration-150 lg:hidden ${
+              className={`rounded-xl p-2 sm:p-2.5 transition-all duration-150 lg:hidden border ${
                 showHistory
-                  ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300'
-                  : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+                  ? 'bg-[#5D4037] text-white border-[#795548]'
+                  : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#2A2827]'
               }`}
               title="History"
               aria-label="Toggle Calculation History"
             >
-              <History size={18} />
+              <History size={16} />
             </button>
           )}
           <ThemeToggle />
         </div>
       </header>
 
-      {/* Mode Sub-Tabs */}
-      <div className="flex gap-1.5 sm:gap-2 border-b border-[var(--card-border)] pb-1.5 mb-2 shrink-0 overflow-x-auto scrollbar-none">
+      {/* Mode Sub-Tabs (Pill Strip) */}
+      <div className="flex gap-1.5 sm:gap-2 pt-2 pb-1 shrink-0 overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setActiveTab('calc')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-colors shrink-0 ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 border ${
             activeTab === 'calc'
-              ? 'bg-blue-500 text-white shadow-xs'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+              : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
           }`}
           aria-label="Calculator Mode"
         >
@@ -123,10 +149,10 @@ export default function Calculator() {
         <button
           type="button"
           onClick={() => setActiveTab('units')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-colors shrink-0 ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 border ${
             activeTab === 'units'
-              ? 'bg-blue-500 text-white shadow-xs'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+              : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
           }`}
           aria-label="Unit Converter Mode"
         >
@@ -136,10 +162,10 @@ export default function Calculator() {
         <button
           type="button"
           onClick={() => setActiveTab('matrix')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-colors shrink-0 ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 border ${
             activeTab === 'matrix'
-              ? 'bg-blue-500 text-white shadow-xs'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+              : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
           }`}
           aria-label="Matrix Calculator Mode"
         >
@@ -148,10 +174,10 @@ export default function Calculator() {
         </button>
       </div>
 
-      {/* Main Tab Content */}
+      {/* Main Dual-Pane / Workspace Content Area */}
       {activeTab === 'calc' && (
-        <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 flex-1 min-h-0 h-full overflow-hidden">
-          {/* Main Calculator Area - Fixed Viewport Fit */}
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-5 flex-1 min-h-0 h-full overflow-hidden pt-1">
+          {/* Left Pane (Input / Tactile Keypad) */}
           <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
             {/* Display */}
             <Display />
@@ -168,21 +194,21 @@ export default function Calculator() {
             </div>
           </div>
 
-          {/* History Panel (Desktop Sidebar) */}
-          <div className="hidden w-72 xl:w-80 lg:flex flex-col min-h-0 h-full overflow-y-auto">
+          {/* Right Pane (Output / Visual / History Log) */}
+          <div className="hidden w-80 xl:w-96 lg:flex flex-col min-h-0 h-full overflow-hidden">
             <HistoryPanel />
           </div>
         </div>
       )}
 
       {activeTab === 'units' && (
-        <div className="max-w-3xl mx-auto flex-1 overflow-y-auto w-full py-2">
+        <div className="max-w-4xl mx-auto flex-1 overflow-y-auto w-full py-2">
           <UnitConverter />
         </div>
       )}
 
       {activeTab === 'matrix' && (
-        <div className="max-w-3xl mx-auto flex-1 overflow-y-auto w-full py-2">
+        <div className="max-w-4xl mx-auto flex-1 overflow-y-auto w-full py-2">
           <MatrixInput />
         </div>
       )}
@@ -194,13 +220,13 @@ export default function Calculator() {
             className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
             onClick={() => setShowHistory(false)}
           />
-          <div className="fixed bottom-0 left-0 right-0 z-50 max-h-[70dvh] animate-slide-up overflow-y-auto rounded-t-2xl border-t border-[var(--card-border)] bg-[var(--background)] p-4 lg:hidden shadow-2xl">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Calculation History</h3>
+          <div className="fixed bottom-0 left-0 right-0 z-50 max-h-[70dvh] animate-slide-up overflow-y-auto rounded-t-3xl border-t border-[#E0E0E0] dark:border-[#3E2723] bg-white dark:bg-[#1B1B1B] p-4 lg:hidden shadow-2xl">
+            <div className="mb-3 flex items-center justify-between pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+              <h3 className="font-semibold text-sm text-[#131313] dark:text-white">Calculation History</h3>
               <button
                 type="button"
                 onClick={() => setShowHistory(false)}
-                className="p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                className="p-1.5 text-[#616161] hover:bg-[#F5F5F5] hover:text-[#131313] dark:text-[#A19891] dark:hover:bg-[#2A2827] dark:hover:text-white rounded-lg transition-colors"
                 aria-label="Close History"
               >
                 <X size={18} />

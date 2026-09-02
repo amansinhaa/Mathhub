@@ -1,13 +1,13 @@
 {
-  "name": "MathHub",
-  "short_name": "MathHub",
-  "description": "All-round mathematics workspace: calculator, equation solver, graphing tool, and formula reference library.",
+  "name": "EasyEquate",
+  "short_name": "EasyEquate",
+  "description": "All-in-one mathematics and graphing studio: scientific calculator, step-by-step equation solver, 2D function plotter, and formula library.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f0f1a",
-  "theme_color": "#3b82f6",
+  "background_color": "#131313",
+  "theme_color": "#5D4037",
   "orientation": "portrait-primary",
-  "categories": ["education", "utilities"],
+  "categories": ["education", "utilities", "productivity"],
   "icons": [
     {
       "src": "/icons/icon-192.svg",

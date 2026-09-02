@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
+import { useSearchParams } from 'next/navigation';
 import {
   generatePlotData,
   generateNiceTicks,
@@ -9,6 +10,10 @@ import {
   pointsToSvgPath,
   findVerticalAsymptotes,
   parseExpression,
+  isPiecewiseExpression,
+  parsePiecewiseBranches,
+  extractPiecewiseEndpoints,
+  PiecewiseEndpoint,
 } from '@/lib/math/graphData';
 import {
   isImplicitEquation,
@@ -64,9 +69,35 @@ export default function FunctionPlotter() {
     setYScale,
     chartTitle,
     setChartTitle,
+    updateEquation,
     autoFitView,
     pan,
   } = useGraphStore();
+
+  const searchParams = useSearchParams();
+  const [highlightedRoots, setHighlightedRoots] = useState<number[]>([]);
+
+  // Synchronize URL parameters (e.g. from Solver or Formulas quick launch)
+  useEffect(() => {
+    const fn = searchParams.get('fn') || searchParams.get('eq');
+    if (fn) {
+      const firstEq = useGraphStore.getState().equations[0];
+      if (firstEq && firstEq.expression !== fn) {
+        updateEquation(firstEq.id, fn, true);
+      }
+    }
+
+    const rootsParam = searchParams.get('roots');
+    if (rootsParam) {
+      const parsed = rootsParam.split(',').map(Number).filter((n) => !isNaN(n) && isFinite(n));
+      setHighlightedRoots((prev) => {
+        if (prev.length === parsed.length && prev.every((v, i) => v === parsed[i])) {
+          return prev;
+        }
+        return parsed;
+      });
+    }
+  }, [searchParams, updateEquation]);
 
   const [hoveredEqId, setHoveredEqId] = useState<string | null>(null);
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -114,8 +145,21 @@ export default function FunctionPlotter() {
 
   useEffect(() => {
     updateDims();
+    const el = chartContainerRef.current;
+    if (!el) return;
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        updateDims();
+      });
+      ro.observe(el);
+    }
     window.addEventListener('resize', updateDims);
-    return () => window.removeEventListener('resize', updateDims);
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', updateDims);
+    };
   }, [updateDims]);
 
   // Keep a ref to bounds for non-passive touch listeners
@@ -410,6 +454,9 @@ export default function FunctionPlotter() {
         pathD,
         asymptotes: asyms,
         labelPoint,
+        piecewiseEndpoints: isPiecewiseExpression(eq.expression)
+          ? extractPiecewiseEndpoints(parsePiecewiseBranches(eq.expression))
+          : [],
       };
     });
   }, [explicitEquations, bounds, plotBox, yScale, toPxX, toPxY]);
@@ -774,11 +821,11 @@ export default function FunctionPlotter() {
   };
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 text-[#131313] dark:text-[#F5F5F5]">
       {/* Chart Canvas Card */}
-      <div className="w-full bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-5 shadow-sm border border-[var(--card-border)] flex flex-col min-h-[560px] relative">
+      <div className="w-full bg-white dark:bg-[#1B1B1B] rounded-2xl p-4 sm:p-5 shadow-sm border border-[#E0E0E0] dark:border-[#2E2825] flex flex-col min-h-[560px] relative transition-colors">
         {/* Editable Chart Title Bar */}
-        <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-[var(--card-border)]/60">
+        <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
           {isEditingTitle ? (
             <div className="flex items-center gap-2 flex-1 max-w-md">
               <input
@@ -787,12 +834,13 @@ export default function FunctionPlotter() {
                 onChange={(e) => setTempTitle(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
                 autoFocus
-                className="math-input py-1 px-2.5 text-base font-bold flex-1"
+                className="math-input py-1 px-2.5 text-base font-bold flex-1 bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                 placeholder="Enter chart title..."
               />
               <button
+                type="button"
                 onClick={handleSaveTitle}
-                className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs"
+                className="p-1.5 bg-[#5D4037] hover:bg-[#6D4C41] text-white rounded-lg text-xs shadow-xs"
                 title="Save Title"
               >
                 <Check size={14} />
@@ -800,12 +848,12 @@ export default function FunctionPlotter() {
             </div>
           ) : (
             <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
-              <h2 className="font-bold text-gray-800 dark:text-gray-100 text-base sm:text-lg select-none">
+              <h2 className="font-bold text-[#131313] dark:text-white text-base sm:text-lg select-none">
                 {chartTitle}
               </h2>
               <Pencil
                 size={13}
-                className="text-gray-400 group-hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-[#757575] group-hover:text-[#5D4037] dark:text-[#8D827A] dark:group-hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
               />
             </div>
           )}
@@ -813,60 +861,68 @@ export default function FunctionPlotter() {
           {/* Controls Bar */}
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
             {/* Zoom / Pan Group */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
+            <div className="flex items-center bg-[#F5F5F5] dark:bg-[#131313] rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825]">
               <button
+                type="button"
                 onClick={() => zoomIn()}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
-                title="Zoom In (Centered on Origin/Cursor)"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
+                title="Zoom In"
               >
                 <ZoomIn size={14} />
               </button>
               <button
+                type="button"
                 onClick={() => zoomOut()}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Zoom Out"
               >
                 <ZoomOut size={14} />
               </button>
               <button
+                type="button"
                 onClick={() => pan('left')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Pan Left"
               >
                 <ChevronLeft size={14} />
               </button>
               <button
+                type="button"
                 onClick={() => pan('right')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Pan Right"
               >
                 <ChevronRight size={14} />
               </button>
               <button
+                type="button"
                 onClick={() => pan('up')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Pan Up"
               >
                 <ChevronUp size={14} />
               </button>
               <button
+                type="button"
                 onClick={() => pan('down')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Pan Down"
               >
                 <ChevronDown size={14} />
               </button>
               <button
+                type="button"
                 onClick={autoFitView}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-blue-600 dark:text-blue-400 text-xs font-semibold transition-colors"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white text-xs font-semibold transition-colors"
                 title="4-Quadrant Auto-Fit View"
               >
                 <Maximize2 size={13} />
                 <span>Auto-Fit</span>
               </button>
               <button
+                type="button"
                 onClick={resetBounds}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Reset to 4-Quadrant View [-8, 8]"
               >
                 <RotateCcw size={14} />
@@ -874,25 +930,27 @@ export default function FunctionPlotter() {
             </div>
 
             {/* Line Labels & Quadrants & 1:1 Aspect Ratio & Asymptotes Toggles */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
+            <div className="flex items-center bg-[#F5F5F5] dark:bg-[#131313] rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825]">
               <button
+                type="button"
                 onClick={handleToggleSquareAspect}
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                   isSquareAspect
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white shadow-xs'
+                    : 'text-[#616161] hover:text-[#131313] hover:bg-white dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
-                title="Lock 1:1 Aspect Ratio (Perfect Circle & Isometric Grid)"
+                title="Lock 1:1 Aspect Ratio"
               >
                 <Scale size={12} />
-                <span>1:1 Ratio</span>
+                <span>1:1</span>
               </button>
               <button
+                type="button"
                 onClick={() => setShowLineLabels(!showLineLabels)}
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                   showLineLabels
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white shadow-xs'
+                    : 'text-[#616161] hover:text-[#131313] hover:bg-white dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
                 title="Toggle On-Chart Line Labels"
               >
@@ -900,23 +958,25 @@ export default function FunctionPlotter() {
                 <span>Labels</span>
               </button>
               <button
+                type="button"
                 onClick={() => setShowQuadrants(!showQuadrants)}
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                   showQuadrants
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white shadow-xs'
+                    : 'text-[#616161] hover:text-[#131313] hover:bg-white dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
                 title="Toggle 4 Quadrant Indicators"
               >
                 <Grid size={12} />
-                <span>4 Quadrants</span>
+                <span>Quadrants</span>
               </button>
               <button
+                type="button"
                 onClick={() => setShowAsymptotes(!showAsymptotes)}
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-all ${
                   showAsymptotes
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white shadow-xs'
+                    : 'text-[#616161] hover:text-[#131313] hover:bg-white dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
                 title="Toggle Dashed Vertical Asymptote Guide Lines"
               >
@@ -926,23 +986,25 @@ export default function FunctionPlotter() {
             </div>
 
             {/* Linear / Log Toggle */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-900 p-0.5 rounded-xl border border-[var(--card-border)]">
+            <div className="flex items-center bg-[#F5F5F5] dark:bg-[#131313] p-0.5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825]">
               <button
+                type="button"
                 onClick={() => setYScale('linear')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                   yScale === 'linear'
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white shadow-xs font-bold'
+                    : 'text-[#616161] hover:text-[#131313] hover:bg-white dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
               >
                 Linear
               </button>
               <button
+                type="button"
                 onClick={() => setYScale('log')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
                   yScale === 'log'
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white shadow-xs font-bold'
+                    : 'text-[#616161] hover:text-[#131313] hover:bg-white dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
               >
                 <Sparkles size={11} />
@@ -952,11 +1014,12 @@ export default function FunctionPlotter() {
 
             {/* Range adjustment toggle */}
             <button
+              type="button"
               onClick={() => setShowRangeInputs(!showRangeInputs)}
-              className={`p-1.5 rounded-xl border border-[var(--card-border)] transition-colors ${
+              className={`p-1.5 rounded-xl border transition-colors ${
                 showRangeInputs
-                  ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300'
-                  : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400'
+                  ? 'bg-[#5D4037] text-white border-[#795548]'
+                  : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-white dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#22201F]'
               }`}
               title="Manual Axis Bounds Settings"
             >
@@ -964,17 +1027,19 @@ export default function FunctionPlotter() {
             </button>
 
             {/* Quick Export */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-0.5 border border-[var(--card-border)]">
+            <div className="flex items-center bg-[#F5F5F5] dark:bg-[#131313] rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825]">
               <button
+                type="button"
                 onClick={handleExportPNG}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Download as HD PNG"
               >
                 <Download size={14} />
               </button>
               <button
+                type="button"
                 onClick={handleExportSVG}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Download as Vector SVG"
               >
                 <FileCode size={14} />
@@ -985,58 +1050,58 @@ export default function FunctionPlotter() {
 
         {/* Manual Range Adjustment Expandable Inputs */}
         {showRangeInputs && (
-          <div className="animate-fade-in grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 p-3 bg-gray-50 dark:bg-gray-900/60 rounded-xl border border-[var(--card-border)] text-xs">
+          <div className="animate-fade-in grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 p-3 bg-[#F5F5F5] dark:bg-[#131313] rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] text-xs">
             <div>
-              <label className="text-[var(--muted)] font-mono block mb-1">X Min</label>
+              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">X Min</label>
               <input
                 type="number"
                 value={bounds.xMin}
                 onChange={(e) => setBounds({ ...bounds, xMin: parseFloat(e.target.value) || -1 })}
-                className="math-input py-1 text-xs font-mono"
+                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
               />
             </div>
             <div>
-              <label className="text-[var(--muted)] font-mono block mb-1">X Max</label>
+              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">X Max</label>
               <input
                 type="number"
                 value={bounds.xMax}
                 onChange={(e) => setBounds({ ...bounds, xMax: parseFloat(e.target.value) || 1 })}
-                className="math-input py-1 text-xs font-mono"
+                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
               />
             </div>
             <div>
-              <label className="text-[var(--muted)] font-mono block mb-1">Y Min</label>
+              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">Y Min</label>
               <input
                 type="number"
                 value={bounds.yMin}
                 onChange={(e) => setBounds({ ...bounds, yMin: parseFloat(e.target.value) || -1 })}
-                className="math-input py-1 text-xs font-mono"
+                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
               />
             </div>
             <div>
-              <label className="text-[var(--muted)] font-mono block mb-1">Y Max</label>
+              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">Y Max</label>
               <input
                 type="number"
                 value={bounds.yMax}
                 onChange={(e) => setBounds({ ...bounds, yMax: parseFloat(e.target.value) || 1 })}
-                className="math-input py-1 text-xs font-mono"
+                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
               />
             </div>
           </div>
         )}
 
         {/* Viewport Range Info Badge */}
-        <div className="flex justify-between items-center text-[11px] text-[var(--muted)] px-1 mb-1 font-mono">
+        <div className="flex justify-between items-center text-[10px] text-[#757575] dark:text-[#8D827A] px-1 mb-1 font-mono">
           <span>
-            Origin-Centric 4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}], Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}]
-            {isSquareAspect && ' • 1:1 Aspect Ratio'}
+            4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}], Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}]
+            {isSquareAspect && ' • 1:1 Aspect'}
           </span>
-          <span className="text-blue-500 font-medium">
-            🖐️ Drag to pan • ✌️ Pinch/scroll to cursor-zoom • Hover curve to trace
+          <span className="text-[#5D4037] dark:text-[#A1887F] font-medium hidden sm:inline">
+            Drag to pan • Scroll to zoom • Hover curve to trace
           </span>
         </div>
 
-        {/* Origin-Centric Mathematical SVG Canvas */}
+        {/* Origin-Centric Mathematical SVG Canvas (White Paper Graph in Light Mode) */}
         <div
           ref={chartContainerRef}
           onMouseDown={handleMouseDown}
@@ -1044,13 +1109,13 @@ export default function FunctionPlotter() {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
           style={{ touchAction: 'none' }}
-          className={`flex-1 w-full min-h-[${TOTAL_HEIGHT}px] relative select-none touch-none bg-[#ffffff] dark:bg-[#0b1120] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-inner ${
+          className={`flex-1 w-full min-h-[${TOTAL_HEIGHT}px] relative select-none touch-none bg-white dark:bg-[#131313] rounded-2xl overflow-hidden border border-[#E0E0E0] dark:border-[#2E2825] shadow-inner transition-colors ${
             isMouseDown ? 'cursor-grabbing' : 'cursor-crosshair'
           }`}
         >
           {/* 4 Quadrant Background Watermarks */}
           {showQuadrants && (
-            <div className="absolute inset-0 pointer-events-none grid grid-cols-2 grid-rows-2 select-none z-0 px-12 py-8 opacity-25 dark:opacity-20 font-bold font-mono text-xs text-gray-500">
+            <div className="absolute inset-0 pointer-events-none grid grid-cols-2 grid-rows-2 select-none z-0 px-12 py-8 opacity-25 dark:opacity-20 font-bold font-mono text-xs text-[#9E9E9E] dark:text-[#8D827A]">
               <div className="flex items-start justify-start p-2">
                 <span>Quadrant II (-,+)</span>
               </div>
@@ -1089,6 +1154,7 @@ export default function FunctionPlotter() {
             <g className="grid-lines">
               {/* Minor Vertical Grid Lines */}
               {minorXTicks.map((xVal, i) => {
+                if (Math.abs(xVal) < 1e-6) return null; // Avoid minor grid line near Y-axis
                 const px = toPxX(xVal);
                 if (px < plotBox.left || px > plotBox.left + plotBox.width) return null;
                 return (
@@ -1098,15 +1164,16 @@ export default function FunctionPlotter() {
                     y1={plotBox.top}
                     x2={px}
                     y2={plotBox.top + plotBox.height}
-                    stroke="#f1f5f9"
+                    stroke="#F3F4F6"
+                    className="dark:stroke-[#1E1C1A]"
                     strokeWidth={0.75}
-                    className="dark:stroke-[#172033]"
                   />
                 );
               })}
 
               {/* Minor Horizontal Grid Lines */}
               {minorYTicks.map((yVal, i) => {
+                if (Math.abs(yVal) < 1e-6) return null; // Avoid minor grid line near X-axis
                 const py = toPxY(yVal);
                 if (py < plotBox.top || py > plotBox.top + plotBox.height) return null;
                 return (
@@ -1116,9 +1183,9 @@ export default function FunctionPlotter() {
                     y1={py}
                     x2={plotBox.left + plotBox.width}
                     y2={py}
-                    stroke="#f1f5f9"
+                    stroke="#F3F4F6"
+                    className="dark:stroke-[#1E1C1A]"
                     strokeWidth={0.75}
-                    className="dark:stroke-[#172033]"
                   />
                 );
               })}
@@ -1135,9 +1202,9 @@ export default function FunctionPlotter() {
                     y1={plotBox.top}
                     x2={px}
                     y2={plotBox.top + plotBox.height}
-                    stroke="#e2e8f0"
+                    stroke="#E5E7EB"
+                    className="dark:stroke-[#2C2825]"
                     strokeWidth={1}
-                    className="dark:stroke-[#252f44]"
                   />
                 );
               })}
@@ -1154,9 +1221,9 @@ export default function FunctionPlotter() {
                     y1={py}
                     x2={plotBox.left + plotBox.width}
                     y2={py}
-                    stroke="#e2e8f0"
+                    stroke="#E5E7EB"
+                    className="dark:stroke-[#2C2825]"
                     strokeWidth={1}
-                    className="dark:stroke-[#252f44]"
                   />
                 );
               })}
@@ -1204,35 +1271,35 @@ export default function FunctionPlotter() {
             })}
 
             {/* 2. Central Origin-Centric Coordinate Axes (Desmos-Style Crisp Vectors) */}
-            <g className="central-axes" stroke="#404040" fill="#404040">
+            <g className="central-axes text-[#334155] dark:text-[#cbd5e1]">
               {/* Horizontal X-Axis Line through y = 0 */}
               <line
                 x1={plotBox.left}
                 y1={axisLineY}
                 x2={plotBox.left + plotBox.width}
                 y2={axisLineY}
-                stroke="#404040"
+                stroke="currentColor"
                 strokeWidth={1.5}
-                className="dark:stroke-gray-300"
               />
               {/* Right Arrowhead */}
               <polygon
                 points={`${plotBox.left + plotBox.width + 6},${axisLineY} ${plotBox.left + plotBox.width},${axisLineY - 3.5} ${plotBox.left + plotBox.width},${axisLineY + 3.5}`}
-                fill="#404040"
-                className="dark:fill-gray-300"
+                fill="currentColor"
+                stroke="none"
               />
               {/* Left Arrowhead */}
               <polygon
                 points={`${plotBox.left - 6},${axisLineY} ${plotBox.left},${axisLineY - 3.5} ${plotBox.left},${axisLineY + 3.5}`}
-                fill="#404040"
-                className="dark:fill-gray-300"
+                fill="currentColor"
+                stroke="none"
               />
               {/* X-Axis Label */}
               <text
                 x={plotBox.left + plotBox.width + 14}
                 y={axisLineY + 4}
-                fill="#404040"
-                className="dark:fill-gray-300 font-serif italic text-sm font-bold select-none"
+                fill="currentColor"
+                stroke="none"
+                className="font-serif italic text-sm font-bold select-none"
               >
                 x
               </text>
@@ -1243,29 +1310,29 @@ export default function FunctionPlotter() {
                 y1={plotBox.top + plotBox.height}
                 x2={axisLineX}
                 y2={plotBox.top}
-                stroke="#404040"
+                stroke="currentColor"
                 strokeWidth={1.5}
-                className="dark:stroke-gray-300"
               />
               {/* Top Arrowhead */}
               <polygon
                 points={`${axisLineX},${plotBox.top - 6} ${axisLineX - 3.5},${plotBox.top} ${axisLineX + 3.5},${plotBox.top}`}
-                fill="#404040"
-                className="dark:fill-gray-300"
+                fill="currentColor"
+                stroke="none"
               />
               {/* Bottom Arrowhead */}
               <polygon
                 points={`${axisLineX},${plotBox.top + plotBox.height + 6} ${axisLineX - 3.5},${plotBox.top + plotBox.height} ${axisLineX + 3.5},${plotBox.top + plotBox.height}`}
-                fill="#404040"
-                className="dark:fill-gray-300"
+                fill="currentColor"
+                stroke="none"
               />
               {/* Y-Axis Label */}
               <text
                 x={axisLineX}
                 y={plotBox.top - 12}
                 textAnchor="middle"
-                fill="#404040"
-                className="dark:fill-gray-300 font-serif italic text-sm font-bold select-none"
+                fill="currentColor"
+                stroke="none"
+                className="font-serif italic text-sm font-bold select-none"
               >
                 y
               </text>
@@ -1276,8 +1343,9 @@ export default function FunctionPlotter() {
                   x={originPxX - 8}
                   y={originPxY + 14}
                   textAnchor="end"
-                  fill="#64748b"
-                  className="dark:fill-gray-400 font-mono text-[10.5px] font-semibold select-none"
+                  fill="currentColor"
+                  stroke="none"
+                  className="font-mono text-[10.5px] font-semibold select-none opacity-80"
                 >
                   0
                 </text>
@@ -1296,17 +1364,17 @@ export default function FunctionPlotter() {
                       y1={axisLineY - 3.5}
                       x2={px}
                       y2={axisLineY + 3.5}
-                      stroke="#404040"
+                      stroke="currentColor"
                       strokeWidth={1.2}
-                      className="dark:stroke-gray-400"
                     />
                     {/* Tick number directly below axis */}
                     <text
                       x={px}
                       y={axisLineY + 15}
                       textAnchor="middle"
-                      fill="#475569"
-                      className="dark:fill-gray-300 font-mono text-[10px] font-medium select-none"
+                      fill="currentColor"
+                      stroke="none"
+                      className="font-mono text-[10px] font-medium select-none opacity-90"
                     >
                       {formatAxisNumber(xVal)}
                     </text>
@@ -1326,17 +1394,18 @@ export default function FunctionPlotter() {
                       x1={axisLineX - 3.5}
                       y1={py}
                       x2={axisLineX + 3.5}
-                      stroke="#404040"
+                      y2={py}
+                      stroke="currentColor"
                       strokeWidth={1.2}
-                      className="dark:stroke-gray-400"
                     />
                     {/* Tick number directly to the left of axis */}
                     <text
                       x={axisLineX - 7}
                       y={py + 3.5}
                       textAnchor="end"
-                      fill="#475569"
-                      className="dark:fill-gray-300 font-mono text-[10px] font-medium select-none"
+                      fill="currentColor"
+                      stroke="none"
+                      className="font-mono text-[10px] font-medium select-none opacity-90"
                     >
                       {formatAxisNumber(yVal)}
                     </text>
@@ -1376,6 +1445,62 @@ export default function FunctionPlotter() {
                   />
                 ) : null
               )}
+
+              {/* Piecewise Open / Closed Endpoint Markers */}
+              {explicitPaths.flatMap((eq) =>
+                (eq.piecewiseEndpoints || []).map((pt, pIdx) => {
+                  const px = toPxX(pt.x);
+                  const py = toPxY(pt.y);
+                  if (px < plotBox.left - 5 || px > plotBox.left + plotBox.width + 5) return null;
+                  if (py < plotBox.top - 5 || py > plotBox.top + plotBox.height + 5) return null;
+
+                  return (
+                    <circle
+                      key={`pw-endpoint-${eq.id}-${pIdx}`}
+                      cx={px}
+                      cy={py}
+                      r={4.5}
+                      fill={pt.inclusive ? eq.color : '#FFFFFF'}
+                      stroke={eq.color}
+                      strokeWidth={2}
+                      className="dark:fill-[#131313]"
+                    />
+                  );
+                })
+              )}
+
+              {/* Highlighted Roots from Equation Solver (Bridge) */}
+              {highlightedRoots.map((root, rIdx) => {
+                const px = toPxX(root);
+                const py = toPxY(0);
+                if (px < plotBox.left - 10 || px > plotBox.left + plotBox.width + 10) return null;
+                if (py < plotBox.top - 10 || py > plotBox.top + plotBox.height + 10) return null;
+
+                return (
+                  <g key={`root-marker-${rIdx}-${root}`} className="select-none">
+                    <circle cx={px} cy={py} r={9} fill="#5D4037" opacity={0.25} />
+                    <circle cx={px} cy={py} r={5} fill="#5D4037" stroke="#FFFFFF" strokeWidth={2} />
+                    <rect
+                      x={px - 28}
+                      y={py - 24}
+                      width={56}
+                      height={16}
+                      rx={4}
+                      fill="#131313"
+                      className="dark:fill-[#2B2320]"
+                    />
+                    <text
+                      x={px}
+                      y={py - 12}
+                      textAnchor="middle"
+                      fill="#FFFFFF"
+                      className="font-mono text-[9px] font-bold"
+                    >
+                      ({formatAxisNumber(root)}, 0)
+                    </text>
+                  </g>
+                );
+              })}
             </g>
 
             {/* 4. On-Chart Direct Function Callout Badges */}
@@ -1446,21 +1571,23 @@ export default function FunctionPlotter() {
                     strokeWidth={2}
                     className="dark:stroke-gray-900"
                   />
-                  {/* Coordinate Pill Tooltip */}
+                  {/* Coordinate Pill Tooltip (Black with White text for maximum contrast on paper canvas) */}
                   <g transform={`translate(${tipX}, ${tipY})`}>
                     <rect
-                      width={100}
-                      height={22}
-                      rx={6}
-                      fill="#1e293b"
-                      className="dark:fill-gray-100 shadow-lg"
+                      width={104}
+                      height={24}
+                      rx={8}
+                      fill="#131313"
+                      stroke="#000000"
+                      strokeWidth={1}
+                      className="dark:fill-[#1B1B1B] dark:stroke-[#5D4037] shadow-lg"
                     />
                     <text
-                      x={50}
-                      y={15}
+                      x={52}
+                      y={16}
                       textAnchor="middle"
-                      fill="#ffffff"
-                      className="dark:fill-gray-900 font-mono text-[10.5px] font-bold select-none"
+                      fill="#FFFFFF"
+                      className="font-mono text-[10.5px] font-bold select-none"
                     >
                       ({Number(pt.x.toFixed(2))}, {Number(pt.y.toFixed(2))})
                     </text>
@@ -1473,13 +1600,13 @@ export default function FunctionPlotter() {
             {(() => {
               if (!mousePos || snappedPoint || isMouseDown) return null;
               return (
-                <g className="mouse-crosshair pointer-events-none" opacity={0.5}>
+                <g className="mouse-crosshair pointer-events-none" opacity={0.4}>
                   <line
                     x1={mousePos.px}
                     y1={plotBox.top}
                     x2={mousePos.px}
                     y2={plotBox.top + plotBox.height}
-                    stroke="#94a3b8"
+                    stroke="#5D4037"
                     strokeWidth={1}
                     strokeDasharray="3 3"
                   />
@@ -1488,7 +1615,7 @@ export default function FunctionPlotter() {
                     y1={mousePos.py}
                     x2={plotBox.left + plotBox.width}
                     y2={mousePos.py}
-                    stroke="#94a3b8"
+                    stroke="#5D4037"
                     strokeWidth={1}
                     strokeDasharray="3 3"
                   />
@@ -1501,17 +1628,17 @@ export default function FunctionPlotter() {
           {(() => {
             if (!mousePos) return null;
             return (
-              <div className="absolute bottom-3 right-3 pointer-events-none z-30 bg-gray-900/85 dark:bg-gray-100/90 text-white dark:text-gray-900 px-2.5 py-1 rounded-lg text-[11px] font-mono shadow-md border border-gray-700/50 dark:border-gray-300 select-none animate-fade-in">
+              <div className="absolute bottom-3 right-3 pointer-events-none z-30 bg-white/95 text-[#131313] border-[#E0E0E0] dark:bg-[#1B1B1B]/95 dark:text-white px-3 py-1 rounded-xl text-[11px] font-mono shadow-md border dark:border-[#5D4037]/60 select-none animate-fade-in">
                 {snappedPoint ? (
-                  <span className="font-bold flex items-center gap-1">
+                  <span className="font-bold flex items-center gap-1.5">
                     <span
                       className="w-2 h-2 rounded-full inline-block"
                       style={{ backgroundColor: (snappedPoint as SnappedPoint).color }}
                     />
-                    ({Number((snappedPoint as SnappedPoint).x.toFixed(3))}, {Number((snappedPoint as SnappedPoint).y.toFixed(3))})
+                    <span>({Number((snappedPoint as SnappedPoint).x.toFixed(3))}, {Number((snappedPoint as SnappedPoint).y.toFixed(3))})</span>
                   </span>
                 ) : (
-                  <span>
+                  <span className="text-[#5D4037] dark:text-[#D7CCC8]">
                     ({mousePos.x}, {mousePos.y})
                   </span>
                 )}

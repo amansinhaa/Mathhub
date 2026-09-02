@@ -1,4 +1,4 @@
-import { SolutionStep, DivisionDetails } from '@/types/solver';
+import { SolutionStep, DivisionDetails, QuadraticMethod } from '@/types/solver';
 
 /** Format a signed coefficient term for display, handling +/- gracefully. */
 function signedTerm(coeff: number, varPart: string, isFirst: boolean): string {
@@ -386,12 +386,127 @@ function formatQuadraticVerification(
   return `\\text{Check } ${variable} = ${rootStr}: \\; ${substituted.trim()} = ${computed.trim()} = 0 \\;\\checkmark`;
 }
 
-export function generateQuadraticSteps(
+/** Generate Completing the Square steps for quadratic ax^2 + bx + c = 0 */
+export function generateCompletingTheSquareSteps(
   a: number,
   b: number,
   c: number,
   variable: string = 'x'
 ): SolutionStep[] {
+  const steps: SolutionStep[] = [];
+  let stepCount = 1;
+
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Write the quadratic equation in standard form $ax^2 + bx + c = 0$.`,
+    math: `${formatPolynomial([a, b, c], variable)} = 0`,
+  });
+
+  // Step 2: Divide by leading coefficient a if a != 1
+  let bOverA = b / a;
+  let cOverA = c / a;
+  if (Math.abs(a - 1) >= 1e-6) {
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Divide the entire equation by the leading coefficient $a = ${fmt(a)}$ to make it monic ($x^2$).`,
+      math: `${variable}^2 ${bOverA >= 0 ? `+ ${fmt(bOverA)}` : `- ${fmt(Math.abs(bOverA))}`}${variable} ${cOverA >= 0 ? `+ ${fmt(cOverA)}` : `- ${fmt(Math.abs(cOverA))}`} = 0`,
+    });
+  }
+
+  // Step 3: Move constant term to RHS
+  const negCOverA = -cOverA;
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Isolate the variable terms on the left side by subtracting the constant term from both sides.`,
+    math: `${variable}^2 ${bOverA >= 0 ? `+ ${fmt(bOverA)}` : `- ${fmt(Math.abs(bOverA))}`}${variable} = ${fmt(negCOverA)}`,
+  });
+
+  // Step 4: Add (b / 2)^2 to both sides
+  const halfB = bOverA / 2;
+  const halfBSquared = halfB * halfB;
+  const rhsSum = negCOverA + halfBSquared;
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Complete the square: take half of the coefficient of $${variable}$ ($\\frac{${fmt(bOverA)}}{2} = ${fmt(halfB)}$), square it ($(${fmt(halfB)})^2 = ${fmt(halfBSquared)}$), and add it to both sides.`,
+    math: `${variable}^2 ${bOverA >= 0 ? `+ ${fmt(bOverA)}` : `- ${fmt(Math.abs(bOverA))}`}${variable} + ${fmt(halfBSquared)} = ${fmt(negCOverA)} + ${fmt(halfBSquared)} = ${fmt(rhsSum)}`,
+  });
+
+  // Step 5: Express LHS as a binomial squared
+  const halfBSign = halfB >= 0 ? `+ ${fmt(halfB)}` : `- ${fmt(Math.abs(halfB))}`;
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Factor the left-hand side as a perfect square $(x + p)^2$.`,
+    math: `(${variable} ${halfBSign})^2 = ${fmt(rhsSum)}`,
+  });
+
+  // Step 6: Take square root of both sides
+  if (rhsSum >= 0) {
+    const sqrtRhs = Math.sqrt(rhsSum);
+    const x1 = -halfB + sqrtRhs;
+    const x2 = -halfB - sqrtRhs;
+
+    if (Math.abs(rhsSum) < 1e-8) {
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Take the square root of both sides:`,
+        math: `${variable} ${halfBSign} = 0 \\implies ${variable} = ${fmt(-halfB)}`,
+      });
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Verify the solution in the original equation.`,
+        math: formatQuadraticVerification(a, b, c, -halfB, variable),
+      });
+    } else {
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Take the square root of both sides, including both positive and negative roots ($\\pm$):`,
+        math: `${variable} ${halfBSign} = \\pm\\sqrt{${fmt(rhsSum)}} = \\pm ${fmt(sqrtRhs)}`,
+      });
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Solve for $${variable}$ by subtracting $${fmt(halfB)}$:`,
+        math: `${variable}_1 = ${fmt(-halfB)} + ${fmt(sqrtRhs)} = ${fmt(x1)}, \\quad ${variable}_2 = ${fmt(-halfB)} - ${fmt(sqrtRhs)} = ${fmt(x2)}`,
+      });
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Verify both roots in the original equation.`,
+        math: `${formatQuadraticVerification(a, b, c, x1, variable)} \\\\[6pt] ${formatQuadraticVerification(a, b, c, x2, variable)}`,
+      });
+    }
+  } else {
+    const imagPart = Math.sqrt(-rhsSum);
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Take the square root of both sides. Since the right side is negative, the solutions are complex conjugates:`,
+      math: `${variable} ${halfBSign} = \\pm\\sqrt{${fmt(rhsSum)}} = \\pm ${fmt(imagPart)}\\,i`,
+    });
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Isolate $${variable}$ to obtain the complex conjugate roots:`,
+      math: `${variable} = ${fmt(-halfB)} \\pm ${fmt(imagPart)}\\,i`,
+    });
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Verification for complex roots:`,
+      math: `f(${fmt(-halfB)} \\pm ${fmt(imagPart)}i) = 0 \\;\\checkmark`,
+    });
+  }
+
+  return steps;
+}
+
+export function generateQuadraticSteps(
+  a: number,
+  b: number,
+  c: number,
+  variable: string = 'x',
+  method: QuadraticMethod = 'auto'
+): SolutionStep[] {
+  // If specific method requested: Completing the Square
+  if (method === 'completing_square') {
+    return generateCompletingTheSquareSteps(a, b, c, variable);
+  }
+
   const steps: SolutionStep[] = [];
   let stepCount = 1;
 
@@ -404,124 +519,136 @@ export function generateQuadraticSteps(
 
   const delta = b * b - 4 * a * c;
 
-  // ─── PATH 1: Monic Integer Factoring (a = 1) ───────────────────────────
-  if (Math.abs(a - 1) < 1e-6) {
-    const monicFactors = findMonicFactors(b, c);
-    if (monicFactors !== null) {
-      const { m, n } = monicFactors;
-      const x1 = -m;
-      const x2 = -n;
+  // If method is 'auto' or 'factoring', attempt factoring first
+  if (method !== 'formula') {
+    // ─── PATH 1: Monic Integer Factoring (a = 1) ───────────────────────────
+    if (Math.abs(a - 1) < 1e-6) {
+      const monicFactors = findMonicFactors(b, c);
+      if (monicFactors !== null) {
+        const { m, n } = monicFactors;
+        const x1 = -m;
+        const x2 = -n;
 
+        steps.push({
+          stepNumber: stepCount++,
+          explanation: `Find two numbers that multiply to $c = ${fmt(c)}$ and add up to $b = ${fmt(b)}$.`,
+          math: `(${fmt(m)}) \\times (${fmt(n)}) = ${fmt(c)}, \\quad (${fmt(m)}) + (${fmt(n)}) = ${fmt(b)}`,
+        });
+
+        const mSign = m >= 0 ? `+ ${fmt(m)}` : `- ${fmt(Math.abs(m))}`;
+        const nSign = n >= 0 ? `+ ${fmt(n)}` : `- ${fmt(Math.abs(n))}`;
+
+        if (m === n) {
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Write the quadratic expression in factored form (perfect square trinomial).`,
+            math: `(${variable} ${mSign})^2 = 0`,
+          });
+
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Set the factor equal to zero and solve for $${variable}$.`,
+            math: `${variable} ${mSign} = 0 \\implies ${variable} = ${fmt(x1)}`,
+          });
+
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Verify the solution by substituting back into the original equation.`,
+            math: formatQuadraticVerification(a, b, c, x1, variable),
+          });
+        } else {
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Write the quadratic expression in factored form.`,
+            math: `(${variable} ${mSign})(${variable} ${nSign}) = 0`,
+          });
+
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Set each factor equal to zero and solve for $${variable}$.`,
+            math: `${variable} ${mSign} = 0 \\implies ${variable}_1 = ${fmt(x1)} \\quad \\text{or} \\quad ${variable} ${nSign} = 0 \\implies ${variable}_2 = ${fmt(x2)}`,
+          });
+
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Verify each root by substituting back into the original equation.`,
+            math: `${formatQuadraticVerification(a, b, c, x1, variable)} \\\\[6pt] ${formatQuadraticVerification(a, b, c, x2, variable)}`,
+          });
+        }
+
+        return steps;
+      }
+    }
+
+    // ─── PATH 2: Non-Monic AC Factoring Method (a ≠ 1) ──────────────────────
+    if (Math.abs(a - 1) >= 1e-6 && isPerfectSquare(delta)) {
+      const acFactors = findACFactors(a, b, c);
+      if (acFactors !== null) {
+        const { m, n, r1, s1, r2, s2, x1, x2 } = acFactors;
+
+        steps.push({
+          stepNumber: stepCount++,
+          explanation: `Apply the $ac$ factoring method: find two numbers that multiply to $ac = (${fmt(a)})(${fmt(c)}) = ${fmt(a * c)}$ and add up to $b = ${fmt(b)}$.`,
+          math: `(${fmt(m)}) \\times (${fmt(n)}) = ${fmt(a * c)}, \\quad (${fmt(m)}) + (${fmt(n)}) = ${fmt(b)}`,
+        });
+
+        const mSign = m >= 0 ? `+ ${fmt(m)}` : `- ${fmt(Math.abs(m))}`;
+        const nSign = n >= 0 ? `+ ${fmt(n)}` : `- ${fmt(Math.abs(n))}`;
+        const cSign = c >= 0 ? `+ ${fmt(c)}` : `- ${fmt(Math.abs(c))}`;
+
+        const s1Sign = s1 >= 0 ? `+ ${fmt(s1)}` : `- ${fmt(Math.abs(s1))}`;
+        const s2Sign = s2 >= 0 ? `+ ${fmt(s2)}` : `- ${fmt(Math.abs(s2))}`;
+
+        const r1Str = r1 === 1 ? '' : r1 === -1 ? '-' : `${fmt(r1)}`;
+        const r2Str = r2 === 1 ? '' : r2 === -1 ? '-' : `${fmt(r2)}`;
+
+        steps.push({
+          stepNumber: stepCount++,
+          explanation: `Split the middle term $${fmt(b)}${variable}$ into $${fmt(m)}${variable} + (${fmt(n)})${variable}$ and factor by grouping.`,
+          math: `${fmt(a)}${variable}^2 ${mSign}${variable} ${nSign}${variable} ${cSign} = 0 \\implies (${r1Str}${variable} ${s1Sign})(${r2Str}${variable} ${s2Sign}) = 0`,
+        });
+
+        if (Math.abs(x1 - x2) < 1e-6) {
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Set the factor equal to zero and solve for $${variable}$.`,
+            math: `${r1Str}${variable} ${s1Sign} = 0 \\implies ${variable} = ${fmt(x1)}`,
+          });
+
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Verify the solution by substituting back into the original equation.`,
+            math: formatQuadraticVerification(a, b, c, x1, variable),
+          });
+        } else {
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Set each factor equal to zero and solve for $${variable}$.`,
+            math: `(${r1Str}${variable} ${s1Sign}) = 0 \\implies ${variable}_1 = ${fmt(x1)} \\quad \\text{or} \\quad (${r2Str}${variable} ${s2Sign}) = 0 \\implies ${variable}_2 = ${fmt(x2)}`,
+          });
+
+          steps.push({
+            stepNumber: stepCount++,
+            explanation: `Verify each root by substituting back into the original equation.`,
+            math: `${formatQuadraticVerification(a, b, c, x1, variable)} \\\\[6pt] ${formatQuadraticVerification(a, b, c, x2, variable)}`,
+          });
+        }
+
+        return steps;
+      }
+    }
+
+    // If factoring was explicitly requested but impossible over integers
+    if (method === 'factoring') {
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Find two numbers that multiply to $c = ${fmt(c)}$ and add up to $b = ${fmt(b)}$.`,
-        math: `(${fmt(m)}) \\times (${fmt(n)}) = ${fmt(c)}, \\quad (${fmt(m)}) + (${fmt(n)}) = ${fmt(b)}`,
+        explanation: `Check if rational factoring is possible: Discriminant $\\Delta = b^2 - 4ac = (${fmt(b)})^2 - 4(${fmt(a)})(${fmt(c)}) = ${fmt(delta)}$. Since $\\Delta$ is ${delta < 0 ? 'negative' : 'not a perfect square'}, this polynomial is irreducible over the integers and cannot be factored by simple grouping. Deferring to the quadratic formula:`,
+        math: `\\Delta = ${fmt(delta)} \\quad (\\text{Not a perfect square})`,
       });
-
-      const mSign = m >= 0 ? `+ ${fmt(m)}` : `- ${fmt(Math.abs(m))}`;
-      const nSign = n >= 0 ? `+ ${fmt(n)}` : `- ${fmt(Math.abs(n))}`;
-
-      if (m === n) {
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Write the quadratic expression in factored form (perfect square trinomial).`,
-          math: `(${variable} ${mSign})^2 = 0`,
-        });
-
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Set the factor equal to zero and solve for $${variable}$.`,
-          math: `${variable} ${mSign} = 0 \\implies ${variable} = ${fmt(x1)}`,
-        });
-
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Verify the solution by substituting back into the original equation.`,
-          math: formatQuadraticVerification(a, b, c, x1, variable),
-        });
-      } else {
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Write the quadratic expression in factored form.`,
-          math: `(${variable} ${mSign})(${variable} ${nSign}) = 0`,
-        });
-
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Set each factor equal to zero and solve for $${variable}$.`,
-          math: `${variable} ${mSign} = 0 \\implies ${variable}_1 = ${fmt(x1)} \\quad \\text{or} \\quad ${variable} ${nSign} = 0 \\implies ${variable}_2 = ${fmt(x2)}`,
-        });
-
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Verify each root by substituting back into the original equation.`,
-          math: `${formatQuadraticVerification(a, b, c, x1, variable)} \\\\[6pt] ${formatQuadraticVerification(a, b, c, x2, variable)}`,
-        });
-      }
-
-      return steps;
     }
   }
 
-  // ─── PATH 2: Non-Monic AC Factoring Method (a ≠ 1) ──────────────────────
-  if (Math.abs(a - 1) >= 1e-6 && isPerfectSquare(delta)) {
-    const acFactors = findACFactors(a, b, c);
-    if (acFactors !== null) {
-      const { m, n, r1, s1, r2, s2, x1, x2 } = acFactors;
-
-      steps.push({
-        stepNumber: stepCount++,
-        explanation: `Apply the $ac$ factoring method: find two numbers that multiply to $ac = (${fmt(a)})(${fmt(c)}) = ${fmt(a * c)}$ and add up to $b = ${fmt(b)}$.`,
-        math: `(${fmt(m)}) \\times (${fmt(n)}) = ${fmt(a * c)}, \\quad (${fmt(m)}) + (${fmt(n)}) = ${fmt(b)}`,
-      });
-
-      const mSign = m >= 0 ? `+ ${fmt(m)}` : `- ${fmt(Math.abs(m))}`;
-      const nSign = n >= 0 ? `+ ${fmt(n)}` : `- ${fmt(Math.abs(n))}`;
-      const cSign = c >= 0 ? `+ ${fmt(c)}` : `- ${fmt(Math.abs(c))}`;
-
-      const s1Sign = s1 >= 0 ? `+ ${fmt(s1)}` : `- ${fmt(Math.abs(s1))}`;
-      const s2Sign = s2 >= 0 ? `+ ${fmt(s2)}` : `- ${fmt(Math.abs(s2))}`;
-
-      const r1Str = r1 === 1 ? '' : r1 === -1 ? '-' : `${fmt(r1)}`;
-      const r2Str = r2 === 1 ? '' : r2 === -1 ? '-' : `${fmt(r2)}`;
-
-      steps.push({
-        stepNumber: stepCount++,
-        explanation: `Split the middle term $${fmt(b)}${variable}$ into $${fmt(m)}${variable} + (${fmt(n)})${variable}$ and factor by grouping.`,
-        math: `${fmt(a)}${variable}^2 ${mSign}${variable} ${nSign}${variable} ${cSign} = 0 \\implies (${r1Str}${variable} ${s1Sign})(${r2Str}${variable} ${s2Sign}) = 0`,
-      });
-
-      if (Math.abs(x1 - x2) < 1e-6) {
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Set the factor equal to zero and solve for $${variable}$.`,
-          math: `${r1Str}${variable} ${s1Sign} = 0 \\implies ${variable} = ${fmt(x1)}`,
-        });
-
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Verify the solution by substituting back into the original equation.`,
-          math: formatQuadraticVerification(a, b, c, x1, variable),
-        });
-      } else {
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Set each factor equal to zero and solve for $${variable}$.`,
-          math: `(${r1Str}${variable} ${s1Sign}) = 0 \\implies ${variable}_1 = ${fmt(x1)} \\quad \\text{or} \\quad (${r2Str}${variable} ${s2Sign}) = 0 \\implies ${variable}_2 = ${fmt(x2)}`,
-        });
-
-        steps.push({
-          stepNumber: stepCount++,
-          explanation: `Verify each root by substituting back into the original equation.`,
-          math: `${formatQuadraticVerification(a, b, c, x1, variable)} \\\\[6pt] ${formatQuadraticVerification(a, b, c, x2, variable)}`,
-        });
-      }
-
-      return steps;
-    }
-  }
-
-  // ─── PATH 3: Quadratic Formula Fallback ──────────────────────────────────
+  // ─── PATH 3: Quadratic Formula ──────────────────────────────────
   steps.push({
     stepNumber: stepCount++,
     explanation: 'Identify the coefficients $a$, $b$, and $c$.',

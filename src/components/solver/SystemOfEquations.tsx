@@ -1,6 +1,8 @@
 'use client';
 
+import React from 'react';
 import { useSolverStore } from '@/stores/solverStore';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function SystemOfEquations() {
   const { 
@@ -25,25 +27,25 @@ export default function SystemOfEquations() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto space-y-6">
-      <div className="space-y-4">
-        <div className="flex justify-between items-end mb-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            System of Equations
+    <form onSubmit={handleSubmit} className="w-full space-y-4">
+      <div className="space-y-3">
+        <div className="flex justify-between items-end mb-1">
+          <label className="block text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+            System Equations
           </label>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
             {systemEquations.length} of 4 equations
           </span>
         </div>
 
         {systemEquations.map((eq, idx) => (
-          <div key={idx} className="flex gap-3">
+          <div key={idx} className="flex gap-2">
             <div className="flex-1">
               <input
                 type="text"
                 value={eq}
                 onChange={(e) => updateSystemEquation(idx, e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-xs"
                 placeholder={`Equation ${idx + 1} (e.g. 2x + y = 5)`}
                 required
               />
@@ -52,10 +54,10 @@ export default function SystemOfEquations() {
               <button
                 type="button"
                 onClick={() => removeSystemEquation(idx)}
-                className="px-4 py-3 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+                className="px-3 py-2 rounded-xl border border-red-200 dark:border-[#5D4037]/50 text-red-500 dark:text-[#FFAB91] bg-red-50 dark:bg-[#3E2723]/40 hover:bg-red-100 dark:hover:bg-[#3E2723]/80 transition-colors"
                 aria-label="Remove equation"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <Trash2 size={16} />
               </button>
             )}
           </div>
@@ -65,15 +67,15 @@ export default function SystemOfEquations() {
           <button
             type="button"
             onClick={addSystemEquation}
-            className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-2 border border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 text-xs font-mono"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-            Add Equation
+            <Plus size={14} />
+            <span>Add Equation</span>
           </button>
         )}
 
-        <div className="pt-4">
-          <label htmlFor="variables" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <div className="pt-2">
+          <label htmlFor="variables" className="block text-xs font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] mb-1">
             Variables (comma separated)
           </label>
           <input
@@ -81,7 +83,7 @@ export default function SystemOfEquations() {
             type="text"
             value={systemVariables.join(', ')}
             onChange={handleVarsChange}
-            className="w-full md:w-1/2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-mono"
+            className="w-full px-3.5 py-2 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-xs"
             placeholder="x, y, z"
           />
         </div>
@@ -90,7 +92,7 @@ export default function SystemOfEquations() {
       <button
         type="submit"
         disabled={isLoading || systemEquations.some(eq => !eq.trim())}
-        className="w-full py-3 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-[#795548]/50"
       >
         {isLoading ? 'Solving...' : 'Solve System'}
       </button>

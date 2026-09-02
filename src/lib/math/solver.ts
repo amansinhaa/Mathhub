@@ -1,4 +1,4 @@
-import { SolverResult } from '@/types/solver';
+import { SolverResult, QuadraticMethod } from '@/types/solver';
 import {
   generateLinearSteps,
   generateQuadraticSteps,
@@ -17,7 +17,7 @@ import nerdamer from 'nerdamer';
 import 'nerdamer/Algebra';
 import 'nerdamer/Calculus';
 import 'nerdamer/Solve';
-import { normalizeExpression } from './normalizer';
+import { normalizeExpression, autoBalanceParens, autoInterpretEquals } from './normalizer';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -341,8 +341,16 @@ function formatFinalRoots(
 
 // ─── Main Solver Functions ──────────────────────────────────────────────────
 
-export function solvePolynomial(equation: string): SolverResult {
+export function solvePolynomial(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
   let cleanEq = equation.trim();
+  cleanEq = autoBalanceParens(cleanEq);
+  
+  // Auto-interpret expression without = as = 0
+  const interpretation = autoInterpretEquals(cleanEq);
+  if (interpretation.interpreted) {
+    cleanEq = interpretation.expr;
+  }
+  
   cleanEq = normalizeExpression(cleanEq);
   if (!cleanEq) {
     return {
@@ -359,6 +367,15 @@ export function solvePolynomial(equation: string): SolverResult {
   }
 
   const variable = detectVariable(cleanEq);
+  
+  // Generate input interpretation string
+  const displayEq = cleanEq
+    .replace(/\*/g, '')
+    .replace(/\^(\d+)/g, '^{$1}')
+    .replace(/\^(\([^)]+\))/g, '^{$1}');
+  const interpretationLatex = interpretation.interpreted
+    ? `\\text{Interpreted as: } ${displayEq} \\text{. Solve for } ${variable} \\text{ over } \\mathbb{R} \\text{ and } \\mathbb{C}`
+    : `\\text{Solve } ${displayEq} \\text{ for variable } ${variable} \\text{ over } \\mathbb{R} \\text{ and } \\mathbb{C}`;
 
   // Normalize equation to "LHS - RHS" standard form
   let [lhs, rhs] = cleanEq.split('=');
@@ -383,13 +400,14 @@ export function solvePolynomial(equation: string): SolverResult {
         type: 'polynomial',
         steps,
         finalAnswer: `${variable} = ${fmt(-b / a)}`,
+        inputInterpretation: interpretationLatex,
       };
     }
 
     // ─── DEGREE 2 (QUADRATIC): ax^2 + bx + c = 0 ────────────────────────────
     if (degree === 2) {
       const [a, b, c] = coeffs;
-      const steps = generateQuadraticSteps(a, b, c, variable);
+      const steps = generateQuadraticSteps(a, b, c, variable, method);
       const delta = b * b - 4 * a * c;
       let finalAnswer = '';
 
@@ -412,6 +430,8 @@ export function solvePolynomial(equation: string): SolverResult {
         type: 'polynomial',
         steps,
         finalAnswer,
+        inputInterpretation: interpretationLatex,
+        quadraticMethod: method,
       };
     }
 
@@ -425,6 +445,7 @@ export function solvePolynomial(equation: string): SolverResult {
         type: 'polynomial',
         steps,
         finalAnswer,
+        inputInterpretation: interpretationLatex,
       };
     }
 
@@ -437,6 +458,7 @@ export function solvePolynomial(equation: string): SolverResult {
         type: 'polynomial',
         steps,
         finalAnswer,
+        inputInterpretation: interpretationLatex,
       };
     }
 
@@ -449,6 +471,7 @@ export function solvePolynomial(equation: string): SolverResult {
         type: 'polynomial',
         steps,
         finalAnswer,
+        inputInterpretation: interpretationLatex,
       };
     }
   }
@@ -469,6 +492,7 @@ export function solvePolynomial(equation: string): SolverResult {
         type: 'polynomial',
         steps,
         finalAnswer: steps[steps.length - 1]?.math || cleanSols.join(', '),
+        inputInterpretation: interpretationLatex,
       };
     }
   } catch {
@@ -485,6 +509,7 @@ export function solvePolynomial(equation: string): SolverResult {
       },
     ],
     finalAnswer: '\\text{No solution found}',
+    inputInterpretation: interpretationLatex,
   };
 }
 
@@ -582,15 +607,24 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
 }
 
 export function solveInequality(inequality: string): SolverResult {
+  let cleanIneq = autoBalanceParens(inequality.trim());
+  cleanIneq = normalizeExpression(cleanIneq);
+  
   let rel = '>';
-  if (inequality.includes('>=')) rel = '>=';
-  else if (inequality.includes('<=')) rel = '<=';
-  else if (inequality.includes('>')) rel = '>';
-  else if (inequality.includes('<')) rel = '<';
+  if (cleanIneq.includes('>=')) rel = '>=';
+  else if (cleanIneq.includes('<=')) rel = '<=';
+  else if (cleanIneq.includes('>')) rel = '>';
+  else if (cleanIneq.includes('<')) rel = '<';
 
-  const [lhs, rhs] = inequality.split(rel);
+  const [lhs, rhs] = cleanIneq.split(rel);
   const diffExpr = `(${lhs}) - (${rhs || 0})`;
   const variable = detectVariable(diffExpr);
+  
+  // Generate interpretation
+  const relLatex = rel === '>=' ? '\\geq' : rel === '<=' ? '\\leq' : rel;
+  const displayLhs = lhs.trim().replace(/\*/g, '').replace(/\^(\d+)/g, '^{$1}');
+  const displayRhs = (rhs || '0').trim().replace(/\*/g, '').replace(/\^(\d+)/g, '^{$1}');
+  const interpretationLatex = `\\text{Solve } ${displayLhs} ${relLatex} ${displayRhs} \\text{ for variable } ${variable}`;
 
   try {
     const poly = extractCoefficients(diffExpr, variable);
@@ -618,6 +652,7 @@ export function solveInequality(inequality: string): SolverResult {
           },
         ],
         finalAnswer: latex,
+        inputInterpretation: interpretationLatex,
       };
     }
 
@@ -660,6 +695,7 @@ export function solveInequality(inequality: string): SolverResult {
             },
           ],
           finalAnswer: latex,
+          inputInterpretation: interpretationLatex,
         };
       }
     }
@@ -669,6 +705,7 @@ export function solveInequality(inequality: string): SolverResult {
       type: 'inequality',
       steps,
       finalAnswer: steps[steps.length - 1]?.math || `${variable} \\in \\mathbb{R}`,
+      inputInterpretation: interpretationLatex,
     };
   } catch {
     return {
@@ -681,14 +718,21 @@ export function solveInequality(inequality: string): SolverResult {
         },
       ],
       finalAnswer: '\\text{Undefined}',
+      inputInterpretation: interpretationLatex,
     };
   }
 }
 
 export function solveSymbolic(equation: string, solveFor: string): SolverResult {
   const target = (solveFor || 'x').trim();
-  const [lhs, rhs] = equation.includes('=') ? equation.split('=') : [equation, '0'];
+  let cleanEq = autoBalanceParens(equation.trim());
+  cleanEq = normalizeExpression(cleanEq);
+  const [lhs, rhs] = cleanEq.includes('=') ? cleanEq.split('=') : [cleanEq, '0'];
   const standardExpr = `(${lhs}) - (${rhs})`;
+  
+  // Generate interpretation
+  const displayEq = cleanEq.replace(/\*/g, '').replace(/\^(\d+)/g, '^{$1}');
+  const interpretationLatex = `\\text{Solve } ${displayEq} \\text{ for } ${target}`;
 
   try {
     const sol = (nerdamer as any).solve(standardExpr, target).toString();
@@ -709,6 +753,7 @@ export function solveSymbolic(equation: string, solveFor: string): SolverResult 
         },
       ],
       finalAnswer: `${target} = ${cleanSol}`,
+      inputInterpretation: interpretationLatex,
     };
   } catch {
     return {

@@ -15,24 +15,22 @@ export default function SolverTypeSelector() {
   ];
 
   return (
-    <div className="flex justify-center mb-6 sm:mb-8 w-full">
-      <div className="flex w-full sm:w-auto overflow-x-auto scrollbar-none bg-gray-100 dark:bg-gray-800 rounded-2xl sm:rounded-full p-1 shadow-inner gap-1">
-        {types.map((type) => (
-          <button
-            key={type.value}
-            type="button"
-            onClick={() => setSolverType(type.value)}
-            className={`flex-1 sm:flex-none px-3.5 sm:px-6 py-2 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 text-center ${
-              solverType === type.value
-                ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-xs font-bold'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-            }`}
-            aria-label={`Select ${type.label} Solver`}
-          >
-            {type.label}
-          </button>
-        ))}
-      </div>
+    <div className="flex w-full overflow-x-auto scrollbar-none bg-[#F5F5F5] dark:bg-[#131313] rounded-xl p-1 border border-[#E0E0E0] dark:border-[#2E2825] gap-1 transition-colors">
+      {types.map((type) => (
+        <button
+          key={type.value}
+          type="button"
+          onClick={() => setSolverType(type.value)}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap text-center ${
+            solverType === type.value
+              ? 'bg-[#5D4037] text-white shadow-xs font-bold'
+              : 'text-[#616161] hover:text-[#131313] hover:bg-[#EFEBE9] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
+          }`}
+          aria-label={`Select ${type.label} Solver`}
+        >
+          {type.label}
+        </button>
+      ))}
     </div>
   );
 }

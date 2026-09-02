@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
 import { parseCSV } from '@/lib/utils/csv';
+import { UploadCloud } from 'lucide-react';
 
 export default function CSVUploader() {
   const { setFileData, setDataPoints } = useGraphStore();
@@ -33,13 +34,18 @@ export default function CSVUploader() {
   };
 
   return (
-    <div className="flex flex-col space-y-4">
-      <h3 className="font-semibold text-gray-700 dark:text-gray-200">Upload Data</h3>
+    <div className="flex flex-col space-y-3">
+      <h3 className="font-bold text-[#131313] dark:text-white text-xs sm:text-sm font-mono uppercase tracking-wider">
+        Upload CSV / TSV
+      </h3>
       <div 
-        className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
+        className="border border-dashed border-[#D7CCC8] hover:border-[#5D4037] dark:border-[#3E2723] dark:hover:border-[#5D4037] bg-[#F5F5F5] hover:bg-[#EFEBE9] dark:bg-[#131313] dark:hover:bg-[#22201F] rounded-2xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 group shadow-2xs"
         onClick={() => fileInputRef.current?.click()}
       >
-        <p className="text-sm text-gray-500 dark:text-gray-400">Drag & drop a CSV file here, or click to browse</p>
+        <UploadCloud size={24} className="text-[#5D4037] dark:text-[#A1887F] group-hover:scale-110 transition-transform" />
+        <p className="text-xs text-[#616161] group-hover:text-[#131313] dark:text-[#A19891] dark:group-hover:text-white">
+          Drop a CSV/TSV file here or click to browse
+        </p>
         <input 
           type="file" 
           accept=".csv,.tsv,.txt"

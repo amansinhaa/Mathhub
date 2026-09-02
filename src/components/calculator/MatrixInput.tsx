@@ -86,19 +86,20 @@ export default function MatrixInput() {
   const needsMatrixB = operation === 'add' || operation === 'multiply';
 
   return (
-    <div className="math-card w-full">
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 border-b border-[var(--card-border)] pb-3">
-        <h3 className="text-lg font-semibold">Matrix Operations</h3>
+    <div className="math-card w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] p-4 sm:p-6 rounded-2xl transition-colors shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 border-b border-[#E0E0E0] dark:border-[#2E2825] pb-3">
+        <h3 className="text-base sm:text-lg font-bold text-[#131313] dark:text-white">Matrix Operations</h3>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[var(--muted)]">Size:</span>
+          <span className="text-xs font-mono text-[#616161] dark:text-[#A19891]">Dimension:</span>
           {[2, 3, 4].map((s) => (
             <button
               key={s}
+              type="button"
               onClick={() => handleSizeChange(s)}
-              className={`px-2.5 py-1 rounded text-xs font-semibold ${
+              className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all border ${
                 size === s
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                  ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+                  : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
               }`}
             >
               {s}×{s}
@@ -108,7 +109,7 @@ export default function MatrixInput() {
       </div>
 
       {/* Operation tabs */}
-      <div className="flex flex-wrap gap-1 mb-4">
+      <div className="flex flex-wrap gap-1.5 mb-5">
         {[
           { id: 'add', label: 'A + B' },
           { id: 'multiply', label: 'A × B' },
@@ -118,11 +119,12 @@ export default function MatrixInput() {
         ].map((op) => (
           <button
             key={op.id}
+            type="button"
             onClick={() => setOperation(op.id as any)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all border ${
               operation === op.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+                : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#262220]'
             }`}
           >
             {op.label}
@@ -131,12 +133,12 @@ export default function MatrixInput() {
       </div>
 
       {/* Matrices grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 my-4">
         {/* Matrix A */}
         <div>
-          <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Matrix A</div>
+          <div className="text-xs font-mono font-bold mb-2 text-[#5D4037] dark:text-[#D7CCC8]">Matrix A</div>
           <div
-            className="grid gap-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-[var(--card-border)]"
+            className="grid gap-2 p-3.5 bg-[#F5F5F5] dark:bg-[#131313] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825]"
             style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
           >
             {matrixA.map((row, r) =>
@@ -146,7 +148,7 @@ export default function MatrixInput() {
                   type="number"
                   value={val}
                   onChange={(e) => updateCell('A', r, c, parseFloat(e.target.value) || 0)}
-                  className="math-input text-center font-mono py-2 text-sm"
+                  className="math-input text-center font-mono py-2 text-sm bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                 />
               ))
             )}
@@ -156,9 +158,9 @@ export default function MatrixInput() {
         {/* Matrix B */}
         {needsMatrixB && (
           <div>
-            <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Matrix B</div>
+            <div className="text-xs font-mono font-bold mb-2 text-[#5D4037] dark:text-[#D7CCC8]">Matrix B</div>
             <div
-              className="grid gap-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-[var(--card-border)]"
+              className="grid gap-2 p-3.5 bg-[#F5F5F5] dark:bg-[#131313] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825]"
               style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
             >
               {matrixB.map((row, r) =>
@@ -168,7 +170,7 @@ export default function MatrixInput() {
                     type="number"
                     value={val}
                     onChange={(e) => updateCell('B', r, c, parseFloat(e.target.value) || 0)}
-                    className="math-input text-center font-mono py-2 text-sm"
+                    className="math-input text-center font-mono py-2 text-sm bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                   />
                 ))
               )}
@@ -179,22 +181,23 @@ export default function MatrixInput() {
 
       {/* Calculate Button */}
       <button
+        type="button"
         onClick={calculate}
-        className="w-full py-2.5 px-4 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium text-sm transition-colors shadow-sm mb-4"
+        className="w-full py-3 px-4 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm transition-all shadow-md mb-4 border border-[#795548]/50"
       >
-        Calculate
+        Compute Matrix Result
       </button>
 
       {/* Results */}
       {errorMessage && (
-        <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-sm">
+        <div className="p-3.5 rounded-xl bg-red-50 dark:bg-[#3E2723]/60 border border-red-200 dark:border-[#5D4037]/60 text-red-600 dark:text-[#FFAB91] text-xs font-mono">
           {errorMessage}
         </div>
       )}
 
       {resultLatex && (
-        <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 text-center overflow-x-auto">
-          <div className="text-xs text-[var(--muted)] mb-1">Result</div>
+        <div className="p-4 rounded-2xl bg-[#F5F5F5] dark:bg-[#131313] border border-[#D7CCC8] dark:border-[#5D4037]/50 text-center overflow-x-auto shadow-xs">
+          <div className="text-xs font-mono text-[#5D4037] dark:text-[#A1887F] mb-1.5 font-bold">Result Matrix</div>
           <MathDisplay math={resultLatex} block />
         </div>
       )}

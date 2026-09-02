@@ -20,7 +20,7 @@ export default function MemoryIndicator() {
           key={btn.label}
           type="button"
           onClick={btn.action}
-          className="calc-btn-memory px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 min-h-[30px] flex items-center justify-center transition-colors border border-gray-200/50 dark:border-gray-700/50"
+          className="calc-btn-memory px-2.5 sm:px-3 py-1 text-xs font-mono font-bold min-h-[30px]"
           title={btn.title}
           aria-label={btn.title}
         >

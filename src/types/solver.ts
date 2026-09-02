@@ -1,5 +1,7 @@
 export type SolverType = 'polynomial' | 'system' | 'inequality' | 'symbolic';
 
+export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';
+
 export interface DivisionDetails {
   longDivisionMath: string;
   syntheticMath: string;
@@ -21,4 +23,6 @@ export interface SolverResult {
   steps: SolutionStep[];
   finalAnswer: string; // LaTeX
   type: SolverType;
+  inputInterpretation?: string; // LaTeX description of what the engine parsed
+  quadraticMethod?: QuadraticMethod;
 }

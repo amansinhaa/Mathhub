@@ -2,8 +2,14 @@ import Calculator from '@/components/calculator/Calculator';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Scientific Calculator | MathHub',
-  description: 'Advanced scientific calculator with history and memory functions.',
+  title: {
+    absolute: 'Online Scientific Calculator with History | EasyEquate',
+  },
+  description:
+    'Advanced online scientific calculator with memory, calculation history, angle modes, unit conversions, and matrix operations.',
+  alternates: {
+    canonical: '/calculator',
+  },
 };
 
 export default function CalculatorPage() {

@@ -4,21 +4,31 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #0f172a;
-    --card: #f8fafc;
-    --card-border: #e2e8f0;
-    --muted: #94a3b8;
-    --accent: #3b82f6;
+    /* MathHub Light Mode - Whiteboard / Laboratory Style */
+    --background: #FFFFFF;
+    --foreground: #131313;
+    --card: #FFFFFF;
+    --card-secondary: #F5F5F5;
+    --card-border: #E0E0E0;
+    --muted: #616161;
+    --accent: #5D4037;
+    --accent-hover: #6D4C41;
+    --accent-container: #EFEBE9;
+    --accent-light: #5D4037;
   }
 
   .dark {
-    --background: #0f0f1a;
-    --foreground: #e2e8f0;
-    --card: #1e1e2e;
-    --card-border: #334155;
-    --muted: #64748b;
-    --accent: #60a5fa;
+    /* MathHub Dark Mode - Instrument-Grade */
+    --background: #131313;
+    --foreground: #F5F5F5;
+    --card: #1B1B1B;
+    --card-secondary: #22201F;
+    --card-border: #2E2825;
+    --muted: #A19891;
+    --accent: #5D4037;
+    --accent-hover: #6D4C41;
+    --accent-container: #3E2723;
+    --accent-light: #D7CCC8;
   }
 
   html {
@@ -26,12 +36,12 @@
   }
 
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)] transition-colors duration-200;
+    @apply bg-white text-[#131313] dark:bg-[#131313] dark:text-[#F5F5F5] transition-colors duration-150 antialiased selection:bg-[#5D4037] selection:text-white;
   }
 }
 
 @layer components {
-  /* Calculator button styles */
+  /* Calculator button styles - Material 3 & Instrument Design */
   .calc-btn {
     @apply flex items-center justify-center rounded-xl font-medium
            transition-all duration-150 active:scale-95
@@ -39,76 +49,87 @@
            text-sm sm:text-base;
   }
 
+  /* Number keys: Light = White with Black text; Dark = #1B1B1B with White text */
   .calc-btn-number {
-    @apply calc-btn bg-gray-100 dark:bg-gray-800 
-           hover:bg-gray-200 dark:hover:bg-gray-700
-           text-gray-900 dark:text-gray-100;
+    @apply calc-btn bg-white hover:bg-[#F5F5F5] hover:border-[#D7CCC8]
+           text-[#131313] border border-[#E0E0E0]
+           shadow-xs
+           dark:bg-[#1B1B1B] dark:hover:bg-[#2A2827] dark:text-white dark:border-[#2E2825];
   }
 
+  /* Operator keys: Light = #F5F5F5 with bold Black text; Dark = Tonal Brown with light text */
   .calc-btn-operator {
-    @apply calc-btn bg-blue-100 dark:bg-blue-900/40
-           hover:bg-blue-200 dark:hover:bg-blue-800/50
-           text-blue-700 dark:text-blue-300;
+    @apply calc-btn bg-[#F5F5F5] hover:bg-[#EFEBE9] hover:text-[#5D4037]
+           text-[#131313] border border-[#E0E0E0]
+           font-bold text-lg sm:text-xl
+           shadow-xs
+           dark:bg-[#2A2321] dark:hover:bg-[#3E2723] dark:text-[#F5F5F5] dark:border-[#5D4037]/50;
   }
 
+  /* Function keys: Light = Brown with White text; Dark = #1B1B1B with light brown text */
   .calc-btn-function {
-    @apply calc-btn bg-purple-100 dark:bg-purple-900/30
-           hover:bg-purple-200 dark:hover:bg-purple-800/40
-           text-purple-700 dark:text-purple-300
-           text-xs sm:text-sm;
+    @apply calc-btn bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E]
+           text-white border border-[#795548]/40
+           text-xs sm:text-sm font-medium shadow-xs
+           dark:bg-[#1B1B1B] dark:hover:bg-[#3E2723]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/35 dark:shadow-none;
   }
 
+  /* Clear / Action keys: Light = #EFEBE9 with Brown text; Dark = Deep tonal brown */
   .calc-btn-action {
-    @apply calc-btn bg-red-100 dark:bg-red-900/30
-           hover:bg-red-200 dark:hover:bg-red-800/40
-           text-red-700 dark:text-red-300;
+    @apply calc-btn bg-[#EFEBE9] hover:bg-[#D7CCC8]
+           text-[#5D4037] border border-[#D7CCC8]
+           font-bold
+           shadow-xs
+           dark:bg-[#3E2723] dark:hover:bg-[#4E342E] dark:text-[#FFCCBC] dark:border-[#5D4037]/60;
   }
 
+  /* Equals key: Solid Brown across both light and dark */
   .calc-btn-equals {
-    @apply calc-btn bg-blue-500 dark:bg-blue-600
-           hover:bg-blue-600 dark:hover:bg-blue-500
-           text-white font-bold;
+    @apply calc-btn bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E]
+           text-white font-bold shadow-md border border-[#795548]/50;
   }
 
+  /* Memory keys: Light = #F5F5F5 with Brown text; Dark = #22201F */
   .calc-btn-memory {
-    @apply calc-btn bg-amber-100 dark:bg-amber-900/30
-           hover:bg-amber-200 dark:hover:bg-amber-800/40
-           text-amber-700 dark:text-amber-300
-           text-xs;
+    @apply calc-btn bg-[#F5F5F5] hover:bg-[#EFEBE9]
+           text-[#5D4037] border border-[#E0E0E0]
+           text-xs font-semibold
+           dark:bg-[#22201F] dark:hover:bg-[#3E2723]/50 dark:text-[#BCAAA4] dark:border-[#3E2723];
   }
 
   /* Card component */
   .math-card {
-    @apply rounded-2xl border border-[var(--card-border)] 
-           bg-[var(--card)] p-4 
-           shadow-sm transition-all duration-200;
+    @apply rounded-2xl border border-[#E0E0E0]
+           bg-white p-4 sm:p-5
+           shadow-xs transition-all duration-200
+           dark:border-[#2E2825] dark:bg-[#1B1B1B];
   }
 
   /* Input styling */
   .math-input {
-    @apply w-full rounded-xl border border-[var(--card-border)]
-           bg-[var(--background)] px-4 py-3
-           text-[var(--foreground)] placeholder-[var(--muted)]
-           focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20
-           font-mono transition-all duration-150;
+    @apply w-full rounded-xl border border-[#E0E0E0]
+           bg-white px-4 py-2.5 sm:py-3
+           text-[#131313] placeholder-[#9E9E9E]
+           focus:border-[#5D4037] focus:outline-none focus:ring-2 focus:ring-[#5D4037]/20
+           font-mono transition-all duration-150
+           dark:border-[#332D2A] dark:bg-[#131313] dark:text-white dark:placeholder-[#8D827A] dark:focus:ring-[#5D4037]/30;
   }
 
   /* Tab styling */
   .math-tab {
-    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150
-           text-[var(--muted)] hover:text-[var(--foreground)]
-           hover:bg-gray-100 dark:hover:bg-gray-800;
+    @apply px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-150
+           text-[#616161] hover:text-[#131313] hover:bg-[#F5F5F5]
+           dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#242220];
   }
 
   .math-tab-active {
-    @apply math-tab bg-blue-100 dark:bg-blue-900/40 
-           text-blue-700 dark:text-blue-300;
+    @apply math-tab bg-[#5D4037] text-white font-semibold shadow-xs hover:bg-[#5D4037] hover:text-white dark:hover:bg-[#5D4037] dark:hover:text-white;
   }
 }
 
-/* KaTeX overrides for dark mode */
-.dark .katex {
-  color: #e2e8f0;
+/* KaTeX overrides */
+.katex {
+  color: inherit !important;
 }
 
 /* Scrollbar styling */
@@ -118,15 +139,20 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  background: #BCAAA4;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3E3835;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
+  background: #5D4037;
 }
 
 .scrollbar-none {
@@ -137,4 +163,3 @@
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
-

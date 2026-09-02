@@ -1,52 +1,101 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { useGraphStore } from '@/stores/graphStore';
 import EquationInput from './EquationInput';
 import DataTableInput from './DataTableInput';
 import CSVUploader from './CSVUploader';
-import FunctionPlotter from './FunctionPlotter';
-import DataChart from './DataChart';
 import ExportButton from './ExportButton';
 import SavedGraphsList from './SavedGraphsList';
-import CollageExport from './CollageExport';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
-import { Layers, Printer } from 'lucide-react';
+import { Printer, Compass } from 'lucide-react';
+import FunctionAnalysisPanel from './FunctionAnalysisPanel';
+import UnitCircleModal from './UnitCircleModal';
+
+const FunctionPlotter = dynamic(() => import('./FunctionPlotter'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[560px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
+      <span className="text-xs font-mono text-[#757575] dark:text-[#8D827A] animate-pulse">Initializing Plotter Engine...</span>
+    </div>
+  ),
+});
+
+const DataChart = dynamic(() => import('./DataChart'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[420px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
+      <span className="text-xs font-mono text-[#757575] dark:text-[#8D827A] animate-pulse">Loading Chart Engine...</span>
+    </div>
+  ),
+});
+
+const CollageExport = dynamic(() => import('./CollageExport'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[500px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
+      <span className="text-xs font-mono text-[#757575] dark:text-[#8D827A] animate-pulse">Preparing Collage Studio...</span>
+    </div>
+  ),
+});
 
 export default function GraphModule() {
   const { inputMode, setInputMode, chartType, setChartType, regressionType, setRegressionType } = useGraphStore();
+  const [isUnitCircleOpen, setIsUnitCircleOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col h-full space-y-4 sm:space-y-6 animate-fade-in">
-      {/* Top Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[var(--card-border)] pb-3 sm:pb-4 gap-3 sm:gap-4">
-        <div>
-          <h1 className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-xl sm:text-3xl font-bold text-transparent">
-            Graphing Tool
-          </h1>
-          <p className="text-xs sm:text-sm text-[var(--muted)]">
-            Plot mathematical functions, analyze table data, or build multi-graph printable notebook sheets
-          </p>
+    <div className="flex flex-col h-full space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
+      {/* Unit Circle Modal */}
+      <UnitCircleModal isOpen={isUnitCircleOpen} onClose={() => setIsUnitCircleOpen(false)} />
+
+      {/* Top App Bar / Header */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-3 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+                Graphing Studio
+              </h1>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
+                2D PLOTTER
+              </span>
+            </div>
+            <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block">
+              Laboratory-grade 2D function plotting, implicit curves, and print sheets
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-2 w-full md:w-auto">
-          <div className="flex overflow-x-auto scrollbar-none space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl w-full sm:w-auto">
+          {/* Unit Circle Tool Button */}
+          <button
+            type="button"
+            onClick={() => setIsUnitCircleOpen(true)}
+            className="px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center justify-center gap-1.5 border border-[#E0E0E0] dark:border-[#2E2825] bg-white dark:bg-[#1B1B1B] text-[#5D4037] dark:text-[#D7CCC8] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723]/60 shadow-xs"
+            title="Interactive Unit Circle"
+          >
+            <Compass size={14} />
+            <span className="hidden sm:inline">Unit Circle</span>
+          </button>
+
+          <div className="flex overflow-x-auto scrollbar-none space-x-1 bg-[#F5F5F5] dark:bg-[#131313] p-1 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] w-full sm:w-auto transition-colors">
             {(
               [
-                { id: 'equation', label: 'From Equation' },
-                { id: 'table', label: 'From Table' },
-                { id: 'file', label: 'From File' },
-                { id: 'collage', label: 'Collage (Print)' },
+                { id: 'equation', label: 'Equation' },
+                { id: 'table', label: 'Table' },
+                { id: 'file', label: 'CSV File' },
+                { id: 'collage', label: 'Collage Sheet' },
               ] as const
             ).map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setInputMode(item.id)}
-                className={`flex-1 sm:flex-none px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap min-h-[34px] ${
+                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap min-h-[32px] border ${
                   inputMode === item.id
-                    ? 'bg-blue-600 text-white shadow-xs font-bold'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs font-bold'
+                    : 'bg-transparent text-[#616161] border-transparent hover:text-[#131313] hover:bg-[#EFEBE9] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#22201F]'
                 }`}
                 aria-label={`Switch to ${item.label} mode`}
               >
@@ -57,29 +106,32 @@ export default function GraphModule() {
           </div>
           <ThemeToggle />
         </div>
-      </div>
+      </header>
 
-      {/* Main Content Area */}
+      {/* Main Multi-Pane Content Area */}
       {inputMode === 'collage' ? (
         <CollageExport />
       ) : (
-        <div className="flex flex-col lg:flex-row gap-5 sm:gap-6">
+        <div className="flex flex-col lg:flex-row gap-5 items-start">
           {/* Left Panel - Inputs & Saved Graphs */}
-          <div className="w-full lg:w-1/3 flex flex-col space-y-4 sm:space-y-5">
-            <div className="math-card">
+          <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0 flex flex-col space-y-4">
+            <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
               {inputMode === 'equation' && <EquationInput />}
               {inputMode === 'table' && <DataTableInput />}
               {inputMode === 'file' && <CSVUploader />}
             </div>
 
+            {/* Function Analysis Side Panel */}
+            {inputMode === 'equation' && <FunctionAnalysisPanel />}
+
             {(inputMode === 'table' || inputMode === 'file') && (
-              <div className="math-card flex flex-col space-y-4">
+              <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 flex flex-col space-y-3 transition-colors shadow-sm">
                 <div>
-                  <label className="block text-xs font-medium text-[var(--muted)] mb-1">Chart Type</label>
+                  <label className="block text-xs font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] mb-1">Chart Type</label>
                   <select
                     value={chartType}
                     onChange={(e) => setChartType(e.target.value as any)}
-                    className="math-input py-2 text-sm"
+                    className="math-input py-2 text-xs bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                   >
                     <option value="line">Line</option>
                     <option value="scatter">Scatter</option>
@@ -88,11 +140,11 @@ export default function GraphModule() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[var(--muted)] mb-1">Regression</label>
+                  <label className="block text-xs font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] mb-1">Regression</label>
                   <select
                     value={regressionType}
                     onChange={(e) => setRegressionType(e.target.value as any)}
-                    className="math-input py-2 text-sm"
+                    className="math-input py-2 text-xs bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                   >
                     <option value="none">None</option>
                     <option value="linear">Linear (y = mx + b)</option>
@@ -104,17 +156,17 @@ export default function GraphModule() {
             )}
 
             {/* My Graphs Saved Snapshot List */}
-            <div className="math-card">
+            <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 shadow-sm transition-colors">
               <SavedGraphsList />
             </div>
 
-            <div className="math-card">
+            <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 shadow-sm transition-colors">
               <ExportButton />
             </div>
           </div>
 
-          {/* Right Panel - Chart */}
-          <div className="w-full lg:w-2/3 min-w-0">
+          {/* Right Panel - Chart / Canvas */}
+          <div className="flex-1 w-full min-w-0">
             {inputMode === 'equation' ? <FunctionPlotter /> : <DataChart />}
           </div>
         </div>

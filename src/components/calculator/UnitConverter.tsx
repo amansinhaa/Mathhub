@@ -85,44 +85,47 @@ export default function UnitConverter() {
     : getUnitsByCategory(category);
 
   return (
-    <div className="math-card w-full">
-      <div className="flex items-center justify-between mb-4 border-b border-[var(--card-border)] pb-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
+    <div className="math-card w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] p-4 sm:p-6 rounded-2xl transition-colors shadow-sm">
+      <div className="flex items-center justify-between mb-4 border-b border-[#E0E0E0] dark:border-[#2E2825] pb-3">
+        <h3 className="text-base sm:text-lg font-bold text-[#131313] dark:text-white flex items-center gap-2">
           <span>Unit & Currency Converter</span>
         </h3>
         {category === 'currency' && (
           <button
+            type="button"
             onClick={loadCurrencyRates}
             disabled={isLoadingRates}
-            className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+            className="flex items-center gap-1.5 text-xs text-[#5D4037] hover:text-white bg-[#EFEBE9] hover:bg-[#5D4037] dark:text-[#D7CCC8] dark:hover:text-white dark:bg-[#3E2723] dark:hover:bg-[#5D4037] px-2.5 py-1 rounded-lg transition-colors border border-[#D7CCC8] dark:border-[#5D4037]/60"
           >
             <RefreshCw size={12} className={isLoadingRates ? 'animate-spin' : ''} />
-            Refresh Rates
+            <span>Refresh Rates</span>
           </button>
         )}
       </div>
 
       {/* Category selector */}
-      <div className="flex overflow-x-auto gap-1 mb-4 pb-1 scrollbar-hide">
+      <div className="flex overflow-x-auto gap-1.5 mb-5 pb-1 scrollbar-none">
         {UNIT_CATEGORIES.map((cat) => (
           <button
             key={cat.name}
+            type="button"
             onClick={() => setCategory(cat.name)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize whitespace-nowrap transition-all border ${
               category === cat.name
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+                : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#262220]'
             }`}
           >
             {cat.name}
           </button>
         ))}
         <button
+          type="button"
           onClick={() => setCategory('currency')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize whitespace-nowrap transition-colors ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize whitespace-nowrap transition-all border ${
             category === 'currency'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+              : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#262220]'
           }`}
         >
           Currency (Live)
@@ -130,17 +133,17 @@ export default function UnitConverter() {
       </div>
 
       {/* Conversion inputs */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
         {/* From */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-medium text-[var(--muted)]">From</label>
+          <label className="text-xs font-mono font-medium text-[#616161] dark:text-[#A19891]">From</label>
           <select
             value={fromUnit}
             onChange={(e) => setFromUnit(e.target.value)}
-            className="math-input text-sm py-2"
+            className="math-input text-sm py-2 bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
           >
             {currentUnits.map((u) => (
-              <option key={u.symbol} value={u.symbol}>
+              <option key={u.symbol} value={u.symbol} className="bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white">
                 {u.name} ({u.symbol})
               </option>
             ))}
@@ -149,7 +152,7 @@ export default function UnitConverter() {
             type="number"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="math-input text-lg font-mono py-2"
+            className="math-input text-lg font-mono py-2 bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
             placeholder="0"
           />
         </div>
@@ -157,9 +160,11 @@ export default function UnitConverter() {
         {/* Swap button */}
         <div className="flex justify-center md:col-span-1 pt-4">
           <button
+            type="button"
             onClick={swapUnits}
-            className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
+            className="p-3 rounded-full bg-[#F5F5F5] hover:bg-[#5D4037] text-[#5D4037] hover:text-white border border-[#E0E0E0] dark:bg-[#131313] dark:hover:bg-[#5D4037] dark:text-[#D7CCC8] dark:border-[#3E2723] transition-all active:scale-95 shadow-sm"
             title="Swap Units"
+            aria-label="Swap Units"
           >
             <ArrowRightLeft size={18} />
           </button>
@@ -167,19 +172,19 @@ export default function UnitConverter() {
 
         {/* To */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-medium text-[var(--muted)]">To</label>
+          <label className="text-xs font-mono font-medium text-[#616161] dark:text-[#A19891]">To</label>
           <select
             value={toUnit}
             onChange={(e) => setToUnit(e.target.value)}
-            className="math-input text-sm py-2"
+            className="math-input text-sm py-2 bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
           >
             {currentUnits.map((u) => (
-              <option key={u.symbol} value={u.symbol}>
+              <option key={u.symbol} value={u.symbol} className="bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white">
                 {u.name} ({u.symbol})
               </option>
             ))}
           </select>
-          <div className="math-input text-lg font-mono py-2 bg-gray-50 dark:bg-gray-900/50 flex items-center min-h-[46px] overflow-x-auto text-blue-600 dark:text-blue-400 font-semibold">
+          <div className="math-input text-lg font-mono py-2 bg-[#F5F5F5] dark:bg-[#131313] flex items-center min-h-[46px] overflow-x-auto text-[#5D4037] dark:text-[#D7CCC8] font-bold border-[#E0E0E0] dark:border-[#332D2A]">
             {outputValue || '0'}
           </div>
         </div>

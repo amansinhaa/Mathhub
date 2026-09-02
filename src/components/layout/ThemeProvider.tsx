@@ -11,10 +11,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useThemeStore();
 
   useEffect(() => {
-    // If no stored theme, detect system preference
+    // Default to light mode unless explicitly set to dark
     if (!theme) {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(prefersDark ? 'dark' : 'light');
+      setTheme('light');
     }
   }, [theme, setTheme]);
 

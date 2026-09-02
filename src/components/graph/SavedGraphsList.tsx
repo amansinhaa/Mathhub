@@ -7,13 +7,10 @@ import {
   Trash2,
   Pencil,
   Check,
-  Plus,
   Play,
   CheckSquare,
   Square,
-  Clock,
   Layers,
-  Sparkles,
 } from 'lucide-react';
 import { SavedGraphSnapshot } from '@/types/graph';
 
@@ -42,7 +39,7 @@ export default function SavedGraphsList({
   const [savedToast, setSavedToast] = useState(false);
 
   const handleSaveSnapshot = () => {
-    const snap = saveCurrentGraphSnapshot();
+    saveCurrentGraphSnapshot();
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 2500);
   };
@@ -63,14 +60,15 @@ export default function SavedGraphsList({
     <div className="flex flex-col space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <Layers size={16} className="text-blue-500" />
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+          <Layers size={15} className="text-[#5D4037] dark:text-[#A1887F]" />
+          <h3 className="font-bold text-[#131313] dark:text-white text-xs sm:text-sm font-mono uppercase tracking-wider">
             My Graphs ({savedGraphs.length})
           </h3>
         </div>
         <button
+          type="button"
           onClick={handleSaveSnapshot}
-          className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 bg-[#5D4037] hover:bg-[#6D4C41] text-white rounded-lg transition-colors shadow-xs border border-[#795548]/50"
           title="Save active view as a new snapshot"
         >
           <Camera size={13} />
@@ -79,15 +77,15 @@ export default function SavedGraphsList({
       </div>
 
       {savedToast && (
-        <div className="animate-fade-in px-3 py-1.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs rounded-lg flex items-center justify-between">
-          <span>✨ Saved snapshot to My Graphs!</span>
+        <div className="animate-fade-in px-3 py-1.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-xs font-mono rounded-lg flex items-center justify-between dark:border-[#5D4037]">
+          <span>Saved snapshot to My Graphs!</span>
         </div>
       )}
 
       {savedGraphs.length === 0 ? (
-        <div className="text-center py-6 px-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl border border-dashed border-[var(--card-border)] text-xs text-[var(--muted)] space-y-1">
-          <p>No saved graphs yet.</p>
-          <p className="text-[11px]">Click "Save Active" above or plot an equation to save snapshots for collage printing.</p>
+        <div className="text-center py-6 px-3 bg-[#F5F5F5] dark:bg-[#131313] rounded-xl border border-dashed border-[#E0E0E0] dark:border-[#2E2825] text-xs text-[#757575] dark:text-[#8D827A] space-y-1">
+          <p className="font-medium text-[#131313] dark:text-[#A19891]">No saved graphs yet.</p>
+          <p className="text-[10px]">Click "Save Active" above to save snapshots for collage printing.</p>
         </div>
       ) : (
         <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
@@ -101,21 +99,22 @@ export default function SavedGraphsList({
                 key={graph.id}
                 className={`p-2.5 rounded-xl border transition-all text-xs flex flex-col gap-1.5 ${
                   isSelected
-                    ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-400 dark:border-blue-700'
-                    : 'bg-white dark:bg-gray-800/80 border-[var(--card-border)] hover:border-gray-300 dark:hover:border-gray-600'
+                    ? 'bg-[#EFEBE9] border-[#5D4037] text-[#131313] dark:bg-[#3E2723]/60 dark:border-[#5D4037] dark:text-white'
+                    : 'bg-[#F5F5F5] border-[#E0E0E0] hover:border-[#D7CCC8] dark:bg-[#131313] dark:border-[#262220] dark:hover:border-[#5D4037]/50'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  {/* Select Checkbox (if in collage mode) or Thumbnail Pill */}
+                  {/* Select Checkbox or Thumbnail Pill */}
                   {isSelectionMode ? (
                     <button
+                      type="button"
                       onClick={() => onToggleSelect?.(graph.id)}
-                      className="text-blue-600 dark:text-blue-400 shrink-0"
+                      className="text-[#5D4037] dark:text-[#D7CCC8] shrink-0"
                     >
-                      {isSelected ? <CheckSquare size={16} /> : <Square size={16} className="text-gray-400" />}
+                      {isSelected ? <CheckSquare size={15} className="text-[#5D4037] dark:text-[#D7CCC8]" /> : <Square size={15} className="text-[#757575] dark:text-[#8D827A]" />}
                     </button>
                   ) : (
-                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[#5D4037] shrink-0" />
                   )}
 
                   {/* Title / Renaming Input */}
@@ -131,35 +130,36 @@ export default function SavedGraphsList({
                             if (e.key === 'Escape') setEditingId(null);
                           }}
                           autoFocus
-                          className="math-input py-0.5 px-1.5 text-xs font-semibold w-full"
+                          className="math-input py-0.5 px-1.5 text-xs font-semibold w-full bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                         />
                         <button
+                          type="button"
                           onClick={() => saveRename(graph.id)}
-                          className="p-1 text-green-600 hover:bg-green-50 rounded"
+                          className="p-1 text-emerald-600 dark:text-[#81C784] hover:bg-gray-100 dark:hover:bg-[#1B1B1B] rounded"
                         >
                           <Check size={13} />
                         </button>
                       </div>
                     ) : (
                       <div className="flex items-baseline gap-1.5 truncate">
-                        <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                        <span className="font-semibold text-[#131313] dark:text-white truncate">
                           {graph.title}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  {/* Action Icons with comfortable touch targets */}
-                  <div className="flex items-center gap-0.5 shrink-0 text-gray-400">
+                  {/* Action Icons */}
+                  <div className="flex items-center gap-0.5 shrink-0 text-[#757575] dark:text-[#8D827A]">
                     {!isEditing && (
                       <button
                         type="button"
                         onClick={() => startRename(graph)}
-                        className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors"
+                        className="p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center hover:text-[#131313] hover:bg-white dark:hover:text-white dark:hover:bg-[#1B1B1B] rounded-lg transition-colors"
                         title="Rename"
                         aria-label={`Rename ${graph.title}`}
                       >
-                        <Pencil size={13} />
+                        <Pencil size={12} />
                       </button>
                     )}
                     <button
@@ -168,26 +168,26 @@ export default function SavedGraphsList({
                         loadSavedGraph(graph.id);
                         setInputMode(graph.type);
                       }}
-                      className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-950/40 rounded-lg transition-colors"
+                      className="p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center hover:text-[#131313] hover:bg-white dark:hover:text-white dark:hover:bg-[#1B1B1B] rounded-lg transition-colors"
                       title="Load into Main Graph view"
                       aria-label={`Load ${graph.title} into graph view`}
                     >
-                      <Play size={13} />
+                      <Play size={12} />
                     </button>
                     <button
                       type="button"
                       onClick={() => deleteSavedGraph(graph.id)}
-                      className="p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors"
+                      className="p-1.5 min-w-[28px] min-h-[28px] flex items-center justify-center hover:text-red-500 hover:bg-white dark:hover:text-[#FFAB91] dark:hover:bg-[#1B1B1B] rounded-lg transition-colors"
                       title="Delete"
                       aria-label={`Delete ${graph.title}`}
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </div>
 
                 {/* Subtitle with expressions & range */}
-                <div className="flex items-center justify-between text-[10px] text-[var(--muted)] font-mono pl-4">
+                <div className="flex items-center justify-between text-[10px] text-[#757575] dark:text-[#8D827A] font-mono pl-3.5">
                   <span className="truncate max-w-[170px]">{exprList}</span>
                   <span>
                     x:[{graph.bounds.xMin},{graph.bounds.xMax}]

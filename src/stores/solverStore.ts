@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { SolverType, SolverResult } from '@/types/solver';
+import { SolverType, SolverResult, QuadraticMethod } from '@/types/solver';
 import { solvePolynomial, solveSystem, solveInequality, solveSymbolic } from '@/lib/math/solver';
 
 interface SolverState {
   equation: string;
   solverType: SolverType;
+  quadraticMethod: QuadraticMethod;
   systemEquations: string[];
   systemVariables: string[];
   result: SolverResult | null;
@@ -15,6 +16,7 @@ interface SolverState {
 
   setEquation: (equation: string) => void;
   setSolverType: (type: SolverType) => void;
+  setQuadraticMethod: (method: QuadraticMethod) => void;
   addSystemEquation: () => void;
   removeSystemEquation: (index: number) => void;
   updateSystemEquation: (index: number, eq: string) => void;
@@ -30,6 +32,7 @@ export const useSolverStore = create<SolverState>()(
     (set, get) => ({
       equation: '',
       solverType: 'polynomial',
+      quadraticMethod: 'auto',
       systemEquations: ['', ''],
       systemVariables: ['x', 'y'],
       result: null,
@@ -39,6 +42,7 @@ export const useSolverStore = create<SolverState>()(
 
       setEquation: (equation) => set({ equation, error: null }),
       setSolverType: (solverType) => set({ solverType, result: null, error: null }),
+      setQuadraticMethod: (quadraticMethod) => set({ quadraticMethod }),
       addSystemEquation: () => set((state) => {
         if (state.systemEquations.length < 4) {
           return { systemEquations: [...state.systemEquations, ''], error: null };
@@ -64,14 +68,14 @@ export const useSolverStore = create<SolverState>()(
       setSolveForVariable: (variable) => set({ solveForVariable: variable }),
       solve: () => {
         set({ isLoading: true, error: null });
-        const { solverType, equation, systemEquations, systemVariables, solveForVariable } = get();
+        const { solverType, equation, quadraticMethod, systemEquations, systemVariables, solveForVariable } = get();
         
         try {
           let result: SolverResult | null = null;
           switch (solverType) {
             case 'polynomial':
               if (!equation.trim()) throw new Error('Please enter a polynomial equation.');
-              result = solvePolynomial(equation);
+              result = solvePolynomial(equation, quadraticMethod);
               break;
             case 'system':
               if (systemEquations.some((eq) => !eq.trim())) throw new Error('Please fill in all equations in the system.');
@@ -87,6 +91,27 @@ export const useSolverStore = create<SolverState>()(
               break;
           }
           set({ result, isLoading: false, error: null });
+
+          // Sync URL search params for shareability
+          if (typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', solverType);
+            if (solverType === 'system') {
+              url.searchParams.delete('eq');
+              url.searchParams.delete('method');
+            } else if (equation) {
+              url.searchParams.set('eq', equation);
+              if (solverType === 'polynomial' && quadraticMethod !== 'auto') {
+                url.searchParams.set('method', quadraticMethod);
+              } else {
+                url.searchParams.delete('method');
+              }
+            }
+            if (solverType === 'symbolic' && solveForVariable) {
+              url.searchParams.set('var', solveForVariable);
+            }
+            window.history.replaceState({}, '', url.toString());
+          }
         } catch (err: any) {
           const message = err?.message || 'Could not solve the equation. Please check equation syntax (e.g. x^2 - 5x + 6 = 0).';
           set({ result: null, isLoading: false, error: message });

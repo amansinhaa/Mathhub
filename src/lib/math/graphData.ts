@@ -49,6 +49,157 @@ math.import(
   { override: true }
 );
 
+export interface PiecewiseBranch {
+  condition: string;
+  expression: string;
+  compiledExpr: any;
+  testCondition: (x: number) => boolean;
+  min?: number;
+  max?: number;
+  includeMin?: boolean;
+  includeMax?: boolean;
+}
+
+export interface PiecewiseEndpoint {
+  x: number;
+  y: number;
+  inclusive: boolean;
+}
+
+/** Check if input string is in piecewise syntax, e.g. {x < 0: -x, x >= 0: x^2} */
+export function isPiecewiseExpression(input: string): boolean {
+  if (!input) return false;
+  const trimmed = input.trim();
+  return trimmed.startsWith('{') && trimmed.endsWith('}') && trimmed.includes(':');
+}
+
+/** Parse piecewise syntax into branches and condition evaluators */
+export function parsePiecewiseBranches(input: string): PiecewiseBranch[] {
+  const trimmed = input.trim();
+  const inner = trimmed.replace(/^\{|\}$/g, '').trim();
+  const parts = inner.split(/,(?![^{]*\})/);
+  const branches: PiecewiseBranch[] = [];
+
+  for (const part of parts) {
+    const colonIdx = part.indexOf(':');
+    if (colonIdx === -1) continue;
+    const condStr = part.slice(0, colonIdx).trim();
+    const exprStr = part.slice(colonIdx + 1).trim();
+
+    let compiledExpr: any = null;
+    try {
+      compiledExpr = math.compile(normalizeExpression(exprStr));
+    } catch {
+      continue;
+    }
+
+    // Build condition evaluator
+    let testFn: (x: number) => boolean = () => true;
+    let min: number | undefined;
+    let max: number | undefined;
+    let includeMin = false;
+    let includeMax = false;
+
+    // Pattern 1: x < val, x <= val, x > val, x >= val
+    const singleComp = condStr.match(/x\s*(<=|>=|<|>|==|=)\s*(-?\d+(\.\d+)?)/);
+    // Pattern 2: a < x < b, a <= x <= b
+    const doubleComp = condStr.match(/(-?\d+(\.\d+)?)\s*(<=|<)\s*x\s*(<=|<)\s*(-?\d+(\.\d+)?)/);
+
+    if (doubleComp) {
+      const a = parseFloat(doubleComp[1]);
+      const op1 = doubleComp[3];
+      const op2 = doubleComp[4];
+      const b = parseFloat(doubleComp[5]);
+      min = a;
+      max = b;
+      includeMin = op1 === '<=';
+      includeMax = op2 === '<=';
+      testFn = (x: number) => {
+        const c1 = includeMin ? x >= a : x > a;
+        const c2 = includeMax ? x <= b : x < b;
+        return c1 && c2;
+      };
+    } else if (singleComp) {
+      const op = singleComp[1];
+      const val = parseFloat(singleComp[2]);
+      if (op === '<') {
+        max = val;
+        includeMax = false;
+        testFn = (x: number) => x < val;
+      } else if (op === '<=') {
+        max = val;
+        includeMax = true;
+        testFn = (x: number) => x <= val;
+      } else if (op === '>') {
+        min = val;
+        includeMin = false;
+        testFn = (x: number) => x > val;
+      } else if (op === '>=') {
+        min = val;
+        includeMin = true;
+        testFn = (x: number) => x >= val;
+      } else if (op === '==' || op === '=') {
+        min = val;
+        max = val;
+        includeMin = true;
+        includeMax = true;
+        testFn = (x: number) => Math.abs(x - val) < 1e-6;
+      }
+    } else {
+      // Fallback condition evaluator using mathjs
+      try {
+        const condCompiled = math.compile(condStr);
+        testFn = (x: number) => Boolean(condCompiled.evaluate({ x }));
+      } catch {
+        testFn = () => true;
+      }
+    }
+
+    branches.push({
+      condition: condStr,
+      expression: exprStr,
+      compiledExpr,
+      testCondition: testFn,
+      min,
+      max,
+      includeMin,
+      includeMax,
+    });
+  }
+
+  return branches;
+}
+
+/** Extract open/closed boundary endpoint points for piecewise curves */
+export function extractPiecewiseEndpoints(branches: PiecewiseBranch[]): PiecewiseEndpoint[] {
+  const endpoints: PiecewiseEndpoint[] = [];
+
+  branches.forEach((b) => {
+    if (b.min !== undefined && b.compiledExpr) {
+      try {
+        const y = b.compiledExpr.evaluate({ x: b.min });
+        if (typeof y === 'number' && Number.isFinite(y)) {
+          endpoints.push({ x: b.min, y, inclusive: Boolean(b.includeMin) });
+        }
+      } catch {
+        // skip
+      }
+    }
+    if (b.max !== undefined && b.compiledExpr) {
+      try {
+        const y = b.compiledExpr.evaluate({ x: b.max });
+        if (typeof y === 'number' && Number.isFinite(y)) {
+          endpoints.push({ x: b.max, y, inclusive: Boolean(b.includeMax) });
+        }
+      } catch {
+        // skip
+      }
+    }
+  });
+
+  return endpoints;
+}
+
 export function parseExpression(input: string): string {
   let expr = input.replace(/^y\s*=\s*/, '').trim();
   if (!expr) return '0';
@@ -164,6 +315,56 @@ export function generatePlotData(
 ): DataPoint[] {
   const data: DataPoint[] = [];
   if (xMin >= xMax) return data;
+
+  // ─── Piecewise Evaluation Branch ──────────────────────────────────────────
+  if (isPiecewiseExpression(expression)) {
+    const branches = parsePiecewiseBranches(expression);
+    if (branches.length === 0) return data;
+
+    const step = (xMax - xMin) / numPoints;
+    let prevActiveBranch = -1;
+
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + i * step;
+      let activeBranch = -1;
+      let yVal: number | null = null;
+
+      for (let bIdx = 0; bIdx < branches.length; bIdx++) {
+        const branch = branches[bIdx];
+        if (branch.testCondition(x)) {
+          activeBranch = bIdx;
+          try {
+            const res = branch.compiledExpr.evaluate({ x });
+            if (typeof res === 'number' && !isNaN(res) && isFinite(res)) {
+              yVal = res;
+            } else if (res && typeof res.re === 'number' && Math.abs(res.im || 0) < 1e-9) {
+              yVal = res.re;
+            }
+          } catch {
+            yVal = null;
+          }
+          break;
+        }
+      }
+
+      // If switching branches, insert a null gap so svg path doesn't connect disparate branches
+      if (activeBranch !== prevActiveBranch && prevActiveBranch !== -1) {
+        data.push({ x, y: null as any });
+      }
+
+      if (yVal !== null && Math.abs(yVal) < 1e9) {
+        data.push({ x, y: yVal });
+      } else {
+        data.push({ x, y: null as any });
+      }
+
+      prevActiveBranch = activeBranch;
+    }
+
+    return data;
+  }
+
+  // ─── Standard Function Evaluation ─────────────────────────────────────────
   const expr = parseExpression(expression);
 
   let compiled: any = null;

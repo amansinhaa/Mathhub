@@ -390,7 +390,7 @@ export function generateCollageSvg(
       ${sheetTitle ? `
         <!-- Sheet Header -->
         <text x="${(sheetWidth / 2).toFixed(1)}" y="30" text-anchor="middle" fill="${isDark ? '#f8fafc' : '#0f172a'}" font-family="system-ui, -apple-system, sans-serif" font-size="18px" font-weight="bold">${escapeXml(sheetTitle)}</text>
-        <text x="${(sheetWidth / 2).toFixed(1)}" y="46" text-anchor="middle" fill="${isDark ? '#94a3b8' : '#64748b'}" font-family="sans-serif" font-size="10.5px">MathHub Multi-Graph Printable Notebook Sheet • ${graphs.length} graphs (${cols}×${rows} grid • ${pageSize.toUpperCase()} ${orientation})</text>
+        <text x="${(sheetWidth / 2).toFixed(1)}" y="46" text-anchor="middle" fill="${isDark ? '#94a3b8' : '#64748b'}" font-family="sans-serif" font-size="10.5px">EasyEquate Multi-Graph Printable Notebook Sheet • ${graphs.length} graphs (${cols}×${rows} grid • ${pageSize.toUpperCase()} ${orientation})</text>
       ` : ''}
 
       <!-- Grid Cells -->
@@ -398,6 +398,9 @@ export function generateCollageSvg(
 
       <!-- Scissor Cut Lines -->
       ${cutLinesSvg}
+
+      <!-- EasyEquate Footer Attribution -->
+      <text x="${(sheetWidth / 2).toFixed(1)}" y="${(sheetHeight - 8).toFixed(1)}" text-anchor="middle" fill="${isDark ? '#64748b' : '#9ca3af'}" font-family="sans-serif" font-size="10px" font-weight="500">Generated with EasyEquate.com</text>
     </svg>
   `;
 }
@@ -455,7 +458,7 @@ export async function exportCollageToPdf(
     fileName?: string;
   } = {}
 ): Promise<void> {
-  const { pageSize = 'a4', orientation = 'landscape', fileName = 'mathhub-graph-collage.pdf' } = options;
+  const { pageSize = 'a4', orientation = 'landscape', fileName = 'easyequate-graph-collage.pdf' } = options;
 
   const pdf = new jsPDF({
     orientation,
