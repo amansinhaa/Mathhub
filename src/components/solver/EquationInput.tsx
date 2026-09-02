@@ -17,20 +17,15 @@ function SolverQuerySync() {
       setSolverType(tab as any);
     }
 
+    const formula = searchParams.get('formula') || searchParams.get('eq');
     const method = searchParams.get('method');
+    
     if (method && ['auto', 'factoring', 'completing_square', 'formula'].includes(method)) {
       setQuadraticMethod(method as any);
     }
 
-    const variable = searchParams.get('var');
-    if (variable) {
-      setSolveForVariable(variable);
-    }
-
-    const formula = searchParams.get('formula') || searchParams.get('eq');
     if (formula) {
       setEquation(formula);
-      // Automatically trigger solve on mount with a tick delay so store state settles
       setTimeout(() => {
         useSolverStore.getState().solve();
       }, 50);

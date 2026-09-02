@@ -42,7 +42,13 @@ export const useSolverStore = create<SolverState>()(
 
       setEquation: (equation) => set({ equation, error: null }),
       setSolverType: (solverType) => set({ solverType, result: null, error: null }),
-      setQuadraticMethod: (quadraticMethod) => set({ quadraticMethod }),
+      setQuadraticMethod: (quadraticMethod) => {
+        set({ quadraticMethod });
+        const { equation, solverType } = get();
+        if (solverType === 'polynomial' && equation.trim()) {
+          get().solve();
+        }
+      },
       addSystemEquation: () => set((state) => {
         if (state.systemEquations.length < 4) {
           return { systemEquations: [...state.systemEquations, ''], error: null };

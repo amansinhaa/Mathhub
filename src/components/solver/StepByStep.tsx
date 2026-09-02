@@ -8,17 +8,17 @@ import { Check, Copy, ChevronDown, Share2, LineChart, Info } from 'lucide-react'
 import { extractPlotFunction } from '@/utils/mathSanitizer';
 
 export default function StepByStep() {
-  const { result, solverType, equation } = useSolverStore();
+  const { result, solverType, equation, quadraticMethod } = useSolverStore();
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({});
-  const [showSteps, setShowSteps] = useState(false);
+  const [showSteps, setShowSteps] = useState(true);
   const [copiedLatex, setCopiedLatex] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // Reset showSteps when result or solverType or equation changes
+  // Keep showSteps open when result or method changes so user immediately sees the new steps
   useEffect(() => {
-    setShowSteps(false);
+    setShowSteps(true);
     setExpandedSteps({});
-  }, [result, solverType, equation]);
+  }, [result, solverType, equation, quadraticMethod]);
 
   if (!result) return null;
 
@@ -38,6 +38,9 @@ export default function StepByStep() {
     url.searchParams.set('tab', solverType);
     if (equation) {
       url.searchParams.set('eq', equation);
+      if (solverType === 'polynomial' && quadraticMethod !== 'auto') {
+        url.searchParams.set('method', quadraticMethod);
+      }
     }
     navigator.clipboard.writeText(url.toString());
     setCopiedLink(true);
@@ -99,6 +102,11 @@ export default function StepByStep() {
             <span className="px-2.5 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] font-mono font-bold uppercase">
               {result.type}
             </span>
+            {result.type === 'polynomial' && (
+              <span className="px-2.5 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] font-mono font-bold">
+                Method: {quadraticMethod === 'factoring' ? 'Factoring (AC)' : quadraticMethod === 'completing_square' ? 'Completing the Square' : quadraticMethod === 'formula' ? 'Quadratic Formula' : 'Auto'}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
