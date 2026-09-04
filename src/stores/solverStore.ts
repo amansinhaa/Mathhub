@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { SolverType, SolverResult, QuadraticMethod } from '@/types/solver';
 import { solvePolynomial, solveSystem, solveInequality, solveSymbolic } from '@/lib/math/solver';
+import { solveDerivative, solveIntegral } from '@/lib/math/calculusSolver';
 
 interface SolverState {
   equation: string;
@@ -80,8 +81,16 @@ export const useSolverStore = create<SolverState>()(
           let result: SolverResult | null = null;
           switch (solverType) {
             case 'polynomial':
-              if (!equation.trim()) throw new Error('Please enter a polynomial equation.');
+              if (!equation.trim()) throw new Error('Please enter an equation.');
               result = solvePolynomial(equation, quadraticMethod);
+              break;
+            case 'derivative':
+              if (!equation.trim()) throw new Error('Please enter a function or expression to differentiate.');
+              result = solveDerivative(equation);
+              break;
+            case 'integral':
+              if (!equation.trim()) throw new Error('Please enter a function or expression to integrate.');
+              result = solveIntegral(equation);
               break;
             case 'system':
               if (systemEquations.some((eq) => !eq.trim())) throw new Error('Please fill in all equations in the system.');

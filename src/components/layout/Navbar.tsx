@@ -11,7 +11,7 @@ import { ShortcutsModal } from './ShortcutsModal';
 /** Navigation items for the core modules. */
 const NAV_ITEMS = [
   { href: '/calculator', label: 'Calculator', icon: Calculator, badge: 'fx' },
-  { href: '/solver', label: 'Solver', icon: FunctionSquare, badge: 'ax' },
+  { href: '/solver', label: 'Equation', icon: FunctionSquare, badge: 'ax' },
   { href: '/graph', label: 'Graph', icon: LineChart, badge: '2D' },
   { href: '/formulas', label: 'Formulas', icon: BookOpen, badge: 'Σ' },
 ] as const;

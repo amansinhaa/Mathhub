@@ -301,11 +301,34 @@ export default function StepByStep() {
                             Both methods agree: <span className="font-semibold text-[#131313] dark:text-white">({step.divisionDetails.dividendMath}) ÷ ({step.divisionDetails.divisorMath}) = {step.divisionDetails.quotientMath}</span> (Remainder: {step.divisionDetails.remainderMath})
                           </div>
                         </div>
-                      ) : step.math ? (
-                        <div className="overflow-x-auto max-w-full text-xs sm:text-sm py-1 text-[#131313] dark:text-white">
-                          <MathDisplay math={step.math} block />
+                      ) : (
+                        <div className="space-y-3">
+                          {/* Dedicated Formula Used Callout for Calculus & Step Rules */}
+                          {step.formulaUsed && (
+                            <div className="bg-[#EFEBE9]/70 dark:bg-[#3E2723]/40 border border-[#D7CCC8] dark:border-[#5D4037]/60 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+                              <div className="flex flex-col">
+                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                                  Formula Applied: {step.formulaUsed.name}
+                                </span>
+                                {step.formulaUsed.description && (
+                                  <span className="text-[11px] text-[#616161] dark:text-[#A19891]">
+                                    {step.formulaUsed.description}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="bg-white dark:bg-[#1B1B1B] px-2.5 py-1 rounded-lg border border-[#E0E0E0] dark:border-[#2E2825] text-xs shrink-0 self-start sm:self-auto">
+                                <MathDisplay math={step.formulaUsed.latex} />
+                              </div>
+                            </div>
+                          )}
+
+                          {step.math && (
+                            <div className="overflow-x-auto max-w-full text-xs sm:text-sm py-1 text-[#131313] dark:text-white">
+                              <MathDisplay math={step.math} block />
+                            </div>
+                          )}
                         </div>
-                      ) : null}
+                      )}
                     </div>
                   )}
                 </div>

@@ -2,33 +2,87 @@
 
 import React, { useState } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
-import { Eye, EyeOff, Trash2, Plus, HelpCircle, X, Info } from 'lucide-react';
+import { Eye, EyeOff, Trash2, Plus, HelpCircle, X, Info, Keyboard as KeyboardIcon } from 'lucide-react';
 import { isImplicitEquation } from '@/lib/math/implicitPlot';
+import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 
 export default function EquationInput() {
   const { equations, addEquation, updateEquation, removeEquation } = useGraphStore();
   const [showHelp, setShowHelp] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [activeEqId, setActiveEqId] = useState<string | null>(null);
+
+  const handleKeyboardInsert = (text: string) => {
+    const targetId = activeEqId || equations[0]?.id;
+    if (!targetId) return;
+    const eq = equations.find((e) => e.id === targetId);
+    if (eq) {
+      updateEquation(targetId, eq.expression + text);
+    }
+  };
+
+  const handleKeyboardBackspace = () => {
+    const targetId = activeEqId || equations[0]?.id;
+    if (!targetId) return;
+    const eq = equations.find((e) => e.id === targetId);
+    if (eq) {
+      updateEquation(targetId, eq.expression.slice(0, -1));
+    }
+  };
+
+  const handleKeyboardClear = () => {
+    const targetId = activeEqId || equations[0]?.id;
+    if (!targetId) return;
+    updateEquation(targetId, '');
+  };
 
   return (
     <div className="flex flex-col space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-[#131313] dark:text-white text-xs sm:text-sm font-mono uppercase tracking-wider">
-          Equations ({equations.length})
+          Equations & Relations ({equations.length})
         </h3>
-        <button
-          type="button"
-          onClick={() => setShowHelp(!showHelp)}
-          className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg transition-colors border ${
-            showHelp
-              ? 'bg-[#5D4037] text-white border-[#795548]'
-              : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
-          }`}
-          title="Syntax Guide"
-        >
-          <HelpCircle size={13} />
-          <span>Guide</span>
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => setShowKeyboard(!showKeyboard)}
+            className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg transition-colors border ${
+              showKeyboard
+                ? 'bg-[#5D4037] text-white border-[#795548]'
+                : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
+            }`}
+            title="Toggle Math Keyboard"
+          >
+            <KeyboardIcon size={13} />
+            <span className="hidden sm:inline">Keyboard</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowHelp(!showHelp)}
+            className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg transition-colors border ${
+              showHelp
+                ? 'bg-[#5D4037] text-white border-[#795548]'
+                : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
+            }`}
+            title="Syntax Guide"
+          >
+            <HelpCircle size={13} />
+            <span>Guide</span>
+          </button>
+        </div>
       </div>
+
+      {/* Virtual Math Keyboard in Graphing Studio */}
+      {showKeyboard && (
+        <div className="animate-fade-in">
+          <VirtualMathKeyboard
+            onInsert={handleKeyboardInsert}
+            onBackspace={handleKeyboardBackspace}
+            onClear={handleKeyboardClear}
+            onClose={() => setShowKeyboard(false)}
+          />
+        </div>
+      )}
 
       {/* Syntax Guide Panel */}
       {showHelp && (
@@ -90,31 +144,29 @@ export default function EquationInput() {
                 title="Toggle visibility"
               />
 
-              {/* Equation Input */}
-              <div className="flex-1 flex items-center bg-white dark:bg-[#1B1B1B] px-2.5 py-1.5 rounded-lg border border-[#E0E0E0] dark:border-[#332D2A]">
-                <span className="text-[#5D4037] dark:text-[#8D827A] font-mono text-xs mr-1.5 select-none font-semibold">
-                  {isImplicit ? '2D:' : 'f(x)='}
-                </span>
+              {/* Dynamic Relation / Graph Type Badge */}
+              <div className="flex-1 flex items-center bg-white dark:bg-[#1B1B1B] px-2.5 py-1.5 rounded-lg border border-[#E0E0E0] dark:border-[#332D2A] focus-within:ring-2 focus-within:ring-[#5D4037]/30 focus-within:border-[#5D4037]">
                 <input
                   type="text"
                   value={eq.expression}
+                  onFocus={() => setActiveEqId(eq.id)}
                   onChange={(e) => updateEquation(eq.id, e.target.value)}
                   className="bg-transparent border-none outline-none w-full font-mono text-xs sm:text-sm text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
-                  placeholder="e.g. x² + y² = 25, sin(x)"
+                  placeholder="e.g. y = 2x + 1,  x² + y² = 25,  or  x³ - 3x"
                 />
               </div>
 
-              {/* Type Badge */}
+              {/* Dynamic Type Badge */}
               {eq.expression.trim() && (
                 <span
-                  className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                  className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded whitespace-nowrap ${
                     isImplicit
                       ? 'bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50'
                       : 'bg-white text-[#757575] border border-[#E0E0E0] dark:bg-[#24201E] dark:text-[#BCAAA4] dark:border-[#3E2723]'
                   }`}
-                  title={isImplicit ? 'Implicit 2D curve F(x, y) = 0' : 'Explicit function y = f(x)'}
+                  title={isImplicit ? 'Implicit 2D curve or relation F(x, y) = 0' : 'Explicit function y = f(x)'}
                 >
-                  {isImplicit ? 'Implicit' : 'f(x)'}
+                  {isImplicit ? 'Curve 2D' : 'Function y'}
                 </span>
               )}
 

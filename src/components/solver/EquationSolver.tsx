@@ -2,61 +2,51 @@
 
 import React from 'react';
 import { useSolverStore } from '@/stores/solverStore';
-import SolverTypeSelector from './SolverTypeSelector';
 import EquationInput from './EquationInput';
-import SystemOfEquations from './SystemOfEquations';
 import StepByStep from './StepByStep';
 import { FunctionSquare } from 'lucide-react';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
-const EMPTY_STATE_MESSAGES = {
-  polynomial: 'Enter a polynomial to see step-by-step division, roots, and factorizations.',
-  system: 'Add 2 or more equations to view step-by-step elimination and substitution.',
-  inequality: 'Enter an inequality to compute solution steps and interval notation.',
-  symbolic: 'Enter an expression or equation to see step-by-step algebraic simplification.',
-} as const;
+const EMPTY_STATE_MESSAGES: Record<string, string> = {
+  polynomial:  'Enter any equation like  2x + 8 = 20  or  x² - 5x + 6 = 0  to get step-by-step solutions.',
+  derivative:  'Enter any function like  3x² + 5x  or  sin(x)  to see step-by-step differentiation.',
+  integral:    'Enter any function like  2x + 3  or  cos(x)  to see the integral with formulas used.',
+  system:      'Enter 2 or more equations below to find where they intersect.',
+  inequality:  'Enter an inequality like  2x - 3 > 0  to compute the solution range.',
+  symbolic:    'Enter any formula like  v = u + a*t  to rearrange and solve for any variable.',
+};
 
 export default function EquationSolver() {
   const { solverType, result } = useSolverStore();
 
   return (
     <div className="w-full h-full flex flex-col space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
-      {/* Top App Bar / Header */}
+      {/* Header */}
       <header className="flex items-center justify-between gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
-                Equation Solver
-              </h1>
-              <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
-                STEP-BY-STEP
-              </span>
-            </div>
-            <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block">
-              Step-by-step solutions for algebra, systems, and inequalities
-            </p>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+              Equation Solver
+            </h1>
+            <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
+              STEP-BY-STEP
+            </span>
           </div>
+          <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block mt-0.5">
+            Type anything — equation, function, or system — then choose what you want to do with it
+          </p>
         </div>
         <ThemeToggle />
       </header>
 
-      {/* Main Dual-Pane / Multi-Pane Layout */}
+      {/* Dual pane layout */}
       <div className="flex flex-col lg:flex-row gap-5 flex-1 min-h-0 items-start">
-        {/* Left Pane: Equation Input & Controls */}
-        <div className="w-full lg:w-[420px] xl:w-[460px] shrink-0 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col space-y-4 transition-colors">
-          <SolverTypeSelector />
-          
-          <div className="pt-2 border-t border-[#E0E0E0] dark:border-[#2E2825]">
-            {solverType === 'system' ? (
-              <SystemOfEquations />
-            ) : (
-              <EquationInput />
-            )}
-          </div>
+        {/* Left: Input + Controls */}
+        <div className="w-full lg:w-[420px] xl:w-[460px] shrink-0 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
+          <EquationInput />
         </div>
 
-        {/* Right Pane: Step-by-Step Logic & Final Answer */}
+        {/* Right: Results */}
         <div className="flex-1 w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[360px] overflow-y-auto transition-colors">
           {result ? (
             <StepByStep />
@@ -65,10 +55,8 @@ export default function EquationSolver() {
               <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EFEBE9] border border-[#D7CCC8] dark:bg-[#24201E] dark:border-[#3E2723] mb-3 text-[#5D4037] dark:text-[#A1887F]">
                 <FunctionSquare size={28} />
               </div>
-              <h3 className="text-sm font-semibold text-[#131313] dark:text-white mb-1">
-                Awaiting Input
-              </h3>
-              <p className="text-xs text-[#616161] dark:text-[#8D827A] max-w-sm">
+              <h3 className="text-sm font-semibold text-[#131313] dark:text-white mb-1">Awaiting Input</h3>
+              <p className="text-xs text-[#616161] dark:text-[#8D827A] max-w-sm leading-relaxed">
                 {EMPTY_STATE_MESSAGES[solverType]}
               </p>
             </div>

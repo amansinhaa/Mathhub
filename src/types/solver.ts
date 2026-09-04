@@ -1,4 +1,4 @@
-export type SolverType = 'polynomial' | 'system' | 'inequality' | 'symbolic';
+export type SolverType = 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic';
 
 export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';
 
@@ -12,11 +12,18 @@ export interface DivisionDetails {
   explainer?: string;
 }
 
+export interface FormulaUsed {
+  name: string;
+  latex: string;
+  description?: string;
+}
+
 export interface SolutionStep {
   stepNumber?: number;
   explanation: string;
   math: string; // LaTeX
   divisionDetails?: DivisionDetails;
+  formulaUsed?: FormulaUsed;
 }
 
 export interface SolverResult {

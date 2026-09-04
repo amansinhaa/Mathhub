@@ -222,3 +222,76 @@ export const SYNTAX_HELP = [
   { input: '2x  →  2*x', description: 'implicit multiplication' },
   { input: '(x+1)(x-1)', description: 'auto-multiplied' },
 ];
+
+/**
+ * Quick heuristic equation degree detector for real-time UI badges.
+ * Returns degree number: 1 (linear), 2 (quadratic), 3 (cubic), 4+, or null if non-polynomial/unknown.
+ * CRITICAL: Only triggers if the input actually contains an algebraic variable (e.g. x, y, t)!
+ */
+export function quickDegreeDetect(input: string): { degree: number; label: string } | null {
+  if (!input || !input.trim()) return null;
+  const clean = normalizeExpression(input);
+
+  // Extract variables: must have single-letter variables not part of functions (sin, cos, sqrt, etc.)
+  const reserved = new Set([
+    'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
+    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e'
+  ]);
+  const tokens = clean.match(/[a-zA-Z]+/g) || [];
+  const hasVariable = tokens.some((t) => t.length === 1 && !reserved.has(t.toLowerCase()));
+
+  // If there is NO variable, this is just arithmetic numbers, NOT an algebraic equation!
+  if (!hasVariable) return null;
+
+  // Check for powers like x^4, x^3, x^2
+  const powerMatches = clean.match(/[a-zA-Z]\s*\^\s*([0-9]+)/g);
+  let maxExp = 0;
+  if (powerMatches) {
+    for (const m of powerMatches) {
+      const p = parseInt(m.replace(/^[a-zA-Z]\s*\^\s*/, ''), 10);
+      if (!isNaN(p) && p > maxExp) maxExp = p;
+    }
+  }
+
+  // Also check for Unicode powers like x³, x²
+  if (clean.match(/[a-zA-Z]\s*[\^3|³]/)) maxExp = Math.max(maxExp, 3);
+  if (clean.match(/[a-zA-Z]\s*[\^2|²]/)) maxExp = Math.max(maxExp, 2);
+
+  if (maxExp >= 4) return { degree: maxExp, label: `Polynomial (Degree ${maxExp})` };
+  if (maxExp === 3) return { degree: 3, label: 'Cubic (3rd Degree)' };
+  if (maxExp === 2) return { degree: 2, label: 'Quadratic (2nd Degree)' };
+  if (maxExp === 0 && hasVariable) return { degree: 1, label: 'Linear (1st Degree)' };
+
+  return null;
+}
+
+/**
+ * Convert an ASCII math expression (with sqrt, *, /, ^) into beautiful formatted LaTeX.
+ */
+export function expressionToLatex(expr: string): string {
+  if (!expr || !expr.trim()) return '';
+  let tex = expr.trim();
+
+  // If already pure LaTeX
+  if (tex.includes('\\frac') || tex.includes('\\sqrt')) return tex;
+
+  try {
+    const nerdamer = require('nerdamer');
+    require('nerdamer/Algebra');
+    // If it has equals sign, split into LHS = RHS
+    if (tex.includes('=')) {
+      const parts = tex.split('=');
+      const lhsLatex = nerdamer(parts[0].trim()).toTeX();
+      const rhsLatex = nerdamer(parts[1].trim()).toTeX();
+      return `${lhsLatex} = ${rhsLatex}`;
+    }
+    return nerdamer(tex).toTeX();
+  } catch {
+    // Fallback simple regex formatting
+    return tex
+      .replace(/\*/g, ' \\cdot ')
+      .replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}')
+      .replace(/\^(\d+)/g, '^{$1}');
+  }
+}
+
