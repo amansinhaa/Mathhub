@@ -60,8 +60,14 @@ const DEFAULT_DESKTOP_HEIGHT = 520;
 const DEFAULT_MOBILE_HEIGHT = 360;
 const TOTAL_HEIGHT = DEFAULT_DESKTOP_HEIGHT;
 const PADDING = { top: 32, right: 32, bottom: 36, left: 36 };
+const COMPACT_PADDING = { top: 16, right: 16, bottom: 22, left: 24 };
 
-export default function FunctionPlotter() {
+export interface FunctionPlotterProps {
+  compact?: boolean;
+  mobileHeight?: number;
+}
+
+export default function FunctionPlotter({ compact = false, mobileHeight }: FunctionPlotterProps = {}) {
   const {
     equations,
     bounds,
@@ -141,10 +147,11 @@ export default function FunctionPlotter() {
   const updateDims = useCallback(() => {
     if (chartContainerRef.current) {
       const w = chartContainerRef.current.clientWidth || 800;
-      const h = typeof window !== 'undefined' && window.innerWidth < 768 ? DEFAULT_MOBILE_HEIGHT : DEFAULT_DESKTOP_HEIGHT;
+      const defaultMobH = mobileHeight ?? (compact ? 220 : 340);
+      const h = typeof window !== 'undefined' && window.innerWidth < 768 ? defaultMobH : DEFAULT_DESKTOP_HEIGHT;
       setContainerDimensions({ width: w, height: h });
     }
-  }, []);
+  }, [compact, mobileHeight]);
 
   useEffect(() => {
     updateDims();
@@ -188,12 +195,13 @@ export default function FunctionPlotter() {
 
   // Origin-Centric Mathematical Plot Box
   const plotBox: PlotBox = useMemo(() => {
-    const left = PADDING.left;
-    const top = PADDING.top;
-    const width = Math.max(1, containerDimensions.width - PADDING.left - PADDING.right);
-    const height = Math.max(1, containerDimensions.height - PADDING.top - PADDING.bottom);
+    const pad = compact ? COMPACT_PADDING : PADDING;
+    const left = pad.left;
+    const top = pad.top;
+    const width = Math.max(1, containerDimensions.width - pad.left - pad.right);
+    const height = Math.max(1, containerDimensions.height - pad.top - pad.bottom);
     return { left, top, width, height };
-  }, [containerDimensions.width, containerDimensions.height]);
+  }, [compact, containerDimensions.width, containerDimensions.height]);
 
   // Coordinate transforms
   const xSpan = Math.max(1e-9, bounds.xMax - bounds.xMin);
@@ -824,11 +832,16 @@ export default function FunctionPlotter() {
   };
 
   return (
-    <div className="flex flex-col space-y-4 text-[#131313] dark:text-[#F5F5F5]">
+    <div className={`flex flex-col text-[#131313] dark:text-[#F5F5F5] ${compact ? 'space-y-1' : 'space-y-4'}`}>
       {/* Chart Canvas Card */}
-      <div className="w-full bg-white dark:bg-[#1B1B1B] rounded-2xl p-3 sm:p-5 shadow-sm border border-[#E0E0E0] dark:border-[#2E2825] flex flex-col min-h-[380px] md:min-h-[560px] relative transition-colors">
+      <div
+        className={`w-full bg-white dark:bg-[#1B1B1B] rounded-2xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825] flex flex-col relative transition-colors ${
+          compact ? 'p-1.5' : 'p-3 sm:p-5 min-h-[380px] md:min-h-[560px]'
+        }`}
+      >
         {/* Editable Chart Title Bar & Compact Toolbar */}
-        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+        {!compact && (
+          <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
           {isEditingTitle ? (
             <div className="flex items-center gap-2 flex-1 max-w-xs sm:max-w-md">
               <input
@@ -1009,9 +1022,10 @@ export default function FunctionPlotter() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Manual Range Adjustment Expandable Inputs */}
-        {showRangeInputs && (
+        {!compact && showRangeInputs && (
           <div className="animate-fade-in grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 p-3 bg-[#F5F5F5] dark:bg-[#131313] rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] text-xs">
             <div>
               <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">X Min</label>
@@ -1053,15 +1067,17 @@ export default function FunctionPlotter() {
         )}
 
         {/* Viewport Range Info Badge */}
-        <div className="flex justify-between items-center text-[10px] text-[#757575] dark:text-[#8D827A] px-1 mb-1 font-mono">
-          <span>
-            4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}], Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}]
-            {isSquareAspect && ' • 1:1 Aspect'}
-          </span>
-          <span className="text-[#5D4037] dark:text-[#A1887F] font-medium hidden sm:inline">
-            Drag to pan • Scroll to zoom • Hover curve to trace
-          </span>
-        </div>
+        {!compact && (
+          <div className="flex justify-between items-center text-[10px] text-[#757575] dark:text-[#8D827A] px-1 mb-1 font-mono">
+            <span>
+              4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}], Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}]
+              {isSquareAspect && ' • 1:1 Aspect'}
+            </span>
+            <span className="text-[#5D4037] dark:text-[#A1887F] font-medium hidden sm:inline">
+              Drag to pan • Scroll to zoom • Hover curve to trace
+            </span>
+          </div>
+        )}
 
         {/* Origin-Centric Mathematical SVG Canvas (White Paper Graph in Light Mode) */}
         <div
@@ -1075,6 +1091,35 @@ export default function FunctionPlotter() {
             isMouseDown ? 'cursor-grabbing' : 'cursor-crosshair'
           }`}
         >
+          {/* Floating Controls in compact mode */}
+          {compact && (
+            <div className="absolute top-2 right-2 z-20 flex items-center bg-white/90 dark:bg-[#1B1B1B]/90 backdrop-blur-xs rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs">
+              <button
+                type="button"
+                onClick={() => zoomIn()}
+                className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
+                title="Zoom In"
+              >
+                <ZoomIn size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => zoomOut()}
+                className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
+                title="Zoom Out"
+              >
+                <ZoomOut size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={resetBounds}
+                className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
+                title="Reset to [-8, 8]"
+              >
+                <RotateCcw size={12} />
+              </button>
+            </div>
+          )}
           {/* 4 Quadrant Background Watermarks */}
           {showQuadrants && (
             <div className="absolute inset-0 pointer-events-none grid grid-cols-2 grid-rows-2 select-none z-0 px-12 py-8 opacity-25 dark:opacity-20 font-bold font-mono text-xs text-[#9E9E9E] dark:text-[#8D827A]">
