@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useCalculatorStore } from '@/stores/calculatorStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
+import { formatExpressionForDisplay } from '@/lib/math/normalizer';
 import { Check, Copy } from 'lucide-react';
 
 export default function Display() {
@@ -41,7 +42,7 @@ export default function Display() {
 
       {/* Dynamic Expression Line */}
       <div className="w-full overflow-x-auto text-right whitespace-nowrap scrollbar-none text-sm sm:text-lg font-mono text-[#616161] dark:text-[#A19891] min-h-[1.25rem] sm:min-h-[1.5rem]">
-        {expression || <span className="opacity-0">0</span>}
+        {formatExpressionForDisplay(expression) || <span className="opacity-0">0</span>}
       </div>
 
       {/* Result Display Line with Click-to-Copy */}

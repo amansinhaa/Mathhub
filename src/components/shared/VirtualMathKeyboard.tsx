@@ -41,9 +41,9 @@ export function VirtualMathKeyboard({
     // Row 1: Variables & Powers
     { label: 'x', val: 'x', highlight: true },
     { label: 'y', val: 'y', highlight: true },
-    { label: 'x²', val: '^2', accent: true, title: 'Squared' },
+    { label: 'x²', val: '²', accent: true, title: 'Squared' },
     { label: 'aᵇ', val: '^', accent: true, title: 'Exponent / Power' },
-    { label: '√', val: 'sqrt(', accent: true, title: 'Square root' },
+    { label: '√', val: '√(', accent: true, title: 'Square root' },
 
     // Row 2: 7 8 9 ( )
     { label: '7', val: '7' },
@@ -56,21 +56,21 @@ export function VirtualMathKeyboard({
     { label: '4', val: '4' },
     { label: '5', val: '5' },
     { label: '6', val: '6' },
-    { label: '×', val: '*', accent: true },
-    { label: '÷', val: '/', accent: true },
+    { label: '×', val: ' × ', accent: true },
+    { label: '÷', val: ' ÷ ', accent: true },
 
     // Row 4: 1 2 3 + −
     { label: '1', val: '1' },
     { label: '2', val: '2' },
     { label: '3', val: '3' },
-    { label: '+', val: '+', accent: true },
-    { label: '−', val: '-', accent: true },
+    { label: '+', val: ' + ', accent: true },
+    { label: '−', val: ' − ', accent: true },
 
     // Row 5: 0 . = π ⌫
     { label: '0', val: '0' },
     { label: '.', val: '.' },
     { label: '=', val: '=' },
-    { label: 'π', val: 'pi', highlight: true, title: 'Pi constant' },
+    { label: 'π', val: 'π', highlight: true, title: 'Pi constant' },
     { label: '⌫', isBackspace: true, title: 'Backspace' },
   ];
 
@@ -80,35 +80,35 @@ export function VirtualMathKeyboard({
     { label: 'sin', val: 'sin(' },
     { label: 'cos', val: 'cos(' },
     { label: 'tan', val: 'tan(' },
-    { label: 'ln', val: 'log(', title: 'Natural log' },
-    { label: 'log', val: 'log10(', title: 'Base-10 log' },
+    { label: 'ln', val: 'ln(', title: 'Natural log' },
+    { label: 'log', val: 'log(', title: 'Base-10 log' },
 
     // Row 2
-    { label: 'asin', val: 'asin(' },
-    { label: 'acos', val: 'acos(' },
-    { label: 'atan', val: 'atan(' },
+    { label: 'sin⁻¹', val: 'sin⁻¹(' },
+    { label: 'cos⁻¹', val: 'cos⁻¹(' },
+    { label: 'tan⁻¹', val: 'tan⁻¹(' },
     { label: 'e', val: 'e', highlight: true },
-    { label: 'eˣ', val: 'exp(', title: 'e^x' },
+    { label: 'eˣ', val: 'e^', title: 'e^x' },
 
     // Row 3
     { label: 'sec', val: 'sec(' },
     { label: 'csc', val: 'csc(' },
     { label: 'cot', val: 'cot(' },
     { label: '|x|', val: 'abs(', title: 'Absolute value' },
-    { label: '∛x', val: 'cbrt(', title: 'Cube root' },
+    { label: '∛', val: '∛(', title: 'Cube root' },
 
     // Row 4
     { label: 'sinh', val: 'sinh(' },
     { label: 'cosh', val: 'cosh(' },
     { label: 'tanh', val: 'tanh(' },
-    { label: '1/x', val: '1/(', title: 'Reciprocal' },
+    { label: '1/x', val: '⁻¹', title: 'Reciprocal' },
     { label: 'n!', val: '!', title: 'Factorial' },
 
     // Row 5
     { label: '( )', val: '()' },
     { label: 'x', val: 'x', highlight: true },
     { label: 'y', val: 'y', highlight: true },
-    { label: 'π', val: 'pi', highlight: true },
+    { label: 'π', val: 'π', highlight: true },
     { label: '⌫', isBackspace: true, title: 'Backspace' },
   ];
 
@@ -116,10 +116,10 @@ export function VirtualMathKeyboard({
   const keysCalc: KeyConfig[] = [
     // Row 1
     { label: 'd/dx', val: 'd/dx(', accent: true, title: 'Derivative' },
-    { label: '∫', val: 'integral(', accent: true, title: 'Integral' },
+    { label: '∫', val: '∫ ', accent: true, title: 'Integral' },
     { label: 'lim', val: 'lim(', accent: true, title: 'Limit' },
     { label: 'Σ', val: 'sum(', accent: true, title: 'Summation' },
-    { label: '∞', val: 'Infinity', title: 'Infinity' },
+    { label: '∞', val: '∞', title: 'Infinity' },
 
     // Row 2
     { label: '<', val: ' < ' },
@@ -132,7 +132,7 @@ export function VirtualMathKeyboard({
     { label: 'dx', val: ' dx' },
     { label: 'dy', val: ' dy' },
     { label: 'dt', val: ' dt' },
-    { label: 'θ', val: 'theta', highlight: true },
+    { label: 'θ', val: 'θ', highlight: true },
     { label: '|x|', val: 'abs(' },
 
     // Row 4
@@ -143,8 +143,8 @@ export function VirtualMathKeyboard({
     { label: 'k', val: 'k', highlight: true },
 
     // Row 5
-    { label: '+', val: '+', accent: true },
-    { label: '−', val: '-', accent: true },
+    { label: '+', val: ' + ', accent: true },
+    { label: '−', val: ' − ', accent: true },
     { label: '=', val: '=' },
     { label: '0', val: '0' },
     { label: '⌫', isBackspace: true, title: 'Backspace' },
@@ -153,21 +153,21 @@ export function VirtualMathKeyboard({
   // ── Tab 4: αβγ (Greek Alphabet & Variables) ──
   const keysAbc: KeyConfig[] = [
     // Row 1
-    { label: 'θ', val: 'theta', highlight: true },
-    { label: 'α', val: 'alpha', highlight: true },
-    { label: 'β', val: 'beta', highlight: true },
-    { label: 'γ', val: 'gamma', highlight: true },
-    { label: 'λ', val: 'lambda', highlight: true },
+    { label: 'θ', val: 'θ', highlight: true },
+    { label: 'α', val: 'α', highlight: true },
+    { label: 'β', val: 'β', highlight: true },
+    { label: 'γ', val: 'γ', highlight: true },
+    { label: 'λ', val: 'λ', highlight: true },
 
     // Row 2
-    { label: 'μ', val: 'mu', highlight: true },
-    { label: 'π', val: 'pi', highlight: true },
-    { label: 'σ', val: 'sigma', highlight: true },
-    { label: 'ω', val: 'omega', highlight: true },
-    { label: 'φ', val: 'phi', highlight: true },
+    { label: 'μ', val: 'μ', highlight: true },
+    { label: 'π', val: 'π', highlight: true },
+    { label: 'σ', val: 'σ', highlight: true },
+    { label: 'ω', val: 'ω', highlight: true },
+    { label: 'φ', val: 'φ', highlight: true },
 
     // Row 3
-    { label: 'Δ', val: 'Delta', highlight: true },
+    { label: 'Δ', val: 'Δ', highlight: true },
     { label: 'a', val: 'a' },
     { label: 'b', val: 'b' },
     { label: 'c', val: 'c' },

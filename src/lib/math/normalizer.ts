@@ -33,12 +33,40 @@ export function normalizeExpression(input: string): string {
   let expr = input.trim();
   if (!expr) return '';
 
-  // 1. Replace Unicode math operators
+  // 1. Replace Unicode math operators and symbols
   expr = expr.replace(/×/g, '*');
   expr = expr.replace(/÷/g, '/');
   expr = expr.replace(/−/g, '-');    // Unicode minus
   expr = expr.replace(/π/g, 'pi');
-  expr = expr.replace(/√/g, 'sqrt');
+  expr = expr.replace(/∛/g, 'cbrt');  // Cube root symbol
+  expr = expr.replace(/√/g, 'sqrt');  // Square root symbol
+
+  // Inverse trig and hyperbolic unicode notations
+  expr = expr.replace(/sin⁻¹/g, 'asin');
+  expr = expr.replace(/cos⁻¹/g, 'acos');
+  expr = expr.replace(/tan⁻¹/g, 'atan');
+  expr = expr.replace(/sinh⁻¹/g, 'asinh');
+  expr = expr.replace(/cosh⁻¹/g, 'acosh');
+  expr = expr.replace(/tanh⁻¹/g, 'atanh');
+
+  // Greek and physics symbols
+  expr = expr.replace(/θ/g, 'theta');
+  expr = expr.replace(/α/g, 'alpha');
+  expr = expr.replace(/β/g, 'beta');
+  expr = expr.replace(/γ/g, 'gamma');
+  expr = expr.replace(/λ/g, 'lambda');
+  expr = expr.replace(/μ/g, 'mu');
+  expr = expr.replace(/σ/g, 'sigma');
+  expr = expr.replace(/ω/g, 'omega');
+  expr = expr.replace(/φ/g, 'phi');
+  expr = expr.replace(/Δ/g, 'Delta');
+
+  // Natural log
+  expr = expr.replace(/\bln\s*\(/g, 'log(');
+
+  // Ensure cbrt and sqrt with adjacent numbers without parens work: ∛27 -> cbrt(27), √16 -> sqrt(16)
+  expr = expr.replace(/cbrt\s*([0-9.]+)/g, 'cbrt($1)');
+  expr = expr.replace(/sqrt\s*([0-9.]+)/g, 'sqrt($1)');
 
   // 2. Convert Unicode superscripts to ^(digits)
   // Match: a letter/digit/closing paren followed by one or more superscript chars
@@ -294,4 +322,51 @@ export function expressionToLatex(expr: string): string {
       .replace(/\^(\d+)/g, '^{$1}');
   }
 }
+
+/**
+ * Format an expression string to always use exact mathematical symbols for human display:
+ * Converts cbrt(x) -> ∛(x), sqrt(x) -> √(x), * -> ×, / -> ÷, pi -> π, asin -> sin⁻¹, etc.
+ */
+export function formatExpressionForDisplay(rawExpr: string): string {
+  if (!rawExpr || !rawExpr.trim()) return '';
+  let str = rawExpr;
+
+  // Functions to exact unicode symbols
+  str = str.replace(/\bcbrt\s*\(/g, '∛(');
+  str = str.replace(/\bsqrt\s*\(/g, '√(');
+  str = str.replace(/\basin\s*\(/g, 'sin⁻¹(');
+  str = str.replace(/\bacos\s*\(/g, 'cos⁻¹(');
+  str = str.replace(/\batan\s*\(/g, 'tan⁻¹(');
+  str = str.replace(/\basinh\s*\(/g, 'sinh⁻¹(');
+  str = str.replace(/\bacosh\s*\(/g, 'cosh⁻¹(');
+  str = str.replace(/\batanh\s*\(/g, 'tanh⁻¹(');
+  str = str.replace(/\blog10\s*\(/g, 'log(');
+  str = str.replace(/\blog\s*\(/g, 'ln(');
+
+  // Greek constants and symbols
+  str = str.replace(/\bpi\b/g, 'π');
+  str = str.replace(/\btheta\b/g, 'θ');
+  str = str.replace(/\balpha\b/g, 'α');
+  str = str.replace(/\bbeta\b/g, 'β');
+  str = str.replace(/\bgamma\b/g, 'γ');
+  str = str.replace(/\blambda\b/g, 'λ');
+  str = str.replace(/\bmu\b/g, 'μ');
+  str = str.replace(/\bsigma\b/g, 'σ');
+  str = str.replace(/\bomega\b/g, 'ω');
+  str = str.replace(/\bphi\b/g, 'φ');
+  str = str.replace(/\bDelta\b/g, 'Δ');
+
+  // Operators
+  str = str.replace(/\s*\*\s*/g, ' × ');
+  str = str.replace(/\s*\/\s*/g, ' ÷ ');
+  str = str.replace(/\s*−\s*/g, ' − ');
+
+  // Powers
+  str = str.replace(/\^2\b/g, '²');
+  str = str.replace(/\^3\b/g, '³');
+  str = str.replace(/\^-1\b/g, '⁻¹');
+
+  return str;
+}
+
 

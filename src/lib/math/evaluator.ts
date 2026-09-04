@@ -1,5 +1,6 @@
 import { evaluate, parse, format } from 'mathjs';
 import * as math from 'mathjs';
+import { normalizeExpression, autoBalanceParens } from './normalizer';
 
 export interface EvalResult {
   result: string;
@@ -14,6 +15,7 @@ export function evaluateExpression(
 ): EvalResult {
   try {
     const customScope = { ...scope };
+    const normalizedExpr = autoBalanceParens(normalizeExpression(expr));
 
     const toRad = (val: any) => {
       if (typeof val === 'number') {
@@ -51,7 +53,7 @@ export function evaluateExpression(
       });
     }
 
-    const result = evaluate(expr, customScope);
+    const result = evaluate(normalizedExpr, customScope);
     
     let resultStr = '';
     if (result === undefined || result === null) {
@@ -66,7 +68,7 @@ export function evaluateExpression(
 
     return {
       result: resultStr,
-      latex: toLatex(expr)
+      latex: toLatex(normalizedExpr)
     };
   } catch (error: any) {
     return {
@@ -79,7 +81,8 @@ export function evaluateExpression(
 
 export function toLatex(expr: string): string {
   try {
-    const node = parse(expr);
+    const normalized = autoBalanceParens(normalizeExpression(expr));
+    const node = parse(normalized);
     return node.toTex();
   } catch (e) {
     return expr;
