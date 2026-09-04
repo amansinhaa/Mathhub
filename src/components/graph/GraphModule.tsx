@@ -156,21 +156,19 @@ export default function GraphModule() {
       {/* Unit Circle Modal */}
       <UnitCircleModal isOpen={isUnitCircleOpen} onClose={() => setIsUnitCircleOpen(false)} />
 
-      {/* Top App Bar / Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2">
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
-                Graphing Studio
-              </h1>
-              <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
-                2D PLOTTER
-              </span>
-            </div>
-            <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block">
-              Laboratory-grade 2D function plotting, implicit curves, and print sheets
-            </p>
+      {/* Top App Bar / Header (Android Design Specification compliant without logo or settings icon) */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2">
+        <div className="flex flex-col">
+          <span className="text-[10px] font-mono font-semibold tracking-widest text-[#757575] dark:text-[#9E9E9E] uppercase">
+            MATHHUB
+          </span>
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+              Graphing Studio
+            </h1>
+            <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
+              2D PLOTTER
+            </span>
           </div>
         </div>
 
@@ -189,7 +187,7 @@ export default function GraphModule() {
           <div className="flex overflow-x-auto scrollbar-none space-x-1 bg-[#F5F5F5] dark:bg-[#131313] p-0.5 sm:p-1 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] w-full sm:w-auto transition-colors">
             {(
               [
-                { id: 'equation', label: 'Equation' },
+                { id: 'equation', label: 'f(x) Plot' },
                 { id: 'table', label: 'Table' },
                 { id: 'file', label: 'CSV File' },
                 { id: 'collage', label: 'Collage Sheet' },
@@ -338,13 +336,19 @@ export default function GraphModule() {
                   </div>
                 </div>
 
-                {/* 3. The Math Keyboard directly below the input */}
+                {/* 3. Dense Scientific & Graphing Keypad with PLOT action CTA */}
                 {showMobileKeyboard ? (
                   <div className="w-full shrink-0 animate-fade-in">
                     <VirtualMathKeyboard
                       onInsert={handleMobileInsert}
                       onBackspace={handleMobileBackspace}
                       onClear={handleMobileClear}
+                      onPlot={() => {
+                        // Triggers instant feedback and closes/confirms plot
+                        if (activeMobileEq && !activeMobileEq.visible) {
+                          updateEquation(activeMobileEq.id, undefined, true);
+                        }
+                      }}
                       onClose={() => setShowMobileKeyboard(false)}
                     />
                   </div>

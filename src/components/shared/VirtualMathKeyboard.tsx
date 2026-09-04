@@ -7,6 +7,7 @@ interface VirtualMathKeyboardProps {
   onInsert: (text: string) => void;
   onBackspace: () => void;
   onClear: () => void;
+  onPlot?: () => void;
   onClose?: () => void;
   className?: string;
 }
@@ -17,6 +18,7 @@ interface KeyConfig {
   label: string;
   val?: string;
   isBackspace?: boolean;
+  isPlot?: boolean;
   highlight?: boolean;
   accent?: boolean;
   title?: string;
@@ -26,6 +28,7 @@ export function VirtualMathKeyboard({
   onInsert,
   onBackspace,
   onClear,
+  onPlot,
   onClose,
   className = '',
 }: VirtualMathKeyboardProps) {
@@ -67,12 +70,12 @@ export function VirtualMathKeyboard({
     { label: '+', val: ' + ', accent: true },
     { label: '−', val: ' − ', accent: true },
 
-    // Row 5: 0 . = π ⌫
+    // Row 5: 0 . ⌫ π PLOT
     { label: '0', val: '0' },
     { label: '.', val: '.' },
-    { label: '=', val: '=' },
-    { label: 'π', val: 'π', highlight: true, title: 'Pi constant' },
     { label: '⌫', isBackspace: true, title: 'Backspace' },
+    { label: 'π', val: 'π', highlight: true, title: 'Pi constant' },
+    { label: '≈ PLOT', isPlot: true, title: 'Plot Function / Render Curve' },
   ];
 
   // ── Tab 2: f(x) (Trigonometry & Functions) ──
@@ -209,9 +212,8 @@ export function VirtualMathKeyboard({
           {(
             [
               { id: '123', label: '1 2 3' },
-              { id: 'fx', label: 'f(x)' },
-              { id: 'calc', label: 'Calc ∫' },
-              { id: 'abc', label: 'αβγ' },
+              { id: 'fx', label: 'f(x) Trig' },
+              { id: 'calc', label: 'Calc ∫ α' },
             ] as const
           ).map((tab) => (
             <button
@@ -231,7 +233,7 @@ export function VirtualMathKeyboard({
           ))}
         </div>
 
-        {/* Action Controls: Clear, Backspace & Hide */}
+        {/* Action Controls: Clear & Hide */}
         <div className="flex items-center gap-1 shrink-0">
           <button
             type="button"
@@ -276,6 +278,26 @@ export function VirtualMathKeyboard({
                 aria-label="Backspace"
               >
                 <Delete size={16} />
+              </button>
+            );
+          }
+
+          if (k.isPlot) {
+            return (
+              <button
+                key={idx}
+                type="button"
+                onMouseDown={handleKeyInteraction}
+                onTouchStart={handleKeyInteraction}
+                onClick={() => {
+                  if (onPlot) {
+                    onPlot();
+                  }
+                }}
+                title={k.title || k.label}
+                className="h-9 sm:h-9.5 rounded-xl text-xs font-mono font-bold transition-all active:scale-95 flex items-center justify-center border shadow-xs bg-[#5D4037] hover:bg-[#4E342E] text-white border-[#795548] dark:bg-[#5D4037] dark:hover:bg-[#4E342E] dark:text-white dark:border-[#8D6E63]"
+              >
+                {k.label}
               </button>
             );
           }

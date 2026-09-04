@@ -1093,32 +1093,44 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
         >
           {/* Floating Controls in compact mode */}
           {compact && (
-            <div className="absolute top-2 right-2 z-20 flex items-center bg-white/90 dark:bg-[#1B1B1B]/90 backdrop-blur-xs rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs">
-              <button
-                type="button"
-                onClick={() => zoomIn()}
-                className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
-                title="Zoom In"
-              >
-                <ZoomIn size={13} />
-              </button>
-              <button
-                type="button"
-                onClick={() => zoomOut()}
-                className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
-                title="Zoom Out"
-              >
-                <ZoomOut size={13} />
-              </button>
-              <button
-                type="button"
-                onClick={resetBounds}
-                className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
-                title="Reset to [-8, 8]"
-              >
-                <RotateCcw size={12} />
-              </button>
-            </div>
+            <>
+              {/* Telemetry Badge: Active domain indicator (Top-Left HUD) */}
+              <div className="absolute top-2 left-2 z-20 pointer-events-none flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-[#1B1B1B]/90 backdrop-blur-xs border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#5D4037] dark:bg-[#E0A99A] inline-block shrink-0" />
+                <span>x: [{bounds.xMin}, {bounds.xMax}]</span>
+              </div>
+
+              {/* Viewport Floating Zoom & Recenter Controls (Top-Right HUD) */}
+              <div className="absolute top-2 right-2 z-20 flex items-center bg-white/90 dark:bg-[#1B1B1B]/90 backdrop-blur-xs rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => zoomIn()}
+                  className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
+                  title="Zoom In"
+                  aria-label="Zoom In"
+                >
+                  <ZoomIn size={13} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => zoomOut()}
+                  className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
+                  title="Zoom Out"
+                  aria-label="Zoom Out"
+                >
+                  <ZoomOut size={13} />
+                </button>
+                <button
+                  type="button"
+                  onClick={resetBounds}
+                  className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white"
+                  title="Recenter to Origin [-8, 8]"
+                  aria-label="Recenter to Origin"
+                >
+                  <RotateCcw size={12} />
+                </button>
+              </div>
+            </>
           )}
           {/* 4 Quadrant Background Watermarks */}
           {showQuadrants && (
@@ -1146,6 +1158,14 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
             preserveAspectRatio="none"
           >
             <defs>
+              {/* Soft Gaussian curve glow filter per Android design spec */}
+              <filter id="curve-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
               {/* Clip path for curves to stay inside plot box */}
               <clipPath id="plot-clip">
                 <rect
