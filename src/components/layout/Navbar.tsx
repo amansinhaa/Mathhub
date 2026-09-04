@@ -131,8 +131,8 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Bottom Section: Instrument Status & Theme Toggle */}
-        <div className="flex flex-col gap-2 pt-4 border-t border-[#E0E0E0] dark:border-[#2E2825]">
+        {/* Bottom Section: Instrument Status, Theme Toggle & Legal Links */}
+        <div className="flex flex-col gap-2.5 pt-4 border-t border-[#E0E0E0] dark:border-[#2E2825]">
           <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
             <span className="hidden lg:flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#5D4037] animate-pulse" />
@@ -142,6 +142,25 @@ export function Navbar() {
               <ShortcutsModal />
               <ThemeToggle />
             </div>
+          </div>
+
+          {/* Desktop Footer Legal Links for AdSense / Search Discovery */}
+          <div className="hidden lg:flex flex-wrap items-center gap-x-2.5 gap-y-1 px-2 pt-1 border-t border-[#E0E0E0]/60 dark:border-[#2E2825]/60 text-[10px] text-[#757575] dark:text-[#8D827A]">
+            <Link href="/about" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
+              About
+            </Link>
+            <span>•</span>
+            <Link href="/privacy-policy" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
+              Privacy
+            </Link>
+            <span>•</span>
+            <Link href="/terms" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
+              Terms
+            </Link>
+            <span>•</span>
+            <Link href="/contact" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
+              Contact
+            </Link>
           </div>
         </div>
       </nav>

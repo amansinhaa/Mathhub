@@ -132,10 +132,27 @@ export function ShortcutsModal() {
               ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#E0E0E0] dark:border-[#2E2825] text-center">
+            <div className="mt-4 pt-3 border-t border-[#E0E0E0] dark:border-[#2E2825] flex flex-col items-center gap-2">
               <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
                 Press <kbd className="px-1.5 py-0.5 rounded bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#2E2825] text-[#5D4037] dark:text-[#D7CCC8]">?</kbd> anywhere to open or close
               </span>
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#757575] dark:text-[#8D827A] pt-1">
+                <a href="/about" onClick={() => setIsOpen(false)} className="hover:text-[#5D4037] dark:hover:text-[#E0A99A] underline-offset-2 hover:underline">
+                  About
+                </a>
+                <span>•</span>
+                <a href="/privacy-policy" onClick={() => setIsOpen(false)} className="hover:text-[#5D4037] dark:hover:text-[#E0A99A] underline-offset-2 hover:underline">
+                  Privacy Policy
+                </a>
+                <span>•</span>
+                <a href="/terms" onClick={() => setIsOpen(false)} className="hover:text-[#5D4037] dark:hover:text-[#E0A99A] underline-offset-2 hover:underline">
+                  Terms
+                </a>
+                <span>•</span>
+                <a href="/contact" onClick={() => setIsOpen(false)} className="hover:text-[#5D4037] dark:hover:text-[#E0A99A] underline-offset-2 hover:underline">
+                  Contact
+                </a>
+              </div>
             </div>
           </div>
         </div>

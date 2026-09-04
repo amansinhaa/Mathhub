@@ -45,5 +45,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
+
+    // ── Informational & Legal pages (Google AdSense compliance) ────────
+    { url: `${BASE}/about`,                   lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE}/contact`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE}/privacy-policy`,          lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE}/terms`,                   lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
   ];
 }
