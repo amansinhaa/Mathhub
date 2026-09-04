@@ -4,6 +4,8 @@ import 'katex/dist/katex.min.css';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -130,6 +132,8 @@ export default function RootLayout({
             {/* Navigation — Material 3 bottom bar on mobile, persistent sidebar on desktop */}
             <Navbar />
           </div>
+          <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
