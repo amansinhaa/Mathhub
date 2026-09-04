@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/formulas`,                lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
 
     // ── Dedicated solver landing pages ─────────────────────────────────
+    { url: `${BASE}/derivative-calculator`,     lastModified: now, changeFrequency: 'weekly',   priority: 0.95 },
+    { url: `${BASE}/integral-calculator`,       lastModified: now, changeFrequency: 'weekly',   priority: 0.95 },
     { url: `${BASE}/quadratic-equation-solver`, lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
     { url: `${BASE}/equation-solver-with-steps`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/matrix-solver`,            lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
