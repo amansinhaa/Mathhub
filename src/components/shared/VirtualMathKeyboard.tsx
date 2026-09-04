@@ -31,8 +31,9 @@ export function VirtualMathKeyboard({
 }: VirtualMathKeyboardProps) {
   const [activeTab, setActiveTab] = useState<KeyboardTab>('123');
 
-  // Helper to prevent input blur when tapping keys
-  const handleKeyMouseDown = (e: React.MouseEvent) => {
+  // Helper to prevent input blur and mobile OS keyboard pop-up when tapping keys
+  const handleKeyInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    // Prevent browser from transferring focus away or triggering the phone's software keyboard
     e.preventDefault();
   };
 
@@ -216,7 +217,8 @@ export function VirtualMathKeyboard({
             <button
               key={tab.id}
               type="button"
-              onMouseDown={handleKeyMouseDown}
+              onMouseDown={handleKeyInteraction}
+              onTouchStart={handleKeyInteraction}
               onClick={() => setActiveTab(tab.id)}
               className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all whitespace-nowrap ${
                 activeTab === tab.id
@@ -233,7 +235,8 @@ export function VirtualMathKeyboard({
         <div className="flex items-center gap-1 shrink-0">
           <button
             type="button"
-            onMouseDown={handleKeyMouseDown}
+            onMouseDown={handleKeyInteraction}
+            onTouchStart={handleKeyInteraction}
             onClick={onClear}
             className="px-2 py-1 rounded-lg text-[10px] font-mono font-bold text-red-600 dark:text-[#FFAB91] bg-red-50 dark:bg-[#3E2723]/60 border border-red-200 dark:border-[#5D4037]/60 hover:bg-red-100 transition-colors"
             title="Clear input"
@@ -243,7 +246,8 @@ export function VirtualMathKeyboard({
           {onClose && (
             <button
               type="button"
-              onMouseDown={handleKeyMouseDown}
+              onMouseDown={handleKeyInteraction}
+              onTouchStart={handleKeyInteraction}
               onClick={onClose}
               className="flex items-center gap-0.5 px-2 py-1 rounded-lg text-xs font-mono font-medium text-[#757575] hover:text-[#131313] hover:bg-[#EFEBE9] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#282422] border border-[#E0E0E0] dark:border-[#2E2825] transition-colors"
               title="Hide math keyboard"
@@ -264,7 +268,8 @@ export function VirtualMathKeyboard({
               <button
                 key={idx}
                 type="button"
-                onMouseDown={handleKeyMouseDown}
+                onMouseDown={handleKeyInteraction}
+                onTouchStart={handleKeyInteraction}
                 onClick={onBackspace}
                 className="h-9 sm:h-9.5 rounded-xl text-sm font-mono font-semibold transition-all active:scale-95 flex items-center justify-center border shadow-2xs bg-[#F5F5F5] hover:bg-[#EFEBE9] text-[#616161] hover:text-[#131313] border-[#E0E0E0] dark:bg-[#221F1E] dark:hover:bg-[#2C2724] dark:text-[#A19891] dark:hover:text-white dark:border-[#332D2A]"
                 title="Backspace"
@@ -279,7 +284,8 @@ export function VirtualMathKeyboard({
             <button
               key={idx}
               type="button"
-              onMouseDown={handleKeyMouseDown}
+              onMouseDown={handleKeyInteraction}
+              onTouchStart={handleKeyInteraction}
               onClick={() => k.val && onInsert(k.val)}
               title={k.title || k.label}
               className={`h-9 sm:h-9.5 rounded-xl text-xs sm:text-sm font-mono font-semibold transition-all active:scale-95 flex items-center justify-center border shadow-2xs ${

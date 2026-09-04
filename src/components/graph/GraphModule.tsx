@@ -97,8 +97,8 @@ export default function GraphModule() {
     const newPos = start + text.length;
     mobileSelectionRange.current = { start: newPos, end: newPos };
 
-    // Update cursor position inside input without opening native virtual keyboard
     if (inputEl) {
+      // Set cursor without forcing a focus that summons the mobile OS keyboard
       inputEl.setSelectionRange(newPos, newPos);
     }
   };
@@ -320,11 +320,7 @@ export default function GraphModule() {
                       type="text"
                       inputMode={showMobileKeyboard ? 'none' : 'text'}
                       value={activeMobileEq ? activeMobileEq.expression : ''}
-                      onFocus={() => {
-                        if (!showMobileKeyboard) {
-                          // when keyboard is hidden, focusing allows native typing
-                        }
-                      }}
+                      onFocus={() => setShowMobileKeyboard(true)}
                       onBlur={handleMobileInputBlur}
                       onChange={(e) => activeMobileEq && updateEquation(activeMobileEq.id, e.target.value)}
                       placeholder="Type formula (e.g. x² - 4, sin(x), x³)"

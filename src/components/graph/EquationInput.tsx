@@ -215,7 +215,6 @@ export default function EquationInput() {
                     inputRefs.current[eq.id] = el;
                   }}
                   type="text"
-                  inputMode={showKeyboard ? 'none' : 'text'}
                   value={eq.expression}
                   onFocus={() => setActiveEqId(eq.id)}
                   onBlur={(e) => handleInputBlur(eq.id, e)}
