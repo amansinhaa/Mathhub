@@ -113,12 +113,17 @@ export default function GraphModule() {
         <CollageExport />
       ) : (
         <div className="flex flex-col lg:flex-row gap-5 items-start">
-          {/* Left Panel - Inputs & Saved Graphs */}
+          {/* Left Panel - Inputs & Controls */}
           <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0 flex flex-col space-y-4">
             <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
               {inputMode === 'equation' && <EquationInput />}
               {inputMode === 'table' && <DataTableInput />}
               {inputMode === 'file' && <CSVUploader />}
+            </div>
+
+            {/* Mobile View: Graph canvas displays right after inputs, before saved graphs/export */}
+            <div className="w-full min-w-0 lg:hidden">
+              {inputMode === 'equation' ? <FunctionPlotter /> : <DataChart />}
             </div>
 
             {/* Function Analysis Side Panel */}
@@ -160,13 +165,14 @@ export default function GraphModule() {
               <SavedGraphsList />
             </div>
 
+            {/* Quick Export & Print */}
             <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 shadow-sm transition-colors">
               <ExportButton />
             </div>
           </div>
 
-          {/* Right Panel - Chart / Canvas */}
-          <div className="flex-1 w-full min-w-0">
+          {/* Desktop Right Panel - Chart / Canvas (Hidden on mobile to avoid duplication) */}
+          <div className="hidden lg:block flex-1 w-full min-w-0">
             {inputMode === 'equation' ? <FunctionPlotter /> : <DataChart />}
           </div>
         </div>
