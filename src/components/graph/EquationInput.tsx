@@ -9,7 +9,13 @@ import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 export default function EquationInput() {
   const { equations, addEquation, updateEquation, removeEquation } = useGraphStore();
   const [showHelp, setShowHelp] = useState(false);
-  const [showKeyboard, setShowKeyboard] = useState(false);
+  // Default virtual keyboard to open on mobile screens (< 768px)
+  const [showKeyboard, setShowKeyboard] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
   const [activeEqId, setActiveEqId] = useState<string | null>(null);
 
   const handleKeyboardInsert = (text: string) => {
@@ -72,18 +78,6 @@ export default function EquationInput() {
         </div>
       </div>
 
-      {/* Virtual Math Keyboard in Graphing Studio */}
-      {showKeyboard && (
-        <div className="animate-fade-in">
-          <VirtualMathKeyboard
-            onInsert={handleKeyboardInsert}
-            onBackspace={handleKeyboardBackspace}
-            onClear={handleKeyboardClear}
-            onClose={() => setShowKeyboard(false)}
-          />
-        </div>
-      )}
-
       {/* Syntax Guide Panel */}
       {showHelp && (
         <div className="bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-3 text-xs space-y-2 animate-fade-in shadow-xs">
@@ -122,7 +116,7 @@ export default function EquationInput() {
         </div>
       )}
 
-      {equations.map((eq) => {
+      {equations.map((eq, idx) => {
         const isImplicit = isImplicitEquation(eq.expression);
         const needsConstant =
           isImplicit &&
@@ -131,18 +125,27 @@ export default function EquationInput() {
 
         return (
           <div key={eq.id} className="space-y-1">
-            <div className="flex items-center space-x-2 bg-[#F5F5F5] dark:bg-[#131313] p-2 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] transition-colors">
-              {/* Color pill */}
-              <div
-                className="w-4 h-4 rounded-full shrink-0 cursor-pointer shadow-xs"
-                style={{
-                  backgroundColor: eq.visible ? eq.color : 'transparent',
-                  border: `2px solid ${eq.color}`,
-                }}
-                onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
-                role="button"
-                title="Toggle visibility"
-              />
+            <div className={`flex items-center space-x-2 p-1.5 sm:p-2 rounded-xl border transition-all ${
+              activeEqId === eq.id
+                ? 'bg-white dark:bg-[#1B1B1B] border-[#5D4037] dark:border-[#8D6E63] shadow-xs'
+                : 'bg-[#F5F5F5] dark:bg-[#131313] border-[#E0E0E0] dark:border-[#2E2825]'
+            }`}>
+              {/* Desmos-style row number & color pill */}
+              <div className="flex items-center gap-1.5 pl-1 shrink-0">
+                <span className="text-[11px] font-mono font-bold text-[#757575] dark:text-[#8D827A] w-3.5 text-center">
+                  {idx + 1}
+                </span>
+                <div
+                  className="w-4 h-4 rounded-full shrink-0 cursor-pointer shadow-xs transition-transform active:scale-90"
+                  style={{
+                    backgroundColor: eq.visible ? eq.color : 'transparent',
+                    border: `2px solid ${eq.color}`,
+                  }}
+                  onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
+                  role="button"
+                  title="Toggle visibility"
+                />
+              </div>
 
               {/* Dynamic Relation / Graph Type Badge */}
               <div className="flex-1 flex items-center bg-white dark:bg-[#1B1B1B] px-2.5 py-1.5 rounded-lg border border-[#E0E0E0] dark:border-[#332D2A] focus-within:ring-2 focus-within:ring-[#5D4037]/30 focus-within:border-[#5D4037]">
@@ -221,6 +224,18 @@ export default function EquationInput() {
           <Plus size={13} />
           <span>Add Function</span>
         </button>
+      )}
+
+      {/* Built-in Virtual Math Keyboard Dock (Desmos style beneath equation rows) */}
+      {showKeyboard && (
+        <div className="animate-fade-in pt-2">
+          <VirtualMathKeyboard
+            onInsert={handleKeyboardInsert}
+            onBackspace={handleKeyboardBackspace}
+            onClear={handleKeyboardClear}
+            onClose={() => setShowKeyboard(false)}
+          />
+        </div>
       )}
     </div>
   );

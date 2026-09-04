@@ -16,7 +16,7 @@ import UnitCircleModal from './UnitCircleModal';
 const FunctionPlotter = dynamic(() => import('./FunctionPlotter'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full min-h-[560px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
+    <div className="w-full h-full min-h-[360px] md:min-h-[560px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
       <span className="text-xs font-mono text-[#757575] dark:text-[#8D827A] animate-pulse">Initializing Plotter Engine...</span>
     </div>
   ),
@@ -113,17 +113,17 @@ export default function GraphModule() {
         <CollageExport />
       ) : (
         <div className="flex flex-col lg:flex-row gap-5 items-start">
+          {/* Mobile Only: Graph Canvas placed prominently at the top */}
+          <div className="w-full min-w-0 lg:hidden">
+            {inputMode === 'equation' ? <FunctionPlotter /> : <DataChart />}
+          </div>
+
           {/* Left Panel - Inputs & Controls */}
           <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0 flex flex-col space-y-4">
             <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
               {inputMode === 'equation' && <EquationInput />}
               {inputMode === 'table' && <DataTableInput />}
               {inputMode === 'file' && <CSVUploader />}
-            </div>
-
-            {/* Mobile View: Graph canvas displays right after inputs, before saved graphs/export */}
-            <div className="w-full min-w-0 lg:hidden">
-              {inputMode === 'equation' ? <FunctionPlotter /> : <DataChart />}
             </div>
 
             {/* Function Analysis Side Panel */}

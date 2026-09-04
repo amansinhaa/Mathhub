@@ -56,8 +56,10 @@ interface SnappedPoint {
   distPx: number;
 }
 
-const TOTAL_HEIGHT = 520;
-const PADDING = { top: 38, right: 38, bottom: 42, left: 42 };
+const DEFAULT_DESKTOP_HEIGHT = 520;
+const DEFAULT_MOBILE_HEIGHT = 360;
+const TOTAL_HEIGHT = DEFAULT_DESKTOP_HEIGHT;
+const PADDING = { top: 32, right: 32, bottom: 36, left: 36 };
 
 export default function FunctionPlotter() {
   const {
@@ -135,11 +137,12 @@ export default function FunctionPlotter() {
     setIsEditingTitle(false);
   };
 
-  // Measure container dimensions
+  // Measure container dimensions with responsive mobile height
   const updateDims = useCallback(() => {
     if (chartContainerRef.current) {
       const w = chartContainerRef.current.clientWidth || 800;
-      setContainerDimensions({ width: w, height: TOTAL_HEIGHT });
+      const h = typeof window !== 'undefined' && window.innerWidth < 768 ? DEFAULT_MOBILE_HEIGHT : DEFAULT_DESKTOP_HEIGHT;
+      setContainerDimensions({ width: w, height: h });
     }
   }, []);
 
@@ -188,9 +191,9 @@ export default function FunctionPlotter() {
     const left = PADDING.left;
     const top = PADDING.top;
     const width = Math.max(1, containerDimensions.width - PADDING.left - PADDING.right);
-    const height = Math.max(1, TOTAL_HEIGHT - PADDING.top - PADDING.bottom);
+    const height = Math.max(1, containerDimensions.height - PADDING.top - PADDING.bottom);
     return { left, top, width, height };
-  }, [containerDimensions.width]);
+  }, [containerDimensions.width, containerDimensions.height]);
 
   // Coordinate transforms
   const xSpan = Math.max(1e-9, bounds.xMax - bounds.xMin);
@@ -823,18 +826,18 @@ export default function FunctionPlotter() {
   return (
     <div className="flex flex-col space-y-4 text-[#131313] dark:text-[#F5F5F5]">
       {/* Chart Canvas Card */}
-      <div className="w-full bg-white dark:bg-[#1B1B1B] rounded-2xl p-4 sm:p-5 shadow-sm border border-[#E0E0E0] dark:border-[#2E2825] flex flex-col min-h-[560px] relative transition-colors">
-        {/* Editable Chart Title Bar */}
-        <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+      <div className="w-full bg-white dark:bg-[#1B1B1B] rounded-2xl p-3 sm:p-5 shadow-sm border border-[#E0E0E0] dark:border-[#2E2825] flex flex-col min-h-[380px] md:min-h-[560px] relative transition-colors">
+        {/* Editable Chart Title Bar & Compact Toolbar */}
+        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
           {isEditingTitle ? (
-            <div className="flex items-center gap-2 flex-1 max-w-md">
+            <div className="flex items-center gap-2 flex-1 max-w-xs sm:max-w-md">
               <input
                 type="text"
                 value={tempTitle}
                 onChange={(e) => setTempTitle(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
                 autoFocus
-                className="math-input py-1 px-2.5 text-base font-bold flex-1 bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
+                className="math-input py-1 px-2 text-sm sm:text-base font-bold flex-1 bg-white dark:bg-[#131313] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
                 placeholder="Enter chart title..."
               />
               <button
@@ -847,25 +850,25 @@ export default function FunctionPlotter() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
-              <h2 className="font-bold text-[#131313] dark:text-white text-base sm:text-lg select-none">
+            <div className="flex items-center gap-1.5 group cursor-pointer" onClick={() => setIsEditingTitle(true)}>
+              <h2 className="font-bold text-[#131313] dark:text-white text-sm sm:text-lg select-none truncate max-w-[180px] sm:max-w-xs">
                 {chartTitle}
               </h2>
               <Pencil
-                size={13}
-                className="text-[#757575] group-hover:text-[#5D4037] dark:text-[#8D827A] dark:group-hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                size={12}
+                className="text-[#757575] group-hover:text-[#5D4037] dark:text-[#8D827A] dark:group-hover:text-white opacity-40 group-hover:opacity-100 transition-opacity"
               />
             </div>
           )}
 
-          {/* Controls Bar */}
-          <div className="flex items-center gap-1.5 flex-wrap justify-end">
-            {/* Zoom / Pan Group */}
+          {/* Controls Bar: Compact Floating Style */}
+          <div className="flex items-center gap-1 flex-wrap justify-end">
+            {/* Quick Zoom In/Out & Auto-Fit */}
             <div className="flex items-center bg-[#F5F5F5] dark:bg-[#131313] rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825]">
               <button
                 type="button"
                 onClick={() => zoomIn()}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
+                className="p-1 sm:p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Zoom In"
               >
                 <ZoomIn size={14} />
@@ -873,59 +876,18 @@ export default function FunctionPlotter() {
               <button
                 type="button"
                 onClick={() => zoomOut()}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
+                className="p-1 sm:p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
                 title="Zoom Out"
               >
                 <ZoomOut size={14} />
               </button>
               <button
                 type="button"
-                onClick={() => pan('left')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
-                title="Pan Left"
-              >
-                <ChevronLeft size={14} />
-              </button>
-              <button
-                type="button"
-                onClick={() => pan('right')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
-                title="Pan Right"
-              >
-                <ChevronRight size={14} />
-              </button>
-              <button
-                type="button"
-                onClick={() => pan('up')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
-                title="Pan Up"
-              >
-                <ChevronUp size={14} />
-              </button>
-              <button
-                type="button"
-                onClick={() => pan('down')}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
-                title="Pan Down"
-              >
-                <ChevronDown size={14} />
-              </button>
-              <button
-                type="button"
-                onClick={autoFitView}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white text-xs font-semibold transition-colors"
-                title="4-Quadrant Auto-Fit View"
-              >
-                <Maximize2 size={13} />
-                <span>Auto-Fit</span>
-              </button>
-              <button
-                type="button"
                 onClick={resetBounds}
-                className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
-                title="Reset to 4-Quadrant View [-8, 8]"
+                className="p-1 sm:p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#22201F] text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white transition-colors"
+                title="Reset to [-8, 8]"
               >
-                <RotateCcw size={14} />
+                <RotateCcw size={13} />
               </button>
             </div>
 
@@ -1108,8 +1070,8 @@ export default function FunctionPlotter() {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
-          style={{ touchAction: 'none' }}
-          className={`flex-1 w-full min-h-[${TOTAL_HEIGHT}px] relative select-none touch-none bg-white dark:bg-[#131313] rounded-2xl overflow-hidden border border-[#E0E0E0] dark:border-[#2E2825] shadow-inner transition-colors ${
+          style={{ touchAction: 'none', height: containerDimensions.height }}
+          className={`w-full relative select-none touch-none bg-white dark:bg-[#131313] rounded-2xl overflow-hidden border border-[#E0E0E0] dark:border-[#2E2825] shadow-inner transition-colors ${
             isMouseDown ? 'cursor-grabbing' : 'cursor-crosshair'
           }`}
         >
@@ -1135,7 +1097,7 @@ export default function FunctionPlotter() {
           <svg
             ref={svgRef}
             className="w-full h-full absolute inset-0 z-10"
-            viewBox={`0 0 ${containerDimensions.width} ${TOTAL_HEIGHT}`}
+            viewBox={`0 0 ${containerDimensions.width} ${containerDimensions.height}`}
             preserveAspectRatio="none"
           >
             <defs>
