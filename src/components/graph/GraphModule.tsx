@@ -97,12 +97,10 @@ export default function GraphModule() {
     const newPos = start + text.length;
     mobileSelectionRange.current = { start: newPos, end: newPos };
 
-    setTimeout(() => {
-      if (inputEl) {
-        inputEl.focus();
-        inputEl.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
+    // Update cursor position inside input without opening native virtual keyboard
+    if (inputEl) {
+      inputEl.setSelectionRange(newPos, newPos);
+    }
   };
 
   const handleMobileBackspace = () => {
@@ -138,12 +136,9 @@ export default function GraphModule() {
     updateEquation(targetId, newExpr);
     mobileSelectionRange.current = { start: newPos, end: newPos };
 
-    setTimeout(() => {
-      if (inputEl) {
-        inputEl.focus();
-        inputEl.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
+    if (inputEl) {
+      inputEl.setSelectionRange(newPos, newPos);
+    }
   };
 
   const handleMobileClear = () => {
@@ -152,7 +147,6 @@ export default function GraphModule() {
     updateEquation(targetId, '');
     mobileSelectionRange.current = { start: 0, end: 0 };
     if (mobileInputRef.current) {
-      mobileInputRef.current.focus();
       mobileInputRef.current.setSelectionRange(0, 0);
     }
   };
@@ -324,8 +318,13 @@ export default function GraphModule() {
                     <input
                       ref={mobileInputRef}
                       type="text"
+                      inputMode={showMobileKeyboard ? 'none' : 'text'}
                       value={activeMobileEq ? activeMobileEq.expression : ''}
-                      onFocus={() => setShowMobileKeyboard(true)}
+                      onFocus={() => {
+                        if (!showMobileKeyboard) {
+                          // when keyboard is hidden, focusing allows native typing
+                        }
+                      }}
                       onBlur={handleMobileInputBlur}
                       onChange={(e) => activeMobileEq && updateEquation(activeMobileEq.id, e.target.value)}
                       placeholder="Type formula (e.g. x² - 4, sin(x), x³)"

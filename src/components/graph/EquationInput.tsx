@@ -42,12 +42,9 @@ export default function EquationInput() {
     const newPos = start + text.length;
     selectionRange.current = { start: newPos, end: newPos };
 
-    setTimeout(() => {
-      if (inputEl) {
-        inputEl.focus();
-        inputEl.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
+    if (inputEl) {
+      inputEl.setSelectionRange(newPos, newPos);
+    }
   };
 
   const handleKeyboardBackspace = () => {
@@ -83,12 +80,9 @@ export default function EquationInput() {
     updateEquation(targetId, newExpr);
     selectionRange.current = { start: newPos, end: newPos };
 
-    setTimeout(() => {
-      if (inputEl) {
-        inputEl.focus();
-        inputEl.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
+    if (inputEl) {
+      inputEl.setSelectionRange(newPos, newPos);
+    }
   };
 
   const handleKeyboardClear = () => {
@@ -98,7 +92,6 @@ export default function EquationInput() {
     selectionRange.current = { start: 0, end: 0 };
     const inputEl = inputRefs.current[targetId];
     if (inputEl) {
-      inputEl.focus();
       inputEl.setSelectionRange(0, 0);
     }
   };
@@ -222,6 +215,7 @@ export default function EquationInput() {
                     inputRefs.current[eq.id] = el;
                   }}
                   type="text"
+                  inputMode={showKeyboard ? 'none' : 'text'}
                   value={eq.expression}
                   onFocus={() => setActiveEqId(eq.id)}
                   onBlur={(e) => handleInputBlur(eq.id, e)}
