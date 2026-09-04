@@ -9,37 +9,105 @@ import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 export default function EquationInput() {
   const { equations, addEquation, updateEquation, removeEquation } = useGraphStore();
   const [showHelp, setShowHelp] = useState(false);
-  // Default virtual keyboard to open on mobile screens (< 768px)
-  const [showKeyboard, setShowKeyboard] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth < 768;
-    }
-    return false;
-  });
+  // Default virtual math keyboard to open on graphs for immediate typing
+  const [showKeyboard, setShowKeyboard] = useState(true);
   const [activeEqId, setActiveEqId] = useState<string | null>(null);
+
+  const inputRefs = React.useRef<Record<string, HTMLInputElement | null>>({});
+  const selectionRange = React.useRef<{ start: number; end: number } | null>(null);
 
   const handleKeyboardInsert = (text: string) => {
     const targetId = activeEqId || equations[0]?.id;
     if (!targetId) return;
     const eq = equations.find((e) => e.id === targetId);
-    if (eq) {
-      updateEquation(targetId, eq.expression + text);
+    if (!eq) return;
+
+    const inputEl = inputRefs.current[targetId];
+    let start = eq.expression.length;
+    let end = eq.expression.length;
+
+    if (inputEl && document.activeElement === inputEl) {
+      start = inputEl.selectionStart ?? eq.expression.length;
+      end = inputEl.selectionEnd ?? eq.expression.length;
+    } else if (selectionRange.current && activeEqId === targetId) {
+      start = selectionRange.current.start;
+      end = selectionRange.current.end;
     }
+
+    const before = eq.expression.slice(0, start);
+    const after = eq.expression.slice(end);
+    const newExpr = before + text + after;
+    updateEquation(targetId, newExpr);
+
+    const newPos = start + text.length;
+    selectionRange.current = { start: newPos, end: newPos };
+
+    setTimeout(() => {
+      if (inputEl) {
+        inputEl.focus();
+        inputEl.setSelectionRange(newPos, newPos);
+      }
+    }, 0);
   };
 
   const handleKeyboardBackspace = () => {
     const targetId = activeEqId || equations[0]?.id;
     if (!targetId) return;
     const eq = equations.find((e) => e.id === targetId);
-    if (eq) {
-      updateEquation(targetId, eq.expression.slice(0, -1));
+    if (!eq) return;
+
+    const inputEl = inputRefs.current[targetId];
+    let start = eq.expression.length;
+    let end = eq.expression.length;
+
+    if (inputEl && document.activeElement === inputEl) {
+      start = inputEl.selectionStart ?? eq.expression.length;
+      end = inputEl.selectionEnd ?? eq.expression.length;
+    } else if (selectionRange.current && activeEqId === targetId) {
+      start = selectionRange.current.start;
+      end = selectionRange.current.end;
     }
+
+    if (start === 0 && end === 0) return;
+
+    let newExpr = '';
+    let newPos = 0;
+    if (start === end) {
+      newExpr = eq.expression.slice(0, start - 1) + eq.expression.slice(end);
+      newPos = Math.max(0, start - 1);
+    } else {
+      newExpr = eq.expression.slice(0, start) + eq.expression.slice(end);
+      newPos = start;
+    }
+
+    updateEquation(targetId, newExpr);
+    selectionRange.current = { start: newPos, end: newPos };
+
+    setTimeout(() => {
+      if (inputEl) {
+        inputEl.focus();
+        inputEl.setSelectionRange(newPos, newPos);
+      }
+    }, 0);
   };
 
   const handleKeyboardClear = () => {
     const targetId = activeEqId || equations[0]?.id;
     if (!targetId) return;
     updateEquation(targetId, '');
+    selectionRange.current = { start: 0, end: 0 };
+    const inputEl = inputRefs.current[targetId];
+    if (inputEl) {
+      inputEl.focus();
+      inputEl.setSelectionRange(0, 0);
+    }
+  };
+
+  const handleInputBlur = (id: string, e: React.FocusEvent<HTMLInputElement>) => {
+    selectionRange.current = {
+      start: e.target.selectionStart ?? e.target.value.length,
+      end: e.target.selectionEnd ?? e.target.value.length,
+    };
   };
 
   return (
@@ -52,20 +120,20 @@ export default function EquationInput() {
           <button
             type="button"
             onClick={() => setShowKeyboard(!showKeyboard)}
-            className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg transition-colors border ${
+            className={`flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-lg transition-colors border ${
               showKeyboard
-                ? 'bg-[#5D4037] text-white border-[#795548]'
+                ? 'bg-[#5D4037] text-white border-[#795548] shadow-2xs font-semibold'
                 : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
             }`}
-            title="Toggle Math Keyboard"
+            title={showKeyboard ? 'Hide Math Keyboard' : 'Show Math Keyboard'}
           >
             <KeyboardIcon size={13} />
-            <span className="hidden sm:inline">Keyboard</span>
+            <span>{showKeyboard ? 'Hide Keys' : 'Show Keys'}</span>
           </button>
           <button
             type="button"
             onClick={() => setShowHelp(!showHelp)}
-            className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg transition-colors border ${
+            className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg transition-colors border ${
               showHelp
                 ? 'bg-[#5D4037] text-white border-[#795548]'
                 : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
@@ -150,9 +218,13 @@ export default function EquationInput() {
               {/* Dynamic Relation / Graph Type Badge */}
               <div className="flex-1 flex items-center bg-white dark:bg-[#1B1B1B] px-2.5 py-1.5 rounded-lg border border-[#E0E0E0] dark:border-[#332D2A] focus-within:ring-2 focus-within:ring-[#5D4037]/30 focus-within:border-[#5D4037]">
                 <input
+                  ref={(el) => {
+                    inputRefs.current[eq.id] = el;
+                  }}
                   type="text"
                   value={eq.expression}
                   onFocus={() => setActiveEqId(eq.id)}
+                  onBlur={(e) => handleInputBlur(eq.id, e)}
                   onChange={(e) => updateEquation(eq.id, e.target.value)}
                   className="bg-transparent border-none outline-none w-full font-mono text-xs sm:text-sm text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
                   placeholder="e.g. y = 2x + 1,  x² + y² = 25,  or  x³ - 3x"
@@ -226,8 +298,8 @@ export default function EquationInput() {
         </button>
       )}
 
-      {/* Built-in Virtual Math Keyboard Dock (Desmos style beneath equation rows) */}
-      {showKeyboard && (
+      {/* Built-in Virtual Math Keyboard Dock (Concept 1 Tabbed) */}
+      {showKeyboard ? (
         <div className="animate-fade-in pt-2">
           <VirtualMathKeyboard
             onInsert={handleKeyboardInsert}
@@ -235,6 +307,17 @@ export default function EquationInput() {
             onClear={handleKeyboardClear}
             onClose={() => setShowKeyboard(false)}
           />
+        </div>
+      ) : (
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={() => setShowKeyboard(true)}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-dashed border-[#BCAAA4] dark:border-[#5D4037] bg-white dark:bg-[#1B1B1B] text-xs font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] hover:bg-[#EFEBE9] dark:hover:bg-[#282422] transition-colors shadow-2xs"
+          >
+            <KeyboardIcon size={14} />
+            <span>Show Inbuilt Math Keyboard</span>
+          </button>
         </div>
       )}
     </div>
