@@ -22,24 +22,27 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.easyequate.com'),
   title: {
-    default: 'EasyEquate | All-in-One Step-by-Step Math & Graphing Studio',
-    template: '%s | EasyEquate',
+    default: 'Easy Equate (EasyEquate) — Free Online Math & Graphing Studio',
+    template: '%s | Easy Equate',
   },
   description:
-    'All-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial solver with long division, 2D function plotter, and comprehensive formula library.',
-  applicationName: 'EasyEquate',
+    'Easy Equate is a free all-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial & calculus solver, 2D function plotter, and formula sheets.',
+  applicationName: 'Easy Equate',
   keywords: [
+    'Easy Equate',
+    'EasyEquate',
+    'easy equate math',
+    'easy equate calculator',
     'scientific calculator',
     'polynomial solver',
     'step by step solver',
     'graphing calculator',
     'online math calculator',
-    'EasyEquate',
     'function plotter',
     'polynomial long division',
     'math formula reference',
   ],
-  authors: [{ name: 'EasyEquate Team', url: 'https://easyequate.com' }],
+  authors: [{ name: 'EasyEquate Team', url: 'https://www.easyequate.com' }],
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -49,11 +52,11 @@ export const metadata: Metadata = {
     apple: '/icons/icon-192.svg',
   },
   openGraph: {
-    title: 'EasyEquate | All-in-One Step-by-Step Math & Graphing Studio',
+    title: 'Easy Equate (EasyEquate) — Free Online Math & Graphing Studio',
     description:
-      'All-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial solver with long division, 2D function plotter, and comprehensive formula library.',
-    url: 'https://easyequate.com',
-    siteName: 'EasyEquate',
+      'Easy Equate is a free all-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial & calculus solver, 2D function plotter, and formula reference.',
+    url: 'https://www.easyequate.com',
+    siteName: 'Easy Equate',
     locale: 'en_US',
     type: 'website',
   },
@@ -78,8 +81,9 @@ export const viewport: Viewport = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'EasyEquate',
-  url: 'https://easyequate.com',
+  name: 'Easy Equate',
+  alternateName: ['EasyEquate', 'Easy Equate Math', 'EasyEquate Studio'],
+  url: 'https://www.easyequate.com',
   applicationCategory: 'EducationalApplication',
   operatingSystem: 'All',
   offers: {
@@ -88,10 +92,11 @@ const jsonLd = {
     priceCurrency: 'USD',
   },
   description:
-    'All-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial solver with long division, 2D function plotter, and comprehensive formula library.',
+    'Easy Equate is a free all-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial & calculus solver, 2D function plotter, and formula sheets.',
   featureList: [
     'Online Scientific Calculator with History and Memory',
     'Step-by-Step Polynomial and Long Division Solver',
+    'Calculus Differentiation & Integration with Steps',
     '2D Function Plotter with Printable Study Sheets',
     'Interactive Math Formula Reference Guide',
   ],

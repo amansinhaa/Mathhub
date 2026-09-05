@@ -4,25 +4,26 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Free Online Graphing Calculator & Function Plotter | EasyEquate',
+    absolute: 'Easy Equate: Free Online Graphing Calculator & Function Plotter',
   },
   description:
-    'Free online graphing calculator. Plot functions, implicit curves, circles, and parametric equations. Export printable study sheets. No sign-up required.',
+    'Easy Equate free online graphing calculator. Plot functions, implicit curves, circles, and parametric equations. Export printable study sheets. No sign-up required.',
   alternates: {
     canonical: '/graph',
   },
   openGraph: {
-    title: 'Free Online Graphing Calculator | EasyEquate',
-    description: 'Plot any function, implicit curve, or equation. Export printable graphs. Free.',
-    url: 'https://easyequate.com/graph',
+    title: 'Easy Equate: Free Online Graphing Calculator & Function Plotter',
+    description: 'Plot any function, implicit curve, or equation with Easy Equate. Export printable graphs. Free.',
+    url: 'https://www.easyequate.com/graph',
   },
 };
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'EasyEquate Graphing Calculator',
-  url: 'https://easyequate.com/graph',
+  name: 'Easy Equate Graphing Calculator',
+  alternateName: ['EasyEquate Grapher', 'Easy Equate Plotter'],
+  url: 'https://www.easyequate.com/graph',
   applicationCategory: 'EducationalApplication',
   operatingSystem: 'All',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },

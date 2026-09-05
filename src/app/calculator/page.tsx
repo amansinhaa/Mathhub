@@ -3,25 +3,26 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Online Scientific Calculator with History | EasyEquate',
+    absolute: 'Easy Equate: Online Scientific Calculator with History & Memory',
   },
   description:
-    'Advanced online scientific calculator with memory, calculation history, angle modes, unit conversions, and keyboard support. Free, no sign-up.',
+    'Easy Equate free online scientific calculator with memory, calculation history, angle modes, unit conversions, and keyboard support. 100% free, no sign-up.',
   alternates: {
     canonical: '/calculator',
   },
   openGraph: {
-    title: 'Online Scientific Calculator with History | EasyEquate',
-    description: 'Advanced online scientific calculator with memory, history, angle modes, unit conversions. Free.',
-    url: 'https://easyequate.com/calculator',
+    title: 'Easy Equate: Online Scientific Calculator with History & Memory',
+    description: 'Easy Equate advanced online scientific calculator with memory, history, angle modes, unit conversions. Free.',
+    url: 'https://www.easyequate.com/calculator',
   },
 };
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: 'EasyEquate Scientific Calculator',
-  url: 'https://easyequate.com/calculator',
+  name: 'Easy Equate Scientific Calculator',
+  alternateName: ['EasyEquate Calculator', 'Easy Equate Math'],
+  url: 'https://www.easyequate.com/calculator',
   applicationCategory: 'EducationalApplication',
   operatingSystem: 'All',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
