@@ -107,8 +107,8 @@ export default function IntegralCalculatorPage() {
         {/* Embedded Interactive Solver Widget */}
         <section className="flex justify-center">
           <Suspense fallback={<div className="p-8 text-center font-mono text-sm text-[#757575]">Loading calculator...</div>}>
-            <div className="w-full max-w-3xl bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825]">
-              <EquationSolver />
+            <div className="w-full bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825]">
+              <EquationSolver initialMode="integral" initialEquation="2x + 3" hideHeader />
             </div>
           </Suspense>
         </section>

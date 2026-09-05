@@ -16,28 +16,97 @@ const EMPTY_STATE_MESSAGES: Record<string, string> = {
   symbolic:    'Enter any formula like  v = u + a*t  to rearrange and solve for any variable.',
 };
 
-export default function EquationSolver() {
-  const { solverType, result } = useSolverStore();
+interface EquationSolverProps {
+  initialMode?: 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic';
+  initialEquation?: string;
+  hideHeader?: boolean;
+}
+
+export default function EquationSolver({
+  initialMode,
+  initialEquation,
+  hideHeader = false,
+}: EquationSolverProps = {}) {
+  const { solverType, result, setSolverType, setEquation } = useSolverStore();
+
+  React.useEffect(() => {
+    if (initialMode) {
+      setSolverType(initialMode);
+    }
+    if (initialEquation) {
+      setEquation(initialEquation);
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
+    }
+  }, [initialMode, initialEquation, setSolverType, setEquation]);
 
   return (
     <div className="w-full h-full flex flex-col space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
       {/* Header */}
-      <header className="flex items-center justify-between gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
-              Equation Solver
-            </h1>
-            <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
-              STEP-BY-STEP
-            </span>
+      {!hideHeader && (
+        <header className="flex flex-col gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+                  Equation Solver
+                </h1>
+                <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
+                  STEP-BY-STEP
+                </span>
+              </div>
+              <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block mt-0.5">
+                Type anything — equation, function, or system — then choose what you want to do with it
+              </p>
+            </div>
+            <ThemeToggle />
           </div>
-          <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block mt-0.5">
-            Type anything — equation, function, or system — then choose what you want to do with it
-          </p>
-        </div>
-        <ThemeToggle />
-      </header>
+
+          {/* Quick Solver Hub Navigation */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-mono scrollbar-none">
+            <span className="text-[10px] uppercase font-bold text-[#8D827A] dark:text-[#A19891] shrink-0 mr-1">
+              Solvers:
+            </span>
+            <a
+              href="/solver"
+              className="px-2.5 py-1 rounded-lg bg-[#5D4037] text-white font-semibold text-[11px] shrink-0 shadow-2xs"
+            >
+              General Solver
+            </a>
+            <a
+              href="/integral-calculator"
+              className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
+            >
+              ∫ Integral
+            </a>
+            <a
+              href="/derivative-calculator"
+              className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
+            >
+              d/dx Derivative
+            </a>
+            <a
+              href="/quadratic-equation-solver"
+              className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
+            >
+              x² Quadratic
+            </a>
+            <a
+              href="/matrix-solver"
+              className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
+            >
+              [A] Matrix
+            </a>
+            <a
+              href="/equation-solver-with-steps"
+              className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
+            >
+              Step-by-Step
+            </a>
+          </div>
+        </header>
+      )}
 
       {/* Dual pane layout */}
       <div className="flex flex-col lg:flex-row gap-5 flex-1 min-h-0 items-start">

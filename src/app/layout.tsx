@@ -20,7 +20,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://easyequate.com'),
+  metadataBase: new URL('https://www.easyequate.com'),
   title: {
     default: 'EasyEquate | All-in-One Step-by-Step Math & Graphing Studio',
     template: '%s | EasyEquate',
