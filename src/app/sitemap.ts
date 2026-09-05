@@ -17,7 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     // ── Core tool pages ────────────────────────────────────────────────
-    { url: `${BASE}/calculator`,              lastModified: now, changeFrequency: 'weekly',  priority: 1.0 },
+    { url: `${BASE}`,                         lastModified: now, changeFrequency: 'daily',   priority: 1.0 },
+    { url: `${BASE}/calculator`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${BASE}/solver`,                  lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
     { url: `${BASE}/graph`,                   lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
     { url: `${BASE}/formulas`,                lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
