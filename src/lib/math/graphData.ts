@@ -572,6 +572,8 @@ export function pointsToSvgPath(
   const pathParts: string[] = [];
   let isDrawing = false;
   let prevPoint: DataPoint | null = null;
+  const yBoxTop = plotBox.top;
+  const yBoxBottom = plotBox.top + plotBox.height;
 
   for (let i = 0; i < points.length; i++) {
     const p = points[i];
@@ -581,13 +583,25 @@ export function pointsToSvgPath(
       continue;
     }
 
+    const px = toPxX(p.x);
+    const py = toPxY(p.y);
+    const isAbove = py < yBoxTop;
+    const isBelow = py > yBoxBottom;
+    const isInside = !isAbove && !isBelow;
+
     if (prevPoint && prevPoint.y !== null) {
+      const prevPx = toPxX(prevPoint.x);
+      const prevPy = toPxY(prevPoint.y);
+      const prevAbove = prevPy < yBoxTop;
+      const prevBelow = prevPy > yBoxBottom;
+      const prevInside = !prevAbove && !prevBelow;
+
+      // Check 1: Known asymptote crossing in [prevX, currX]
       const dx = Math.abs(p.x - prevPoint.x);
       const dy = Math.abs(p.y - prevPoint.y);
       const minX = Math.min(prevPoint.x, p.x);
       const maxX = Math.max(prevPoint.x, p.x);
 
-      // Check 1: Known asymptote crossing in [prevX, currX]
       const hasAsymptoteCrossing = knownAsymptotes.some(
         (a) => a >= minX - 1e-4 && a <= maxX + 1e-4
       );
@@ -603,28 +617,58 @@ export function pointsToSvgPath(
         (Math.abs(prevPoint.y) > ySpan * 1.5 && Math.abs(p.y) > ySpan * 1.5) ||
         dy > ySpan * 2.0;
 
-      // Check 4: Cross-viewport jump (one point below yMin, other above yMax)
+      // Check 4: Cross-viewport jump
       const isCrossViewportJump =
         (prevPoint.y < yMin && p.y > yMax) ||
         (prevPoint.y > yMax && p.y < yMin);
 
       if (hasAsymptoteCrossing || isOppositeSignJump || isExtremeSpike || isCrossViewportJump) {
         isDrawing = false;
+        prevPoint = p;
+        continue;
+      }
+
+      // Both points are outside on the same side: lift pen, do not draw horizontal line
+      if ((isAbove && prevAbove) || (isBelow && prevBelow)) {
+        isDrawing = false;
+        prevPoint = p;
+        continue;
+      }
+
+      // Transition: Inside -> Outside (interpolate exact exit on boundary)
+      if (prevInside && (isAbove || isBelow)) {
+        const targetPy = isAbove ? yBoxTop : yBoxBottom;
+        const t = (targetPy - prevPy) / (py - prevPy);
+        const intersectPx = prevPx + t * (px - prevPx);
+        pathParts.push(`L ${intersectPx.toFixed(2)} ${targetPy.toFixed(2)}`);
+        isDrawing = false;
+        prevPoint = p;
+        continue;
+      }
+
+      // Transition: Outside -> Inside (interpolate exact entry on boundary)
+      if ((prevAbove || prevBelow) && isInside) {
+        const targetPy = prevAbove ? yBoxTop : yBoxBottom;
+        const t = (targetPy - prevPy) / (py - prevPy);
+        const intersectPx = prevPx + t * (px - prevPx);
+        pathParts.push(`M ${intersectPx.toFixed(2)} ${targetPy.toFixed(2)}`);
+        pathParts.push(`L ${px.toFixed(2)} ${py.toFixed(2)}`);
+        isDrawing = true;
+        prevPoint = p;
+        continue;
       }
     }
 
-    const px = toPxX(p.x);
-    const py = toPxY(p.y);
-
-    // Limit extreme pixel values to prevent renderer overflow
-    const clampedPy = Math.max(plotBox.top - 10, Math.min(plotBox.top + plotBox.height + 10, py));
-
-    if (!isDrawing) {
-      pathParts.push(`M ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);
-      isDrawing = true;
-    } else {
-      pathParts.push(`L ${px.toFixed(2)} ${clampedPy.toFixed(2)}`);
+    // Normal inside point
+    if (isInside) {
+      if (!isDrawing) {
+        pathParts.push(`M ${px.toFixed(2)} ${py.toFixed(2)}`);
+        isDrawing = true;
+      } else {
+        pathParts.push(`L ${px.toFixed(2)} ${py.toFixed(2)}`);
+      }
     }
+
     prevPoint = p;
   }
 
