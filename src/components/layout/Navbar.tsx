@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Calculator, FunctionSquare, LineChart, BookOpen } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -78,9 +79,14 @@ export function Navbar() {
             href="/calculator"
             className="flex items-center gap-3 px-2 py-1.5 rounded-xl hover:bg-[#F5F5F5] dark:hover:bg-[#1B1B1B] transition-colors"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5D4037] text-white font-bold text-lg shadow-sm border border-[#795548]/40 shrink-0">
-              E
-            </div>
+            <Image
+              src="/logo.png"
+              alt="EasyEquate"
+              width={38}
+              height={38}
+              className="rounded-xl shadow-xs shrink-0 object-contain border border-[#5D4037]/30"
+              priority
+            />
             <div className="hidden lg:flex flex-col">
               <span className="font-bold text-sm tracking-wide text-[#131313] dark:text-white font-sans">
                 EasyEquate

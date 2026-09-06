@@ -1,4 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#5D4037"/>
-  <text x="16" y="22" font-size="20" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" fill="#FFFFFF" text-anchor="middle">E</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Dark Obsidian Radial Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#1A1817"/>
+      <stop offset="100%" stop-color="#0E0D0C"/>
+    </radialGradient>
+
+    <!-- 24K Electric Gold Metallic Linear Gradient -->
+    <linearGradient id="goldBarGrad" x1="0%" y1="50%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="35%" stop-color="#FBBF24"/>
+      <stop offset="70%" stop-color="#FDE047"/>
+      <stop offset="100%" stop-color="#FEF08A"/>
+    </linearGradient>
+
+    <!-- Arrow Head Radiant Gradient -->
+    <linearGradient id="arrowHeadGrad" x1="20%" y1="80%" x2="80%" y2="20%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="35%" stop-color="#F59E0B"/>
+      <stop offset="70%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#FFFBEB"/>
+    </linearGradient>
+
+    <!-- Warm Sienna Brown Frame Gradient -->
+    <linearGradient id="brownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#704A3E"/>
+      <stop offset="100%" stop-color="#54382E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle App Icon Container -->
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+
+  <!-- Warm Sienna Brown Architectural Frame Elements -->
+  <g fill="url(#brownGrad)">
+    <!-- Top Horizontal Bar & Notch -->
+    <path d="M 84 92 H 380 V 126 H 112 V 154 H 84 Z"/>
+
+    <!-- Middle-Lower Horizontal Bar -->
+    <rect x="84" y="298" width="276" height="32" rx="2"/>
+
+    <!-- Bottom L-Frame (Base border + Lower-right vertical riser) -->
+    <path d="M 84 346 H 112 V 392 H 392 V 192 H 420 V 420 H 84 Z"/>
+  </g>
+
+  <!-- Luminous Gold Equal Bars & Ascending Arrow -->
+  <!-- 1. Upper Gold Bar with diagonal chamfered cut -->
+  <polygon points="84,166 320,166 294,202 84,202" fill="url(#goldBarGrad)"/>
+
+  <!-- 2. Lower Gold Bar + Ascending Diagonal Arrow Stem -->
+  <path d="
+    M 84 230 
+    H 312 
+    L 374 148
+    L 400 166
+    L 334 266 
+    H 84 
+    Z" fill="url(#goldBarGrad)"/>
+
+  <!-- 3. Dynamic Sharp Arrowhead -->
+  <polygon points="342,126 422,90 416,176 394,152 368,170" fill="url(#arrowHeadGrad)"/>
 </svg>

@@ -1,4 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="40" fill="#5D4037"/>
-  <text x="50%" y="58%" font-size="110" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" fill="#FFFFFF" dominant-baseline="middle" text-anchor="middle">E</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="192" height="192">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#1A1817"/>
+      <stop offset="100%" stop-color="#0E0D0C"/>
+    </radialGradient>
+    <linearGradient id="goldBarGrad" x1="0%" y1="50%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="35%" stop-color="#FBBF24"/>
+      <stop offset="70%" stop-color="#FDE047"/>
+      <stop offset="100%" stop-color="#FEF08A"/>
+    </linearGradient>
+    <linearGradient id="arrowHeadGrad" x1="20%" y1="80%" x2="80%" y2="20%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="35%" stop-color="#F59E0B"/>
+      <stop offset="70%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#FFFBEB"/>
+    </linearGradient>
+    <linearGradient id="brownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#704A3E"/>
+      <stop offset="100%" stop-color="#54382E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+
+  <g fill="url(#brownGrad)">
+    <path d="M 84 92 H 380 V 126 H 112 V 154 H 84 Z"/>
+    <rect x="84" y="298" width="276" height="32" rx="2"/>
+    <path d="M 84 346 H 112 V 392 H 392 V 192 H 420 V 420 H 84 Z"/>
+  </g>
+
+  <polygon points="84,166 320,166 294,202 84,202" fill="url(#goldBarGrad)"/>
+  <path d="M 84 230 H 312 L 374 148 L 400 166 L 334 266 H 84 Z" fill="url(#goldBarGrad)"/>
+  <polygon points="342,126 422,90 416,176 394,152 368,170" fill="url(#arrowHeadGrad)"/>
 </svg>
