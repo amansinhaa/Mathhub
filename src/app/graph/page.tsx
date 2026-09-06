@@ -90,59 +90,8 @@ export default function GraphPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* Interactive Graph Tool directly at the top — zero top offset for optimal mobile & Android UX */}
       <GraphModule />
-
-      {/* SEO & Knowledge Guide placed below the graph so it never interferes with mobile plotting */}
-      <footer className="mt-8 border-t border-[#E0E0E0] dark:border-[#2E2825] bg-white dark:bg-[#1B1B1B] p-6 rounded-2xl mx-2 sm:mx-4 mb-12 text-[#5D4037] dark:text-[#EFEBE9] space-y-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9]">
-              About the Easy Equate Online Graph Plotter
-            </h2>
-            <p className="text-sm opacity-90 leading-relaxed">
-              Easy Equate is a free, fast online graph plotter and function drawer designed for students, educators, and engineers. Whether you need to plot linear graphs, quadratic parabolas, cubic polynomials, trigonometric waves, or implicit conic sections, our graphing engine renders high-precision mathematical plots directly in your browser.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-            <div className="p-4 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAF8F7] dark:bg-[#131313]/60 space-y-2">
-              <span className="font-bold block text-sm">Supported Function Types</span>
-              <ul className="list-disc list-inside space-y-1 opacity-90">
-                <li><strong>Polynomials:</strong> Linear, quadratic, cubic, and higher-order functions</li>
-                <li><strong>Trigonometric:</strong> sin(x), cos(x), tan(x), sec(x), csc(x), cot(x)</li>
-                <li><strong>Exponentials & Logarithms:</strong> e^x, ln(x), log10(x), 2^x</li>
-                <li><strong>Implicit Relations:</strong> x² + y² = r² (circles), ellipses, hyperbolas</li>
-              </ul>
-            </div>
-
-            <div className="p-4 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAF8F7] dark:bg-[#131313]/60 space-y-2">
-              <span className="font-bold block text-sm">Key Plotter Capabilities</span>
-              <ul className="list-disc list-inside space-y-1 opacity-90">
-                <li><strong>Multi-Curve Graphing:</strong> Overlay multiple functions to compare intersections</li>
-                <li><strong>Touch & Pan:</strong> Smooth pinch-to-zoom and drag navigation on touchscreens</li>
-                <li><strong>Analysis Tools:</strong> Roots, vertex coordinates, and extrema detection</li>
-                <li><strong>Export:</strong> Download SVG, high-res PNG, or printable study sheets</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="space-y-3 pt-4 border-t border-[#E0E0E0] dark:border-[#2E2825]">
-            <span className="font-bold text-sm block">Quick Math Tools & Navigation</span>
-            <div className="flex flex-wrap gap-3 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
-              <a href="/quadratic-equation-solver" className="hover:underline">Quadratic Equation Solver</a>
-              <span>·</span>
-              <a href="/solver" className="hover:underline">Step-by-Step Math Solver</a>
-              <span>·</span>
-              <a href="/formulas" className="hover:underline">Math Formulas Sheet</a>
-              <span>·</span>
-              <a href="/matrix-solver" className="hover:underline">Matrix Solver</a>
-              <span>·</span>
-              <a href="/calculator" className="hover:underline">Scientific Calculator</a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }
+
