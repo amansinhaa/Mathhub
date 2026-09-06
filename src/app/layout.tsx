@@ -47,9 +47,15 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
       { url: '/icons/icon-192.svg', type: 'image/svg+xml' },
+      { url: '/logo.png', type: 'image/png' },
     ],
-    apple: '/icons/icon-192.svg',
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/logo.png', sizes: '512x512', type: 'image/png' },
+    ],
   },
   openGraph: {
     title: 'Easy Equate (EasyEquate) — Free Online Math & Graphing Studio',
@@ -57,6 +63,14 @@ export const metadata: Metadata = {
       'Easy Equate is a free all-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial & calculus solver, 2D function plotter, and formula reference.',
     url: 'https://www.easyequate.com',
     siteName: 'Easy Equate',
+    images: [
+      {
+        url: 'https://www.easyequate.com/og-image.png',
+        width: 1024,
+        height: 1024,
+        alt: 'EasyEquate Logo — Online Math & Graphing Studio',
+      },
+    ],
     locale: 'en_US',
     type: 'website',
   },
@@ -65,6 +79,7 @@ export const metadata: Metadata = {
     title: 'EasyEquate | All-in-One Step-by-Step Math & Graphing Studio',
     description:
       'All-in-one mathematics and graphing studio with scientific calculator, equation solver, 2D function plotter, and formula library.',
+    images: ['https://www.easyequate.com/og-image.png'],
   },
 };
 
@@ -84,6 +99,8 @@ const jsonLd = {
   name: 'Easy Equate',
   alternateName: ['EasyEquate', 'Easy Equate Math', 'EasyEquate Studio'],
   url: 'https://www.easyequate.com',
+  image: 'https://www.easyequate.com/logo.png',
+  logo: 'https://www.easyequate.com/logo.png',
   applicationCategory: 'EducationalApplication',
   operatingSystem: 'All',
   offers: {
