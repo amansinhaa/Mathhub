@@ -7,78 +7,77 @@ import EquationSolver from '@/components/solver/EquationSolver';
 
 export function generateMetadata(): Metadata {
   return {
-    title: 'Quadratic Equation Solver — Solve ax²+bx+c=0 Step by Step | Easy Equate',
-    description: 'Free quadratic equation solver with step-by-step working. Enter any ax²+bx+c=0 equation and get solutions using the quadratic formula, factoring, or completing the square. Handles real and complex roots.',
-    keywords: [
-      'quadratic equation solver', 'solve quadratic equation', 'quadratic formula calculator',
-      'ax2 bx c 0 solver', 'quadratic equation step by step', 'factoring quadratic equations',
-      'completing the square calculator', 'discriminant calculator', 'quadratic roots calculator',
-    ],
+    title: 'Quadratic Equation Solver with Steps: Factoring & Formula | Easy Equate',
+    description: 'Free step-by-step quadratic equation solver. Shows factoring, quadratic formula, discriminant (Δ), vertex, and complex roots with complete working steps.',
     alternates: {
       canonical: '/quadratic-equation-solver',
+    },
+    openGraph: {
+      title: 'Quadratic Equation Solver with Steps: Factoring & Formula | Easy Equate',
+      description: 'Solve any quadratic equation ax² + bx + c = 0. See factoring, quadratic formula, discriminant, and step-by-step working.',
+      url: 'https://www.easyequate.com/quadratic-equation-solver',
     },
   };
 }
 
 export default function QuadraticEquationSolverPage() {
+  const faqs = [
+    {
+      q: "What is the quadratic formula?",
+      a: "The quadratic formula is x = (-b ± √(b² - 4ac)) / (2a). It provides the exact roots for any quadratic equation in standard form ax² + bx + c = 0."
+    },
+    {
+      q: "How do I solve a quadratic equation by factoring?",
+      a: "To factor ax² + bx + c = 0, find two numbers that multiply to ac and add to b. Rewrite the middle term, factor by grouping, and set each factor to zero to solve for x."
+    },
+    {
+      q: "What does the discriminant (b² - 4ac) tell you?",
+      a: "If Δ > 0, there are two distinct real roots. If Δ = 0, there is exactly one repeated real root. If Δ < 0, there are two conjugate complex (imaginary) roots."
+    },
+    {
+      q: "Can this solver find complex or imaginary roots?",
+      a: "Yes. When the discriminant is negative, the solver automatically calculates complex numbers using the imaginary unit i (where i = √-1) and shows each intermediate step."
+    },
+    {
+      q: "How do you solve when a quadratic cannot be factored easily?",
+      a: "When integers do not readily factor, use the quadratic formula or complete the square. Both methods work universally for every quadratic equation."
+    },
+    {
+      q: "What is the difference between quadratic and cubic equations?",
+      a: "A quadratic equation has degree 2 (ax² + bx + c = 0) with up to 2 roots. A cubic equation has degree 3 (ax³ + bx² + cx + d = 0) with up to 3 roots, solved using Cardano's formula or synthetic division."
+    },
+    {
+      q: "Is this quadratic solver completely free?",
+      a: "Yes, Easy Equate's quadratic equation solver is 100% free with unlimited step-by-step calculations and no registration needed."
+    }
+  ];
+
   const schemaOrgJSONLD = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "SoftwareApplication",
-        "name": "EasyEquate Quadratic Equation Solver",
+        "name": "Easy Equate Quadratic Equation Solver",
+        "alternateName": ["Quadratic Formula Calculator", "Quadratic Equation Solver with Steps"],
         "applicationCategory": "EducationalApplication",
         "operatingSystem": "All",
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
-        }
+        },
+        "description": "Free step-by-step quadratic equation calculator that solves ax² + bx + c = 0 by factoring, completing the square, and the quadratic formula."
       },
       {
         "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is the quadratic formula?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The quadratic formula is x = (-b ± √(b² - 4ac)) / 2a. It is used to find the roots of a quadratic equation ax² + bx + c = 0."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do I factor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Factoring involves finding two numbers that multiply to c (or a*c) and add to b, then grouping the terms to factor out common expressions."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is discriminant?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The discriminant is the part of the quadratic formula under the square root, b² - 4ac. It tells you the number and type of roots."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can it solve imaginary roots?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, if the discriminant is negative, the solver will show the complex or imaginary roots."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is it free?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, our quadratic equation solver is completely free to use with no sign-up required."
-            }
+        "mainEntity": faqs.map((faq) => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a
           }
-        ]
+        }))
       }
     ]
   };
@@ -93,70 +92,19 @@ export default function QuadraticEquationSolverPage() {
       <div className="max-w-4xl mx-auto space-y-12">
         <header className="text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold text-[#5D4037] dark:text-[#EFEBE9]">
-            Quadratic Equation Solver — Step-by-Step
+            Quadratic Equation Solver with Steps
           </h1>
           <div className="text-lg md:text-xl max-w-2xl mx-auto space-y-4">
             <p>
-              A quadratic equation is a second-degree polynomial equation in a single variable x with the form <em>ax² + bx + c = 0</em>, where x represents an unknown, and a, b, and c represent known numbers, with a ≠ 0.
+              A quadratic equation is a second-degree polynomial in standard form <em>ax² + bx + c = 0</em>, where <em>a ≠ 0</em>.
             </p>
-            <p>
-              Our solver provides step-by-step solutions using multiple methods: factoring, completing the square, and the quadratic formula. Simply enter your equation to see every step of the working.
+            <p className="text-base opacity-90">
+              Our free step-by-step solver finds exact real and complex roots using factoring, completing the square, and the quadratic formula with every calculation step clearly explained.
             </p>
           </div>
         </header>
 
-        <section className="bg-white dark:bg-[#3E2723] p-6 rounded-xl shadow-sm border border-[#E0E0E0] dark:border-[#5D4037]">
-          <h2 className="text-2xl font-semibold mb-4">How it works</h2>
-          <ol className="list-decimal list-inside space-y-2">
-            <li><strong>Enter equation:</strong> Type your quadratic equation in the input box.</li>
-            <li><strong>Choose method:</strong> Select whether you want to use the formula, factoring, or completing the square (or let the solver decide).</li>
-            <li><strong>See every step:</strong> The solver will break down the math process line by line.</li>
-          </ol>
-        </section>
-
-        {/* Worked Examples — static HTML for SEO indexing */}
-        <section className="space-y-6">
-          <h2 className="text-3xl font-bold text-center">Worked Examples</h2>
-          <p className="text-center opacity-75">See how the quadratic formula and factoring work on real equations.</p>
-
-          {/* Example 1 */}
-          <div className="bg-white dark:bg-[#3E2723] p-6 rounded-xl border border-[#E0E0E0] dark:border-[#5D4037] space-y-3">
-            <h3 className="text-xl font-semibold">Example 1: Solve x² − 5x + 6 = 0 (Factoring)</h3>
-            <p>Here <strong>a = 1, b = −5, c = 6</strong>. We need two numbers that multiply to 6 and add to −5. Those are −2 and −3.</p>
-            <ol className="list-decimal list-inside space-y-1 ml-2">
-              <li>Write in factored form: <strong>(x − 2)(x − 3) = 0</strong></li>
-              <li>Set each factor to zero: x − 2 = 0 → <strong>x = 2</strong></li>
-              <li>And: x − 3 = 0 → <strong>x = 3</strong></li>
-            </ol>
-            <p className="font-medium text-green-700 dark:text-green-400">✓ Solutions: x = 2 and x = 3</p>
-          </div>
-
-          {/* Example 2 */}
-          <div className="bg-white dark:bg-[#3E2723] p-6 rounded-xl border border-[#E0E0E0] dark:border-[#5D4037] space-y-3">
-            <h3 className="text-xl font-semibold">Example 2: Solve 2x² + 3x − 2 = 0 (Quadratic Formula)</h3>
-            <p>Here <strong>a = 2, b = 3, c = −2</strong>. Apply the quadratic formula x = (−b ± √(b² − 4ac)) / 2a:</p>
-            <ol className="list-decimal list-inside space-y-1 ml-2">
-              <li>Discriminant: Δ = 3² − 4(2)(−2) = 9 + 16 = <strong>25</strong></li>
-              <li>√Δ = <strong>5</strong></li>
-              <li>x = (−3 + 5) / 4 = 2/4 = <strong>½</strong></li>
-              <li>x = (−3 − 5) / 4 = −8/4 = <strong>−2</strong></li>
-            </ol>
-            <p className="font-medium text-green-700 dark:text-green-400">✓ Solutions: x = ½ and x = −2</p>
-          </div>
-
-          {/* Example 3 — complex roots */}
-          <div className="bg-white dark:bg-[#3E2723] p-6 rounded-xl border border-[#E0E0E0] dark:border-[#5D4037] space-y-3">
-            <h3 className="text-xl font-semibold">Example 3: Solve x² + x + 1 = 0 (Complex Roots)</h3>
-            <p>Here <strong>a = 1, b = 1, c = 1</strong>. The discriminant is negative, so roots are complex:</p>
-            <ol className="list-decimal list-inside space-y-1 ml-2">
-              <li>Discriminant: Δ = 1² − 4(1)(1) = 1 − 4 = <strong>−3</strong></li>
-              <li>√(−3) = i√3</li>
-              <li>x = (−1 + i√3) / 2 and x = (−1 − i√3) / 2</li>
-            </ol>
-            <p className="font-medium text-blue-700 dark:text-blue-400">✓ Solutions: x = (−1 ± i√3) / 2 (complex conjugate pair)</p>
-          </div>
-        </section>
-
+        {/* Live Interactive Solver Widget */}
         <section className="flex justify-center">
           <Suspense fallback={<div className="p-8 text-center">Loading solver...</div>}>
             <div className="w-full bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825]">
@@ -165,50 +113,104 @@ export default function QuadraticEquationSolverPage() {
           </Suspense>
         </section>
 
+        {/* How It Works */}
+        <section className="bg-white dark:bg-[#1B1B1B] p-6 rounded-xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825]">
+          <h2 className="text-2xl font-semibold mb-4 text-[#5D4037] dark:text-[#EFEBE9]">How to Solve Quadratic Equations</h2>
+          <ol className="list-decimal list-inside space-y-2 text-sm sm:text-base leading-relaxed">
+            <li><strong>Write in standard form:</strong> Rearrange all terms to one side so the equation equals zero: <code>ax² + bx + c = 0</code>.</li>
+            <li><strong>Calculate the discriminant:</strong> Compute <code>Δ = b² - 4ac</code> to determine whether roots are two distinct reals, one repeated real, or two complex conjugates.</li>
+            <li><strong>Apply the quadratic formula:</strong> Plug coefficients into <code>x = (-b ± √Δ) / 2a</code> or factor into binomials <code>(x - r₁)(x - r₂) = 0</code>.</li>
+            <li><strong>Inspect step-by-step solutions:</strong> Review factored brackets, square root simplifications, and decimal approximations.</li>
+          </ol>
+        </section>
+
+        {/* Static Worked Examples for Google SEO */}
         <section className="space-y-6">
-          <h2 className="text-3xl font-bold text-center">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold text-[#5D4037] dark:text-[#EFEBE9] text-center">
+            Worked Examples: Step-by-Step Solutions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Example 1 */}
+            <div className="bg-white dark:bg-[#1B1B1B] p-5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-3">
+              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">
+                Example 1 · Factoring
+              </span>
+              <h3 className="font-bold text-lg text-[#5D4037] dark:text-[#EFEBE9]">x² - 5x + 6 = 0</h3>
+              <ul className="text-sm space-y-1.5 opacity-90 font-mono">
+                <li>1. Find factors of +6 that add to -5: (-2) and (-3).</li>
+                <li>2. Rewrite as factored binomials: (x - 2)(x - 3) = 0.</li>
+                <li>3. Apply Zero Product Property: x - 2 = 0 or x - 3 = 0.</li>
+                <li className="font-bold text-[#5D4037] dark:text-emerald-400">Roots: x = 2, x = 3</li>
+              </ul>
+            </div>
+
+            {/* Example 2 */}
+            <div className="bg-white dark:bg-[#1B1B1B] p-5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-3">
+              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
+                Example 2 · Quadratic Formula
+              </span>
+              <h3 className="font-bold text-lg text-[#5D4037] dark:text-[#EFEBE9]">2x² + 5x - 3 = 0</h3>
+              <ul className="text-sm space-y-1.5 opacity-90 font-mono">
+                <li>1. Identify coefficients: a = 2, b = 5, c = -3.</li>
+                <li>2. Discriminant: Δ = 5² - 4(2)(-3) = 25 + 24 = 49.</li>
+                <li>3. Formula: x = (-5 ± √49) / (2 · 2) = (-5 ± 7) / 4.</li>
+                <li className="font-bold text-[#5D4037] dark:text-blue-400">Roots: x = 1/2, x = -3</li>
+              </ul>
+            </div>
+
+            {/* Example 3 */}
+            <div className="bg-white dark:bg-[#1B1B1B] p-5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-3">
+              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300">
+                Example 3 · Complex Roots (Δ &lt; 0)
+              </span>
+              <h3 className="font-bold text-lg text-[#5D4037] dark:text-[#EFEBE9]">x² + 4x + 13 = 0</h3>
+              <ul className="text-sm space-y-1.5 opacity-90 font-mono">
+                <li>1. Coefficients: a = 1, b = 4, c = 13.</li>
+                <li>2. Discriminant: Δ = 4² - 4(1)(13) = 16 - 52 = -36.</li>
+                <li>3. Square root of negative: √(-36) = 6i.</li>
+                <li className="font-bold text-[#5D4037] dark:text-purple-400">Roots: x = -2 ± 3i</li>
+              </ul>
+            </div>
+
+            {/* Example 4 */}
+            <div className="bg-white dark:bg-[#1B1B1B] p-5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-3">
+              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
+                Example 4 · Completing the Square
+              </span>
+              <h3 className="font-bold text-lg text-[#5D4037] dark:text-[#EFEBE9]">x² + 6x - 7 = 0</h3>
+              <ul className="text-sm space-y-1.5 opacity-90 font-mono">
+                <li>1. Move constant: x² + 6x = 7.</li>
+                <li>2. Add (6/2)² = 9 to both sides: (x + 3)² = 16.</li>
+                <li>3. Take square root: x + 3 = ±4.</li>
+                <li className="font-bold text-[#5D4037] dark:text-amber-400">Roots: x = 1, x = -7</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQs */}
+        <section className="space-y-6">
+          <h2 className="text-3xl font-bold text-[#5D4037] dark:text-[#EFEBE9] text-center">
+            Frequently Asked Questions
+          </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "What is the quadratic formula?",
-                a: "The quadratic formula is x = (−b ± √(b² − 4ac)) / 2a. It solves any quadratic equation ax² + bx + c = 0 by substituting the coefficients a, b, and c. The ± gives two solutions."
-              },
-              {
-                q: "How do you solve a quadratic equation by factoring?",
-                a: "Find two numbers that multiply to c (or a×c for non-monic equations) and add to b. Rewrite the middle term and group the factors. Set each factor equal to zero and solve. Factoring only works when the discriminant is a perfect square."
-              },
-              {
-                q: "What is the discriminant and what does it tell you?",
-                a: "The discriminant is Δ = b² − 4ac. If Δ > 0, the equation has two distinct real roots. If Δ = 0, it has one repeated real root. If Δ < 0, it has two complex (imaginary) roots with no real solution."
-              },
-              {
-                q: "How do you complete the square to solve a quadratic equation?",
-                a: "Move c to the right side, divide by a so the x² coefficient is 1, then add (b/2a)² to both sides to form a perfect square trinomial. Take the square root of both sides and solve for x."
-              },
-              {
-                q: "Can this solver handle complex or imaginary roots?",
-                a: "Yes. When the discriminant is negative, the solver automatically computes the complex conjugate roots in the form p ± qi and shows every step."
-              },
-              {
-                q: "Is this quadratic equation solver free?",
-                a: "Yes, completely free. No account, no sign-up, no ads blocking your results. Just enter your equation and get step-by-step working instantly."
-              },
-            ].map((faq, i) => (
-              <div key={i} className="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-                <h3 className="font-semibold text-lg">{faq.q}</h3>
-                <p className="mt-2 opacity-90">{faq.a}</p>
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-white dark:bg-[#1B1B1B] p-5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825]">
+                <h3 className="font-semibold text-lg text-[#5D4037] dark:text-[#EFEBE9]">{faq.q}</h3>
+                <p className="mt-2 text-sm sm:text-base opacity-90 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <footer className="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#5D4037]">
+        <footer className="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#2E2825]">
           <h3 className="text-xl font-medium">Explore Other Solvers</h3>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/solver" className="text-blue-600 dark:text-blue-400 hover:underline">General Math Solver</Link>
-            <Link href="/integral-calculator" className="text-blue-600 dark:text-blue-400 hover:underline">Integral Calculator</Link>
-            <Link href="/derivative-calculator" className="text-blue-600 dark:text-blue-400 hover:underline">Derivative Calculator</Link>
-            <Link href="/formulas" className="text-blue-600 dark:text-blue-400 hover:underline">Maths Formula Sheet</Link>
+            <Link href="/equation-solver-with-steps" className="text-blue-600 dark:text-blue-400 hover:underline">Equation Solver with Steps</Link>
+            <Link href="/matrix-solver" className="text-blue-600 dark:text-blue-400 hover:underline">Matrix Solver</Link>
+            <Link href="/formulas" className="text-blue-600 dark:text-blue-400 hover:underline">Math Formulas Sheet</Link>
+            <Link href="/graph" className="text-blue-600 dark:text-blue-400 hover:underline">Online Graph Plotter</Link>
           </div>
         </footer>
       </div>
