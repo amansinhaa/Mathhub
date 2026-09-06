@@ -43,6 +43,7 @@ import {
   Check,
   Scale,
   Split,
+  X,
 } from 'lucide-react';
 import * as math from 'mathjs';
 
@@ -147,7 +148,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
   const updateDims = useCallback(() => {
     if (chartContainerRef.current) {
       const w = chartContainerRef.current.clientWidth || 800;
-      const defaultMobH = mobileHeight ?? (compact ? 220 : 340);
+      const defaultMobH = mobileHeight ?? (compact ? 295 : 380);
       const h = typeof window !== 'undefined' && window.innerWidth < 768 ? defaultMobH : DEFAULT_DESKTOP_HEIGHT;
       setContainerDimensions({ width: w, height: h });
     }
@@ -1024,44 +1025,141 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
         </div>
         )}
 
-        {/* Manual Range Adjustment Expandable Inputs */}
-        {!compact && showRangeInputs && (
-          <div className="animate-fade-in grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 p-3 bg-[#F5F5F5] dark:bg-[#131313] rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] text-xs">
-            <div>
-              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">X Min</label>
-              <input
-                type="number"
-                value={bounds.xMin}
-                onChange={(e) => setBounds({ ...bounds, xMin: parseFloat(e.target.value) || -1 })}
-                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
-              />
+        {/* Manual Range Adjustment & Axis Difference Editor */}
+        {showRangeInputs && (
+          <div className="animate-fade-in mb-2 p-2.5 sm:p-3 bg-[#FBF9F8] dark:bg-[#181818] rounded-xl sm:rounded-2xl border border-[#5D4037]/40 dark:border-[#5D4037]/60 text-xs shadow-md space-y-2">
+            <div className="flex items-center justify-between pb-1 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+              <div className="flex items-center gap-1.5">
+                <SlidersHorizontal size={13} className="text-[#5D4037] dark:text-[#D7CCC8]" />
+                <span className="font-bold text-[#131313] dark:text-white text-xs">X & Y Axis Limits & Difference</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRangeInputs(false)}
+                className="p-1 text-[#757575] hover:text-[#131313] dark:text-[#8D827A] dark:hover:text-white rounded"
+                title="Close"
+              >
+                <X size={14} />
+              </button>
             </div>
-            <div>
-              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">X Max</label>
-              <input
-                type="number"
-                value={bounds.xMax}
-                onChange={(e) => setBounds({ ...bounds, xMax: parseFloat(e.target.value) || 1 })}
-                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
-              />
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-0.5">
+                <label className="text-[10px] sm:text-[11px] font-mono text-[#616161] dark:text-[#8D827A] block font-semibold">X Min</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={bounds.xMin}
+                  onChange={(e) => setBounds({ ...bounds, xMin: parseFloat(e.target.value) || -1 })}
+                  className="w-full px-2 py-1 rounded text-xs font-mono bg-white dark:bg-[#131313] text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#332D2A]"
+                />
+              </div>
+              <div className="space-y-0.5">
+                <label className="text-[10px] sm:text-[11px] font-mono text-[#616161] dark:text-[#8D827A] block font-semibold">X Max</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={bounds.xMax}
+                  onChange={(e) => setBounds({ ...bounds, xMax: parseFloat(e.target.value) || 1 })}
+                  className="w-full px-2 py-1 rounded text-xs font-mono bg-white dark:bg-[#131313] text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#332D2A]"
+                />
+              </div>
+              <div className="space-y-0.5 bg-[#EFEBE9]/60 dark:bg-[#25201E] p-1 rounded-lg border border-[#D7CCC8]/80 dark:border-[#3E2723]">
+                <label className="text-[10px] sm:text-[11px] font-mono text-[#5D4037] dark:text-[#D7CCC8] block font-bold">X Diff (ΔX)</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={Number((bounds.xMax - bounds.xMin).toFixed(2))}
+                  onChange={(e) => {
+                    const diff = parseFloat(e.target.value);
+                    if (!isNaN(diff) && diff > 0) {
+                      const center = (bounds.xMin + bounds.xMax) / 2;
+                      setBounds({
+                        ...bounds,
+                        xMin: Number((center - diff / 2).toFixed(2)),
+                        xMax: Number((center + diff / 2).toFixed(2)),
+                      });
+                    }
+                  }}
+                  className="w-full px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-white dark:bg-[#131313] text-[#5D4037] dark:text-[#D7CCC8] border border-[#5D4037]/30"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">Y Min</label>
-              <input
-                type="number"
-                value={bounds.yMin}
-                onChange={(e) => setBounds({ ...bounds, yMin: parseFloat(e.target.value) || -1 })}
-                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
-              />
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-0.5">
+                <label className="text-[10px] sm:text-[11px] font-mono text-[#616161] dark:text-[#8D827A] block font-semibold">Y Min</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={bounds.yMin}
+                  onChange={(e) => setBounds({ ...bounds, yMin: parseFloat(e.target.value) || -1 })}
+                  className="w-full px-2 py-1 rounded text-xs font-mono bg-white dark:bg-[#131313] text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#332D2A]"
+                />
+              </div>
+              <div className="space-y-0.5">
+                <label className="text-[10px] sm:text-[11px] font-mono text-[#616161] dark:text-[#8D827A] block font-semibold">Y Max</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={bounds.yMax}
+                  onChange={(e) => setBounds({ ...bounds, yMax: parseFloat(e.target.value) || 1 })}
+                  className="w-full px-2 py-1 rounded text-xs font-mono bg-white dark:bg-[#131313] text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#332D2A]"
+                />
+              </div>
+              <div className="space-y-0.5 bg-[#EFEBE9]/60 dark:bg-[#25201E] p-1 rounded-lg border border-[#D7CCC8]/80 dark:border-[#3E2723]">
+                <label className="text-[10px] sm:text-[11px] font-mono text-[#5D4037] dark:text-[#D7CCC8] block font-bold">Y Diff (ΔY)</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={Number((bounds.yMax - bounds.yMin).toFixed(2))}
+                  onChange={(e) => {
+                    const diff = parseFloat(e.target.value);
+                    if (!isNaN(diff) && diff > 0) {
+                      const center = (bounds.yMin + bounds.yMax) / 2;
+                      setBounds({
+                        ...bounds,
+                        yMin: Number((center - diff / 2).toFixed(2)),
+                        yMax: Number((center + diff / 2).toFixed(2)),
+                      });
+                    }
+                  }}
+                  className="w-full px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-white dark:bg-[#131313] text-[#5D4037] dark:text-[#D7CCC8] border border-[#5D4037]/30"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-[#616161] dark:text-[#8D827A] font-mono block mb-1">Y Max</label>
-              <input
-                type="number"
-                value={bounds.yMax}
-                onChange={(e) => setBounds({ ...bounds, yMax: parseFloat(e.target.value) || 1 })}
-                className="math-input py-1 text-xs font-mono bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white border-[#E0E0E0] dark:border-[#332D2A]"
-              />
+
+            {/* Quick Presets */}
+            <div className="flex flex-wrap items-center gap-1 pt-0.5">
+              <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">Quick:</span>
+              <button
+                type="button"
+                onClick={() => setBounds({ xMin: -5, xMax: 5, yMin: -5, yMax: 5 })}
+                className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-white dark:bg-[#22201F] border border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#2E2825] transition-colors"
+              >
+                Δ10 (±5)
+              </button>
+              <button
+                type="button"
+                onClick={() => setBounds({ xMin: -10, xMax: 10, yMin: -10, yMax: 10 })}
+                className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-white dark:bg-[#22201F] border border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#2E2825] transition-colors"
+              >
+                Δ20 (±10)
+              </button>
+              <button
+                type="button"
+                onClick={() => setBounds({ xMin: -20, xMax: 20, yMin: -20, yMax: 20 })}
+                className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-white dark:bg-[#22201F] border border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#2E2825] transition-colors"
+              >
+                Δ40 (±20)
+              </button>
+              <button
+                type="button"
+                onClick={resetBounds}
+                className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] border border-[#D7CCC8] dark:border-[#5D4037]/50"
+              >
+                Reset [-8, 8]
+              </button>
             </div>
           </div>
         )}
@@ -1070,7 +1168,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
         {!compact && (
           <div className="flex justify-between items-center text-[10px] text-[#757575] dark:text-[#8D827A] px-1 mb-1 font-mono">
             <span>
-              4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}], Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}]
+              4-Quadrant Plane: X ∈ [{Number(bounds.xMin.toFixed(2))}, {Number(bounds.xMax.toFixed(2))}] (ΔX: {Number((bounds.xMax - bounds.xMin).toFixed(2))}), Y ∈ [{Number(bounds.yMin.toFixed(2))}, {Number(bounds.yMax.toFixed(2))}] (ΔY: {Number((bounds.yMax - bounds.yMin).toFixed(2))})
               {isSquareAspect && ' • 1:1 Aspect'}
             </span>
             <span className="text-[#5D4037] dark:text-[#A1887F] font-medium hidden sm:inline">
@@ -1094,14 +1192,30 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
           {/* Floating Controls in compact mode */}
           {compact && (
             <>
-              {/* Telemetry Badge: Active domain indicator (Top-Left HUD) */}
-              <div className="absolute top-2 left-2 z-20 pointer-events-none flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-[#1B1B1B]/90 backdrop-blur-xs border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#5D4037] dark:bg-[#E0A99A] inline-block shrink-0" />
-                <span>x: [{bounds.xMin}, {bounds.xMax}]</span>
-              </div>
+              {/* Telemetry Badge: Active domain indicator (Top-Left HUD) - Clickable to open editor */}
+              <button
+                type="button"
+                onClick={() => setShowRangeInputs(!showRangeInputs)}
+                className="absolute top-2 left-2 z-20 pointer-events-auto flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-xs border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2320] transition-colors"
+                title="Tap to edit X & Y Axis Limits & Difference"
+              >
+                <SlidersHorizontal size={11} />
+                <span>x: [{bounds.xMin.toFixed(1)}, {bounds.xMax.toFixed(1)}] (Δ: {Number((bounds.xMax - bounds.xMin).toFixed(1))})</span>
+              </button>
 
               {/* Viewport Floating Zoom & Recenter Controls (Top-Right HUD) */}
-              <div className="absolute top-2 right-2 z-20 flex items-center bg-white/90 dark:bg-[#1B1B1B]/90 backdrop-blur-xs rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs">
+              <div className="absolute top-2 right-2 z-20 flex items-center bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-xs rounded-xl p-0.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => setShowRangeInputs(!showRangeInputs)}
+                  className={`p-1 text-[#616161] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white rounded-md transition-colors ${
+                    showRangeInputs ? 'bg-[#5D4037] text-white' : ''
+                  }`}
+                  title="Edit Axis Limits & Difference"
+                  aria-label="Edit Axis Limits & Difference"
+                >
+                  <SlidersHorizontal size={12} />
+                </button>
                 <button
                   type="button"
                   onClick={() => zoomIn()}

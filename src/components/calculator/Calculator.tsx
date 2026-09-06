@@ -7,11 +7,9 @@ import Keypad from './Keypad';
 import HistoryPanel from './HistoryPanel';
 import AngleModeToggle from './AngleModeToggle';
 import MemoryIndicator from './MemoryIndicator';
-import UnitConverter from './UnitConverter';
-import MatrixInput from './MatrixInput';
 import { useCalculatorStore } from '@/stores/calculatorStore';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
-import { FlaskConical, History, Calculator as CalcIcon, ArrowRightLeft, Grid3X3, X } from 'lucide-react';
+import { FlaskConical, History, X } from 'lucide-react';
 
 function CalculatorQuerySync() {
   const searchParams = useSearchParams();
@@ -28,7 +26,6 @@ function CalculatorQuerySync() {
 }
 
 export default function Calculator() {
-  const [activeTab, setActiveTab] = useState<'calc' | 'units' | 'matrix'>('calc');
   const [showHistory, setShowHistory] = useState(false);
   const {
     isScientificMode,
@@ -41,9 +38,8 @@ export default function Calculator() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't capture keys when typing in input fields or in other tabs
+      // Don't capture keys when typing in input fields
       if (
-        activeTab !== 'calc' ||
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLSelectElement
@@ -68,7 +64,7 @@ export default function Calculator() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, appendToExpression, evaluate, clear, clearEntry]);
+  }, [appendToExpression, evaluate, clear, clearEntry]);
 
   return (
     <div className="flex flex-col h-[calc(100dvh-6.5rem)] lg:h-[calc(100dvh-3.2rem)] max-h-[100dvh] overflow-hidden justify-between animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
@@ -81,137 +77,76 @@ export default function Calculator() {
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
-                Scientific Workspace
+                Scientific Calculator
               </h1>
               <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
                 PRO
               </span>
             </div>
             <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block">
-              Precision arithmetic, trigonometry, matrices, and conversions
+              Precision arithmetic, trigonometry, and scientific expressions
             </p>
           </div>
         </div>
 
         {/* Action Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {activeTab === 'calc' && (
-            <button
-              type="button"
-              onClick={toggleScientificMode}
-              className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs font-semibold transition-all duration-150 border ${
-                isScientificMode
-                  ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
-                  : 'bg-white text-[#616161] border-[#E0E0E0] hover:bg-[#F5F5F5] hover:text-[#131313] dark:bg-[#1B1B1B] dark:text-[#D7CCC8] dark:border-[#2E2825] dark:hover:bg-[#2A2827]'
-              }`}
-              title={isScientificMode ? 'Standard Mode' : 'Scientific Mode'}
-              aria-label={isScientificMode ? 'Switch to Standard Mode' : 'Switch to Scientific Mode'}
-            >
-              <FlaskConical size={14} />
-              <span className="hidden xs:inline">{isScientificMode ? 'Scientific' : 'Standard'}</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={toggleScientificMode}
+            className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs font-semibold transition-all duration-150 border ${
+              isScientificMode
+                ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
+                : 'bg-white text-[#616161] border-[#E0E0E0] hover:bg-[#F5F5F5] hover:text-[#131313] dark:bg-[#1B1B1B] dark:text-[#D7CCC8] dark:border-[#2E2825] dark:hover:bg-[#2A2827]'
+            }`}
+            title={isScientificMode ? 'Standard Mode' : 'Scientific Mode'}
+            aria-label={isScientificMode ? 'Switch to Standard Mode' : 'Switch to Scientific Mode'}
+          >
+            <FlaskConical size={14} />
+            <span className="hidden xs:inline">{isScientificMode ? 'Scientific' : 'Standard'}</span>
+          </button>
 
-          {activeTab === 'calc' && (
-            <button
-              type="button"
-              onClick={() => setShowHistory(!showHistory)}
-              className={`rounded-xl p-2 sm:p-2.5 transition-all duration-150 lg:hidden border ${
-                showHistory
-                  ? 'bg-[#5D4037] text-white border-[#795548]'
-                  : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#2A2827]'
-              }`}
-              title="History"
-              aria-label="Toggle Calculation History"
-            >
-              <History size={16} />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setShowHistory(!showHistory)}
+            className={`rounded-xl p-2 sm:p-2.5 transition-all duration-150 lg:hidden border ${
+              showHistory
+                ? 'bg-[#5D4037] text-white border-[#795548]'
+                : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#2A2827]'
+            }`}
+            title="History"
+            aria-label="Toggle Calculation History"
+          >
+            <History size={16} />
+          </button>
           <ThemeToggle />
         </div>
       </header>
 
-      {/* Mode Sub-Tabs (Pill Strip) */}
-      <div className="flex gap-1.5 sm:gap-2 pt-2 pb-1 shrink-0 overflow-x-auto scrollbar-none">
-        <button
-          type="button"
-          onClick={() => setActiveTab('calc')}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 border ${
-            activeTab === 'calc'
-              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
-              : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
-          }`}
-          aria-label="Calculator Mode"
-        >
-          <CalcIcon size={14} />
-          <span>Calculator</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('units')}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 border ${
-            activeTab === 'units'
-              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
-              : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
-          }`}
-          aria-label="Unit Converter Mode"
-        >
-          <ArrowRightLeft size={14} />
-          <span>Unit Converter</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('matrix')}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shrink-0 border ${
-            activeTab === 'matrix'
-              ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
-              : 'bg-white text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#F5F5F5] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#242220]'
-          }`}
-          aria-label="Matrix Calculator Mode"
-        >
-          <Grid3X3 size={14} />
-          <span>Matrices</span>
-        </button>
-      </div>
-
       {/* Main Dual-Pane / Workspace Content Area */}
-      {activeTab === 'calc' && (
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-5 flex-1 min-h-0 h-full overflow-hidden pt-1">
-          {/* Left Pane (Input / Tactile Keypad) */}
-          <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
-            {/* Display */}
-            <Display />
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-5 flex-1 min-h-0 h-full overflow-hidden pt-2">
+        {/* Left Pane (Input / Tactile Keypad) */}
+        <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden justify-between">
+          {/* Display */}
+          <Display />
 
-            {/* Controls Row (Deg/Rad, Memory) */}
-            <div className="mb-2 shrink-0 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
-              <AngleModeToggle />
-              <MemoryIndicator />
-            </div>
-
-            {/* Keypad - Dynamically Fills Available Height */}
-            <div className="flex-1 min-h-0 h-full w-full overflow-hidden flex flex-col">
-              <Keypad />
-            </div>
+          {/* Controls Row (Deg/Rad, Memory) */}
+          <div className="mb-2 shrink-0 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
+            <AngleModeToggle />
+            <MemoryIndicator />
           </div>
 
-          {/* Right Pane (Output / Visual / History Log) */}
-          <div className="hidden w-80 xl:w-96 lg:flex flex-col min-h-0 h-full overflow-hidden">
-            <HistoryPanel />
+          {/* Keypad - Dynamically Fills Available Height */}
+          <div className="flex-1 min-h-0 h-full w-full overflow-hidden flex flex-col">
+            <Keypad />
           </div>
         </div>
-      )}
 
-      {activeTab === 'units' && (
-        <div className="max-w-4xl mx-auto flex-1 overflow-y-auto w-full py-2">
-          <UnitConverter />
+        {/* Right Pane (Output / Visual / History Log) */}
+        <div className="hidden w-80 xl:w-96 lg:flex flex-col min-h-0 h-full overflow-hidden">
+          <HistoryPanel />
         </div>
-      )}
-
-      {activeTab === 'matrix' && (
-        <div className="max-w-4xl mx-auto flex-1 overflow-y-auto w-full py-2">
-          <MatrixInput />
-        </div>
-      )}
+      </div>
 
       {/* Mobile History Drawer */}
       {showHistory && (

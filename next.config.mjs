@@ -13,6 +13,17 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
+  // Redirects to eliminate duplicate routes
+  async redirects() {
+    return [
+      {
+        source: '/solver',
+        destination: '/equation-solver-with-steps',
+        permanent: true,
+      },
+    ];
+  },
+
   // Security headers (also set in vercel.json for CDN layer)
   async headers() {
     return [

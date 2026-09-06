@@ -55,7 +55,7 @@ export default function HistoryPanel() {
               <div className="flex justify-between items-center text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
                 <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <a
-                    href={`/solver?eq=${encodeURIComponent(entry.expression)}&autoSolve=true`}
+                    href={`/equation-solver-with-steps?eq=${encodeURIComponent(entry.expression)}&autoSolve=true`}
                     className="px-1.5 py-0.5 rounded bg-white dark:bg-[#1B1B1B] text-[#5D4037] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#5D4037] hover:text-white"
                     title="Solve as equation in Solver"
                   >

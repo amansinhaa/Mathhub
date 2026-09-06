@@ -61,12 +61,12 @@ export default function WhatIsAFunction() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 text-[#131313] dark:text-[#EFEBE9]">
+    <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6 text-[#131313] dark:text-[#EFEBE9]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <h1 className="text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-8">What is a Function?</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">What is a Function?</h1>
       
       <div className="prose prose-brown dark:prose-invert max-w-none">
         <h2 className="text-2xl font-semibold mb-4 text-[#3E2723] dark:text-white">Definition</h2>

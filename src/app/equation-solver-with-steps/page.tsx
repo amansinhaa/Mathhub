@@ -77,47 +77,45 @@ export default function EquationSolverWithStepsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#EFEBE9] dark:bg-[#131313] text-[#5D4037] dark:text-[#EFEBE9] p-4 md:p-8">
+    <div className="w-full text-[#5D4037] dark:text-[#EFEBE9] py-1">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrgJSONLD) }}
       />
       
-      <div className="max-w-4xl mx-auto space-y-12">
-        <header className="text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#5D4037] dark:text-[#EFEBE9]">
-            Equation Solver with Steps — See Every Working
-          </h1>
-          <div className="text-lg md:text-xl max-w-2xl mx-auto space-y-4">
-            <p>
-              Stuck on a math problem? Our step-by-step equation solver breaks down complex equations into understandable chunks.
-            </p>
-            <p>
-              Whether you are working with simple linear equations, quadratics, complex polynomials, or systems of equations, our solver will show you exactly how to arrive at the correct answer.
-            </p>
+      <div className="max-w-6xl xl:max-w-7xl mx-auto space-y-3 sm:space-y-5">
+        <header className="space-y-1 sm:space-y-1.5 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+            <span>ALGEBRAIC ENGINE</span>
+            <span>•</span>
+            <span>STEP-BY-STEP WORKINGS</span>
           </div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+            Equation Solver with Steps
+          </h1>
+          <p className="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-3xl">
+            Solves linear equations, quadratics, polynomials, or systems line-by-line with complete algebraic proofs.
+          </p>
         </header>
 
-        <section className="bg-white dark:bg-[#3E2723] p-6 rounded-xl shadow-sm border border-[#E0E0E0] dark:border-[#5D4037]">
-          <h2 className="text-2xl font-semibold mb-4">How it works</h2>
-          <ol className="list-decimal list-inside space-y-2">
-            <li><strong>Enter equation:</strong> Type your linear, quadratic, or polynomial equation.</li>
-            <li><strong>Choose method:</strong> Select an appropriate solving method if applicable.</li>
-            <li><strong>See every step:</strong> Follow along as we break down the math process line by line.</li>
-          </ol>
-        </section>
-
-        <section className="flex justify-center">
-          <Suspense fallback={<div className="p-8 text-center">Loading solver...</div>}>
-            <div className="w-full max-w-2xl bg-white dark:bg-[#3E2723] p-6 rounded-xl shadow border border-[#E0E0E0] dark:border-[#5D4037]">
-              <EquationSolver />
-            </div>
+        {/* Live Interactive Solver Widget — Immediate Above-the-Fold Access */}
+        <section className="w-full">
+          <Suspense fallback={<div className="p-8 text-center font-mono text-xs text-[#757575]">Loading solver workstation...</div>}>
+            <EquationSolver hideHeader wideLayout />
           </Suspense>
         </section>
 
-        <section className="space-y-6">
-          <h2 className="text-3xl font-bold text-center">Frequently Asked Questions</h2>
-          <div className="space-y-4">
+        {/* Educational Guide Section */}
+        <section className="bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs space-y-2">
+          <h2 className="text-base sm:text-lg font-bold text-[#131313] dark:text-white">How This Step-by-Step Solver Works</h2>
+          <p className="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed">
+            Stuck on a math problem? Our solver breaks down complex equations into understandable steps, applying algebraic rules sequentially until the variable is isolated. Follow along line by line to understand every transformation.
+          </p>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-center sm:text-left text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+          <div className="space-y-3">
             {[
               { q: "How does the step-by-step solver work?", a: "The solver parses your equation and applies algebraic rules sequentially, showing each transformation like adding/subtracting from both sides or factoring, until the variable is isolated." },
               { q: "Can it solve linear equations?", a: "Yes, it can solve linear equations with one or multiple variables by simplifying and isolating the target variable." },
@@ -136,12 +134,13 @@ export default function EquationSolverWithStepsPage() {
         <footer className="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#5D4037]">
           <h3 className="text-xl font-medium">Explore Other Solvers</h3>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/solver" className="text-blue-600 dark:text-blue-400 hover:underline">General Math Solver</Link>
             <Link href="/quadratic-equation-solver" className="text-blue-600 dark:text-blue-400 hover:underline">Quadratic Equation Solver</Link>
+            <Link href="/system-of-equations" className="text-blue-600 dark:text-blue-400 hover:underline">System of Equations</Link>
+            <Link href="/inequality-solver" className="text-blue-600 dark:text-blue-400 hover:underline">Inequality Solver</Link>
             <Link href="/matrix-solver" className="text-blue-600 dark:text-blue-400 hover:underline">Matrix Solver</Link>
           </div>
         </footer>
       </div>
-    </main>
+    </div>
   );
 }

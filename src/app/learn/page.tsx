@@ -12,10 +12,10 @@ export const metadata = {
 
 export default function LearnIndex() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 prose prose-brown dark:prose-invert">
-      <h1 className="text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">Math Learning Guides</h1>
-      <p className="text-lg text-[#131313] dark:text-[#E0E0E0] mb-12">
-        Welcome to our step-by-step math guides. Each guide comes with simple English explanations, everyday examples, and embedded interactive graphing tools so you can visualize the math immediately.
+    <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6 prose prose-brown dark:prose-invert">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Math Learning Guides</h1>
+      <p className="text-sm sm:text-base text-[#131313] dark:text-[#E0E0E0] mb-6">
+        Step-by-step guides with simple English explanations, everyday examples, and embedded interactive graphing tools to visualize mathematical concepts.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -106,7 +106,7 @@ export default function EquationInput() {
   const currentAction = ACTIONS.find(a => a.value === solverType);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3.5">
       <Suspense fallback={null}><SolverQuerySync /></Suspense>
 
       {/* ── Single equation input (hidden for System) ───────────────────── */}
@@ -260,10 +260,10 @@ export default function EquationInput() {
             </div>
           )}
 
-          {/* Live math preview */}
+          {/* Question preview */}
           {equation && (
             <div className="p-3 rounded-xl bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#2E2825] text-center">
-              <span className="text-[10px] font-mono font-semibold text-[#757575] dark:text-[#8D827A] block mb-1">Live Math Preview</span>
+              <span className="text-[10px] font-mono font-semibold text-[#757575] dark:text-[#8D827A] block mb-1">Question Preview</span>
               <div className="text-sm sm:text-base overflow-x-auto py-1 text-[#131313] dark:text-white">
                 <MathDisplay math={expressionToLatex(equation)} />
               </div>
@@ -349,20 +349,20 @@ export default function EquationInput() {
         <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#757575] dark:text-[#8D827A]">
           What do you want to do?
         </span>
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-3 gap-1 sm:gap-1.5">
           {ACTIONS.map(({ value, emoji, label, hint }) => (
             <button
               key={value}
               type="button"
               onClick={() => setSolverType(value)}
               title={hint}
-              className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2 rounded-xl border text-xs font-semibold transition-all ${
+              className={`flex flex-col items-center justify-center gap-0.5 px-1.5 py-1.5 sm:py-2 rounded-xl border text-xs font-semibold transition-all ${
                 solverType === value
                   ? 'bg-[#5D4037] text-white border-[#795548] shadow-sm scale-[1.02]'
                   : 'bg-[#F5F5F5] dark:bg-[#181818] text-[#616161] dark:text-[#A19891] border-[#E0E0E0] dark:border-[#282422] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] hover:text-[#5D4037] dark:hover:text-white'
               }`}
             >
-              <span className="text-base leading-none font-mono">{emoji}</span>
+              <span className="text-sm sm:text-base leading-none font-mono">{emoji}</span>
               <span className="text-[10px] leading-tight">{label}</span>
             </button>
           ))}
@@ -373,7 +373,7 @@ export default function EquationInput() {
       <button
         type="submit"
         disabled={isLoading || (isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim())}
-        className="w-full py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] flex items-center justify-center gap-2 border border-[#795548]/50"
+        className="w-full py-2.5 sm:py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] sm:min-h-[44px] flex items-center justify-center gap-2 border border-[#795548]/50"
       >
         {isLoading ? 'Working…' : currentAction ? `${currentAction.emoji} ${currentAction.label}` : 'Go'}
       </button>

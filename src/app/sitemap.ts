@@ -19,16 +19,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ── Core tool pages ────────────────────────────────────────────────
     { url: `${BASE}`,                         lastModified: now, changeFrequency: 'daily',   priority: 1.0 },
     { url: `${BASE}/calculator`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
-    { url: `${BASE}/solver`,                  lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE}/graph`,                   lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE}/formulas`,                lastModified: now, changeFrequency: 'weekly',  priority: 0.8 },
+    { url: `${BASE}/graph`,                   lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${BASE}/unit-converter`,          lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${BASE}/matrix-solver`,           lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
+    { url: `${BASE}/formulas`,                lastModified: now, changeFrequency: 'weekly',  priority: 0.9 },
 
-    // ── Dedicated solver landing pages ─────────────────────────────────
+    // ── Dedicated solver workstations & landing pages ──────────────────
+    { url: `${BASE}/equation-solver-with-steps`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${BASE}/quadratic-equation-solver`, lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${BASE}/system-of-equations`,       lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${BASE}/inequality-solver`,         lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
     { url: `${BASE}/derivative-calculator`,     lastModified: now, changeFrequency: 'weekly',   priority: 0.95 },
     { url: `${BASE}/integral-calculator`,       lastModified: now, changeFrequency: 'weekly',   priority: 0.95 },
-    { url: `${BASE}/quadratic-equation-solver`, lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
-    { url: `${BASE}/equation-solver-with-steps`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${BASE}/matrix-solver`,            lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
 
     // ── Exam-board formula sheet pages ─────────────────────────────────
     ...boards.map((board) => ({

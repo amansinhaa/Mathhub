@@ -24,7 +24,7 @@ export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
   // Route to solver with sanitized equation and autoSolve
   const handleOpenSolver = () => {
     const raw = formula.solverExpression || latexToAscii(formula.latex);
-    router.push(`/solver?eq=${encodeURIComponent(raw)}&autoSolve=true`);
+    router.push(`/equation-solver-with-steps?eq=${encodeURIComponent(raw)}&autoSolve=true`);
   };
 
   return (

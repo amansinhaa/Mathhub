@@ -83,33 +83,31 @@ export default function QuadraticEquationSolverPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#EFEBE9] dark:bg-[#131313] text-[#5D4037] dark:text-[#EFEBE9] p-4 md:p-8">
+    <div className="w-full text-[#131313] dark:text-[#F5F5F5] py-1">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrgJSONLD) }}
       />
       
-      <div className="max-w-4xl mx-auto space-y-12">
-        <header className="text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#5D4037] dark:text-[#EFEBE9]">
+      <div className="max-w-6xl xl:max-w-7xl mx-auto space-y-3 sm:space-y-5">
+        <header className="space-y-1 sm:space-y-1.5 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+            <span>QUADRATIC STUDIO</span>
+            <span>•</span>
+            <span>REAL & COMPLEX ROOTS</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
             Quadratic Equation Solver with Steps
           </h1>
-          <div className="text-lg md:text-xl max-w-2xl mx-auto space-y-4">
-            <p>
-              A quadratic equation is a second-degree polynomial in standard form <em>ax² + bx + c = 0</em>, where <em>a ≠ 0</em>.
-            </p>
-            <p className="text-base opacity-90">
-              Our free step-by-step solver finds exact real and complex roots using factoring, completing the square, and the quadratic formula with every calculation step clearly explained.
-            </p>
-          </div>
+          <p className="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-3xl">
+            Solves <em className="font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">ax² + bx + c = 0</em> with factoring, completing the square, quadratic formula, discriminant (Δ), and number line visualizer.
+          </p>
         </header>
 
-        {/* Live Interactive Solver Widget */}
-        <section className="flex justify-center">
-          <Suspense fallback={<div className="p-8 text-center">Loading solver...</div>}>
-            <div className="w-full bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825]">
-              <EquationSolver initialMode="polynomial" initialEquation="x^2 - 5x + 6 = 0" hideHeader />
-            </div>
+        {/* Live Interactive Solver Widget — Immediate Above-the-Fold Access */}
+        <section className="w-full">
+          <Suspense fallback={<div className="p-8 text-center font-mono text-xs text-[#757575]">Loading solver workstation...</div>}>
+            <EquationSolver initialMode="polynomial" initialEquation="x^2 - 5x + 6 = 0" hideHeader wideLayout />
           </Suspense>
         </section>
 
@@ -206,14 +204,15 @@ export default function QuadraticEquationSolverPage() {
         <footer className="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#2E2825]">
           <h3 className="text-xl font-medium">Explore Other Solvers</h3>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/solver" className="text-blue-600 dark:text-blue-400 hover:underline">General Math Solver</Link>
             <Link href="/equation-solver-with-steps" className="text-blue-600 dark:text-blue-400 hover:underline">Equation Solver with Steps</Link>
+            <Link href="/system-of-equations" className="text-blue-600 dark:text-blue-400 hover:underline">System of Equations</Link>
+            <Link href="/inequality-solver" className="text-blue-600 dark:text-blue-400 hover:underline">Inequality Solver</Link>
             <Link href="/matrix-solver" className="text-blue-600 dark:text-blue-400 hover:underline">Matrix Solver</Link>
             <Link href="/formulas" className="text-blue-600 dark:text-blue-400 hover:underline">Math Formulas Sheet</Link>
             <Link href="/graph" className="text-blue-600 dark:text-blue-400 hover:underline">Online Graph Plotter</Link>
           </div>
         </footer>
       </div>
-    </main>
+    </div>
   );
 }

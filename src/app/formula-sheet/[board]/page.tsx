@@ -74,12 +74,12 @@ export default async function BoardFormulaSheet({ params }: Props) {
           </Link>
         </div>
 
-        {/* Header Section */}
-        <header className="mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#131313] dark:text-white mb-6">
+        {/* Header Section — Compact */}
+        <header className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#131313] dark:text-white mb-2">
             {data.h1}
           </h1>
-          <p className="text-base sm:text-lg text-[#616161] dark:text-[#A19891] leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed max-w-3xl">
             {data.intro}
           </p>
         </header>

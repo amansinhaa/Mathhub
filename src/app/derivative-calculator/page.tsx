@@ -82,34 +82,32 @@ export default function DerivativeCalculatorPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] dark:bg-[#131313] text-[#131313] dark:text-[#F5F5F5] p-3 sm:p-6 md:p-8">
+    <div className="w-full text-[#131313] dark:text-[#F5F5F5] py-1">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrgJSONLD) }}
       />
       
-      <div className="max-w-4xl mx-auto space-y-10">
+      <div className="max-w-6xl xl:max-w-7xl mx-auto space-y-3 sm:space-y-5">
         {/* Clean Hero Header */}
-        <header className="text-center space-y-3 pt-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
-            <span>CALCULUS SOLVER</span>
+        <header className="space-y-1 sm:space-y-1.5 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+            <span>CALCULUS ENGINE</span>
             <span>•</span>
             <span>d/dx WITH STEPS</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#131313] dark:text-white">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
             Derivative Calculator with Steps
           </h1>
-          <p className="text-sm sm:text-base text-[#616161] dark:text-[#A19891] max-w-2xl mx-auto">
-            Find the derivative of any algebraic, trigonometric, or exponential function. Every step is clearly broken down with the exact differentiation rule named and explained.
+          <p className="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-3xl">
+            Calculates symbolic derivatives with step-by-step breakdown of Power Rule, Product Rule, Quotient Rule, Chain Rule, and trigonometric identities.
           </p>
         </header>
 
-        {/* Embedded Interactive Solver Widget */}
-        <section className="flex justify-center">
-          <Suspense fallback={<div className="p-8 text-center font-mono text-sm text-[#757575]">Loading calculator...</div>}>
-            <div className="w-full bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl shadow-sm border border-[#E0E0E0] dark:border-[#2E2825]">
-              <EquationSolver initialMode="derivative" initialEquation="3x^2 + 5x" hideHeader />
-            </div>
+        {/* Embedded Interactive Solver Widget — Immediate Above-the-Fold Access */}
+        <section className="w-full">
+          <Suspense fallback={<div className="p-8 text-center font-mono text-xs text-[#757575]">Loading calculator...</div>}>
+            <EquationSolver initialMode="derivative" initialEquation="3x^2 + 5x" hideHeader wideLayout />
           </Suspense>
         </section>
 
@@ -182,6 +180,6 @@ export default function DerivativeCalculatorPage() {
           </div>
         </footer>
       </div>
-    </main>
+    </div>
   );
 }

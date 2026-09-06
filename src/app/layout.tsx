@@ -144,9 +144,9 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <div className="flex h-dvh min-h-screen flex-col overflow-hidden bg-[#FAFAFA] dark:bg-[#131313] transition-colors duration-150">
-            {/* Main content area — takes remaining space above mobile bottom bar and right of desktop sidebar */}
-            <main className="flex-1 overflow-y-auto pb-16 lg:pb-3 lg:pl-56 min-h-0">
-              <div className="mx-auto max-w-7xl px-3 sm:px-5 py-2 sm:py-3.5 h-full">
+            {/* Main content area — full width canvas and responsive container */}
+            <main className="flex-1 overflow-y-auto min-h-0">
+              <div className="mx-auto max-w-7xl px-3 sm:px-6 py-3 sm:py-5 h-full">
                 {children}
               </div>
             </main>

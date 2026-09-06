@@ -9,7 +9,7 @@ import CSVUploader from './CSVUploader';
 import ExportButton from './ExportButton';
 import SavedGraphsList from './SavedGraphsList';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
-import { Printer, Compass, Eye, EyeOff, Trash2, Plus, Keyboard as KeyboardIcon, ChevronDown } from 'lucide-react';
+import { Printer, Compass, Eye, EyeOff, Trash2, Plus, Keyboard as KeyboardIcon, ChevronDown, Copy, Check } from 'lucide-react';
 import FunctionAnalysisPanel from './FunctionAnalysisPanel';
 import UnitCircleModal from './UnitCircleModal';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
@@ -17,7 +17,7 @@ import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 const FunctionPlotter = dynamic(() => import('./FunctionPlotter'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full min-h-[220px] md:min-h-[560px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
+    <div className="w-full h-full min-h-[280px] md:min-h-[560px] bg-white dark:bg-[#1B1B1B] rounded-2xl flex items-center justify-center border border-[#E0E0E0] dark:border-[#2E2825]">
       <span className="text-xs font-mono text-[#757575] dark:text-[#8D827A] animate-pulse">Initializing Plotter Engine...</span>
     </div>
   ),
@@ -58,6 +58,7 @@ export default function GraphModule() {
   const [isUnitCircleOpen, setIsUnitCircleOpen] = React.useState(false);
   const [showMobileKeyboard, setShowMobileKeyboard] = React.useState(true);
   const [activeMobileEqId, setActiveMobileEqId] = React.useState<string>(() => equations[0]?.id || 'eq-1');
+  const [copiedMobileEq, setCopiedMobileEq] = React.useState(false);
 
   const mobileInputRef = React.useRef<HTMLInputElement | null>(null);
   const mobileSelectionRange = React.useRef<{ start: number; end: number } | null>(null);
@@ -152,22 +153,22 @@ export default function GraphModule() {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-2.5 sm:space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
+    <div className="flex flex-col h-full space-y-2 sm:space-y-3.5 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
       {/* Unit Circle Modal */}
       <UnitCircleModal isOpen={isUnitCircleOpen} onClose={() => setIsUnitCircleOpen(false)} />
 
-      {/* Top App Bar / Header (Android Design Specification compliant without logo or settings icon) */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2">
+      {/* Top App Bar / Header — Cleared of floating navbar overlap */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2 pt-12 sm:pt-0 sm:pl-28">
         <div className="flex flex-col">
           <span className="text-[10px] font-mono font-semibold tracking-widest text-[#757575] dark:text-[#9E9E9E] uppercase">
-            MATHHUB
+            EASYEQUATE
           </span>
           <div className="flex items-center gap-2">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
-              Graphing Studio
+            <h1 className="text-base sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+              2D Graph Plotter
             </h1>
             <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
-              2D PLOTTER
+              Curves & Plots
             </span>
           </div>
         </div>
@@ -209,7 +210,9 @@ export default function GraphModule() {
               </button>
             ))}
           </div>
-          <ThemeToggle />
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -222,11 +225,11 @@ export default function GraphModule() {
           <div className="flex flex-col lg:hidden space-y-2 w-full pb-4">
             {inputMode === 'equation' ? (
               <>
-                {/* 1. The Compact Plotter Canvas */}
+                {/* 1. The Compact Plotter Canvas — Increased Height for Visibility */}
                 <div className="w-full shrink-0">
                   <FunctionPlotter
                     compact={showMobileKeyboard}
-                    mobileHeight={showMobileKeyboard ? 215 : 360}
+                    mobileHeight={showMobileKeyboard ? 295 : 420}
                   />
                 </div>
 
@@ -325,13 +328,30 @@ export default function GraphModule() {
                       className="bg-transparent border-none outline-none w-full font-mono text-xs text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
                     />
                     {activeMobileEq?.expression && (
-                      <button
-                        type="button"
-                        onClick={handleMobileClear}
-                        className="text-[10px] font-mono font-bold text-[#757575] hover:text-red-500 dark:text-[#8D827A] dark:hover:text-[#FFAB91] shrink-0"
-                      >
-                        CLR
-                      </button>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (activeMobileEq?.expression) {
+                              navigator.clipboard.writeText(activeMobileEq.expression);
+                              setCopiedMobileEq(true);
+                              setTimeout(() => setCopiedMobileEq(false), 1500);
+                            }
+                          }}
+                          className="p-1 text-[#757575] hover:text-[#5D4037] dark:text-[#8D827A] dark:hover:text-white transition-colors"
+                          title="Copy Equation"
+                          aria-label="Copy Equation"
+                        >
+                          {copiedMobileEq ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleMobileClear}
+                          className="text-[10px] font-mono font-bold text-[#757575] hover:text-red-500 dark:text-[#8D827A] dark:hover:text-[#FFAB91]"
+                        >
+                          CLR
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>

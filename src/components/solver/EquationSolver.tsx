@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSolverStore } from '@/stores/solverStore';
 import EquationInput from './EquationInput';
 import StepByStep from './StepByStep';
@@ -20,12 +20,14 @@ interface EquationSolverProps {
   initialMode?: 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic';
   initialEquation?: string;
   hideHeader?: boolean;
+  wideLayout?: boolean;
 }
 
 export default function EquationSolver({
   initialMode,
   initialEquation,
   hideHeader = false,
+  wideLayout = false,
 }: EquationSolverProps = {}) {
   const { solverType, result, setSolverType, setEquation } = useSolverStore();
 
@@ -41,15 +43,27 @@ export default function EquationSolver({
     }
   }, [initialMode, initialEquation, setSolverType, setEquation]);
 
+  // On mobile/Android, smoothly scroll to direct solution as soon as result is ready
+  useEffect(() => {
+    if (result && typeof window !== 'undefined' && window.innerWidth < 768) {
+      setTimeout(() => {
+        const el = document.getElementById('direct-solution');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 120);
+    }
+  }, [result]);
+
   return (
-    <div className="w-full h-full flex flex-col space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
+    <div className="w-full h-full flex flex-col space-y-3 sm:space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
       {/* Header */}
       {!hideHeader && (
-        <header className="flex flex-col gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+        <header className="flex flex-col gap-2 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
           <div className="flex items-center justify-between gap-3">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
+                <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
                   Equation Solver
                 </h1>
                 <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
@@ -69,7 +83,7 @@ export default function EquationSolver({
               Solvers:
             </span>
             <a
-              href="/solver"
+              href="/equation-solver-with-steps"
               className="px-2.5 py-1 rounded-lg bg-[#5D4037] text-white font-semibold text-[11px] shrink-0 shadow-2xs"
             >
               General Solver
@@ -108,30 +122,56 @@ export default function EquationSolver({
         </header>
       )}
 
-      {/* Dual pane layout */}
-      <div className="flex flex-col lg:flex-row gap-5 flex-1 min-h-0 items-start">
-        {/* Left: Input + Controls */}
-        <div className="w-full lg:w-[420px] xl:w-[460px] shrink-0 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
-          <EquationInput />
-        </div>
+      {/* Dual pane or Stacked layout */}
+      {wideLayout ? (
+        <div className="w-full flex flex-col gap-3 sm:gap-5">
+          {/* Top: Full-Width Input Console */}
+          <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3.5 sm:p-5 md:p-6 shadow-sm transition-colors">
+            <EquationInput />
+          </div>
 
-        {/* Right: Results */}
-        <div className="flex-1 w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[360px] overflow-y-auto transition-colors">
-          {result ? (
-            <StepByStep />
-          ) : (
-            <div className="flex flex-col items-center justify-center min-h-[300px] text-center p-8 border border-dashed border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl bg-[#F5F5F5] dark:bg-[#131313]/60">
-              <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EFEBE9] border border-[#D7CCC8] dark:bg-[#24201E] dark:border-[#3E2723] mb-3 text-[#5D4037] dark:text-[#A1887F]">
-                <FunctionSquare size={28} />
+          {/* Bottom: Expansive Full-Width Results & Steps */}
+          <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-sm min-h-[200px] sm:min-h-[360px] transition-colors">
+            {result ? (
+              <StepByStep />
+            ) : (
+              <div className="flex flex-col items-center justify-center min-h-[260px] text-center p-8 border border-dashed border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl bg-[#F5F5F5] dark:bg-[#131313]/60">
+                <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EFEBE9] border border-[#D7CCC8] dark:bg-[#24201E] dark:border-[#3E2723] mb-3 text-[#5D4037] dark:text-[#A1887F]">
+                  <FunctionSquare size={28} />
+                </div>
+                <h3 className="text-sm font-semibold text-[#131313] dark:text-white mb-1">Awaiting Input</h3>
+                <p className="text-xs text-[#616161] dark:text-[#8D827A] max-w-sm leading-relaxed">
+                  {EMPTY_STATE_MESSAGES[solverType]}
+                </p>
               </div>
-              <h3 className="text-sm font-semibold text-[#131313] dark:text-white mb-1">Awaiting Input</h3>
-              <p className="text-xs text-[#616161] dark:text-[#8D827A] max-w-sm leading-relaxed">
-                {EMPTY_STATE_MESSAGES[solverType]}
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col xl:flex-row gap-5 flex-1 min-h-0 items-start">
+          {/* Left: Input + Controls */}
+          <div className="w-full xl:w-[420px] shrink-0 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
+            <EquationInput />
+          </div>
+
+          {/* Right: Results */}
+          <div className="flex-1 w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[360px] overflow-y-auto transition-colors">
+            {result ? (
+              <StepByStep />
+            ) : (
+              <div className="flex flex-col items-center justify-center min-h-[300px] text-center p-8 border border-dashed border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl bg-[#F5F5F5] dark:bg-[#131313]/60">
+                <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EFEBE9] border border-[#D7CCC8] dark:bg-[#24201E] dark:border-[#3E2723] mb-3 text-[#5D4037] dark:text-[#A1887F]">
+                  <FunctionSquare size={28} />
+                </div>
+                <h3 className="text-sm font-semibold text-[#131313] dark:text-white mb-1">Awaiting Input</h3>
+                <p className="text-xs text-[#616161] dark:text-[#8D827A] max-w-sm leading-relaxed">
+                  {EMPTY_STATE_MESSAGES[solverType]}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

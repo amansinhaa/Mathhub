@@ -90,7 +90,7 @@ export function MathInput({
       {showLivePreview && value.trim() && (
         <div className="p-2.5 rounded-xl bg-[#F5F5F5] dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#282422] text-center max-w-full overflow-x-auto shadow-2xs">
           <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A] block mb-0.5">
-            Live Math Preview
+            Question Preview
           </span>
           <div className="text-sm py-0.5 text-[#131313] dark:text-white">
             <MathDisplay math={value} />

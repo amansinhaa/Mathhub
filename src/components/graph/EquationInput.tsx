@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
-import { Eye, EyeOff, Trash2, Plus, HelpCircle, X, Info, Keyboard as KeyboardIcon } from 'lucide-react';
+import { Eye, EyeOff, Trash2, Plus, HelpCircle, X, Info, Keyboard as KeyboardIcon, Copy, Check } from 'lucide-react';
 import { isImplicitEquation } from '@/lib/math/implicitPlot';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 
@@ -12,6 +12,7 @@ export default function EquationInput() {
   // Default virtual math keyboard to open on graphs for immediate typing
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [activeEqId, setActiveEqId] = useState<string | null>(null);
+  const [copiedEqId, setCopiedEqId] = useState<string | null>(null);
 
   const inputRefs = React.useRef<Record<string, HTMLInputElement | null>>({});
   const selectionRange = React.useRef<{ start: number; end: number } | null>(null);
@@ -237,6 +238,23 @@ export default function EquationInput() {
                   {isImplicit ? 'Curve 2D' : 'Function y'}
                 </span>
               )}
+
+              {/* Copy equation formula button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (eq.expression) {
+                    navigator.clipboard.writeText(eq.expression);
+                    setCopiedEqId(eq.id);
+                    setTimeout(() => setCopiedEqId(null), 1500);
+                  }
+                }}
+                className="text-[#757575] hover:text-[#5D4037] dark:text-[#8D827A] dark:hover:text-white p-1 transition-colors"
+                title="Copy equation formula"
+                aria-label="Copy equation formula"
+              >
+                {copiedEqId === eq.id ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+              </button>
 
               {/* Visibility toggle button */}
               <button
