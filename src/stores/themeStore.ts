@@ -1,30 +1,42 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'system' | 'light' | 'dark';
 
 interface ThemeState {
-  theme: Theme | null;
+  theme: Theme;
   setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
+  cycleTheme: () => void;
 }
 
 /**
  * Theme store — persisted to localStorage.
- * `null` theme means "not yet initialized" → will read system preference.
+ * Default is 'system' which automatically respects the user's OS preference.
  */
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'light',
+      theme: 'system',
       setTheme: (theme: Theme) => set({ theme }),
-      toggleTheme: () => {
+      cycleTheme: () => {
         const current = get().theme;
-        set({ theme: current === 'dark' ? 'light' : 'dark' });
+        if (current === 'system') {
+          // If in system mode, check current system dark state
+          const isSystemDark =
+            typeof window !== 'undefined' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+          // Switch to opposite of system
+          set({ theme: isSystemDark ? 'light' : 'dark' });
+        } else if (current === 'light') {
+          set({ theme: 'dark' });
+        } else {
+          set({ theme: 'system' });
+        }
       },
     }),
     {
-      name: 'mathhub-theme',
+      name: 'mathhub-theme-mode',
     }
   )
 );
+

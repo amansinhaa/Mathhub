@@ -115,6 +115,8 @@ export function Navbar() {
           <HomeIcon size={16} />
           <span className="hidden md:inline">Home</span>
         </Link>
+
+        <ThemeToggle className="p-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322]" />
       </div>
 
       {/* Backdrop overlay */}

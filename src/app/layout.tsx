@@ -127,10 +127,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Anti-FOUC Theme Script - Defaults to light mode */}
+        {/* Anti-FOUC Theme Script - Defaults to system mode */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('mathhub-theme');if(t==='dark'){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}`,
+            __html: `try{var raw=localStorage.getItem('mathhub-theme-mode');var theme='system';if(raw){var p=JSON.parse(raw);if(p&&p.state&&p.state.theme){theme=p.state.theme;}}else{var old=localStorage.getItem('mathhub-theme');if(old){var op=JSON.parse(old);if(op&&op.state&&op.state.theme){theme=op.state.theme;}}}var isDark=theme==='dark'||(theme==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(isDark){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}`,
           }}
         />
         {/* Structured Data */}
