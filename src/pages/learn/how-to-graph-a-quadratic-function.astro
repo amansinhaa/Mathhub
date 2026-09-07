@@ -1,0 +1,135 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GraphModuleClient from '@/components/shared/GraphModuleClient';
+
+const title = 'How to Graph a Quadratic Function — Step-by-Step | EasyEquate';
+const description = 'Learn how to graph a quadratic function step by step. Find the vertex, axis of symmetry, and x-intercepts with worked examples and a live graphing tool.';
+const canonical = 'https://www.easyequate.com/learn/how-to-graph-a-quadratic-function';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What shape does a quadratic function make?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A quadratic function forms a U-shaped curve called a parabola. If 'a' is positive, it opens upwards. If 'a' is negative, it opens downwards."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you find the vertex of a parabola?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The x-coordinate of the vertex is found using the formula x = -b / (2a). Then, plug this x-value back into the original function to find the y-coordinate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the axis of symmetry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The axis of symmetry is the vertical line that divides the parabola exactly in half. It passes through the vertex and its equation is x = -b / (2a)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you find x-intercepts of a quadratic?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can find x-intercepts (also called roots or zeros) by setting y = 0 and solving for x. You can solve by factoring, completing the square, or using the quadratic formula."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a² + bx + c always have two roots?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Depending on the discriminant (b² - 4ac), a quadratic can have two real roots, one real root (if the vertex touches the x-axis), or no real roots (if it never crosses the x-axis)."
+      }
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={faqSchema}>
+  <article class="max-w-4xl mx-auto px-4 py-8 prose prose-brown dark:prose-invert">
+    <div class="mb-6">
+      <a href="/learn" class="text-sm font-medium text-[#5D4037] dark:text-[#D7CCC8] hover:underline">&larr; Back to Guides</a>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">How to Graph a Quadratic Function</h1>
+    <p class="lead text-lg text-[#131313] dark:text-[#E0E0E0] mb-8">
+      A visual walkthrough on sketching parabolas. Discover how to identify the vertex, axis of symmetry, intercepts, and orientation step by step.
+    </p>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. Anatomy of a Parabola</h2>
+    <p>
+      The standard form of a quadratic function is:
+    </p>
+    <div class="bg-[#EFEBE9] dark:bg-[#3E2723] p-4 rounded-lg my-4 text-center font-mono text-lg">
+      f(x) = ax² + bx + c
+    </div>
+    <p>
+      Every quadratic function produces a symmetric curve called a <strong>parabola</strong>. Here is what each constant controls:
+    </p>
+    <ul>
+      <li><strong>Sign of a:</strong> If <code>a &gt; 0</code>, the parabola opens <em>upwards</em> (like a smile, with a minimum point). If <code>a &lt; 0</code>, it opens <em>downwards</em> (with a maximum point).</li>
+      <li><strong>Vertex:</strong> The turning point of the curve.</li>
+      <li><strong>Axis of Symmetry:</strong> The central vertical line running straight through the vertex.</li>
+      <li><strong>y-intercept:</strong> The point where the curve crosses the y-axis, which is simply <code>(0, c)</code>.</li>
+    </ul>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. The 4-Step Graphing Method</h2>
+    <ol>
+      <li><strong>Find the Vertex:</strong> Calculate <code>x = -b / (2a)</code>. Then compute <code>f(x)</code> to get the y-coordinate. Your vertex is <code>(x, y)</code>.</li>
+      <li><strong>Draw the Axis of Symmetry:</strong> A dashed vertical line at <code>x = -b / (2a)</code>.</li>
+      <li><strong>Find the y-intercept:</strong> Plug in <code>x = 0</code> to get <code>(0, c)</code>. Then use symmetry to plot the mirror point across the axis.</li>
+      <li><strong>Find the x-intercepts (Roots):</strong> Set <code>ax² + bx + c = 0</code> and solve via factoring or the quadratic formula.</li>
+    </ol>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">3. Worked Example: f(x) = x² - 4x + 3</h2>
+    <div class="p-4 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl not-prose space-y-2 text-sm">
+      <div><strong>Step 1: Vertex:</strong> a = 1, b = -4 &rArr; x = -(-4) / (2*1) = 2. Plug in x = 2: f(2) = 4 - 8 + 3 = -1. Vertex is <code>(2, -1)</code>.</div>
+      <div><strong>Step 2: Axis of symmetry:</strong> <code>x = 2</code>.</div>
+      <div><strong>Step 3: y-intercept:</strong> When x = 0, y = 3. Point: <code>(0, 3)</code>. Reflected across x = 2 gives <code>(4, 3)</code>.</div>
+      <div><strong>Step 4: Roots:</strong> x² - 4x + 3 = (x - 1)(x - 3) = 0 &rArr; Roots at <code>x = 1</code> and <code>x = 3</code>.</div>
+    </div>
+
+    <div class="not-prose my-8 p-6 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-2xl shadow-sm">
+      <h3 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Plot f(x) = x² - 4x + 3 Live</h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Try entering <code>x^2 - 4x + 3</code> into our interactive plotter below. Notice the vertex at (2, -1) and intercepts at x = 1 and 3!
+      </p>
+      <div class="h-[500px] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl overflow-hidden">
+        <GraphModuleClient client:only="react" />
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-12 mb-6">Frequently Asked Questions</h2>
+    <div class="space-y-4">
+      {faqSchema.mainEntity.map((item) => (
+        <div class="border border-[#E0E0E0] dark:border-[#3E2723] rounded-lg p-4 bg-white dark:bg-[#131313]">
+          <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 text-base">{item.name}</h3>
+          <p class="text-sm text-[#131313] dark:text-[#E0E0E0] m-0">{item.acceptedAnswer.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-[#E0E0E0] dark:border-[#3E2723]">
+      <h3 class="text-lg font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">More Resources:</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
+        <a href="/quadratic-equation-solver" class="p-4 border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#131313]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">INTERACTIVE SOLVER &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">Quadratic Equation Solver with Steps</span>
+        </a>
+        <a href="/learn" class="p-4 border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#131313]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">ALL GUIDES &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">Math Learning Hub</span>
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

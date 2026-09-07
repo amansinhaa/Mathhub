@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from '@/components/shared/RouterShim';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
 import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2 } from 'lucide-react';

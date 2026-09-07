@@ -1,10 +1,17 @@
 {
-  "framework": "nextjs",
+  "framework": "astro",
   "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --legacy-peer-deps",
   "devCommand": "npm run dev",
   "regions": ["bom1"],
+  "redirects": [
+    {
+      "source": "/solver",
+      "destination": "/equation-solver-with-steps",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -15,13 +22,13 @@
       ]
     },
     {
-      "source": "/static/(.*)",
+      "source": "/_astro/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/_next/static/(.*)",
+      "source": "/static/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]

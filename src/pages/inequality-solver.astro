@@ -1,0 +1,101 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import EquationSolver from '@/components/solver/EquationSolver';
+
+const title = 'Inequality Solver with Number Line — Step-by-Step | EasyEquate';
+const description = 'Free step-by-step inequality solver with interactive number line. Solves linear and quadratic inequalities with intervals and visual rays shown.';
+const canonical = 'https://www.easyequate.com/inequality-solver';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the inequality solver graph on a number line?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The solver computes boundary roots and displays an interactive SVG number line with open circles for strict inequalities (<, >) and solid closed circles for inclusive inequalities (<=, >=), shading the solution ray."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens when dividing an inequality by a negative number?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you multiply or divide both sides by a negative number, the direction of the inequality sign must flip (e.g. > becomes <)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it solve quadratic inequalities like x² - 4 > 0?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, it finds the critical roots and tests the sign of each interval to determine whether the solution is outside the roots (x < -2 or x > 2) or between them."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <div class="w-full text-[#131313] dark:text-[#F5F5F5] py-1">
+    <div class="max-w-6xl xl:max-w-7xl mx-auto space-y-3 sm:space-y-5">
+      <header class="space-y-1 sm:space-y-1.5 text-center sm:text-left">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+          <span>ALGEBRAIC INEQUALITIES</span>
+          <span>•</span>
+          <span>NUMBER LINE VISUALIZATION</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+          Inequality Solver with Number Line
+        </h1>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-3xl">
+          Solve linear and quadratic inequalities with complete interval notation, sign testing, and interactive number line graphs.
+        </p>
+      </header>
+
+      <section class="w-full">
+        <EquationSolver client:load initialMode="inequality" initialEquation="x^2 - 5x + 6 > 0" hideHeader wideLayout />
+      </section>
+
+      <section class="bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs space-y-3">
+        <h2 class="text-base sm:text-lg font-bold text-[#131313] dark:text-white">Solving Inequalities</h2>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed">
+          An inequality compares two mathematical expressions using &lt;, &gt;, ≤, or ≥. Unlike standard equations that have discrete values, inequalities typically have continuous ranges of solutions represented in interval notation.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-center sm:text-left text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="space-y-3">
+          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
+            <h3 class="font-semibold text-lg">How does the inequality solver graph on a number line?</h3>
+            <p class="mt-2 opacity-90">The solver computes boundary roots and displays an interactive SVG number line with open circles for strict inequalities and solid closed circles for inclusive inequalities.</p>
+          </div>
+          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
+            <h3 class="font-semibold text-lg">What happens when dividing an inequality by a negative number?</h3>
+            <p class="mt-2 opacity-90">When you multiply or divide both sides by a negative number, the direction of the inequality sign must flip (e.g. &gt; becomes &lt;).</p>
+          </div>
+          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
+            <h3 class="font-semibold text-lg">Can it solve quadratic inequalities like x² - 4 &gt; 0?</h3>
+            <p class="mt-2 opacity-90">Yes, it finds the critical roots and tests the sign of each interval to determine whether the solution is outside the roots or between them.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#5D4037]">
+        <h3 class="text-xl font-medium">Explore Other Solvers</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/quadratic-equation-solver" class="text-blue-600 dark:text-blue-400 hover:underline">Quadratic Equation Solver</a>
+          <a href="/equation-solver-with-steps" class="text-blue-600 dark:text-blue-400 hover:underline">Equation Solver with Steps</a>
+          <a href="/graph" class="text-blue-600 dark:text-blue-400 hover:underline">Graph Plotter</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>

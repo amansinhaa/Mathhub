@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import Link from '@/components/shared/Link';
+import { usePathname } from '@/components/shared/RouterShim';
 import {
   Menu,
   X,
@@ -135,7 +134,7 @@ export function Navbar() {
         {/* Drawer Header */}
         <div className="p-4 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5" onClick={() => setIsOpen(false)}>
-            <Image
+            <img
               src="/logo.png"
               alt="EasyEquate"
               width={32}

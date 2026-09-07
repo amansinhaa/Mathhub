@@ -1,6 +1,6 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import dynamic from '@/components/shared/DynamicShim';
 
 const GraphModule = dynamic(() => import('@/components/graph/GraphModule'), {
   ssr: false,

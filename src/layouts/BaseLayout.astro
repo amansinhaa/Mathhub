@@ -1,0 +1,122 @@
+---
+import 'katex/dist/katex.min.css';
+import '../styles/globals.css';
+import { ThemeToggle } from '../components/layout/ThemeToggle';
+import { Navbar } from '../components/layout/Navbar';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  jsonLd?: any;
+}
+
+const {
+  title = 'Easy Equate (EasyEquate) — Free Online Math & Graphing Studio',
+  description = 'Easy Equate is a free all-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial & calculus solver, 2D function plotter, and formula sheets.',
+  canonical = Astro.url.href,
+  jsonLd,
+} = Astro.props;
+
+const canonicalUrl = new URL(canonical, 'https://www.easyequate.com').href;
+
+const defaultJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Easy Equate',
+  alternateName: ['EasyEquate', 'Easy Equate Math', 'EasyEquate Studio'],
+  url: 'https://www.easyequate.com',
+  image: 'https://www.easyequate.com/logo.png',
+  logo: 'https://www.easyequate.com/logo.png',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  description: description,
+};
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://www.easyequate.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://www.easyequate.com/og-image.png" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Anti-FOUC Theme Script -->
+    <script is:inline>
+      try {
+        var raw = localStorage.getItem('mathhub-theme-mode');
+        var theme = 'system';
+        if (raw) {
+          var p = JSON.parse(raw);
+          if (p && p.state && p.state.theme) {
+            theme = p.state.theme;
+          }
+        } else {
+          var old = localStorage.getItem('mathhub-theme');
+          if (old) {
+            var op = JSON.parse(old);
+            if (op && op.state && op.state.theme) {
+              theme = op.state.theme;
+            }
+          }
+        }
+        var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    </script>
+
+    <!-- Structured Data -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd || defaultJsonLd)} />
+  </head>
+  <body class="font-sans bg-white dark:bg-[#131313] text-[#131313] dark:text-[#F5F5F5] antialiased">
+    <div class="relative flex h-dvh min-h-screen flex-col overflow-hidden bg-[#FAFAFA] dark:bg-[#131313] transition-colors duration-150">
+      <!-- Single Universal Top-Right Theme Toggle Island -->
+      <div class="fixed top-3 right-3 z-50">
+        <ThemeToggle client:load className="p-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322]" />
+      </div>
+
+      <!-- Main content area -->
+      <main class="flex-1 overflow-y-auto min-h-0">
+        <div class="mx-auto max-w-7xl px-3 sm:px-6 py-3 sm:py-5 h-full">
+          <slot />
+        </div>
+      </main>
+
+      <!-- Navigation Drawer Island -->
+      <Navbar client:load />
+    </div>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import dynamic from 'next/dynamic';
+import dynamic from '@/components/shared/DynamicShim';
 import { useGraphStore } from '@/stores/graphStore';
 import EquationInput from './EquationInput';
 import DataTableInput from './DataTableInput';

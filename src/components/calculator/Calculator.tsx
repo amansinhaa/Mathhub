@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from '@/components/shared/RouterShim';
 import Display from './Display';
 import Keypad from './Keypad';
 import HistoryPanel from './HistoryPanel';

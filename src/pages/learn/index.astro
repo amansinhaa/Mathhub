@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const title = 'Math Learning Guides — Functions, Graphs & Algebra Explained | EasyEquate';
+const description = 'Free step-by-step math guides with live interactive examples. Learn functions, domain & range, quadratics, and more with embedded graphing tools.';
+const canonical = 'https://www.easyequate.com/learn';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <div class="max-w-4xl mx-auto px-4 py-4 sm:py-6 prose prose-brown dark:prose-invert">
+    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Math Learning Guides</h1>
+    <p class="text-sm sm:text-base text-[#131313] dark:text-[#E0E0E0] mb-6">
+      Step-by-step guides with simple English explanations, everyday examples, and embedded interactive graphing tools to visualize mathematical concepts.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 not-prose">
+      <a href="/learn/what-is-a-function" class="block border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-6 hover:shadow-lg transition-shadow bg-white dark:bg-[#131313] no-underline">
+        <h2 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 mt-0">What is a Function?</h2>
+        <p class="text-[#131313] dark:text-[#E0E0E0] text-sm m-0">Definition, examples, and the vertical line test explained simply.</p>
+      </a>
+      <a href="/learn/how-to-find-domain-and-range" class="block border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-6 hover:shadow-lg transition-shadow bg-white dark:bg-[#131313] no-underline">
+        <h2 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 mt-0">Find Domain & Range</h2>
+        <p class="text-[#131313] dark:text-[#E0E0E0] text-sm m-0">Step-by-step guide to finding domain and range with worked examples.</p>
+      </a>
+      <a href="/learn/how-to-graph-a-quadratic-function" class="block border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-6 hover:shadow-lg transition-shadow bg-white dark:bg-[#131313] no-underline">
+        <h2 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 mt-0">Graph a Quadratic</h2>
+        <p class="text-[#131313] dark:text-[#E0E0E0] text-sm m-0">Find the vertex, intercepts, and graph parabolas with ease.</p>
+      </a>
+    </div>
+  </div>
+</BaseLayout>

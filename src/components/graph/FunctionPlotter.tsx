@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from '@/components/shared/RouterShim';
 import {
   generatePlotData,
   generateNiceTicks,

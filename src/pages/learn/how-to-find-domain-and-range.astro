@@ -1,0 +1,148 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GraphModuleClient from '@/components/shared/GraphModuleClient';
+
+const title = 'How to Find Domain and Range — Step-by-Step Guide | EasyEquate';
+const description = 'Learn how to find the domain and range of any function step by step. Includes worked examples, interval notation, and an interactive graph tool.';
+const canonical = 'https://www.easyequate.com/learn/how-to-find-domain-and-range';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is domain in maths?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The domain is the complete set of all possible input values (usually the x-values) for which the function is defined and produces a real output."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is range in maths?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The range is the complete set of all possible output values (usually the y-values or f(x)) that a function can produce from its domain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you write domain in interval notation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Interval notation uses brackets like [ and ] for included values, and parentheses like ( and ) for excluded values or infinity. For example, [0, ∞) means all numbers greater than or equal to 0."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the domain of f(x) = 1/x?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The domain is all real numbers except x = 0, because dividing by zero is undefined."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can domain and range be all real numbers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, many functions like basic linear functions (e.g., f(x) = x) or odd-degree polynomials have both a domain and range of all real numbers."
+      }
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={faqSchema}>
+  <article class="max-w-4xl mx-auto px-4 py-8 prose prose-brown dark:prose-invert">
+    <div class="mb-6">
+      <a href="/learn" class="text-sm font-medium text-[#5D4037] dark:text-[#D7CCC8] hover:underline">&larr; Back to Guides</a>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">How to Find Domain and Range</h1>
+    <p class="lead text-lg text-[#131313] dark:text-[#E0E0E0] mb-8">
+      A step-by-step tutorial on identifying domain and range from algebraic equations and graphs with worked examples and interactive plotting.
+    </p>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. Definitions: What are Domain & Range?</h2>
+    <p>
+      Understanding these two core concepts is critical for algebra and calculus:
+    </p>
+    <ul>
+      <li><strong>Domain:</strong> The set of all possible <em>input values</em> (x-values) that do not break the function.</li>
+      <li><strong>Range:</strong> The set of all resulting <em>output values</em> (y-values) that the function actually produces.</li>
+    </ul>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. The Two Golden Rules for Domain</h2>
+    <p>Unless specified otherwise, assume the domain is "all real numbers," <strong>except</strong> when encountering two major mathematical red flags:</p>
+    <ol>
+      <li><strong>Division by Zero:</strong> You cannot divide by zero. Any x-value that makes the denominator zero must be excluded from the domain.</li>
+      <li><strong>Square Roots of Negatives:</strong> In real-number math, you cannot take the square root (or any even root) of a negative number. The expression under the radical must be greater than or equal to zero (<code>≥ 0</code>).</li>
+    </ol>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">3. Worked Examples</h2>
+    <div class="space-y-6 my-6 not-prose">
+      <div class="p-4 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl">
+        <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-1">Example A: f(x) = x²</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Can you square any real number? Yes. No fractions, no square roots.</p>
+        <div class="text-xs font-mono space-y-1">
+          <div><strong>Domain:</strong> (-∞, ∞) or all real numbers</div>
+          <div><strong>Range:</strong> [0, ∞) because squaring any real number always yields a result ≥ 0.</div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl">
+        <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-1">Example B: f(x) = 1 / x</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Notice the variable is in the denominator. Setting x = 0 makes it divide by zero!</p>
+        <div class="text-xs font-mono space-y-1">
+          <div><strong>Domain:</strong> (-∞, 0) U (0, ∞) [all real numbers except x = 0]</div>
+          <div><strong>Range:</strong> (-∞, 0) U (0, ∞) [1/x can never equal 0]</div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl">
+        <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-1">Example C: f(x) = √(x - 3)</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">The value under the root must be non-negative: x - 3 ≥ 0 &rArr; x ≥ 3.</p>
+        <div class="text-xs font-mono space-y-1">
+          <div><strong>Domain:</strong> [3, ∞)</div>
+          <div><strong>Range:</strong> [0, ∞)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="not-prose my-8 p-6 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-2xl shadow-sm">
+      <h3 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Visualize Domain & Range on a Live Graph</h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Plot the functions above to inspect where the graph exists horizontally (domain) and vertically (range):
+      </p>
+      <div class="h-[500px] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl overflow-hidden">
+        <GraphModuleClient client:only="react" />
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-12 mb-6">Frequently Asked Questions</h2>
+    <div class="space-y-4">
+      {faqSchema.mainEntity.map((item) => (
+        <div class="border border-[#E0E0E0] dark:border-[#3E2723] rounded-lg p-4 bg-white dark:bg-[#131313]">
+          <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 text-base">{item.name}</h3>
+          <p class="text-sm text-[#131313] dark:text-[#E0E0E0] m-0">{item.acceptedAnswer.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-[#E0E0E0] dark:border-[#3E2723]">
+      <h3 class="text-lg font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">Explore More Guides:</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
+        <a href="/learn/what-is-a-function" class="p-4 border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#131313]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">&larr; PART 1</span>
+          <span class="font-bold text-[#131313] dark:text-white">What is a Function?</span>
+        </a>
+        <a href="/learn/how-to-graph-a-quadratic-function" class="p-4 border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#131313]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">PART 3 &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">How to Graph a Quadratic Function</span>
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

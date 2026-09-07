@@ -1,0 +1,134 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GraphModuleClient from '@/components/shared/GraphModuleClient';
+
+const title = 'What is a Function? — Definition, Examples & Graph | EasyEquate';
+const description = 'Learn what a function is in maths with simple examples, domain & range explained, and a live interactive graph you can try yourself. Free guide.';
+const canonical = 'https://www.easyequate.com/learn/what-is-a-function';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a function in simple terms?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In simple terms, a function is like a machine that takes an input, applies a rule to it, and gives exactly one output."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is f(x) notation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "f(x) is pronounced 'f of x'. It is a way to name a function (f) and specify its input variable (x). It replaces 'y' in equations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a function and an equation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An equation shows that two things are equal, while a function is a specific relationship where every input has exactly one output."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a function have two outputs for one input?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. By definition, a true mathematical function must have exactly one output for each valid input."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the domain of a function?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The domain of a function is the complete set of all possible input values (usually x-values) that will make the function work."
+      }
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={faqSchema}>
+  <article class="max-w-4xl mx-auto px-4 py-8 prose prose-brown dark:prose-invert">
+    <div class="mb-6">
+      <a href="/learn" class="text-sm font-medium text-[#5D4037] dark:text-[#D7CCC8] hover:underline">&larr; Back to Guides</a>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">What is a Function?</h1>
+    <p class="lead text-lg text-[#131313] dark:text-[#E0E0E0] mb-8">
+      A comprehensive guide to understanding functions in mathematics, with clear definitions, real-world examples, and interactive visualizations.
+    </p>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. The Definition: A Mathematical Machine</h2>
+    <p>
+      At its core, a <strong>function</strong> is a relation between a set of inputs and a set of permissible outputs with the property that each input is related to <em>exactly one</em> output.
+    </p>
+    <p>
+      Think of a function like a vending machine. If you press button <strong>B4</strong> (your input), you always expect to get a bag of chips (your output). If you pressed B4 and sometimes got chips, sometimes soda, and sometimes nothing at all, the machine would be broken. In math, we call that broken machine a "relation that is not a function."
+    </p>
+    <p>
+      The formal notation is written as:
+    </p>
+    <div class="bg-[#EFEBE9] dark:bg-[#3E2723] p-4 rounded-lg my-4 text-center font-mono text-lg">
+      f(x) = y
+    </div>
+    <p>
+      Here, <code>f</code> is the name of the function, <code>x</code> is the <strong>input</strong> (often called the independent variable), and <code>f(x)</code> represents the resulting <strong>output</strong> (often called <code>y</code> or the dependent variable).
+    </p>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. Everyday Examples</h2>
+    <p>Functions aren't just abstract symbols on paper—they describe how the real world operates:</p>
+    <ul>
+      <li><strong>Temperature over Time:</strong> At any specific moment in time (input), there is exactly one temperature outside (output). Time cannot have two different temperatures simultaneously at the same exact location.</li>
+      <li><strong>Speed and Distance:</strong> If you drive at a constant speed of 60 mph, your distance traveled is a function of time: <code>d(t) = 60t</code>. Plug in 2 hours, and you get exactly 120 miles.</li>
+    </ul>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">3. The Vertical Line Test</h2>
+    <p>
+      When you look at a graph, there is a simple visual test to determine whether it represents a function: the <strong>Vertical Line Test</strong>.
+    </p>
+    <p>
+      If you can draw a vertical line anywhere through the graph and it intersects the curve <em>more than once</em>, then the graph is <strong>not</strong> a function. Why? Because that would mean a single input value of <code>x</code> produces two or more different output values of <code>y</code>!
+    </p>
+
+    <div class="not-prose my-8 p-6 bg-white dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-2xl shadow-sm">
+      <h3 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Try it Live: Graphing a Linear Function</h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Below is our interactive graphing tool. Try entering the function <code>f(x) = 2x + 1</code>. Notice how every single x-value produces exactly one y-value on the line!
+      </p>
+      <div class="h-[500px] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl overflow-hidden">
+        <GraphModuleClient client:only="react" />
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-12 mb-6">Frequently Asked Questions</h2>
+    <div class="space-y-4">
+      {faqSchema.mainEntity.map((item) => (
+        <div class="border border-[#E0E0E0] dark:border-[#3E2723] rounded-lg p-4 bg-white dark:bg-[#131313]">
+          <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 text-base">{item.name}</h3>
+          <p class="text-sm text-[#131313] dark:text-[#E0E0E0] m-0">{item.acceptedAnswer.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-[#E0E0E0] dark:border-[#3E2723]">
+      <h3 class="text-lg font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">Next in this series:</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
+        <a href="/learn/how-to-find-domain-and-range" class="p-4 border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#131313]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">PART 2 &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">How to Find Domain and Range</span>
+        </a>
+        <a href="/learn/how-to-graph-a-quadratic-function" class="p-4 border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#131313]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">PART 3 &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">How to Graph a Quadratic Function</span>
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

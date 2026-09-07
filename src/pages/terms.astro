@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Scale, ArrowLeft } from 'lucide-react';
+
+const title = 'Terms of Service | EasyEquate';
+const description = 'EasyEquate Terms of Service. Guidelines for educational usage, intellectual property, disclaimers of mathematical accuracy, and user terms.';
+const canonical = 'https://www.easyequate.com/terms';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <div class="max-w-4xl mx-auto py-6 sm:py-10 px-4 space-y-8 animate-fade-in">
+    <!-- Header Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs font-mono text-[#757575] dark:text-[#A19891]">
+      <a
+        href="/"
+        class="hover:text-[#5D4037] dark:hover:text-white flex items-center gap-1 transition-colors"
+      >
+        <ArrowLeft size={14} /> Back to EasyEquate
+      </a>
+      <span>/</span>
+      <span class="text-[#5D4037] dark:text-[#D7CCC8] font-bold">Terms of Service</span>
+    </div>
+
+    <!-- Title Header -->
+    <div class="space-y-2 border-b border-[#E0E0E0] dark:border-[#2E2825] pb-5">
+      <div class="flex items-center gap-2.5">
+        <div class="p-2 rounded-xl bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8]">
+          <Scale size={24} />
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+          Terms of Service
+        </h1>
+      </div>
+      <p class="text-xs font-mono text-[#757575] dark:text-[#A19891]">
+        Effective Date: September 5, 2026 • Last Updated: September 5, 2026
+      </p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="prose prose-neutral dark:prose-invert max-w-none text-sm leading-relaxed space-y-6 text-[#424242] dark:text-[#D7CCC8]">
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          1. Acceptance of Terms
+        </h2>
+        <p>
+          By accessing and utilizing <strong>EasyEquate</strong> (accessible at{' '}
+          <a href="https://www.easyequate.com" class="text-[#5D4037] dark:text-[#E0A99A] underline font-mono">
+            https://www.easyequate.com
+          </a>
+          ), you agree to be bound by these Terms of Service, applicable laws, and regulations. If you
+          do not agree with any of these terms, you are prohibited from using or accessing this site.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          2. Educational Use License
+        </h2>
+        <p>
+          Permission is granted to use EasyEquate for personal, academic, classroom, and non-commercial
+          educational calculation and graphing purposes. You may print formula sheets, export charts, and
+          demonstrate step solutions in classrooms.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          3. Mathematical Accuracy & Disclaimer
+        </h2>
+        <p>
+          While we strive for 100% precision using verified symbolic computation engines (Math.js, Nerdamer),
+          the materials and calculation outputs are provided on an "as is" basis. EasyEquate makes no warranties,
+          expressed or implied, regarding mission-critical applications (such as structural engineering or medical dosage).
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          4. Contact Information
+        </h2>
+        <p>
+          If you have questions regarding these terms, contact us at{' '}
+          <a href="mailto:kumaraman6376@gmail.com" class="text-[#5D4037] dark:text-[#E0A99A] underline font-mono">
+            kumaraman6376@gmail.com
+          </a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

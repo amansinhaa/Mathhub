@@ -3,7 +3,7 @@
 import React from 'react';
 import { FormulaEntry } from '@/types/formula';
 import { MathDisplay } from '@/components/shared/MathDisplay';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/components/shared/RouterShim';
 import { ArrowUpRight, Calculator } from 'lucide-react';
 import { latexToAscii } from '@/utils/mathSanitizer';
 import {

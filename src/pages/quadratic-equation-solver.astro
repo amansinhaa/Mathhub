@@ -1,0 +1,122 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import EquationSolver from '@/components/solver/EquationSolver';
+
+const title = 'Quadratic Equation Solver with Steps: Factoring & Formula | Easy Equate';
+const description = 'Free step-by-step quadratic equation solver. Shows factoring, quadratic formula, discriminant (Δ), vertex, and complex roots with complete working steps.';
+const canonical = 'https://www.easyequate.com/quadratic-equation-solver';
+
+const faqs = [
+  {
+    q: "What is the quadratic formula?",
+    a: "The quadratic formula is x = (-b ± √(b² - 4ac)) / (2a). It provides the exact roots for any quadratic equation in standard form ax² + bx + c = 0."
+  },
+  {
+    q: "How do I solve a quadratic equation by factoring?",
+    a: "To factor ax² + bx + c = 0, find two numbers that multiply to ac and add to b. Rewrite the middle term, factor by grouping, and set each factor to zero to solve for x."
+  },
+  {
+    q: "What does the discriminant (b² - 4ac) tell you?",
+    a: "If Δ > 0, there are two distinct real roots. If Δ = 0, there is exactly one repeated real root. If Δ < 0, there are two conjugate complex (imaginary) roots."
+  },
+  {
+    q: "Can this solver find complex or imaginary roots?",
+    a: "Yes. When the discriminant is negative, the solver automatically calculates complex numbers using the imaginary unit i (where i = √-1) and shows each intermediate step."
+  },
+  {
+    q: "How do you solve when a quadratic cannot be factored easily?",
+    a: "When integers do not readily factor, use the quadratic formula or complete the square. Both methods work universally for every quadratic equation."
+  },
+  {
+    q: "What is the difference between quadratic and cubic equations?",
+    a: "A quadratic equation has degree 2 (ax² + bx + c = 0) with up to 2 roots. A cubic equation has degree 3 (ax³ + bx² + cx + d = 0) with up to 3 roots, solved using Cardano's formula or synthetic division."
+  },
+  {
+    q: "Is this quadratic solver completely free?",
+    a: "Yes, Easy Equate's quadratic equation solver is 100% free with unlimited step-by-step calculations and no registration needed."
+  }
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Easy Equate Quadratic Equation Solver",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": faqs.map(f => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <div class="w-full text-[#131313] dark:text-[#F5F5F5] py-1">
+    <div class="max-w-6xl xl:max-w-7xl mx-auto space-y-3 sm:space-y-5">
+      <header class="space-y-1 sm:space-y-1.5 text-center sm:text-left">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+          <span>POLYNOMIAL ENGINE</span>
+          <span>•</span>
+          <span>STEP-BY-STEP PROOFS</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+          Quadratic Equation Solver with Steps
+        </h1>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-3xl">
+          Solve any quadratic equation ax² + bx + c = 0. Shows factoring, completing the square, quadratic formula, discriminant (Δ), vertex, and roots.
+        </p>
+      </header>
+
+      <section class="w-full">
+        <EquationSolver client:load initialMode="polynomial" initialEquation="x^2 - 5x + 6 = 0" hideHeader wideLayout />
+      </section>
+
+      <section class="bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs space-y-3">
+        <h2 class="text-base sm:text-lg font-bold text-[#131313] dark:text-white">Understanding Quadratic Equations</h2>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed">
+          A quadratic equation is a second-order polynomial equation of the form <strong>ax² + bx + c = 0</strong>, where <em>a ≠ 0</em>.
+          The roots represent the x-intercepts where the parabola crosses or touches the horizontal axis. Depending on the discriminant Δ = b² - 4ac,
+          a quadratic equation may have two distinct real roots, one repeated real root, or two conjugate complex roots.
+        </p>
+      </section>
+
+      <section class="space-y-3 sm:space-y-4">
+        <h2 class="text-base sm:text-xl font-bold text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {faqs.map(faq => (
+            <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+              <h3 class="text-xs sm:text-sm font-bold text-[#131313] dark:text-white">{faq.q}</h3>
+              <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer class="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#5D4037]">
+        <h3 class="text-xl font-medium">Explore Related Solvers</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/equation-solver-with-steps" class="text-blue-600 dark:text-blue-400 hover:underline">Equation Solver with Steps</a>
+          <a href="/system-of-equations" class="text-blue-600 dark:text-blue-400 hover:underline">System of Equations</a>
+          <a href="/matrix-solver" class="text-blue-600 dark:text-blue-400 hover:underline">Matrix Solver</a>
+          <a href="/graph" class="text-blue-600 dark:text-blue-400 hover:underline">Graph Plotter</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>

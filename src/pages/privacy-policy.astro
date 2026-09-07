@@ -1,0 +1,103 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { ShieldCheck, ArrowLeft } from 'lucide-react';
+
+const title = 'Privacy Policy | EasyEquate';
+const description = 'EasyEquate Privacy Policy. Details on client-side computations, cookie usage, Google AdSense, analytics disclosures, and data protection.';
+const canonical = 'https://www.easyequate.com/privacy-policy';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <div class="max-w-4xl mx-auto py-6 sm:py-10 px-4 space-y-8 animate-fade-in">
+    <!-- Header Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs font-mono text-[#757575] dark:text-[#A19891]">
+      <a
+        href="/"
+        class="hover:text-[#5D4037] dark:hover:text-white flex items-center gap-1 transition-colors"
+      >
+        <ArrowLeft size={14} /> Back to EasyEquate
+      </a>
+      <span>/</span>
+      <span class="text-[#5D4037] dark:text-[#D7CCC8] font-bold">Privacy Policy</span>
+    </div>
+
+    <!-- Title & Introduction -->
+    <div class="space-y-2 border-b border-[#E0E0E0] dark:border-[#2E2825] pb-5">
+      <div class="flex items-center gap-2.5">
+        <div class="p-2 rounded-xl bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8]">
+          <ShieldCheck size={24} />
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+          Privacy Policy
+        </h1>
+      </div>
+      <p class="text-xs font-mono text-[#757575] dark:text-[#A19891]">
+        Effective Date: September 5, 2026 • Last Updated: September 5, 2026
+      </p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="prose prose-neutral dark:prose-invert max-w-none text-sm leading-relaxed space-y-6 text-[#424242] dark:text-[#D7CCC8]">
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          1. Overview & Commitment to Privacy
+        </h2>
+        <p>
+          At <strong>EasyEquate</strong> (accessible at{' '}
+          <a
+            href="https://www.easyequate.com"
+            class="text-[#5D4037] dark:text-[#E0A99A] underline font-mono"
+          >
+            https://www.easyequate.com
+          </a>
+          ), your privacy is of paramount importance. This Privacy Policy details the types of
+          information collected and recorded by EasyEquate and how it is utilized.
+        </p>
+        <p>
+          Unlike conventional mathematical tools that send calculations to remote cloud servers,{' '}
+          <strong>EasyEquate executes calculations 100% client-side inside your browser</strong>. Your equations,
+          matrix inputs, derivatives, and function evaluations are never stored or logged on our servers.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          2. Log Files & Analytics
+        </h2>
+        <p>
+          EasyEquate follows standard industry procedures for using web log files. These files log
+          visitors when they browse websites. The information collected may include internet protocol
+          (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamps,
+          referring/exit pages, and number of clicks.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          3. Cookies & Advertising Partners
+        </h2>
+        <p>
+          EasyEquate may partner with third-party advertising vendors, such as Google AdSense, to support
+          our free educational mission. Third-party vendors use cookies to serve ads based on a user's prior
+          visits to our website or other websites.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+          4. Contact Information
+        </h2>
+        <p>
+          If you have additional questions or require more information about our Privacy Policy, do not
+          hesitate to contact us via email at{' '}
+          <a
+            href="mailto:kumaraman6376@gmail.com"
+            class="text-[#5D4037] dark:text-[#E0A99A] underline font-mono"
+          >
+            kumaraman6376@gmail.com
+          </a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

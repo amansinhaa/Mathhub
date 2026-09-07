@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Calculator from '@/components/calculator/Calculator';
+
+const title = 'Easy Equate: Online Scientific Calculator with History & Memory';
+const description = 'Easy Equate free online scientific calculator with memory, calculation history, angle modes, unit conversions, and keyboard support. 100% free, no sign-up.';
+const canonical = 'https://www.easyequate.com/calculator';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Easy Equate Scientific Calculator',
+  alternateName: ['EasyEquate Calculator', 'Easy Equate Math'],
+  url: 'https://www.easyequate.com/calculator',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'All',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  description: 'Advanced online scientific calculator with memory, calculation history, angle modes, and unit conversions.',
+  featureList: ['Memory functions (M+, M-, MR, MC)', 'Calculation history', 'Degree and Radian modes', 'Unit conversions', 'Keyboard support'],
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <Calculator client:load />
+</BaseLayout>

@@ -1,0 +1,94 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import UnitConverter from '@/components/calculator/UnitConverter';
+
+const title = 'Unit Converter — Instant Length, Mass, Currency & Speed | EasyEquate';
+const description = 'Free dedicated online unit converter. Convert metric, imperial, currency, digital data, temperature, speed, and volume with live real-time rates.';
+const canonical = 'https://www.easyequate.com/unit-converter';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the unit converter handle currency rates?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The currency converter fetches live foreign exchange rates with an instant refresh button, converting between USD, EUR, GBP, JPY, and other major world currencies."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I convert between Metric and Imperial units?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, EasyEquate supports seamless two-way conversion for meters, feet, inches, kilometers, miles, kilograms, pounds, Celsius, and Fahrenheit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the unit converter free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, it is 100% free with no sign-up, subscriptions, or ads required."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <div class="w-full text-[#131313] dark:text-[#F5F5F5] py-1">
+    <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      <header class="space-y-1 text-center sm:text-left">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+          <span>MULTI-DIMENSIONAL CONVERTER</span>
+          <span>•</span>
+          <span>LIVE FOREX RATES</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+          Dedicated Unit & Currency Converter
+        </h1>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-2xl">
+          Quickly convert measurements of length, mass, currency, digital storage, temperature, speed, and volume.
+        </p>
+      </header>
+
+      <section class="bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs">
+        <UnitConverter client:load />
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-center sm:text-left text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="space-y-3">
+          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
+            <h3 class="font-semibold text-lg">How does the unit converter handle currency rates?</h3>
+            <p class="mt-2 opacity-90">The currency converter fetches live foreign exchange rates with an instant refresh button, converting between USD, EUR, GBP, JPY, and other major world currencies.</p>
+          </div>
+          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
+            <h3 class="font-semibold text-lg">Can I convert between Metric and Imperial units?</h3>
+            <p class="mt-2 opacity-90">Yes, EasyEquate supports seamless two-way conversion for meters, feet, inches, kilometers, miles, kilograms, pounds, Celsius, and Fahrenheit.</p>
+          </div>
+          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
+            <h3 class="font-semibold text-lg">Is the unit converter free?</h3>
+            <p class="mt-2 opacity-90">Yes, it is 100% free with no sign-up, subscriptions, or ads required.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#5D4037]">
+        <h3 class="text-xl font-medium">Explore Other Tools</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/calculator" class="text-blue-600 dark:text-blue-400 hover:underline">Scientific Calculator</a>
+          <a href="/graph" class="text-blue-600 dark:text-blue-400 hover:underline">Graph Plotter</a>
+          <a href="/formulas" class="text-blue-600 dark:text-blue-400 hover:underline">Formula Sheets</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>
