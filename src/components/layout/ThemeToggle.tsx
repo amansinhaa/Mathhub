@@ -33,6 +33,23 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     );
   }
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else if (theme === 'light') {
+      root.classList.remove('dark');
+    } else {
+      if (mediaQuery.matches) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    }
+  }, [theme]);
+
   // Active dark state is either explicit 'dark' or (when theme is null) system dark
   const isDarkActive = theme === 'dark' || (theme === null && isSystemDark);
 
