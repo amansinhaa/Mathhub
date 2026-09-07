@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'About EasyEquate — Mission, architecture, and principles behind our free, privacy-first, client-side mathematics and graphing workspace.',
   alternates: {
-    canonical: 'https://easyequate.com/about',
+    canonical: 'https://www.easyequate.com/about',
   },
 };
 

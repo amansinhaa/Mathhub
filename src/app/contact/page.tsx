@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'Contact the EasyEquate development and editorial team. Send feedback, report formula bugs, suggest solver enhancements, or request academic partnerships.',
   alternates: {
-    canonical: 'https://easyequate.com/contact',
+    canonical: 'https://www.easyequate.com/contact',
   },
 };
 

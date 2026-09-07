@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'EasyEquate Privacy Policy. Details on client-side computations, cookie usage, Google AdSense, analytics disclosures, and data protection.',
   alternates: {
-    canonical: 'https://easyequate.com/privacy-policy',
+    canonical: 'https://www.easyequate.com/privacy-policy',
   },
 };
 

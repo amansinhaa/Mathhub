@@ -13,7 +13,7 @@ export function generateMetadata(): Metadata {
     openGraph: {
       title: 'Derivative Calculator with Steps | EasyEquate',
       description: 'Differentiate any function step-by-step with formulas shown. Free, fast, and no sign-up required.',
-      url: 'https://easyequate.com/derivative-calculator',
+      url: 'https://www.easyequate.com/derivative-calculator',
     },
   };
 }

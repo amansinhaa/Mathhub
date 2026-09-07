@@ -13,7 +13,7 @@ export function generateMetadata(): Metadata {
     openGraph: {
       title: 'Integral Calculator with Steps | EasyEquate',
       description: 'Integrate any function step-by-step with integration rules and constants explained. Free, instant, and clean.',
-      url: 'https://easyequate.com/integral-calculator',
+      url: 'https://www.easyequate.com/integral-calculator',
     },
   };
 }

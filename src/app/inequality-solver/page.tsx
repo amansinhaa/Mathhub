@@ -13,7 +13,7 @@ export function generateMetadata(): Metadata {
     openGraph: {
       title: 'Inequality Solver with Steps & Number Line | EasyEquate',
       description: 'Solve any inequality step-by-step. Features interval notation, sign testing, and interactive number line graphs.',
-      url: 'https://easyequate.com/inequality-solver',
+      url: 'https://www.easyequate.com/inequality-solver',
     },
   };
 }

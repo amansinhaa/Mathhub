@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     'EasyEquate Terms of Service. Guidelines for educational usage, intellectual property, disclaimers of mathematical accuracy, and user terms.',
   alternates: {
-    canonical: 'https://easyequate.com/terms',
+    canonical: 'https://www.easyequate.com/terms',
   },
 };
 

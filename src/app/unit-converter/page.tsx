@@ -13,7 +13,7 @@ export function generateMetadata(): Metadata {
     openGraph: {
       title: 'Dedicated Unit & Currency Converter | EasyEquate',
       description: 'Convert between length, mass, currency, temperature, speed, and data storage instantly. Free with no sign-up.',
-      url: 'https://easyequate.com/unit-converter',
+      url: 'https://www.easyequate.com/unit-converter',
     },
   };
 }

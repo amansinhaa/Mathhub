@@ -13,7 +13,7 @@ export function generateMetadata(): Metadata {
     openGraph: {
       title: 'System of Equations Solver with Steps | EasyEquate',
       description: 'Solve simultaneous linear equations step-by-step. Free with full matrix and elimination workings shown.',
-      url: 'https://easyequate.com/system-of-equations',
+      url: 'https://www.easyequate.com/system-of-equations',
     },
   };
 }
