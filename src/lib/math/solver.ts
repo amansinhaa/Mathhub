@@ -13,10 +13,8 @@ import {
 } from './stepGenerator';
 import { evaluate } from 'mathjs';
 import * as math from 'mathjs';
-import nerdamer from 'nerdamer';
-import 'nerdamer/Algebra';
-import 'nerdamer/Calculus';
-import 'nerdamer/Solve';
+// @ts-ignore
+import nerdamer from 'nerdamer/all.min.js';
 import { normalizeExpression, autoBalanceParens, autoInterpretEquals } from './normalizer';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

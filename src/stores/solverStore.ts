@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { SolverType, SolverResult, QuadraticMethod } from '@/types/solver';
-import { solvePolynomial, solveSystem, solveInequality, solveSymbolic } from '@/lib/math/solver';
-import { solveDerivative, solveIntegral } from '@/lib/math/calculusSolver';
 
 interface SolverState {
   equation: string;
@@ -73,37 +71,49 @@ export const useSolverStore = create<SolverState>()(
       clearResult: () => set({ result: null, error: null }),
       clearError: () => set({ error: null }),
       setSolveForVariable: (variable) => set({ solveForVariable: variable }),
-      solve: () => {
+      solve: async () => {
         set({ isLoading: true, error: null });
         const { solverType, equation, quadraticMethod, systemEquations, systemVariables, solveForVariable } = get();
         
         try {
           let result: SolverResult | null = null;
           switch (solverType) {
-            case 'polynomial':
+            case 'polynomial': {
               if (!equation.trim()) throw new Error('Please enter an equation.');
+              const { solvePolynomial } = await import('@/lib/math/solver');
               result = solvePolynomial(equation, quadraticMethod);
               break;
-            case 'derivative':
+            }
+            case 'derivative': {
               if (!equation.trim()) throw new Error('Please enter a function or expression to differentiate.');
+              const { solveDerivative } = await import('@/lib/math/calculusSolver');
               result = solveDerivative(equation);
               break;
-            case 'integral':
+            }
+            case 'integral': {
               if (!equation.trim()) throw new Error('Please enter a function or expression to integrate.');
+              const { solveIntegral } = await import('@/lib/math/calculusSolver');
               result = solveIntegral(equation);
               break;
-            case 'system':
+            }
+            case 'system': {
               if (systemEquations.some((eq) => !eq.trim())) throw new Error('Please fill in all equations in the system.');
+              const { solveSystem } = await import('@/lib/math/solver');
               result = solveSystem(systemEquations, systemVariables);
               break;
-            case 'inequality':
+            }
+            case 'inequality': {
               if (!equation.trim()) throw new Error('Please enter an inequality.');
+              const { solveInequality } = await import('@/lib/math/solver');
               result = solveInequality(equation);
               break;
-            case 'symbolic':
+            }
+            case 'symbolic': {
               if (!equation.trim()) throw new Error('Please enter a symbolic equation.');
+              const { solveSymbolic } = await import('@/lib/math/solver');
               result = solveSymbolic(equation, solveForVariable);
               break;
+            }
           }
           set({ result, isLoading: false, error: null });
 

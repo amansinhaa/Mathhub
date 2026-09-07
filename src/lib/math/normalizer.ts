@@ -303,24 +303,19 @@ export function expressionToLatex(expr: string): string {
   // If already pure LaTeX
   if (tex.includes('\\frac') || tex.includes('\\sqrt')) return tex;
 
-  try {
-    const nerdamer = require('nerdamer');
-    require('nerdamer/Algebra');
-    // If it has equals sign, split into LHS = RHS
-    if (tex.includes('=')) {
-      const parts = tex.split('=');
-      const lhsLatex = nerdamer(parts[0].trim()).toTeX();
-      const rhsLatex = nerdamer(parts[1].trim()).toTeX();
-      return `${lhsLatex} = ${rhsLatex}`;
-    }
-    return nerdamer(tex).toTeX();
-  } catch {
-    // Fallback simple regex formatting
-    return tex
+  const toTexSingle = (s: string) => {
+    return s
       .replace(/\*/g, ' \\cdot ')
       .replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}')
+      .replace(/cbrt\(([^)]+)\)/g, '\\sqrt[3]{$1}')
       .replace(/\^(\d+)/g, '^{$1}');
+  };
+
+  if (tex.includes('=')) {
+    const parts = tex.split('=');
+    return `${toTexSingle(parts[0].trim())} = ${toTexSingle(parts[1].trim())}`;
   }
+  return toTexSingle(tex);
 }
 
 /**

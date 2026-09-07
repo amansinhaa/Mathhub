@@ -33,3 +33,4 @@ export interface SolverResult {
   inputInterpretation?: string; // LaTeX description of what the engine parsed
   quadraticMethod?: QuadraticMethod;
 }
+

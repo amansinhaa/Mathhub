@@ -1,6 +1,5 @@
-import nerdamer from 'nerdamer';
-import 'nerdamer/Algebra';
-import 'nerdamer/Calculus';
+// @ts-ignore
+import nerdamer from 'nerdamer/all.min.js';
 import { SolverResult, SolutionStep } from '@/types/solver';
 import { normalizeExpression, autoBalanceParens } from './normalizer';
 import { detectVariable } from './solver';
