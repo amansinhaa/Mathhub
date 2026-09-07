@@ -8,7 +8,6 @@ import DataTableInput from './DataTableInput';
 import CSVUploader from './CSVUploader';
 import ExportButton from './ExportButton';
 import SavedGraphsList from './SavedGraphsList';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { Printer, Compass, Eye, EyeOff, Trash2, Plus, Keyboard as KeyboardIcon, ChevronDown, Copy, Check } from 'lucide-react';
 import FunctionAnalysisPanel from './FunctionAnalysisPanel';
 import UnitCircleModal from './UnitCircleModal';
@@ -209,9 +208,6 @@ export default function GraphModule() {
                 <span>{item.label}</span>
               </button>
             ))}
-          </div>
-          <div className="hidden sm:block">
-            <ThemeToggle />
           </div>
         </div>
       </header>

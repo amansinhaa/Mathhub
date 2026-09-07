@@ -21,7 +21,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { ThemeToggle } from './ThemeToggle';
 import { ShortcutsModal } from './ShortcutsModal';
 
 interface NavCategory {
@@ -115,8 +114,6 @@ export function Navbar() {
           <HomeIcon size={16} />
           <span className="hidden md:inline">Home</span>
         </Link>
-
-        <ThemeToggle className="p-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322]" />
       </div>
 
       {/* Backdrop overlay */}
@@ -221,7 +218,6 @@ export function Navbar() {
             </span>
             <div className="flex items-center gap-1">
               <ShortcutsModal />
-              <ThemeToggle className="p-1.5" />
             </div>
           </div>
 

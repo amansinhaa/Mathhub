@@ -1,60 +1,57 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Laptop } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useThemeStore } from '@/stores/themeStore';
 
 /**
- * Three-state theme toggle (System Auto -> Light -> Dark).
- * Shows current mode icon and switches on click.
+ * Dedicated top-right theme toggle (Light / Dark mode).
+ * Picks system preference by default if no user choice is stored.
  */
 export function ThemeToggle({ className = '' }: { className?: string }) {
-  const { theme, cycleTheme } = useThemeStore();
+  const { theme, toggleTheme } = useThemeStore();
   const [mounted, setMounted] = useState(false);
+  const [isSystemDark, setIsSystemDark] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      setIsSystemDark(mq.matches);
+      const handler = (e: MediaQueryListEvent) => setIsSystemDark(e.matches);
+      mq.addEventListener('change', handler);
+      return () => mq.removeEventListener('change', handler);
+    }
   }, []);
 
   if (!mounted) {
-    // Avoid SSR hydration mismatch
     return (
       <div
-        className={`w-8 h-8 rounded-xl p-1.5 flex items-center justify-center opacity-0 ${className}`}
+        className={`w-9 h-9 rounded-xl p-2 flex items-center justify-center opacity-0 ${className}`}
         aria-hidden="true"
       />
     );
   }
 
-  const getLabel = () => {
-    if (theme === 'system') return 'Theme: System (Auto)';
-    if (theme === 'dark') return 'Theme: Dark';
-    return 'Theme: Light';
-  };
-
-  const getNextAction = () => {
-    if (theme === 'system') return 'Switch theme (Light / Dark / Auto)';
-    if (theme === 'light') return 'Switch to Dark mode';
-    return 'Switch to System mode';
-  };
+  // Active dark state is either explicit 'dark' or (when theme is null) system dark
+  const isDarkActive = theme === 'dark' || (theme === null && isSystemDark);
 
   return (
     <button
       type="button"
-      onClick={cycleTheme}
-      className={`relative group rounded-xl p-1.5 sm:p-2 transition-all duration-150 flex items-center justify-center text-[#5D4037] hover:bg-[#EFEBE9] dark:text-[#D7CCC8] dark:hover:bg-[#22201F] cursor-pointer select-none ${className}`}
-      aria-label={`${getLabel()} - ${getNextAction()}`}
-      title={`${getLabel()} (Click to cycle)`}
+      onClick={toggleTheme}
+      className={`relative group rounded-xl p-2 transition-all duration-150 flex items-center justify-center text-[#5D4037] hover:bg-[#EFEBE9] dark:text-[#D7CCC8] dark:hover:bg-[#22201F] cursor-pointer select-none ${className}`}
+      aria-label={`Switch to ${isDarkActive ? 'light' : 'dark'} mode`}
+      title={`Switch to ${isDarkActive ? 'light' : 'dark'} mode`}
     >
-      {theme === 'system' ? (
-        <Laptop size={17} className="transition-transform group-hover:scale-110" />
-      ) : theme === 'dark' ? (
-        <Moon size={17} className="transition-transform group-hover:scale-110" />
+      {isDarkActive ? (
+        <Sun size={18} className="transition-transform group-hover:rotate-45" />
       ) : (
-        <Sun size={17} className="transition-transform group-hover:scale-110" />
+        <Moon size={18} className="transition-transform group-hover:-rotate-12" />
       )}
-      <span className="sr-only">{getLabel()}</span>
+      <span className="sr-only">Switch to {isDarkActive ? 'light' : 'dark'} mode</span>
     </button>
   );
 }
+
 

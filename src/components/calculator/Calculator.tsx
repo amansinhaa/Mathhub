@@ -8,7 +8,6 @@ import HistoryPanel from './HistoryPanel';
 import AngleModeToggle from './AngleModeToggle';
 import MemoryIndicator from './MemoryIndicator';
 import { useCalculatorStore } from '@/stores/calculatorStore';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { FlaskConical, History, X } from 'lucide-react';
 
 function CalculatorQuerySync() {
@@ -119,7 +118,6 @@ export default function Calculator() {
           >
             <History size={16} />
           </button>
-          <ThemeToggle />
         </div>
       </header>
 

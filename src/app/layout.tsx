@@ -4,6 +4,7 @@ import 'katex/dist/katex.min.css';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -143,7 +144,12 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-white dark:bg-[#131313] text-[#131313] dark:text-[#F5F5F5] antialiased`}
       >
         <ThemeProvider>
-          <div className="flex h-dvh min-h-screen flex-col overflow-hidden bg-[#FAFAFA] dark:bg-[#131313] transition-colors duration-150">
+          <div className="relative flex h-dvh min-h-screen flex-col overflow-hidden bg-[#FAFAFA] dark:bg-[#131313] transition-colors duration-150">
+            {/* Single universal Top-Right Theme Toggle (Light / Dark) */}
+            <div className="fixed top-3 right-3 z-50">
+              <ThemeToggle className="p-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322]" />
+            </div>
+
             {/* Main content area — full width canvas and responsive container */}
             <main className="flex-1 overflow-y-auto min-h-0">
               <div className="mx-auto max-w-7xl px-3 sm:px-6 py-3 sm:py-5 h-full">

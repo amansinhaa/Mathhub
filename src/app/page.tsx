@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import {
   Calculator,
   LineChart,
@@ -164,9 +163,6 @@ export default function Home() {
             </span>
           </div>
         </Link>
-        <div className="flex items-center gap-1.5">
-          <ThemeToggle className="p-1 sm:p-1.5 border border-[#E0E0E0] dark:border-[#2E2825] bg-white dark:bg-[#1B1B1B] shadow-2xs" />
-        </div>
       </header>
 
       {/* Hero Welcome Header — Ultra-Compact on Mobile */}

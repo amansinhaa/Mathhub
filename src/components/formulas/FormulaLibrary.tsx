@@ -7,7 +7,6 @@ import FormulaCard from './FormulaCard';
 import { ALL_FORMULAS, getCategoryGroups } from '@/data/formulas';
 import { FormulaCategory, CurriculumLevel, CURRICULUM_LABELS } from '@/types/formula';
 import { BookOpen, Download, GraduationCap } from 'lucide-react';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { exportFormulaSheetPdf } from '@/lib/export/FormulaPdfExport';
 
 export default function FormulaLibrary() {
@@ -76,7 +75,6 @@ export default function FormulaLibrary() {
           <div className="flex-1 sm:w-64">
             <SearchBar onSearch={setQuery} />
           </div>
-          <ThemeToggle />
         </div>
       </header>
 

@@ -5,11 +5,10 @@ import { useThemeStore } from '@/stores/themeStore';
 
 /**
  * ThemeProvider applies the dark/light class to <html> based on Zustand store.
- * Supports 'system', 'light', and 'dark'.
- * In 'system' mode, dynamically listens for OS dark/light mode changes.
+ * If user hasn't explicitly picked light or dark (theme === null), it defaults to system OS preference.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { theme } = useThemeStore();
+  const { theme, setTheme } = useThemeStore();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -21,7 +20,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       } else if (theme === 'light') {
         root.classList.remove('dark');
       } else {
-        // 'system' mode
+        // System preference by default
         if (mediaQuery.matches) {
           root.classList.add('dark');
         } else {
@@ -32,9 +31,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     applyTheme();
 
-    // Listen for OS theme changes when in 'system' mode
+    // If user has not explicitly chosen, adapt automatically when system switches
     const handleChange = () => {
-      if (theme === 'system') {
+      if (theme === null) {
         applyTheme();
       }
     };
@@ -45,4 +44,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+
 

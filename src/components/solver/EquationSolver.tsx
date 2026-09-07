@@ -5,7 +5,6 @@ import { useSolverStore } from '@/stores/solverStore';
 import EquationInput from './EquationInput';
 import StepByStep from './StepByStep';
 import { FunctionSquare } from 'lucide-react';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 const EMPTY_STATE_MESSAGES: Record<string, string> = {
   polynomial:  'Enter any equation like  2x + 8 = 20  or  x² - 5x + 6 = 0  to get step-by-step solutions.',
@@ -74,7 +73,6 @@ export default function EquationSolver({
                 Type anything — equation, function, or system — then choose what you want to do with it
               </p>
             </div>
-            <ThemeToggle />
           </div>
 
           {/* Quick Solver Hub Navigation */}
