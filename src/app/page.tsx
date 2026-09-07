@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Metadata } from 'next';
 import {
   Calculator,
@@ -145,9 +146,12 @@ export default function Home() {
       {/* Top Brand Bar on Home */}
       <header className="flex items-center justify-between py-0.5 px-0.5">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <img
+          <Image
             src="/logo.png"
             alt="EasyEquate Logo"
+            width={32}
+            height={32}
+            priority
             className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl shadow-xs border border-[#5D4037]/30 object-contain group-hover:scale-105 transition-transform"
           />
           <div className="flex flex-col">
