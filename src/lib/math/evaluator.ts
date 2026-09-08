@@ -61,7 +61,11 @@ export function evaluateExpression(
     } else if (result.isComplex) {
       resultStr = `${format(result.re, { precision: 14 })} ${result.im >= 0 ? '+' : '-'} ${format(Math.abs(result.im), { precision: 14 })}i`;
     } else if (typeof result === 'number') {
-      resultStr = format(result, { precision: 14 });
+      if (Number.isInteger(result) && Math.abs(result) < 1e16) {
+        resultStr = result.toString();
+      } else {
+        resultStr = format(result, { precision: 14 });
+      }
     } else {
       resultStr = result.toString();
     }

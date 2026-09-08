@@ -101,6 +101,28 @@ const INT_RULES = {
   },
 };
 
+/** Split polynomial into top-level additive terms without breaking parentheses */
+function splitTopLevelTerms(expr: string): string[] {
+  const terms: string[] = [];
+  let depth = 0;
+  let currentTerm = '';
+
+  for (let i = 0; i < expr.length; i++) {
+    const ch = expr[i];
+    if (ch === '(') depth++;
+    else if (ch === ')') depth--;
+
+    if (depth === 0 && (ch === '+' || ch === '-') && i > 0) {
+      if (currentTerm.trim()) terms.push(currentTerm.trim());
+      currentTerm = ch;
+    } else {
+      currentTerm += ch;
+    }
+  }
+  if (currentTerm.trim()) terms.push(currentTerm.trim());
+  return terms;
+}
+
 /**
  * Solve step-by-step differentiation of any function f(x).
  */
@@ -110,6 +132,20 @@ export function solveDerivative(expression: string): SolverResult {
   // Remove f(x)= or y= if user typed it
   clean = clean.replace(/^(?:f\([a-zA-Z]\)|y)\s*=\s*/, '');
   clean = normalizeExpression(clean);
+
+  if (!clean) {
+    return {
+      type: 'derivative',
+      steps: [
+        {
+          stepNumber: 1,
+          explanation: 'Please enter a valid mathematical expression to differentiate.',
+          math: '\\text{No expression entered}',
+        },
+      ],
+      finalAnswer: '\\text{Empty expression}',
+    };
+  }
 
   const variable = detectVariable(clean) || 'x';
   const steps: SolutionStep[] = [];
@@ -134,7 +170,7 @@ export function solveDerivative(expression: string): SolverResult {
     });
 
     // Check if expression is a sum of terms (e.g. polynomial)
-    const terms = clean.split(/(?=[+-])/).map((t) => t.trim()).filter(Boolean);
+    const terms = splitTopLevelTerms(clean);
 
     if (terms.length > 1) {
       // Step 2: Sum/Difference Rule
@@ -247,6 +283,20 @@ export function solveIntegral(expression: string): SolverResult {
   clean = clean.replace(/^(?:f\([a-zA-Z]\)|y)\s*=\s*/, '');
   clean = normalizeExpression(clean);
 
+  if (!clean) {
+    return {
+      type: 'integral',
+      steps: [
+        {
+          stepNumber: 1,
+          explanation: 'Please enter a valid mathematical expression to integrate.',
+          math: '\\text{No expression entered}',
+        },
+      ],
+      finalAnswer: '\\text{Empty expression}',
+    };
+  }
+
   const variable = detectVariable(clean) || 'x';
   const steps: SolutionStep[] = [];
   let stepNum = 1;
@@ -270,7 +320,7 @@ export function solveIntegral(expression: string): SolverResult {
     });
 
     // Check if expression is a sum of terms
-    const terms = clean.split(/(?=[+-])/).map((t) => t.trim()).filter(Boolean);
+    const terms = splitTopLevelTerms(clean);
 
     if (terms.length > 1) {
       // Step 2: Sum/Difference Rule

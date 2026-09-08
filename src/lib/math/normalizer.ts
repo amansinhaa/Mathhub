@@ -271,19 +271,22 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
   // If there is NO variable, this is just arithmetic numbers, NOT an algebraic equation!
   if (!hasVariable) return null;
 
-  // Check for powers like x^4, x^3, x^2
-  const powerMatches = clean.match(/[a-zA-Z]\s*\^\s*([0-9]+)/g);
+  // Check for powers like x^4, x^(3), x^2, x³, x²
+  const powerMatches = clean.match(/[a-zA-Z]\s*\^\s*\(?([0-9]+)\)?/g);
   let maxExp = 0;
   if (powerMatches) {
     for (const m of powerMatches) {
-      const p = parseInt(m.replace(/^[a-zA-Z]\s*\^\s*/, ''), 10);
-      if (!isNaN(p) && p > maxExp) maxExp = p;
+      const match = m.match(/[0-9]+/);
+      if (match) {
+        const p = parseInt(match[0], 10);
+        if (!isNaN(p) && p > maxExp) maxExp = p;
+      }
     }
   }
 
-  // Also check for Unicode powers like x³, x²
-  if (clean.match(/[a-zA-Z]\s*[\^3|³]/)) maxExp = Math.max(maxExp, 3);
-  if (clean.match(/[a-zA-Z]\s*[\^2|²]/)) maxExp = Math.max(maxExp, 2);
+  // Also check for Unicode powers like x³, x² (if not normalized)
+  if (clean.match(/[a-zA-Z]\s*(\^3|³)/)) maxExp = Math.max(maxExp, 3);
+  if (clean.match(/[a-zA-Z]\s*(\^2|²)/)) maxExp = Math.max(maxExp, 2);
 
   if (maxExp >= 4) return { degree: maxExp, label: `Polynomial (Degree ${maxExp})` };
   if (maxExp === 3) return { degree: 3, label: 'Cubic (3rd Degree)' };

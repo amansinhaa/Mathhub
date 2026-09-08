@@ -708,7 +708,7 @@ export function generateQuadraticSteps(
     }
   } else {
     const realPart = -b / (2 * a);
-    const imaginaryPart = Math.sqrt(-delta) / (2 * a);
+    const imaginaryPart = Math.sqrt(-delta) / (2 * Math.abs(a));
 
     steps.push({
       stepNumber: stepCount++,

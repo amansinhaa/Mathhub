@@ -420,7 +420,7 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
         }
       } else {
         const realPart = -b / (2 * a);
-        const imagPart = Math.sqrt(-delta) / (2 * a);
+        const imagPart = Math.sqrt(-delta) / (2 * Math.abs(a));
         finalAnswer = `${variable} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`;
       }
 
@@ -600,7 +600,7 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
   return {
     type: 'system',
     steps,
-    finalAnswer: steps[steps.length - 1]?.math || 'No unique solution',
+    finalAnswer: '\\text{No unique solution}',
   };
 }
 
@@ -658,8 +658,9 @@ export function solveInequality(inequality: string): SolverResult {
       const [a, b, c] = poly.coeffs;
       const delta = b * b - 4 * a * c;
       if (delta >= 0) {
-        const r1 = (-b - Math.sqrt(delta)) / (2 * a);
-        const r2 = (-b + Math.sqrt(delta)) / (2 * a);
+        let r1 = (-b - Math.sqrt(delta)) / (2 * a);
+        let r2 = (-b + Math.sqrt(delta)) / (2 * a);
+        if (r1 > r2) [r1, r2] = [r2, r1];
         const fmtVal = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(4));
         const openOrClosed = rel.includes('=') ? ['\\leq', '\\geq'] : ['<', '>'];
 
@@ -668,11 +669,11 @@ export function solveInequality(inequality: string): SolverResult {
           if (rel === '>' || rel === '>=') {
             latex = `${variable} ${openOrClosed[0]} ${fmtVal(r1)} \\quad \\text{or} \\quad ${variable} ${openOrClosed[1]} ${fmtVal(r2)}`;
           } else {
-            latex = `${fmtVal(r1)} ${openOrClosed[1]} ${variable} ${openOrClosed[0]} ${fmtVal(r2)}`;
+            latex = `${fmtVal(r1)} ${openOrClosed[0]} ${variable} ${openOrClosed[0]} ${fmtVal(r2)}`;
           }
         } else {
           if (rel === '>' || rel === '>=') {
-            latex = `${fmtVal(r1)} ${openOrClosed[1]} ${variable} ${openOrClosed[0]} ${fmtVal(r2)}`;
+            latex = `${fmtVal(r1)} ${openOrClosed[0]} ${variable} ${openOrClosed[0]} ${fmtVal(r2)}`;
           } else {
             latex = `${variable} ${openOrClosed[0]} ${fmtVal(r1)} \\quad \\text{or} \\quad ${variable} ${openOrClosed[1]} ${fmtVal(r2)}`;
           }
