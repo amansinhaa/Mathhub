@@ -9,29 +9,6 @@ import { SYNTAX_HELP, quickDegreeDetect, expressionToLatex } from '@/lib/math/no
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 import { SolverType } from '@/types/solver';
 
-function SolverQuerySync() {
-  const searchParams = useSearchParams();
-  const { setEquation, setSolverType, setSolveForVariable, setQuadraticMethod } = useSolverStore();
-
-  useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic'].includes(tab)) {
-      setSolverType(tab as SolverType);
-    }
-    const formula = searchParams.get('formula') || searchParams.get('eq');
-    const method = searchParams.get('method');
-    if (method && ['auto', 'factoring', 'completing_square', 'formula'].includes(method)) {
-      setQuadraticMethod(method as any);
-    }
-    if (formula) {
-      setEquation(formula);
-      setTimeout(() => { useSolverStore.getState().solve(); }, 50);
-    }
-  }, [searchParams, setEquation, setSolverType, setSolveForVariable, setQuadraticMethod]);
-
-  return null;
-}
-
 // ─── Action mode pill config ──────────────────────────────────────────────────
 const ACTIONS: { value: SolverType; emoji: string; label: string; hint: string }[] = [
   { value: 'polynomial', emoji: '=',  label: 'Solve',      hint: 'Find x, roots & answers' },
@@ -63,6 +40,36 @@ export default function EquationInput() {
     systemVariables,
     setSystemVariables,
   } = useSolverStore();
+
+  const searchParams = useSearchParams();
+  const searchStr = searchParams.toString();
+  const prevSearchRef = React.useRef<string | null>(null);
+
+  useEffect(() => {
+    if (prevSearchRef.current === searchStr) return;
+    prevSearchRef.current = searchStr;
+
+    const store = useSolverStore.getState();
+    const tab = searchParams.get('tab');
+    if (tab && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic'].includes(tab)) {
+      if (store.solverType !== tab) {
+        store.setSolverType(tab as SolverType);
+      }
+    }
+    const formula = searchParams.get('formula') || searchParams.get('eq');
+    const method = searchParams.get('method');
+    if (method && ['auto', 'factoring', 'completing_square', 'formula'].includes(method)) {
+      if (store.quadraticMethod !== method) {
+        store.setQuadraticMethod(method as any);
+      }
+    }
+    if (formula && store.equation !== formula) {
+      store.setEquation(formula);
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
+    }
+  }, [searchStr]);
 
   const [showHelp, setShowHelp] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
@@ -107,7 +114,6 @@ export default function EquationInput() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3.5">
-      <Suspense fallback={null}><SolverQuerySync /></Suspense>
 
       {/* ── Single equation input (hidden for System) ───────────────────── */}
       {!isSystem && (

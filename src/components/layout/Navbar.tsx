@@ -65,8 +65,9 @@ const TOOL_GROUPS: NavCategory[] = [
   },
 ];
 
-export function Navbar() {
-  const pathname = usePathname();
+export function Navbar({ currentPath }: { currentPath?: string }) {
+  const routerPathname = usePathname();
+  const pathname = currentPath || routerPathname;
   const [isOpen, setIsOpen] = useState(false);
 
   // Close the drawer when navigating to a new route

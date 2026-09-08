@@ -1,4 +1,6 @@
-﻿export function usePathname(): string {
+import { useState, useEffect, useMemo } from 'react';
+
+export function usePathname(): string {
   if (typeof window !== 'undefined') {
     return window.location.pathname;
   }
@@ -21,9 +23,22 @@ export function useRouter() {
 }
 
 export function useSearchParams(): URLSearchParams {
-  if (typeof window !== 'undefined') {
-    return new URLSearchParams(window.location.search);
-  }
-  return new URLSearchParams();
+  const [search, setSearch] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.search;
+    }
+    return '';
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const updateSearch = () => {
+      setSearch(window.location.search);
+    };
+    window.addEventListener('popstate', updateSearch);
+    return () => window.removeEventListener('popstate', updateSearch);
+  }, []);
+
+  return useMemo(() => new URLSearchParams(search), [search]);
 }
 

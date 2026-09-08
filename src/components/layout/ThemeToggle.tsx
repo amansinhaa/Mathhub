@@ -24,15 +24,6 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     }
   }, []);
 
-  if (!mounted) {
-    return (
-      <div
-        className={`w-9 h-9 rounded-xl p-2 flex items-center justify-center opacity-0 ${className}`}
-        aria-hidden="true"
-      />
-    );
-  }
-
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
@@ -52,6 +43,15 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
 
   // Active dark state is either explicit 'dark' or (when theme is null) system dark
   const isDarkActive = theme === 'dark' || (theme === null && isSystemDark);
+
+  if (!mounted) {
+    return (
+      <div
+        className={`w-9 h-9 rounded-xl p-2 flex items-center justify-center opacity-0 ${className}`}
+        aria-hidden="true"
+      />
+    );
+  }
 
   return (
     <button

@@ -31,16 +31,17 @@ export default function EquationSolver({
   const { solverType, result, setSolverType, setEquation } = useSolverStore();
 
   React.useEffect(() => {
-    if (initialMode) {
-      setSolverType(initialMode);
+    const store = useSolverStore.getState();
+    if (initialMode && store.solverType !== initialMode) {
+      store.setSolverType(initialMode);
     }
-    if (initialEquation) {
-      setEquation(initialEquation);
+    if (initialEquation && store.equation !== initialEquation) {
+      store.setEquation(initialEquation);
       setTimeout(() => {
         useSolverStore.getState().solve();
       }, 50);
     }
-  }, [initialMode, initialEquation, setSolverType, setEquation]);
+  }, [initialMode, initialEquation]);
 
   // On mobile/Android, smoothly scroll to direct solution as soon as result is ready
   useEffect(() => {

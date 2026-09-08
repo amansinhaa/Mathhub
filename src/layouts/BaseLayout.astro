@@ -19,6 +19,8 @@ const {
 } = Astro.props;
 
 const canonicalUrl = new URL(canonical, 'https://www.easyequate.com').href;
+const currentPath = Astro.url.pathname;
+const isHome = currentPath === '/' || currentPath === '';
 
 const defaultJsonLd = {
   '@context': 'https://schema.org',
@@ -116,7 +118,7 @@ const defaultJsonLd = {
       </main>
 
       <!-- Navigation Drawer Island -->
-      <Navbar client:load />
+      {!isHome && <Navbar client:load currentPath={currentPath} />}
     </div>
   </body>
 </html>
