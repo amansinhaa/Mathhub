@@ -200,18 +200,6 @@ export default function EquationInput() {
             </div>
           )}
 
-          {/* Virtual keyboard */}
-          {showKeyboard && (
-            <div className="animate-fade-in">
-              <VirtualMathKeyboard
-                onInsert={handleKeyboardInsert}
-                onBackspace={handleKeyboardBackspace}
-                onClear={handleKeyboardClear}
-                onClose={() => setShowKeyboard(false)}
-              />
-            </div>
-          )}
-
           {/* Main input */}
           <input
             id="equation"
@@ -221,6 +209,18 @@ export default function EquationInput() {
             className="w-full px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-xs"
             placeholder={placeholders[solverType]}
           />
+
+          {/* Virtual keyboard (displays after the entry field) */}
+          {showKeyboard && (
+            <div className="animate-fade-in pt-1">
+              <VirtualMathKeyboard
+                onInsert={handleKeyboardInsert}
+                onBackspace={handleKeyboardBackspace}
+                onClear={handleKeyboardClear}
+                onClose={() => setShowKeyboard(false)}
+              />
+            </div>
+          )}
 
           {/* Quadratic method selector */}
           {solverType === 'polynomial' && isDegreeTwo && (

@@ -86,6 +86,18 @@ export function MathInput({
         </button>
       </div>
 
+      {/* Virtual On-Screen Math Keyboard (shows immediately after the entry field) */}
+      {showKeyboard && (
+        <div className="animate-fade-in pt-1">
+          <VirtualMathKeyboard
+            onInsert={handleInsert}
+            onBackspace={handleBackspace}
+            onClear={handleClear}
+            onClose={() => setShowKeyboard(false)}
+          />
+        </div>
+      )}
+
       {/* Live Formatted KaTeX Preview */}
       {showLivePreview && value.trim() && (
         <div className="p-2.5 rounded-xl bg-[#F5F5F5] dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#282422] text-center max-w-full overflow-x-auto shadow-2xs">
@@ -95,18 +107,6 @@ export function MathInput({
           <div className="text-sm py-0.5 text-[#131313] dark:text-white">
             <MathDisplay math={value} />
           </div>
-        </div>
-      )}
-
-      {/* Virtual On-Screen Math Keyboard */}
-      {showKeyboard && (
-        <div className="animate-fade-in pt-1">
-          <VirtualMathKeyboard
-            onInsert={handleInsert}
-            onBackspace={handleBackspace}
-            onClear={handleClear}
-            onClose={() => setShowKeyboard(false)}
-          />
         </div>
       )}
     </div>
