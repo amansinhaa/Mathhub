@@ -157,7 +157,7 @@ export default function GraphModule() {
       <UnitCircleModal isOpen={isUnitCircleOpen} onClose={() => setIsUnitCircleOpen(false)} />
 
       {/* Top App Bar / Header — Cleared of floating navbar overlap */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2 pt-12 sm:pt-0 sm:pl-28">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2 pt-12 sm:pt-0 sm:pl-36 md:pl-44">
         <div className="flex flex-col">
           <span className="text-[10px] font-mono font-semibold tracking-widest text-[#757575] dark:text-[#9E9E9E] uppercase">
             EASYEQUATE

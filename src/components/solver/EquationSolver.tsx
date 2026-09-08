@@ -60,7 +60,7 @@ export default function EquationSolver({
       {/* Header */}
       {!hideHeader && (
         <header className="flex flex-col gap-2 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 pl-28 sm:pl-36 md:pl-44">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-[#131313] dark:text-white">

@@ -72,7 +72,7 @@ export default function Calculator() {
       </Suspense>
       {/* Top App Bar — Material 3 / Instrument-Grade Header */}
       <header className="flex items-center justify-between gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pl-28 sm:pl-36 md:pl-44">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">

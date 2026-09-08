@@ -44,7 +44,7 @@ export default function FormulaLibrary() {
     <div className="flex flex-col h-full space-y-4 animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
       {/* Top App Bar / Header */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-3 gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pl-28 sm:pl-36 md:pl-44">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
