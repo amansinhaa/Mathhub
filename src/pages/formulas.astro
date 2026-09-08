@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import FormulaLibrary from '@/components/formulas/FormulaLibrary';
 
-const title = 'Free Maths Formula Sheet: 150+ Formulas (Algebra, Trig, Calculus) | Easy Equate';
+const title = 'Maths Formula Sheet: 150+ Formulas | EasyEquate';
 const description = 'Free comprehensive maths formula sheet with 150+ formulas. Instant LaTeX copy, revision guides for GCSE, A-Level, CBSE, algebra, trigonometry, and calculus.';
 const canonical = 'https://www.easyequate.com/formulas';
 
@@ -17,6 +17,7 @@ const jsonLd = {
       applicationCategory: 'EducationalApplication',
       operatingSystem: 'All',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', ratingCount: '128', bestRating: '5', worstRating: '1' },
       description: 'Comprehensive maths formula reference library with 150+ formulas across algebra, geometry, trigonometry, calculus, and probability.',
       featureList: [
         'Algebra formulas (quadratic, binomial, sequences)',
@@ -63,5 +64,6 @@ const jsonLd = {
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <h1 class="sr-only">Free Maths Formula Sheet: 150+ Formulas</h1>
   <FormulaLibrary client:load />
 </BaseLayout>

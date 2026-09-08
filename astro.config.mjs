@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://www.easyequate.com',
+  trailingSlash: 'never',
   redirects: {
     '/solver': '/equation-solver-with-steps',
   },

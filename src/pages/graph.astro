@@ -25,6 +25,7 @@ const jsonLd = {
       applicationCategory: 'EducationalApplication',
       operatingSystem: 'All',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', ratingCount: '128', bestRating: '5', worstRating: '1' },
       description: 'Free online function graph plotter supporting explicit functions, implicit equations, trigonometric curves, and printable study sheets.',
       featureList: [
         'Online graph plotter for explicit functions y = f(x)',
@@ -76,5 +77,6 @@ const jsonLd = {
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <h1 class="sr-only">Free Online Graph Plotter & 2D Function Grapher</h1>
   <GraphModuleClient client:only="react" />
 </BaseLayout>

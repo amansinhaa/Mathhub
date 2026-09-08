@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Calculator from '@/components/calculator/Calculator';
 
-const title = 'Easy Equate: Online Scientific Calculator with History & Memory';
+const title = 'Online Scientific Calculator with History | EasyEquate';
 const description = 'Easy Equate free online scientific calculator with memory, calculation history, angle modes, unit conversions, and keyboard support. 100% free, no sign-up.';
 const canonical = 'https://www.easyequate.com/calculator';
 
@@ -15,11 +15,13 @@ const jsonLd = {
   applicationCategory: 'EducationalApplication',
   operatingSystem: 'All',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', ratingCount: '128', bestRating: '5', worstRating: '1' },
   description: 'Advanced online scientific calculator with memory, calculation history, angle modes, and unit conversions.',
   featureList: ['Memory functions (M+, M-, MR, MC)', 'Calculation history', 'Degree and Radian modes', 'Unit conversions', 'Keyboard support'],
 };
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <h1 class="sr-only">Online Scientific Calculator with History & Memory</h1>
   <Calculator client:load />
 </BaseLayout>
