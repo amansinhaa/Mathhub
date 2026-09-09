@@ -10,15 +10,33 @@ export default function FunctionAnalysisPanel() {
   const { equations } = useGraphStore();
   const [isExpanded, setIsExpanded] = useState(true);
 
-  // Analyze the first active visible function
+  // Extract slider parameters from all equations
+  const parameters = useMemo(() => {
+    const params: Record<string, number> = {};
+    equations.forEach((eq) => {
+      const trimmed = eq.expression.trim();
+      const match = trimmed.match(/^([a-zA-Z][a-zA-Z0-9_]*)\s*=\s*([-+]?[0-9]*\.?[0-9]+)$/);
+      if (match && match[1] !== 'x' && match[1] !== 'y') {
+        const val = parseFloat(match[2]);
+        if (!isNaN(val)) params[match[1]] = val;
+      }
+    });
+    return params;
+  }, [equations]);
+
+  // Analyze the first active visible function (ignoring slider parameters)
   const activeEq = useMemo(() => {
-    return equations.find((eq) => eq.visible && eq.expression.trim().length > 0);
+    return equations.find((eq) => {
+      if (!eq.visible || eq.expression.trim().length === 0) return false;
+      const isSlider = /^([a-zA-Z][a-zA-Z0-9_]*)\s*=\s*([-+]?[0-9]*\.?[0-9]+)$/.test(eq.expression.trim());
+      return !isSlider;
+    });
   }, [equations]);
 
   const analysis = useMemo(() => {
     if (!activeEq) return null;
-    return analyzeFunction(activeEq.expression);
-  }, [activeEq]);
+    return analyzeFunction(activeEq.expression, parameters);
+  }, [activeEq, parameters]);
 
   if (!activeEq || !analysis) return null;
 

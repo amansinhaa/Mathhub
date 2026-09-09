@@ -279,6 +279,18 @@ export function findVerticalAsymptotes(
   const expr = parseExpression(expression);
   if (!expr || expr === '0') return asymptotes;
 
+  // Optimization & Accuracy check: Only expressions with potential singularities can have vertical asymptotes.
+  // Polynomials, linear functions, pure sin/cos, etc. have no vertical asymptotes.
+  const hasSingularityPattern =
+    /\//.test(expr) ||
+    /\b(tan|cot|sec|csc)\b/.test(expr) ||
+    /\^(-|\([+-]?[0-9])/.test(expr) ||
+    /\b(ln|log)\b/.test(expr);
+
+  if (!hasSingularityPattern) {
+    return asymptotes;
+  }
+
   let compiled: any = null;
   try {
     compiled = math.compile(expr);
@@ -340,16 +352,22 @@ export function findVerticalAsymptotes(
         }
       }
       const root = Number(((lo + hi) / 2).toFixed(5));
-      // Verify that near this root, |f(x)| actually blows up
+      // Verify that near this root, |f(x)| actually blows up towards infinity
       const testLeft = evalF(root - 1e-4);
       const testRight = evalF(root + 1e-4);
-      const isBlowup =
+      const testFarLeft = evalF(root - 0.05);
+      const testFarRight = evalF(root + 0.05);
+
+      const isLeftBlowup =
         testLeft === null ||
-        testRight === null ||
         !isFinite(testLeft) ||
+        (Math.abs(testLeft) > 50 && (testFarLeft === null || Math.abs(testLeft) > Math.abs(testFarLeft) * 1.5));
+      const isRightBlowup =
+        testRight === null ||
         !isFinite(testRight) ||
-        Math.abs(testLeft) > 15 ||
-        Math.abs(testRight) > 15;
+        (Math.abs(testRight) > 50 && (testFarRight === null || Math.abs(testRight) > Math.abs(testFarRight) * 1.5));
+
+      const isBlowup = isLeftBlowup || isRightBlowup;
 
       if (isBlowup) {
         if (!asymptotes.some((a) => Math.abs(a - root) < 0.015)) {
@@ -665,18 +683,21 @@ export function pointsToSvgPath(
         (a) => a >= minX - 1e-4 && a <= maxX + 1e-4
       );
 
-      // Check 2: Steep jump with opposite signs
+      // Check 2: Steep jump with opposite signs across an asymptote (e.g. f(x) -> -inf on one side and +inf on the other)
+      // Must NOT trigger for normal continuous functions crossing y = 0!
+      // Therefore, both points must be significantly away from 0, and dy must be large.
       const isOppositeSignJump =
         prevPoint.y * p.y < 0 &&
-        (dy / Math.max(1e-6, dx) > (ySpan / xSpan) * 4 ||
-          (Math.abs(prevPoint.y) > ySpan * 0.25 && Math.abs(p.y) > ySpan * 0.25));
+        Math.abs(prevPoint.y) > ySpan * 0.4 &&
+        Math.abs(p.y) > ySpan * 0.4 &&
+        dy > ySpan * 0.8;
 
       // Check 3: Huge same-sign spike (like 1/x^2)
       const isExtremeSpike =
-        (Math.abs(prevPoint.y) > ySpan * 1.5 && Math.abs(p.y) > ySpan * 1.5) ||
-        dy > ySpan * 2.0;
+        (Math.abs(prevPoint.y) > ySpan * 1.5 && Math.abs(p.y) > ySpan * 1.5 && dy > ySpan * 1.5) ||
+        dy > ySpan * 3.0;
 
-      // Check 4: Cross-viewport jump
+      // Check 4: Cross-viewport jump (one point way above and one way below the viewport)
       const isCrossViewportJump =
         (prevPoint.y < yMin && p.y > yMax) ||
         (prevPoint.y > yMax && p.y < yMin);

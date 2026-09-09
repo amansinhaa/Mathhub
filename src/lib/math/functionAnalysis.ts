@@ -19,7 +19,10 @@ export interface FunctionAnalysisResult {
   };
 }
 
-export function analyzeFunction(input: string): FunctionAnalysisResult | null {
+export function analyzeFunction(
+  input: string,
+  parameters: Record<string, number> = {}
+): FunctionAnalysisResult | null {
   if (!input) return null;
   let expr = input.replace(/^y\s*=\s*/, '').trim();
   if (!expr || expr.startsWith('{')) return null; // skip piecewise
@@ -34,7 +37,7 @@ export function analyzeFunction(input: string): FunctionAnalysisResult | null {
 
   const evalAt = (x: number): number | null => {
     try {
-      const res = compiled.evaluate({ x });
+      const res = compiled.evaluate({ x, ...parameters });
       if (typeof res === 'number' && !isNaN(res) && isFinite(res)) return res;
       if (res && typeof res.re === 'number' && Math.abs(res.im || 0) < 1e-9) return res.re;
       return null;
@@ -44,7 +47,7 @@ export function analyzeFunction(input: string): FunctionAnalysisResult | null {
   };
 
   // 1. Vertical Asymptotes & Denominator Discontinuities
-  const vAsyms = findVerticalAsymptotes(expr, -20, 20);
+  const vAsyms = findVerticalAsymptotes(expr, -20, 20, parameters);
   const verticalStr = vAsyms.map((a) => `x = ${Number(a.toFixed(3))}`);
 
   // 2. Domain
