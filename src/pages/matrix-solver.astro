@@ -6,6 +6,37 @@ const title = 'Matrix Solver — Determinant, Inverse & RREF | EasyEquate';
 const description = 'Free step-by-step matrix solver. Calculate determinant, inverse, multiply matrices, RREF, and find eigenvalues with full working shown.';
 const canonical = 'https://www.easyequate.com/matrix-solver';
 
+const faqs = [
+  {
+    q: "How do you find the determinant of a matrix?",
+    a: "For a 2x2 matrix, the determinant is ad - bc. For a 3x3, you use cofactor expansion along a row or column. Our solver shows the exact steps for both."
+  },
+  {
+    q: "What is an inverse matrix?",
+    a: "An inverse matrix is a matrix that, when multiplied by the original matrix, yields the identity matrix. A matrix must be square and have a non-zero determinant to be invertible."
+  },
+  {
+    q: "How does matrix multiplication work?",
+    a: "To multiply matrices, you multiply the elements of each row of the first matrix by the corresponding elements of each column of the second matrix, then add the products."
+  },
+  {
+    q: "What is Row Reduced Echelon Form (RREF)?",
+    a: "RREF is a simplified matrix form achieved through Gaussian elimination, where leading entries are 1 and all other entries in the leading column are 0."
+  },
+  {
+    q: "Can it solve eigenvalues?",
+    a: "Yes, our matrix calculator computes the characteristic polynomial det(A - λI) = 0 and finds real and complex eigenvalues."
+  },
+  {
+    q: "Why is matrix multiplication not commutative (AB ≠ BA)?",
+    a: "Matrix multiplication represents the composition of linear transformations, where order fundamentally changes the geometric mapping. Furthermore, for non-square matrices of dimensions m × k and k × n, AB produces an m × n matrix, while BA may not even be dimensionally defined unless m = n."
+  },
+  {
+    q: "Can a non-square matrix have an inverse?",
+    a: "No, a true two-sided inverse only exists for square matrices (n × n) with a non-zero determinant. For non-square rectangular matrices, generalized inverses like the Moore-Penrose pseudoinverse are used to solve least-squares optimization problems."
+  }
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -22,48 +53,14 @@ const jsonLd = {
     },
     {
       "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How do you find the determinant of a matrix?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "For a 2x2 matrix, the determinant is ad - bc. For a 3x3, you use cofactor expansion along a row or column. Our solver shows the exact steps for both."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What is an inverse matrix?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "An inverse matrix is a matrix that, when multiplied by the original matrix, yields the identity matrix. A matrix must be square and have a non-zero determinant to be invertible."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How does matrix multiplication work?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "To multiply matrices, you multiply the elements of each row of the first matrix by the corresponding elements of each column of the second matrix, then add the products."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What is Row Reduced Echelon Form (RREF)?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "RREF is a simplified matrix form achieved through Gaussian elimination, where leading entries are 1 and all other entries in the leading column are 0."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can it solve eigenvalues?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, our matrix calculator computes the characteristic polynomial det(A - λI) = 0 and finds real and complex eigenvalues."
-          }
+      "mainEntity": faqs.map(f => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.a
         }
-      ]
+      }))
     }
   ]
 };
@@ -97,29 +94,15 @@ const jsonLd = {
         </p>
       </section>
 
-      <section class="space-y-4">
-        <h2 class="text-xl sm:text-2xl font-bold text-center sm:text-left text-[#131313] dark:text-white">Frequently Asked Questions</h2>
-        <div class="space-y-3">
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">How do you find the determinant of a matrix?</h3>
-            <p class="mt-2 opacity-90">For a 2x2 matrix, the determinant is ad - bc. For a 3x3, you use cofactor expansion along a row or column. Our solver shows the exact steps for both.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">What is an inverse matrix?</h3>
-            <p class="mt-2 opacity-90">An inverse matrix is a matrix that, when multiplied by the original matrix, yields the identity matrix. A matrix must be square and have a non-zero determinant to be invertible.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">How does matrix multiplication work?</h3>
-            <p class="mt-2 opacity-90">To multiply matrices, you multiply the elements of each row of the first matrix by the corresponding elements of each column of the second matrix, then add the products.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">What is Row Reduced Echelon Form (RREF)?</h3>
-            <p class="mt-2 opacity-90">RREF is a simplified matrix form achieved through Gaussian elimination, where leading entries are 1 and all other entries in the leading column are 0.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">Can it solve eigenvalues?</h3>
-            <p class="mt-2 opacity-90">Yes, our matrix calculator computes the characteristic polynomial det(A - λI) = 0 and finds real and complex eigenvalues.</p>
-          </div>
+      <section class="space-y-3 sm:space-y-4">
+        <h2 class="text-base sm:text-xl font-bold text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {faqs.map(faq => (
+            <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+              <h3 class="text-xs sm:text-sm font-bold text-[#131313] dark:text-white">{faq.q}</h3>
+              <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 

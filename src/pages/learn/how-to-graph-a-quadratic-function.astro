@@ -44,10 +44,26 @@ const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "Does a² + bx + c always have two roots?",
+      "name": "Does a quadratic equation ax² + bx + c = 0 always have two roots?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Depending on the discriminant (b² - 4ac), a quadratic can have two real roots, one real root (if the vertex touches the x-axis), or no real roots (if it never crosses the x-axis)."
+        "text": "Yes. By the Fundamental Theorem of Algebra, every degree 2 polynomial has exactly two roots in the complex number system: either two distinct real roots (b² - 4ac > 0), one repeated real root of multiplicity 2 (b² - 4ac = 0), or two complex conjugate roots (b² - 4ac < 0)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you know if a parabola opens upwards or downwards?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Look at the leading coefficient 'a' in y = ax² + bx + c. If a > 0 (positive), the parabola opens upwards like a 'U' and the vertex is a minimum point. If a < 0 (negative), the parabola opens downwards and the vertex is a maximum point."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you convert standard form to vertex form?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can either complete the square or find the vertex (h, k) using h = -b / (2a) and k = f(h). Then substitute these values into vertex form y = a(x - h)² + k, retaining the original leading coefficient 'a'."
       }
     }
   ]

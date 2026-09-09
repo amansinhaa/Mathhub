@@ -6,6 +6,29 @@ const title = 'Integral Calculator with Steps — Calculus | EasyEquate';
 const description = 'Free integral calculator with steps. Calculate indefinite and definite integrals step-by-step with power rule, substitution, and + C shown.';
 const canonical = 'https://www.easyequate.com/integral-calculator';
 
+const faqs = [
+  {
+    q: "Why is the constant + C added to integrals?",
+    a: "For indefinite integrals, any constant term differentiates to zero. Therefore, there are infinitely many antiderivatives differing by a constant C, which represents this unknown constant."
+  },
+  {
+    q: "What is the reverse power rule for integration?",
+    a: "The power rule for integration is ∫ x^n dx = (x^(n + 1)) / (n + 1) + C (for n ≠ -1). If n = -1, the integral is ln|x| + C."
+  },
+  {
+    q: "Can this solve definite integrals with bounds?",
+    a: "Yes, enter limits to compute definite integrals using the Fundamental Theorem of Calculus: F(b) - F(a)."
+  },
+  {
+    q: "What is the difference between an indefinite integral and a definite integral?",
+    a: "An indefinite integral ∫ f(x) dx has no limits and represents the general family of antiderivatives, always including the constant of integration + C. A definite integral ∫[a to b] f(x) dx has specific integration bounds [a, b] and calculates a single numerical value representing the net signed area under the curve."
+  },
+  {
+    q: "How do you solve integrals using u-substitution step by step?",
+    a: "First, identify an inner function u = g(x) whose derivative du = g'(x) dx also appears in the integrand. Next, substitute u and du to rewrite the integral completely in terms of u. Evaluate the simpler integral, and finally replace u with the original variable expression g(x) (adding + C for indefinite integrals)."
+  }
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -22,32 +45,14 @@ const jsonLd = {
     },
     {
       "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Why is the constant + C added to integrals?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "For indefinite integrals, any constant term differentiates to zero. Therefore, there are infinitely many antiderivatives differing by a constant C, which represents this unknown constant."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What is the reverse power rule for integration?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The power rule for integration is ∫ x^n dx = (x^(n + 1)) / (n + 1) + C (for n ≠ -1). If n = -1, the integral is ln|x| + C."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can this solve definite integrals with bounds?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, enter limits to compute definite integrals using the Fundamental Theorem of Calculus: F(b) - F(a)."
-          }
+      "mainEntity": faqs.map(f => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.a
         }
-      ]
+      }))
     }
   ]
 };
@@ -81,21 +86,15 @@ const jsonLd = {
         </p>
       </section>
 
-      <section class="space-y-4">
-        <h2 class="text-xl sm:text-2xl font-bold text-center sm:text-left text-[#131313] dark:text-white">Frequently Asked Questions</h2>
-        <div class="space-y-3">
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">Why is the constant + C added to integrals?</h3>
-            <p class="mt-2 opacity-90">For indefinite integrals, any constant term differentiates to zero. Therefore, there are infinitely many antiderivatives differing by a constant C, which represents this unknown constant.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">What is the reverse power rule for integration?</h3>
-            <p class="mt-2 opacity-90">The power rule for integration is ∫ x^n dx = (x^(n + 1)) / (n + 1) + C (for n ≠ -1). If n = -1, the integral is ln|x| + C.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">Can this solve definite integrals with bounds?</h3>
-            <p class="mt-2 opacity-90">Yes, enter limits to compute definite integrals using the Fundamental Theorem of Calculus: F(b) - F(a).</p>
-          </div>
+      <section class="space-y-3 sm:space-y-4">
+        <h2 class="text-base sm:text-xl font-bold text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {faqs.map(faq => (
+            <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+              <h3 class="text-xs sm:text-sm font-bold text-[#131313] dark:text-white">{faq.q}</h3>
+              <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 

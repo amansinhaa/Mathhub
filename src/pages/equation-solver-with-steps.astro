@@ -6,6 +6,37 @@ const title = 'Equation Solver with Steps — Algebra Solver | EasyEquate';
 const description = 'Free step-by-step equation solver. Shows every working step for linear, quadratic, cubic equations, systems, and inequalities. No sign-up required.';
 const canonical = 'https://www.easyequate.com/equation-solver-with-steps';
 
+const faqs = [
+  {
+    q: "How does the step-by-step solver work?",
+    a: "The solver parses your equation and applies algebraic rules sequentially, showing each transformation like adding/subtracting from both sides or factoring, until the variable is isolated."
+  },
+  {
+    q: "Can it solve linear equations?",
+    a: "Yes, it can solve linear equations with one or multiple variables by simplifying and isolating the target variable."
+  },
+  {
+    q: "Does it handle systems of equations?",
+    a: "Yes, it can solve systems of equations using substitution, elimination, or matrix methods, providing steps for each."
+  },
+  {
+    q: "What about polynomials?",
+    a: "It can solve quadratic, cubic, and higher-order polynomials using factoring, formulas, or numerical approximation where necessary."
+  },
+  {
+    q: "Do I have to pay to see the steps?",
+    a: "No, EasyEquate provides all step-by-step solutions completely free."
+  },
+  {
+    q: "How do you solve an equation with variables on both sides step by step?",
+    a: "First, simplify each side by expanding parentheses and combining like terms. Next, collect all variable terms on one side by adding or subtracting from both sides. Finally, isolate the variable by moving constant terms to the opposite side and dividing by the coefficient."
+  },
+  {
+    q: "What is an extraneous solution and why do they appear?",
+    a: "An extraneous solution is a mathematical result derived during solving that does not satisfy the original equation. They most commonly occur when squaring both sides of a radical equation (which can introduce false positive signs) or when multiplying by variable denominators in rational equations (which can cause division by zero). Always substitute answers back into the original equation to verify validity."
+  }
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -22,48 +53,14 @@ const jsonLd = {
     },
     {
       "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How does the step-by-step solver work?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The solver parses your equation and applies algebraic rules sequentially, showing each transformation like adding/subtracting from both sides or factoring, until the variable is isolated."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can it solve linear equations?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, it can solve linear equations with one or multiple variables by simplifying and isolating the target variable."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does it handle systems of equations?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, it can solve systems of equations using substitution, elimination, or matrix methods, providing steps for each."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What about polynomials?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "It can solve quadratic, cubic, and higher-order polynomials using factoring, formulas, or numerical approximation where necessary."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Do I have to pay to see the steps?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "No, EasyEquate provides all step-by-step solutions completely free."
-          }
+      "mainEntity": faqs.map(f => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.a
         }
-      ]
+      }))
     }
   ]
 };
@@ -97,29 +94,15 @@ const jsonLd = {
         </p>
       </section>
 
-      <section class="space-y-4">
-        <h2 class="text-xl sm:text-2xl font-bold text-center sm:text-left text-[#131313] dark:text-white">Frequently Asked Questions</h2>
-        <div class="space-y-3">
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">How does the step-by-step solver work?</h3>
-            <p class="mt-2 opacity-90">The solver parses your equation and applies algebraic rules sequentially, showing each transformation like adding/subtracting from both sides or factoring, until the variable is isolated.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">Can it solve linear equations?</h3>
-            <p class="mt-2 opacity-90">Yes, it can solve linear equations with one or multiple variables by simplifying and isolating the target variable.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">Does it handle systems of equations?</h3>
-            <p class="mt-2 opacity-90">Yes, it can solve systems of equations using substitution, elimination, or matrix methods, providing steps for each.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">What about polynomials?</h3>
-            <p class="mt-2 opacity-90">It can solve quadratic, cubic, and higher-order polynomials using factoring, formulas, or numerical approximation where necessary.</p>
-          </div>
-          <div class="bg-white dark:bg-[#3E2723] p-4 rounded-lg border border-[#E0E0E0] dark:border-[#5D4037]">
-            <h3 class="font-semibold text-lg">Do I have to pay to see the steps?</h3>
-            <p class="mt-2 opacity-90">No, EasyEquate provides all step-by-step solutions completely free.</p>
-          </div>
+      <section class="space-y-3 sm:space-y-4">
+        <h2 class="text-base sm:text-xl font-bold text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {faqs.map(faq => (
+            <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+              <h3 class="text-xs sm:text-sm font-bold text-[#131313] dark:text-white">{faq.q}</h3>
+              <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
         </div>
       </section>
 
