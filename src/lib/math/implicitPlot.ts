@@ -77,7 +77,8 @@ export function generateImplicitContour(
   xMax: number,
   yMin: number,
   yMax: number,
-  gridResolution: number = 100
+  gridResolution: number = 100,
+  parameters: Record<string, number> = {}
 ): LineSegment[] {
   const expr = parseImplicitExpression(rawExpr);
   let compiled: any = null;
@@ -101,7 +102,7 @@ export function generateImplicitContour(
     for (let i = 0; i <= nx; i++) {
       const x = xMin + i * dx;
       try {
-        const val = compiled.evaluate({ x, y });
+        const val = compiled.evaluate({ x, y, ...parameters });
         if (typeof val === 'number' && !isNaN(val) && isFinite(val)) {
           row.push(val);
         } else {

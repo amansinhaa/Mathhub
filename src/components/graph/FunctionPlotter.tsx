@@ -14,6 +14,8 @@ import {
   parsePiecewiseBranches,
   extractPiecewiseEndpoints,
   PiecewiseEndpoint,
+  isSliderParameter,
+  isVerticalLine,
 } from '@/lib/math/graphData';
 import {
   isImplicitEquation,
@@ -403,13 +405,29 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
     };
   }, [fromPxX, fromPxY, setBounds]);
 
-  // Separate explicit and implicit equations
+  // Extract dynamic slider parameters (e.g. i = 0.4, a = 2, m = -1.5)
+  const parameters = useMemo(() => {
+    const params: Record<string, number> = {};
+    equations.forEach((eq) => {
+      if (!eq.expression || eq.expression.trim() === '') return;
+      const slider = isSliderParameter(eq.expression);
+      if (slider) {
+        params[slider.variable] = slider.value;
+      }
+    });
+    return params;
+  }, [equations]);
+
+  // Separate explicit and implicit equations (excluding slider parameter definitions)
   const { explicitEquations, implicitEquations } = useMemo(() => {
     const explicit: typeof equations = [];
     const implicit: typeof equations = [];
 
     equations.forEach((eq) => {
       if (!eq.visible || eq.expression.trim() === '') return;
+      // Sliders define constants, they are not curves themselves
+      if (isSliderParameter(eq.expression)) return;
+
       if (isImplicitEquation(eq.expression)) {
         implicit.push(eq);
       } else {
@@ -420,12 +438,36 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
     return { explicitEquations: explicit, implicitEquations: implicit };
   }, [equations]);
 
-  // Generate continuous SVG paths for explicit functions with asymptote splitting
+  // Generate continuous SVG paths for explicit functions with asymptote splitting & vertical lines
   const explicitPaths = useMemo(() => {
     const numPoints = 650;
     return explicitEquations.map((eq) => {
-      const data = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, numPoints);
-      const asyms = findVerticalAsymptotes(eq.expression, bounds.xMin, bounds.xMax);
+      // Check if this equation is a vertical line like x = 3 or x = a
+      const vert = isVerticalLine(eq.expression, parameters);
+      if (vert !== null) {
+        const px = toPxX(vert.x);
+        const yTopPx = plotBox.top;
+        const yBottomPx = plotBox.top + plotBox.height;
+        const pathD = `M ${px.toFixed(2)} ${yTopPx.toFixed(2)} L ${px.toFixed(2)} ${yBottomPx.toFixed(2)}`;
+        const labelPoint = {
+          x: vert.x,
+          y: (bounds.yMin + bounds.yMax) / 2,
+          px,
+          py: (yTopPx + yBottomPx) / 2,
+        };
+        return {
+          id: eq.id,
+          expression: eq.expression,
+          color: eq.color,
+          pathD,
+          asymptotes: [],
+          labelPoint,
+          piecewiseEndpoints: [],
+        };
+      }
+
+      const data = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, numPoints, parameters);
+      const asyms = findVerticalAsymptotes(eq.expression, bounds.xMin, bounds.xMax, parameters);
       const pathD = pointsToSvgPath(
         data,
         bounds.xMin,
@@ -471,7 +513,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
           : [],
       };
     });
-  }, [explicitEquations, bounds, plotBox, yScale, toPxX, toPxY]);
+  }, [explicitEquations, bounds, plotBox, yScale, toPxX, toPxY, parameters]);
 
   // Compute all unique vertical asymptotes for dashed guide line rendering
   const allAsymptotes = useMemo(() => {
@@ -496,7 +538,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
     if (explicitEquations.length < 2) return false;
     const maxVals: number[] = [];
     explicitEquations.forEach((eq) => {
-      const data = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, 80);
+      const data = generatePlotData(eq.expression, bounds.xMin, bounds.xMax, 80, parameters);
       let maxAbs = 0;
       data.forEach((d) => {
         if (d.y !== null && !isNaN(d.y) && isFinite(d.y)) {
@@ -512,7 +554,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
       return minOverall > 0 && maxOverall / minOverall >= 100;
     }
     return false;
-  }, [explicitEquations, bounds.xMin, bounds.xMax]);
+  }, [explicitEquations, bounds.xMin, bounds.xMax, parameters]);
 
   // Generate Marching Squares implicit contour SVG paths
   const implicitPaths = useMemo(() => {
@@ -523,7 +565,8 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
         bounds.xMax,
         bounds.yMin,
         bounds.yMax,
-        120
+        120,
+        parameters
       );
       const svgPath = segmentsToSvgPath(
         segments,
@@ -540,7 +583,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
         svgPath,
       };
     });
-  }, [implicitEquations, bounds, plotBox]);
+  }, [implicitEquations, bounds, plotBox, parameters]);
 
   // Compute Major D3-style Nice Ticks for X and Y axes
   const xTicks = useMemo(
@@ -596,7 +639,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
     explicitEquations.forEach((eq) => {
       try {
         const compiled = math.compile(parseExpression(eq.expression));
-        const evalY = compiled.evaluate({ x: mouseMathX });
+        const evalY = compiled.evaluate({ x: mouseMathX, ...parameters });
         let yVal: number | null = null;
         if (typeof evalY === 'number' && !isNaN(evalY) && isFinite(evalY)) {
           yVal = evalY;
@@ -630,7 +673,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
     });
 
     return closest;
-  }, [mousePos, isMouseDown, explicitEquations, fromPxX, toPxX, toPxY, bounds]);
+  }, [mousePos, isMouseDown, explicitEquations, fromPxX, toPxX, toPxY, bounds, parameters]);
 
   // Smooth Animated Zoom for Toolbar Buttons
   const animateZoom = useCallback(

@@ -208,6 +208,63 @@ export function parseExpression(input: string): string {
   return expr;
 }
 
+/** Check whether an equation is a constant parameter/slider definition, e.g. "a = 2", "i = 0.4", "m = -1.5" */
+export function isSliderParameter(expr: string): { variable: string; value: number } | null {
+  if (!expr) return null;
+  const clean = expr.trim();
+  const match = clean.match(/^([a-zA-Z][a-zA-Z0-9_]*)\s*=\s*([-+]?[0-9]*\.?[0-9]+)$/);
+  if (!match) return null;
+  const varName = match[1];
+  if (varName === 'x' || varName === 'y') return null;
+  const val = parseFloat(match[2]);
+  if (isNaN(val) || !isFinite(val)) return null;
+  return { variable: varName, value: val };
+}
+
+/** Check whether an equation is a vertical line, e.g. "x = 3" or "x = -4" */
+export function isVerticalLine(expr: string, parameters: Record<string, number> = {}): { x: number } | null {
+  if (!expr) return null;
+  const clean = expr.trim();
+  const match = clean.match(/^x\s*=\s*([^=]+)$/i);
+  if (!match) return null;
+  const rhs = match[1].trim();
+  if (/\by\b/i.test(rhs)) return null;
+  try {
+    const compiled = math.compile(normalizeExpression(rhs));
+    const val = compiled.evaluate(parameters);
+    if (typeof val === 'number' && !isNaN(val) && isFinite(val)) {
+      return { x: val };
+    }
+  } catch {
+    // fallback
+  }
+  return null;
+}
+
+/** Extract all unbound single-letter variables in an expression (e.g. "i" in "y = i2x - 3i") */
+export function findUnboundVariables(expr: string, definedVars: string[] = []): string[] {
+  if (!expr) return [];
+  const clean = expr.replace(/^[a-zA-Z]\s*=\s*/, '').replace(/^f\s*\(\s*x\s*\)\s*=\s*/, '').trim();
+  const norm = normalizeExpression(clean);
+  const reserved = new Set([
+    'x', 'y', 'e', 'pi', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'log', 'ln',
+    'exp', 'sqrt', 'cbrt', 'abs', 'ceil', 'floor', 'round', 'sign',
+    'min', 'max', 'nthRoot', 'pow', 'mod', 'theta', 'alpha', 'beta',
+    'gamma', 'lambda', 'mu', 'sigma', 'omega', 'phi', 'Delta'
+  ]);
+  definedVars.forEach(v => reserved.add(v));
+
+  const tokens = norm.match(/[a-zA-Z]+/g) || [];
+  const unbound = new Set<string>();
+  for (const t of tokens) {
+    if (!reserved.has(t) && t.length === 1) {
+      unbound.add(t);
+    }
+  }
+  return Array.from(unbound);
+}
+
 /**
  * Find vertical asymptotes of an expression in the domain [xMin, xMax].
  * Uses zero-crossing and singularity detection of 1/f(x) = 0.
@@ -215,7 +272,8 @@ export function parseExpression(input: string): string {
 export function findVerticalAsymptotes(
   expression: string,
   xMin: number,
-  xMax: number
+  xMax: number,
+  parameters: Record<string, number> = {}
 ): number[] {
   const asymptotes: number[] = [];
   const expr = parseExpression(expression);
@@ -230,7 +288,7 @@ export function findVerticalAsymptotes(
 
   const evalF = (xVal: number): number | null => {
     try {
-      const res = compiled.evaluate({ x: xVal });
+      const res = compiled.evaluate({ x: xVal, ...parameters });
       if (typeof res === 'number' && !isNaN(res)) return res;
       if (res && typeof res.re === 'number' && Math.abs(res.im || 0) < 1e-9) return res.re;
       return null;
@@ -311,7 +369,8 @@ export function generatePlotData(
   expression: string,
   xMin: number,
   xMax: number,
-  numPoints: number = 450
+  numPoints: number = 450,
+  parameters: Record<string, number> = {}
 ): DataPoint[] {
   const data: DataPoint[] = [];
   if (xMin >= xMax) return data;
@@ -334,7 +393,7 @@ export function generatePlotData(
         if (branch.testCondition(x)) {
           activeBranch = bIdx;
           try {
-            const res = branch.compiledExpr.evaluate({ x });
+            const res = branch.compiledExpr.evaluate({ x, ...parameters });
             if (typeof res === 'number' && !isNaN(res) && isFinite(res)) {
               yVal = res;
             } else if (res && typeof res.re === 'number' && Math.abs(res.im || 0) < 1e-9) {
@@ -376,7 +435,7 @@ export function generatePlotData(
 
   const evalAt = (x: number): number | null => {
     try {
-      const y = compiled.evaluate({ x });
+      const y = compiled.evaluate({ x, ...parameters });
       if (typeof y === 'number' && !isNaN(y) && isFinite(y)) return y;
       if (y && typeof y.re === 'number' && Math.abs(y.im || 0) < 1e-9) return y.re;
       return null;
@@ -385,7 +444,7 @@ export function generatePlotData(
     }
   };
 
-  const asymptotes = findVerticalAsymptotes(expression, xMin, xMax);
+  const asymptotes = findVerticalAsymptotes(expression, xMin, xMax, parameters);
   const step = (xMax - xMin) / numPoints;
 
   // Collect all critical x coordinates

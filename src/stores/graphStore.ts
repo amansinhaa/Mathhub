@@ -25,7 +25,7 @@ interface GraphState {
   setYScale: (scale: YScaleType) => void;
   setShowLineLabels: (show: boolean) => void;
   setShowQuadrants: (show: boolean) => void;
-  addEquation: () => void;
+  addEquation: (initialExpression?: string) => void;
   updateEquation: (id: string, expr?: string, visible?: boolean) => void;
   removeEquation: (id: string) => void;
   setDataPoints: (points: DataPoint[]) => void;
@@ -71,14 +71,14 @@ export const useGraphStore = create<GraphState>()(
       setYScale: (scale) => set({ yScale: scale }),
       setShowLineLabels: (show) => set({ showLineLabels: show }),
       setShowQuadrants: (show) => set({ showQuadrants: show }),
-      addEquation: () =>
+      addEquation: (initialExpression: string = '') =>
         set((state) => {
           if (state.equations.length >= 8) return state;
           const color = GRAPH_COLORS[state.equations.length % GRAPH_COLORS.length];
           return {
             equations: [
               ...state.equations,
-              { id: Date.now().toString(), expression: '', color, visible: true },
+              { id: Date.now().toString(), expression: initialExpression, color, visible: true },
             ],
           };
         }),

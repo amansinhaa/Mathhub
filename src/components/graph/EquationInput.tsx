@@ -1,18 +1,36 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGraphStore } from '@/stores/graphStore';
-import { Eye, EyeOff, Trash2, Plus, HelpCircle, X, Info, Keyboard as KeyboardIcon, Copy, Check } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Trash2,
+  Plus,
+  HelpCircle,
+  X,
+  Info,
+  Keyboard as KeyboardIcon,
+  Copy,
+  Check,
+  Play,
+  Pause,
+  SlidersHorizontal,
+  Sparkles,
+} from 'lucide-react';
 import { isImplicitEquation } from '@/lib/math/implicitPlot';
+import { isSliderParameter, findUnboundVariables } from '@/lib/math/graphData';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 
 export default function EquationInput() {
   const { equations, addEquation, updateEquation, removeEquation } = useGraphStore();
   const [showHelp, setShowHelp] = useState(false);
-  // Default virtual math keyboard to open on graphs for immediate typing
-  const [showKeyboard, setShowKeyboard] = useState(true);
+  // Default virtual math keyboard to false on desktop so it doesn't crowd screen
+  const [showKeyboard, setShowKeyboard] = useState(false);
   const [activeEqId, setActiveEqId] = useState<string | null>(null);
   const [copiedEqId, setCopiedEqId] = useState<string | null>(null);
+  const [playingSliders, setPlayingSliders] = useState<Record<string, boolean>>({});
+  const animationDirections = useRef<Record<string, number>>({});
 
   const inputRefs = React.useRef<Record<string, HTMLInputElement | null>>({});
   const selectionRange = React.useRef<{ start: number; end: number } | null>(null);
@@ -104,6 +122,52 @@ export default function EquationInput() {
     };
   };
 
+  // Continuous animation loop for active sliders (oscillating between -10 and 10)
+  useEffect(() => {
+    const activeIds = Object.keys(playingSliders).filter((id) => playingSliders[id]);
+    if (activeIds.length === 0) return;
+
+    const interval = setInterval(() => {
+      activeIds.forEach((id) => {
+        const eq = equations.find((e) => e.id === id);
+        if (!eq) return;
+        const slider = isSliderParameter(eq.expression);
+        if (!slider) return;
+
+        let dir = animationDirections.current[id] || 1;
+        let nextVal = slider.value + dir * 0.1;
+        if (nextVal > 10) {
+          nextVal = 10;
+          dir = -1;
+        } else if (nextVal < -10) {
+          nextVal = -10;
+          dir = 1;
+        }
+        animationDirections.current[id] = dir;
+        updateEquation(id, `${slider.variable} = ${Number(nextVal.toFixed(2))}`);
+      });
+    }, 40);
+
+    return () => clearInterval(interval);
+  }, [playingSliders, equations, updateEquation]);
+
+  const togglePlaySlider = (id: string) => {
+    setPlayingSliders((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // Collect all currently defined parameter variables
+  const definedSliderVars = React.useMemo(() => {
+    const list: string[] = [];
+    equations.forEach((eq) => {
+      const s = isSliderParameter(eq.expression);
+      if (s) list.push(s.variable);
+    });
+    return list;
+  }, [equations]);
+
   return (
     <div className="flex flex-col space-y-3">
       <div className="flex items-center justify-between">
@@ -157,11 +221,11 @@ export default function EquationInput() {
           </div>
 
           <div className="space-y-1 text-[#616161] dark:text-[#A19891]">
-            <p className="font-semibold text-[11px] text-[#5D4037] dark:text-[#D7CCC8]">1. Explicit Functions y = f(x):</p>
+            <p className="font-semibold text-[11px] text-[#5D4037] dark:text-[#D7CCC8]">1. Explicit Functions & Parameters:</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px]">
-              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x³ + 3x + 5</code></div>
+              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">y = i2x - 3i</code> (with slider <code className="font-bold">i = 0.4</code>)</div>
               <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">sin(x)</code> or <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">cos(2x)</code></div>
-              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">sqrt(x)</code> or <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x^(1/3)</code></div>
+              <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x = 3</code> (vertical line)</div>
               <div>• <code className="bg-white dark:bg-[#1B1B1B] px-1 rounded text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825]">x² - 4</code></div>
             </div>
           </div>
@@ -179,37 +243,54 @@ export default function EquationInput() {
       )}
 
       {equations.map((eq, idx) => {
-        const isImplicit = isImplicitEquation(eq.expression);
+        const slider = isSliderParameter(eq.expression);
+        const isImplicit = !slider && isImplicitEquation(eq.expression);
         const needsConstant =
           isImplicit &&
           !eq.expression.includes('=') &&
           /x\s*\^?\s*2?\s*\+\s*y\s*\^?\s*2?/i.test(eq.expression);
 
+        // Check for unbound variables that Desmos would offer sliders for
+        const unboundVars = !slider
+          ? findUnboundVariables(eq.expression, definedSliderVars)
+          : [];
+
         return (
-          <div key={eq.id} className="space-y-1">
-            <div className={`flex items-center space-x-2 p-1.5 sm:p-2 rounded-xl border transition-all ${
-              activeEqId === eq.id
-                ? 'bg-white dark:bg-[#1B1B1B] border-[#5D4037] dark:border-[#8D6E63] shadow-xs'
-                : 'bg-[#F5F5F5] dark:bg-[#131313] border-[#E0E0E0] dark:border-[#2E2825]'
-            }`}>
+          <div key={eq.id} className="space-y-1.5">
+            <div
+              className={`flex items-center space-x-2 p-1.5 sm:p-2 rounded-xl border transition-all ${
+                activeEqId === eq.id
+                  ? 'bg-white dark:bg-[#1B1B1B] border-[#5D4037] dark:border-[#8D6E63] shadow-xs'
+                  : 'bg-[#F5F5F5] dark:bg-[#131313] border-[#E0E0E0] dark:border-[#2E2825]'
+              }`}
+            >
               {/* Desmos-style row number & color pill */}
               <div className="flex items-center gap-1.5 pl-1 shrink-0">
                 <span className="text-[11px] font-mono font-bold text-[#757575] dark:text-[#8D827A] w-3.5 text-center">
                   {idx + 1}
                 </span>
-                <div
-                  className="w-4 h-4 rounded-full shrink-0 cursor-pointer shadow-xs transition-transform active:scale-90"
-                  style={{
-                    backgroundColor: eq.visible ? eq.color : 'transparent',
-                    border: `2px solid ${eq.color}`,
-                  }}
-                  onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
-                  role="button"
-                  title="Toggle visibility"
-                />
+                {slider ? (
+                  <div
+                    className="w-4 h-4 rounded-full shrink-0 flex items-center justify-center bg-[#EFEBE9] dark:bg-[#2E2825] text-[#5D4037] dark:text-[#D7CCC8]"
+                    title="Slider Parameter"
+                  >
+                    <SlidersHorizontal size={10} />
+                  </div>
+                ) : (
+                  <div
+                    className="w-4 h-4 rounded-full shrink-0 cursor-pointer shadow-xs transition-transform active:scale-90"
+                    style={{
+                      backgroundColor: eq.visible ? eq.color : 'transparent',
+                      border: `2px solid ${eq.color}`,
+                    }}
+                    onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
+                    role="button"
+                    title="Toggle visibility"
+                  />
+                )}
               </div>
 
-              {/* Dynamic Relation / Graph Type Badge */}
+              {/* Dynamic Relation / Graph Type Input Field */}
               <div className="flex-1 flex items-center bg-white dark:bg-[#1B1B1B] px-2.5 py-1.5 rounded-lg border border-[#E0E0E0] dark:border-[#332D2A] focus-within:ring-2 focus-within:ring-[#5D4037]/30 focus-within:border-[#5D4037]">
                 <input
                   ref={(el) => {
@@ -221,7 +302,11 @@ export default function EquationInput() {
                   onBlur={(e) => handleInputBlur(eq.id, e)}
                   onChange={(e) => updateEquation(eq.id, e.target.value)}
                   className="bg-transparent border-none outline-none w-full font-mono text-xs sm:text-sm text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
-                  placeholder="e.g. y = 2x + 1,  x² + y² = 25,  or  x³ - 3x"
+                  placeholder={
+                    idx === 0
+                      ? 'e.g. y = i2x - 3i,  y = 2x + 1,  x² + y² = 25'
+                      : 'e.g. i = 0.4,  a = 2,  y = -x + 4'
+                  }
                 />
               </div>
 
@@ -229,13 +314,21 @@ export default function EquationInput() {
               {eq.expression.trim() && (
                 <span
                   className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded whitespace-nowrap ${
-                    isImplicit
+                    slider
+                      ? 'bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50'
+                      : isImplicit
                       ? 'bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50'
                       : 'bg-white text-[#757575] border border-[#E0E0E0] dark:bg-[#24201E] dark:text-[#BCAAA4] dark:border-[#3E2723]'
                   }`}
-                  title={isImplicit ? 'Implicit 2D curve or relation F(x, y) = 0' : 'Explicit function y = f(x)'}
+                  title={
+                    slider
+                      ? 'Constant slider parameter used in other expressions'
+                      : isImplicit
+                      ? 'Implicit 2D curve or relation F(x, y) = 0'
+                      : 'Explicit function y = f(x)'
+                  }
                 >
-                  {isImplicit ? 'Curve 2D' : 'Function y'}
+                  {slider ? 'Slider' : isImplicit ? 'Curve 2D' : 'Function y'}
                 </span>
               )}
 
@@ -256,15 +349,17 @@ export default function EquationInput() {
                 {copiedEqId === eq.id ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
               </button>
 
-              {/* Visibility toggle button */}
-              <button
-                type="button"
-                onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
-                className="text-[#757575] hover:text-[#131313] dark:text-[#8D827A] dark:hover:text-white p-1 transition-colors"
-                title={eq.visible ? 'Hide' : 'Show'}
-              >
-                {eq.visible ? <Eye size={15} /> : <EyeOff size={15} />}
-              </button>
+              {/* Visibility toggle button (only for curves) */}
+              {!slider && (
+                <button
+                  type="button"
+                  onClick={() => updateEquation(eq.id, undefined, !eq.visible)}
+                  className="text-[#757575] hover:text-[#131313] dark:text-[#8D827A] dark:hover:text-white p-1 transition-colors"
+                  title={eq.visible ? 'Hide' : 'Show'}
+                >
+                  {eq.visible ? <Eye size={15} /> : <EyeOff size={15} />}
+                </button>
+              )}
 
               {/* Delete button */}
               <button
@@ -277,6 +372,97 @@ export default function EquationInput() {
                 <Trash2 size={15} />
               </button>
             </div>
+
+            {/* Interactive Desmos-Style Parameter Slider Controls */}
+            {slider && (
+              <div className="flex items-center gap-2.5 px-3 py-2 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl shadow-2xs">
+                {/* Play / Pause Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => togglePlaySlider(eq.id)}
+                  className={`p-1.5 rounded-lg border transition-colors ${
+                    playingSliders[eq.id]
+                      ? 'bg-[#5D4037] text-white border-[#795548]'
+                      : 'bg-[#F5F5F5] text-[#5D4037] border-[#E0E0E0] hover:bg-[#EFEBE9] dark:bg-[#24201E] dark:text-[#D7CCC8] dark:border-[#3E2723]'
+                  }`}
+                  title={playingSliders[eq.id] ? 'Pause Animation' : 'Play Animation'}
+                >
+                  {playingSliders[eq.id] ? <Pause size={12} /> : <Play size={12} />}
+                </button>
+
+                {/* Min Bound Indicator */}
+                <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A] select-none">
+                  -10
+                </span>
+
+                {/* Range Slider Track */}
+                <input
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="0.05"
+                  value={slider.value}
+                  onChange={(e) => {
+                    const next = parseFloat(e.target.value);
+                    updateEquation(eq.id, `${slider.variable} = ${next}`);
+                  }}
+                  className="flex-1 accent-[#5D4037] cursor-pointer h-1.5 bg-[#E0E0E0] dark:bg-[#3E2723] rounded-lg"
+                />
+
+                {/* Max Bound Indicator */}
+                <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A] select-none">
+                  10
+                </span>
+
+                {/* Numeric Value Input */}
+                <div className="flex items-center gap-1 bg-[#F5F5F5] dark:bg-[#24201E] px-2 py-0.5 rounded-lg border border-[#E0E0E0] dark:border-[#3E2723]">
+                  <span className="text-[11px] font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+                    {slider.variable} =
+                  </span>
+                  <input
+                    type="number"
+                    step="0.05"
+                    value={slider.value}
+                    onChange={(e) => {
+                      const next = parseFloat(e.target.value);
+                      if (!isNaN(next)) {
+                        updateEquation(eq.id, `${slider.variable} = ${next}`);
+                      }
+                    }}
+                    className="w-12 bg-transparent text-right font-mono text-[11px] font-bold text-[#131313] dark:text-white outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Desmos-style "add slider: [ i ]" suggestion chips */}
+            {unboundVars.length > 0 && (
+              <div className="flex items-center flex-wrap gap-1.5 px-2 py-1 text-xs">
+                <span className="text-[11px] font-mono text-[#757575] dark:text-[#8D827A] flex items-center gap-1">
+                  <Sparkles size={11} className="text-[#5D4037] dark:text-[#D7CCC8]" />
+                  <span>add slider:</span>
+                </span>
+                {unboundVars.map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => addEquation(`${v} = 1`)}
+                    className="px-2 py-0.5 bg-[#EFEBE9] hover:bg-[#5D4037] text-[#5D4037] hover:text-white dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:hover:bg-[#5D4037] rounded-md font-mono text-[11px] font-bold border border-[#D7CCC8] dark:border-[#5D4037] transition-colors shadow-2xs"
+                  >
+                    {v}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    unboundVars.forEach((v) => addEquation(`${v} = 1`));
+                  }}
+                  className="text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8] hover:underline ml-1"
+                >
+                  all
+                </button>
+              </div>
+            )}
 
             {/* Smart tip if user typed x^2 + y^2 without an = value */}
             {needsConstant && (
@@ -301,7 +487,7 @@ export default function EquationInput() {
       {equations.length < 8 && (
         <button
           type="button"
-          onClick={addEquation}
+          onClick={() => addEquation()}
           className="mt-1 text-xs font-mono font-semibold text-[#5D4037] hover:text-white bg-[#F5F5F5] hover:bg-[#5D4037] dark:bg-[#131313] dark:hover:bg-[#262220] dark:text-[#D7CCC8] dark:hover:text-white border border-[#E0E0E0] dark:border-[#2E2825] flex items-center gap-1 py-1.5 px-3 rounded-xl w-fit transition-all active:scale-95 shadow-2xs"
         >
           <Plus size={13} />

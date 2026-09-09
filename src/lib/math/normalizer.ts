@@ -108,6 +108,12 @@ export function normalizeExpression(input: string): string {
     'nthRoot', 'pow', 'mod'
   ];
 
+  // Letter followed by digits followed by letter: i2x → i*2*x, a2x → a*2*x, m3x → m*3*x
+  expr = expr.replace(/([a-zA-Z])(\d+)([a-zA-Z])/g, '$1*$2*$3');
+
+  // Letter with space before digit: i 2x → i*2x
+  expr = expr.replace(/([a-zA-Z])\s+(\d)/g, '$1*$2');
+
   // Digit followed by letter: 3x → 3*x
   expr = expr.replace(/(\d)([a-zA-Z])/g, '$1*$2');
 
