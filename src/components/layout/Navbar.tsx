@@ -17,6 +17,9 @@ import {
   ArrowRightLeft,
   Home as HomeIcon,
   HelpCircle,
+  Percent,
+  Divide,
+  GraduationCap,
   type LucideIcon,
 } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -39,28 +42,36 @@ const TOOL_GROUPS: NavCategory[] = [
       { href: '/', label: 'Home Studio', icon: HomeIcon, badge: 'Hub' },
       { href: '/calculator', label: 'Scientific Calculator', icon: Calculator, badge: 'fx' },
       { href: '/graph', label: '2D Graph Plotter', icon: LineChart, badge: '2D' },
-      { href: '/unit-converter', label: 'Unit Converter', icon: ArrowRightLeft, badge: 'Units' },
-      { href: '/formulas', label: 'Formula Library', icon: BookOpen, badge: 'Σ' },
-    ],
-  },
-  {
-    category: 'Dedicated Solvers',
-    items: [
       { href: '/quadratic-equation-solver', label: 'Quadratic Solver', icon: FunctionSquare, badge: 'ax²' },
       { href: '/equation-solver-with-steps', label: 'Polynomial & Algebra', icon: Superscript, badge: 'Steps' },
-      { href: '/system-of-equations', label: 'System of Equations', icon: FunctionSquare, badge: 'Sys' },
-      { href: '/inequality-solver', label: 'Inequality Solver', icon: FunctionSquare, badge: '≤ ≥' },
-      { href: '/derivative-calculator', label: 'Derivative Calculator', icon: Split, badge: 'd/dx' },
-      { href: '/integral-calculator', label: 'Integral Calculator', icon: Binary, badge: '∫' },
-      { href: '/matrix-solver', label: 'Matrix Calculator', icon: Grid3X3, badge: 'Mat' },
     ],
   },
   {
-    category: 'Guides & Exam Sheets',
+    category: 'Calculus & Advanced Solvers',
     items: [
-      { href: '/formula-sheet/gcse', label: 'GCSE Formula Sheet', icon: BookOpen },
-      { href: '/formula-sheet/a-level', label: 'A-Level Formula Sheet', icon: BookOpen },
-      { href: '/learn', label: 'Learning Guides & Tutorials', icon: HelpCircle },
+      { href: '/derivative-calculator', label: 'Derivative Calculator', icon: Split, badge: 'd/dx' },
+      { href: '/integral-calculator', label: 'Integral Calculator', icon: Binary, badge: '∫' },
+      { href: '/system-of-equations', label: 'System of Equations', icon: FunctionSquare, badge: 'Sys' },
+      { href: '/matrix-solver', label: 'Matrix Calculator', icon: Grid3X3, badge: 'Mat' },
+      { href: '/inequality-solver', label: 'Inequality Solver', icon: FunctionSquare, badge: '≤ ≥' },
+    ],
+  },
+  {
+    category: 'Arithmetic & Everyday Math',
+    items: [
+      { href: '/percentage-calculator', label: 'Percentage Calculator', icon: Percent, badge: '%' },
+      { href: '/fraction-calculator', label: 'Fraction Calculator', icon: Divide, badge: '½' },
+      { href: '/gcd-lcm-calculator', label: 'GCD & LCM Calculator', icon: Binary, badge: 'GCD' },
+      { href: '/unit-converter', label: 'Unit & Currency Converter', icon: ArrowRightLeft, badge: 'Units' },
+    ],
+  },
+  {
+    category: 'Study Guides & Formulas',
+    items: [
+      { href: '/learn', label: 'Math Learning Guides', icon: HelpCircle, badge: 'Learn' },
+      { href: '/formulas', label: 'Formula Library (150+)', icon: BookOpen, badge: 'Σ' },
+      { href: '/formula-sheet/gcse', label: 'GCSE Formula Sheet', icon: GraduationCap },
+      { href: '/formula-sheet/a-level', label: 'A-Level Formula Sheet', icon: GraduationCap },
     ],
   },
 ];
