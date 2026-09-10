@@ -71,14 +71,34 @@ const defaultJsonLd = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8F7L0PRB5N"></script>
+    <!-- Google tag (gtag.js) with Anti-Bot Gating -->
     <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      (function () {
+        // Prevent headless browsers, automated drivers, and known crawler bots from firing GA
+        var isBot = Boolean(
+          navigator.webdriver ||
+          window.__nightmare ||
+          window.callPhantom ||
+          window._phantom ||
+          /bot|googlebot|crawler|spider|robot|crawling|slurp|facebookexternalhit|lighthouse|headless|bytespider|gptbot|bingbot|yandex|duckduckbot/i.test(
+            navigator.userAgent || ''
+          )
+        );
 
-      gtag('config', 'G-8F7L0PRB5N');
+        if (isBot) return;
+
+        // Dynamically inject GA4 only for real human visitors
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8F7L0PRB5N';
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-8F7L0PRB5N');
+      })();
     </script>
 
     <!-- Google AdSense -->
