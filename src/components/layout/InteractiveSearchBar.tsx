@@ -324,7 +324,7 @@ export default function InteractiveSearchBar({
     const clean = query.trim().toLowerCase();
     if (!clean) {
       // In drawer mode or when empty, show top 5 popular tools as suggestions
-      return mode === 'drawer' ? [] : SEARCH_ITEMS.slice(0, 6);
+      return mode === 'drawer' ? [] : SEARCH_ITEMS.slice(0, 4);
     }
 
     return SEARCH_ITEMS.filter((item) => {
@@ -419,16 +419,19 @@ export default function InteractiveSearchBar({
       {/* Live Dropdown Overlay */}
       {isOpen && (filteredResults.length > 0 || query.trim() !== '') && (
         <div
-          className={`absolute left-0 right-0 z-50 mt-2 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl shadow-xl overflow-hidden animate-in fade-in-50 duration-150 ${
-            isHero ? 'max-h-[380px]' : 'max-h-[300px]'
+          className={`absolute left-0 right-0 z-50 mt-1.5 bg-white dark:bg-[#1C1A19] border border-[#D7CCC8] dark:border-[#3E2723] rounded-xl shadow-2xl overflow-hidden animate-in fade-in-50 duration-100 ${
+            isHero ? 'max-h-[260px]' : 'max-h-[220px]'
           } overflow-y-auto`}
         >
           {filteredResults.length > 0 ? (
-            <div className="p-2 space-y-1">
+            <div className="p-1 sm:p-1.5 divide-y divide-[#F0EDE8] dark:divide-[#2A2624]">
               {!query.trim() && isHero && (
-                <div className="px-3 py-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-[#8D6E63] dark:text-[#A19891] flex items-center gap-1.5">
-                  <Sparkles size={12} className="text-amber-500" />
-                  Popular Workstations & Tools
+                <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[#8D6E63] dark:text-[#A19891] flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <Sparkles size={11} className="text-amber-500" />
+                    Popular Tools
+                  </span>
+                  <span className="text-[9px] font-normal lowercase text-[#A19891]">press &uarr;&darr; to navigate</span>
                 </div>
               )}
 
@@ -444,44 +447,44 @@ export default function InteractiveSearchBar({
                       if (onSelect) onSelect();
                     }}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl transition-all duration-150 ${
+                    className={`flex items-center justify-between px-2.5 py-1.5 sm:py-2 rounded-lg transition-colors text-left ${
                       isSelected
-                        ? 'bg-[#EFEBE9] dark:bg-[#2A2320] text-[#5D4037] dark:text-white'
-                        : 'text-[#131313] dark:text-[#E0E0E0] hover:bg-[#FDFBF7] dark:hover:bg-[#221D1B]'
+                        ? 'bg-[#EFEBE9] dark:bg-[#2D2622] text-[#5D4037] dark:text-white'
+                        : 'text-[#131313] dark:text-[#E0E0E0] hover:bg-[#FDFBF7] dark:hover:bg-[#25201E]'
                     }`}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2 rounded-xl bg-white dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] shrink-0">
-                        <Icon size={18} />
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                      <div className="w-6 h-6 rounded-md bg-[#F5F2ED] dark:bg-[#25201E] text-[#5D4037] dark:text-[#D7CCC8] flex items-center justify-center shrink-0 border border-[#E0DCD6] dark:border-[#3E2723]">
+                        <Icon size={13} />
                       </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs sm:text-sm truncate">{item.title}</span>
-                          {item.badge && (
-                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] shrink-0">
-                              {item.badge}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] sm:text-xs text-[#616161] dark:text-[#A19891] truncate m-0 mt-0.5">
-                          {item.description}
-                        </p>
+                      <div className="min-w-0 flex items-baseline gap-2">
+                        <span className="font-semibold text-xs sm:text-sm truncate text-[#131313] dark:text-white">
+                          {item.title}
+                        </span>
+                        {item.badge && (
+                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] shrink-0">
+                            {item.badge}
+                          </span>
+                        )}
+                        <span className="text-[11px] text-[#757575] dark:text-[#A19891] truncate hidden md:inline">
+                          — {item.description}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pl-2 shrink-0">
-                      <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-[#8D6E63] dark:text-[#A19891] hidden sm:inline">
+                    <div className="flex items-center gap-1.5 shrink-0 pl-1">
+                      <span className="text-[9px] uppercase font-mono tracking-wider text-[#8D6E63] dark:text-[#A19891] hidden sm:inline">
                         {item.category}
                       </span>
-                      <ArrowRight size={14} className="text-[#8D6E63] dark:text-[#A19891]" />
+                      <ArrowRight size={12} className="text-[#8D6E63] dark:text-[#A19891]" />
                     </div>
                   </a>
                 );
               })}
             </div>
           ) : (
-            <div className="p-6 text-center text-xs sm:text-sm text-[#616161] dark:text-[#A19891]">
-              No math tools found for &ldquo;<span className="font-semibold text-[#131313] dark:text-white">{query}</span>&rdquo;. Try searching &ldquo;fraction&rdquo;, &ldquo;derivative&rdquo;, or &ldquo;percentage&rdquo;.
+            <div className="p-4 text-center text-xs text-[#757575] dark:text-[#A19891]">
+              No results for &ldquo;<span className="font-semibold text-[#131313] dark:text-white">{query}</span>&rdquo;. Try searching &ldquo;derivative&rdquo; or &ldquo;fraction&rdquo;.
             </div>
           )}
         </div>
