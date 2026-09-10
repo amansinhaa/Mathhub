@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import AdBanner from '@/components/ads/AdBanner.astro';
+import InteractiveSearchBar from '@/components/layout/InteractiveSearchBar';
 import {
   Calculator,
   Percent,
@@ -221,6 +222,11 @@ const POPULAR_PROBLEMS = [
         <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed hidden sm:block">
           Free step-by-step calculators for algebra, calculus, matrices, and graphing. See every line of working and formulas used.
         </p>
+
+        <!-- Interactive Optimized Search Bar -->
+        <div class="py-1">
+          <InteractiveSearchBar client:load mode="hero" placeholder="Search calculators, solvers, formulas, guides... (Press '/' to search)" />
+        </div>
 
         <!-- Quick Problem Pills -->
         <div class="pt-0.5 flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5 sm:flex-wrap">

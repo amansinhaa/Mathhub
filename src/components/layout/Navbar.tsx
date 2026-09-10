@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { ShortcutsModal } from './ShortcutsModal';
+import InteractiveSearchBar from './InteractiveSearchBar';
 
 interface NavCategory {
   category: string;
