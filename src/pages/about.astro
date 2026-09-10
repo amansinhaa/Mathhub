@@ -2,8 +2,8 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { Sparkles, Cpu, ShieldCheck, Heart, ArrowLeft, BookOpen, Compass, Calculator } from 'lucide-react';
 
-const title = 'About Us | EasyEquate';
-const description = 'About EasyEquate — Mission, architecture, and principles behind our free, privacy-first, client-side mathematics and graphing workspace.';
+const title = 'About EasyEquate — Free Step-by-Step Math Tools';
+const description = 'Why EasyEquate was built: fast, free, in-browser math calculators and step-by-step solvers without paywalls, accounts, or intrusive popups.';
 const canonical = 'https://www.easyequate.com/about';
 ---
 
@@ -18,7 +18,7 @@ const canonical = 'https://www.easyequate.com/about';
         <ArrowLeft size={14} /> Back to EasyEquate
       </a>
       <span>/</span>
-      <span class="text-[#5D4037] dark:text-[#D7CCC8] font-bold">About Us</span>
+      <span class="text-[#5D4037] dark:text-[#D7CCC8] font-bold">About</span>
     </div>
 
     <!-- Title Header -->
@@ -31,42 +31,37 @@ const canonical = 'https://www.easyequate.com/about';
           <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
             About EasyEquate
           </h1>
-          <p class="text-xs font-mono text-[#757575] dark:text-[#A19891]">
-            Democratizing Precision Mathematics & Interactive Visual Learning
+          <p class="text-xs sm:text-sm text-[#757575] dark:text-[#A19891] mt-0.5">
+            Free, in-browser math tools that show every step without paywalls or accounts.
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Story & Mission -->
+    <!-- Story & Motivation -->
     <div class="prose prose-neutral dark:prose-invert max-w-none text-sm leading-relaxed space-y-6 text-[#424242] dark:text-[#D7CCC8]">
       <section class="space-y-3">
         <h2 class="text-lg font-bold text-[#131313] dark:text-white">
-          Our Mission
+          Why I Built This
         </h2>
         <p>
-          <strong>EasyEquate</strong> was founded with a singular conviction: mathematical tools
-          should be <em>fast</em>, <em>frictionless</em>, and <em>accessible to every student and educator worldwide</em> without
-          paywalls, subscription gates, or invasive data harvesting.
+          If you've ever tried looking up a math solution online late at night while doing homework, you've probably run into the same frustration:
+          popular solver websites show you the final answer, but blur out all the intermediate steps unless you pay $10/month. Other sites bombard you with popups, force you to create an account, or take forever to load.
         </p>
         <p>
-          Traditional graphing software and step-by-step solvers often lock necessary intermediate steps
-          behind expensive monthly subscriptions or bombard students with intrusive pop-ups that derail
-          their concentration. EasyEquate provides a distraction-free, instrument-grade mathematics studio
-          that pairs symbolic computational power with human-readable pedagogy.
+          I built <strong>EasyEquate</strong> as a cleaner alternative. It gives students, teachers, and anyone brushing up on math a straightforward place to solve equations, plot graphs, and actually see how the solution was found—completely free, with zero sign-up required.
         </p>
       </section>
 
-      <!-- Core Pillars Grid -->
+      <!-- Three Pillars -->
       <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 py-2 not-prose">
         <div class="p-4 rounded-2xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] space-y-2 shadow-2xs">
           <div class="w-8 h-8 rounded-lg bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] flex items-center justify-center font-bold">
             <Cpu size={18} />
           </div>
-          <h3 class="font-bold text-sm text-[#131313] dark:text-white">100% Client-Side</h3>
+          <h3 class="font-bold text-sm text-[#131313] dark:text-white">Runs in Your Browser</h3>
           <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">
-            Every expression, derivative, integral, and polynomial division runs directly in your browser.
-            Calculations are instant and work offline.
+            Calculations and graphs are evaluated directly on your device using JavaScript. There's no server lag or queue.
           </p>
         </div>
 
@@ -74,9 +69,9 @@ const canonical = 'https://www.easyequate.com/about';
           <div class="w-8 h-8 rounded-lg bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] flex items-center justify-center font-bold">
             <ShieldCheck size={18} />
           </div>
-          <h3 class="font-bold text-sm text-[#131313] dark:text-white">Privacy First</h3>
+          <h3 class="font-bold text-sm text-[#131313] dark:text-white">No Accounts or Logins</h3>
           <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">
-            No accounts, no user tracking, no hidden profiles. Your educational queries never leave your machine.
+            No signup, no passwords, no email collection. Just bookmark the page and use it whenever you need it.
           </p>
         </div>
 
@@ -84,25 +79,25 @@ const canonical = 'https://www.easyequate.com/about';
           <div class="w-8 h-8 rounded-lg bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] flex items-center justify-center font-bold">
             <Heart size={18} />
           </div>
-          <h3 class="font-bold text-sm text-[#131313] dark:text-white">Free for Everyone</h3>
+          <h3 class="font-bold text-sm text-[#131313] dark:text-white">Every Step Included</h3>
           <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">
-            Built for high schoolers, university engineering students, and educators preparing classroom sheets.
+            From polynomial synthetic division to calculus chain rules, step-by-step workings are open to everyone.
           </p>
         </div>
       </section>
 
-      <!-- Modules Overview -->
+      <!-- What's on EasyEquate -->
       <section class="space-y-3">
         <h2 class="text-lg font-bold text-[#131313] dark:text-white">
-          What EasyEquate Offers
+          What You Can Do on EasyEquate
         </h2>
         <div class="space-y-3 not-prose">
           <div class="flex items-start gap-3 p-3.5 rounded-xl bg-[#F5F5F5] dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825]">
             <Calculator className="text-[#5D4037] dark:text-[#D7CCC8] shrink-0 mt-0.5" size={18} />
             <div>
-              <h4 class="text-xs font-bold text-[#131313] dark:text-white">Scientific Calculator & Matrix Engine</h4>
+              <h4 class="text-xs font-bold text-[#131313] dark:text-white">Calculators & Conversions</h4>
               <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">
-                Real and complex evaluation, unit conversions, matrix determinants, inverses, eigenvalues, and full history logging.
+                Scientific calculator with calculation history, percentages, fractions, GCD/LCM, unit conversions, and full matrix operations (determinant, inverse, RREF).
               </p>
             </div>
           </div>
@@ -110,9 +105,9 @@ const canonical = 'https://www.easyequate.com/about';
           <div class="flex items-start gap-3 p-3.5 rounded-xl bg-[#F5F5F5] dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825]">
             <Compass className="text-[#5D4037] dark:text-[#D7CCC8] shrink-0 mt-0.5" size={18} />
             <div>
-              <h4 class="text-xs font-bold text-[#131313] dark:text-white">Step-by-Step Polynomial & Equation Solver</h4>
+              <h4 class="text-xs font-bold text-[#131313] dark:text-white">Step-by-Step Algebra & Calculus Solvers</h4>
               <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">
-                Complete intermediate workings including factoring, synthetic division, and polynomial long division steps rendered in clean KaTeX.
+                Quadratic equations, polynomials, systems of equations, derivatives, and integrals with detailed intermediate working.
               </p>
             </div>
           </div>
@@ -120,37 +115,35 @@ const canonical = 'https://www.easyequate.com/about';
           <div class="flex items-start gap-3 p-3.5 rounded-xl bg-[#F5F5F5] dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825]">
             <BookOpen className="text-[#5D4037] dark:text-[#D7CCC8] shrink-0 mt-0.5" size={18} />
             <div>
-              <h4 class="text-xs font-bold text-[#131313] dark:text-white">Curriculum Formula Sheets & 2D Graphing</h4>
+              <h4 class="text-xs font-bold text-[#131313] dark:text-white">2D Graphing & Exam Formula Sheets</h4>
               <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">
-                Board-aligned revision guides (GCSE, A-Level, Edexcel, Class 10/12) and zero-scroll interactive function plotting.
+                Interactive function plotter with turning points and roots, plus quick-reference formula sheets for GCSE, A-Level, Edexcel, and CBSE boards.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Editorial Standards & Integrity -->
+      <!-- Technical Approach -->
       <section class="space-y-3">
         <h2 class="text-lg font-bold text-[#131313] dark:text-white">
-          Editorial Integrity & Quality Standards
+          How It's Built
         </h2>
         <p>
-          All mathematical algorithms and formula derivations are vetted against standard academic
-          curricula and verified using established symbolic libraries (Math.js and Nerdamer). We
-          regularly update our step generator to ensure pedagogy aligns with examination standards.
+          EasyEquate is built with Astro, React, and Tailwind CSS. Symbolic math is powered by open-source libraries like Math.js and Nerdamer, paired with custom step-generation logic to make algebraic steps look the way they are taught in school and college classrooms.
         </p>
       </section>
 
       <!-- Creator / Organization Info -->
       <section class="space-y-3 pt-4 border-t border-[#E0E0E0] dark:border-[#2E2825]">
         <h2 class="text-lg font-bold text-[#131313] dark:text-white">
-          Creator & Location
+          Creator & Contact
         </h2>
-        <div class="p-4 rounded-xl bg-white dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#2E2825] font-mono text-xs space-y-1">
-          <div><strong>Project:</strong> EasyEquate</div>
-          <div><strong>Founder / Maintainer:</strong> Aman Kumar</div>
-          <div><strong>Origin:</strong> India</div>
-          <div><strong>Contact:</strong> <a href="mailto:kumaraman6376@gmail.com" class="text-[#5D4037] dark:text-[#E0A99A] underline">kumaraman6376@gmail.com</a></div>
+        <div class="p-4 rounded-xl bg-white dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#2E2825] text-xs space-y-1">
+          <div><span class="font-bold text-[#131313] dark:text-white">Creator:</span> Aman Kumar</div>
+          <div><span class="font-bold text-[#131313] dark:text-white">Location:</span> India</div>
+          <div><span class="font-bold text-[#131313] dark:text-white">Email:</span> <a href="mailto:kumaraman6376@gmail.com" class="text-[#5D4037] dark:text-[#D7CCC8] underline">kumaraman6376@gmail.com</a></div>
+          <div class="text-[#757575] dark:text-[#A19891] pt-1">If you spot a bug or want to suggest a new calculator feature, feel free to reach out.</div>
         </div>
       </section>
     </div>

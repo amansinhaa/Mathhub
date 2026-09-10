@@ -55,10 +55,10 @@ const faqSchema = {
 
     <h1 class="text-3xl sm:text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">How to Find Limits in Calculus</h1>
     <p class="lead text-lg text-[#131313] dark:text-[#E0E0E0] mb-8">
-      Limits are the foundation of all calculus, including derivatives and integrals. Here is the complete step-by-step framework to evaluate any limit.
+      Evaluating limits is the starting point of calculus. When plugging in a number gives you 0/0, these four methods will help you solve almost any limit problem.
     </p>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">Step 1: Always Try Direct Substitution First</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. Direct Substitution (Try This First)</h2>
     <p>
       The simplest technique is to plug the target number directly into <code>x</code>. If the function is continuous at that point, the result is your answer.
     </p>
@@ -66,7 +66,7 @@ const faqSchema = {
       lim (x &rarr; 3) [x² + 2x - 1] = (3)² + 2(3) - 1 = 9 + 6 - 1 = 14
     </div>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">Step 2: Factoring and Canceling (When You Get 0/0)</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. Factoring and Canceling (For 0/0 Forms)</h2>
     <p>
       If direct substitution yields <code>0/0</code>, you have an <strong>indeterminate form</strong>. There is usually a removable "hole" in the graph caused by a common factor.
     </p>
@@ -78,7 +78,7 @@ const faqSchema = {
       <li>Now substitute <code>x = 2</code>: <code>2 + 2 = 4</code>.</li>
     </ol>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">Step 3: Conjugate / Rationalization (For Square Roots)</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">3. Multiplying by the Conjugate (For Square Roots)</h2>
     <p>
       When an expression has radical terms (square roots) producing <code>0/0</code>, multiply both the numerator and denominator by the <strong>conjugate</strong> (change the sign between the terms).
     </p>
@@ -86,7 +86,7 @@ const faqSchema = {
       For example, if you have <code>(&radic;(x + 1) - 1) / x</code> as <code>x &rarr; 0</code>, multiply by <code>(&radic;(x + 1) + 1)</code>. The square roots eliminate, leaving an algebraic factor that cancels cleanly.
     </p>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">Step 4: L'Hôpital's Rule</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">4. L'Hôpital's Rule</h2>
     <p>
       For stubborn fractions producing <code>0/0</code> or <code>&infin;/&infin;</code>, differentiate the top and bottom separately:
     </p>

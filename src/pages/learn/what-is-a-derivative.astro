@@ -63,21 +63,18 @@ const faqSchema = {
 
     <h1 class="text-3xl sm:text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">What is a Derivative?</h1>
     <p class="lead text-lg text-[#131313] dark:text-[#E0E0E0] mb-8">
-      Calculus often feels intimidating, but the core concept of a derivative is something you already experience every day: the speed of change.
+      At its simplest, a derivative tells you how fast something is changing at an exact moment in time. Here is a clear, visual way to understand it without getting bogged down in confusing jargon.
     </p>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. The Intuition: The Car Speedometer</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. Average Speed vs. Instant Speed</h2>
     <p>
-      Imagine taking a 100-mile road trip that takes exactly 2 hours. If you divide 100 miles by 2 hours, you get an <strong>average speed</strong> of 50 mph.
+      If you drive 100 miles in 2 hours, your average speed was 50 mph. But you weren't driving at 50 mph the whole time—you stopped at red lights, slowed down for turns, and drove faster on highways.
     </p>
     <p>
-      Did you travel at exactly 50 mph the entire trip? Of course not. You were stopped at traffic lights at 0 mph, cruising on highways at 65 mph, and turning corners at 20 mph.
-    </p>
-    <p>
-      When you look down at your speedometer at any given split-second, the number you see is your <strong>instantaneous speed</strong>. That instantaneous speed is precisely what a <strong>derivative</strong> represents in mathematics.
+      The number on your speedometer at any single moment is your <strong>instantaneous speed</strong>. In mathematics, that instantaneous rate of change is called the <strong>derivative</strong>.
     </p>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. The Geometric Meaning: Tangent Lines</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. Slopes and Tangent Lines</h2>
     <p>
       On a standard linear graph (a straight line like <code>y = 2x + 1</code>), the slope is constant everywhere. The slope is 2 no matter which point you pick.
     </p>
@@ -96,7 +93,7 @@ const faqSchema = {
       f'(x) = lim (h &rarr; 0) [f(x + h) - f(x)] / h
     </div>
 
-    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">4. Essential Rules You Must Know</h2>
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">4. Common Derivative Rules</h2>
     <p>Rather than computing limits by hand every time, calculus provides shortcuts:</p>
     <ul>
       <li><strong>Power Rule:</strong> <code>d/dx [xⁿ] = n · xⁿ⁻¹</code> &mdash; Example: derivative of <code>x⁴</code> is <code>4x³</code>.</li>
@@ -108,7 +105,7 @@ const faqSchema = {
     <div class="not-prose my-8 p-6 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl shadow-sm">
       <h3 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Try it Live: Graphing a Function and Its Slope</h3>
       <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-        Below is our interactive graphing tool. Try graphing <code>f(x) = x^2</code>. Notice that at <code>x = 0</code> the curve is completely flat (derivative = 0). For <code>x &gt; 0</code> it slopes upwards, and for <code>x &lt; 0</code> it slopes downwards!
+        Try graphing <code>f(x) = x^2</code>. Notice that at <code>x = 0</code> the curve is completely flat (derivative = 0). For <code>x &gt; 0</code> it slopes upwards, and for <code>x &lt; 0</code> it slopes downwards!
       </p>
       <div class="h-[500px] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl overflow-hidden">
         <GraphModuleClient client:only="react" />
