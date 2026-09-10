@@ -3,6 +3,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import AdBanner from '@/components/ads/AdBanner.astro';
 import {
   Calculator,
+  Percent,
+  Divide,
   LineChart,
   FunctionSquare,
   Superscript,
@@ -22,6 +24,33 @@ const description = 'Free online math calculators: scientific calculator, 2D gra
 const canonical = 'https://www.easyequate.com';
 
 const WORKSTATIONS = [
+  {
+    title: 'Percentage Calculator',
+    href: '/percentage-calculator',
+    badge: '% Ratio',
+    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+    description: 'Calculate percentage of numbers, percentage change, increase, decrease, discounts, and markups.',
+    Icon: Percent,
+    tags: ['Percentage Of', 'Increase & Decrease', 'Discount & Tax', 'Percent Difference'],
+  },
+  {
+    title: 'Fraction Calculator',
+    href: '/fraction-calculator',
+    badge: 'Fractions',
+    badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
+    description: 'Add, subtract, multiply, and divide fractions with LCD, automatic simplification, and mixed numbers.',
+    Icon: Divide,
+    tags: ['Add & Subtract', 'Multiply & Divide', 'Mixed Numbers', 'Lowest Terms'],
+  },
+  {
+    title: 'GCD & LCM Calculator',
+    href: '/gcd-lcm-calculator',
+    badge: 'Divisors',
+    badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
+    description: 'Find the Greatest Common Divisor (HCF) and Least Common Multiple with Euclidean division steps.',
+    Icon: Binary,
+    tags: ['Greatest Common Divisor', 'Least Common Multiple', 'Euclidean Algorithm', 'Prime Factors'],
+  },
   {
     title: 'Scientific Calculator',
     href: '/calculator',

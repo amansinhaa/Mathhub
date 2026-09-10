@@ -1,0 +1,111 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PercentageCalculator from '@/components/calculator/PercentageCalculator';
+import AdBanner from '@/components/ads/AdBanner.astro';
+
+const title = 'Percentage Calculator — Free Online % Calculator';
+const description = 'Free percentage calculator. Easily find percentage of a number, percentage change, increase, decrease, markup, and discount with steps shown.';
+const canonical = 'https://www.easyequate.com/percentage-calculator';
+
+const faqs = [
+  {
+    q: "How do you calculate a percentage of a number?",
+    a: "Convert the percentage to a decimal by dividing by 100, then multiply by the number. For example, to find 20% of 150: (20 ÷ 100) × 150 = 0.20 × 150 = 30."
+  },
+  {
+    q: "How do you calculate percentage increase or decrease?",
+    a: "Subtract the old value from the new value, divide by the absolute value of the original number, and multiply by 100: ((New - Old) ÷ |Old|) × 100. If positive, it is an increase; if negative, it is a decrease."
+  },
+  {
+    q: "What is the formula to find what percent X is of Y?",
+    a: "Divide the part (X) by the whole (Y) and multiply by 100: (X ÷ Y) × 100%. For example, 25 out of 200 is (25 ÷ 200) × 100% = 12.5%."
+  },
+  {
+    q: "How do you calculate a discount or sales tax?",
+    a: "To add tax or markup: Original × (1 + Rate ÷ 100). To subtract a discount: Original × (1 - Discount ÷ 100). For example, a 15% discount on $80 is 80 × (1 - 0.15) = 80 × 0.85 = $68."
+  }
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "EasyEquate Percentage Calculator",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": faqs.map(f => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.a
+        }
+      }))
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
+  <div class="w-full text-[#131313] dark:text-[#F5F5F5] py-1">
+    <div class="max-w-6xl xl:max-w-7xl mx-auto space-y-4 sm:space-y-6">
+      <header class="space-y-1 sm:space-y-1.5 text-center sm:text-left pt-10 sm:pt-0 sm:pl-36 md:pl-44">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[10px] sm:text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8]">
+          <span>ARITHMETIC TOOLS</span>
+          <span>•</span>
+          <span>REAL-TIME % CALCULATOR</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+          Percentage Calculator
+        </h1>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] max-w-3xl">
+          Quickly compute percentages, percentage change, increases, discounts, and common ratios with exact mathematical step-by-step working.
+        </p>
+      </header>
+
+      <section class="w-full">
+        <PercentageCalculator client:load />
+      </section>
+
+      <AdBanner />
+
+      <section class="bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs space-y-3">
+        <h2 class="text-base sm:text-lg font-bold text-[#131313] dark:text-white">Understanding Percentages</h2>
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed">
+          The word <em>percentage</em> comes from the Latin <em>per centum</em>, meaning "by the hundred." A percentage is simply a fraction or ratio with a denominator of 100. Whether calculating tips, sales discounts, tax obligations, or scientific growth rates, percentage calculations provide a standardized way to compare relative proportions.
+        </p>
+      </section>
+
+      <section class="space-y-3 sm:space-y-4">
+        <h2 class="text-base sm:text-xl font-bold text-[#131313] dark:text-white">Frequently Asked Questions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {faqs.map(faq => (
+            <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+              <h3 class="text-xs sm:text-sm font-bold text-[#131313] dark:text-white">{faq.q}</h3>
+              <p class="text-xs text-[#616161] dark:text-[#A19891] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer class="text-center space-y-4 pt-8 border-t border-[#E0E0E0] dark:border-[#5D4037]">
+        <h3 class="text-xl font-medium">Explore Related Calculators</h3>
+        <div class="flex flex-wrap justify-center gap-4 text-sm">
+          <a href="/fraction-calculator" class="text-blue-600 dark:text-blue-400 hover:underline">Fraction Calculator</a>
+          <a href="/gcd-lcm-calculator" class="text-blue-600 dark:text-blue-400 hover:underline">GCD & LCM Calculator</a>
+          <a href="/calculator" class="text-blue-600 dark:text-blue-400 hover:underline">Scientific Calculator</a>
+          <a href="/unit-converter" class="text-blue-600 dark:text-blue-400 hover:underline">Unit Converter</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,144 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GraphModuleClient from '@/components/shared/GraphModuleClient';
+import AdBanner from '@/components/ads/AdBanner.astro';
+
+const title = 'What is a Derivative? Simple Explanation with Steps';
+const description = 'Learn what a derivative is in calculus with intuitive real-world examples, rates of change, tangent lines, core rules, and an interactive live graph.';
+const canonical = 'https://www.easyequate.com/learn/what-is-a-derivative';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a derivative in simple terms?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In simple terms, a derivative is the exact instantaneous rate at which something is changing at a specific moment. Geometrically, it is the slope of the tangent line touching a curve at that exact point."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between average rate of change and instantaneous rate of change?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Average rate of change is measured over an interval of time (like dividing total miles by total hours on a road trip). Instantaneous rate of change is what your speedometer shows at a single exact split-second."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Power Rule in calculus?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The power rule states that for any power function f(x) = x^n, its derivative is f'(x) = n · x^(n - 1). For example, the derivative of x^3 is 3x^2."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the derivative of a constant number zero?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A constant number never changes—its graph is a completely flat horizontal line with a slope of 0. Because a derivative measures change, and a constant has zero change, its derivative is always 0."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does a negative derivative mean on a graph?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A negative derivative indicates that the curve is sloping downward from left to right at that point, meaning the function's output values are decreasing as x increases."
+      }
+    }
+  ]
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} jsonLd={faqSchema}>
+  <article class="max-w-4xl mx-auto px-4 py-8 prose prose-brown dark:prose-invert pt-10 sm:pt-8 sm:pl-36 md:pl-44">
+    <div class="mb-6">
+      <a href="/learn" class="text-sm font-medium text-[#5D4037] dark:text-[#D7CCC8] hover:underline">&larr; Back to Guides</a>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">What is a Derivative?</h1>
+    <p class="lead text-lg text-[#131313] dark:text-[#E0E0E0] mb-8">
+      Calculus often feels intimidating, but the core concept of a derivative is something you already experience every day: the speed of change.
+    </p>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">1. The Intuition: The Car Speedometer</h2>
+    <p>
+      Imagine taking a 100-mile road trip that takes exactly 2 hours. If you divide 100 miles by 2 hours, you get an <strong>average speed</strong> of 50 mph.
+    </p>
+    <p>
+      Did you travel at exactly 50 mph the entire trip? Of course not. You were stopped at traffic lights at 0 mph, cruising on highways at 65 mph, and turning corners at 20 mph.
+    </p>
+    <p>
+      When you look down at your speedometer at any given split-second, the number you see is your <strong>instantaneous speed</strong>. That instantaneous speed is precisely what a <strong>derivative</strong> represents in mathematics.
+    </p>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">2. The Geometric Meaning: Tangent Lines</h2>
+    <p>
+      On a standard linear graph (a straight line like <code>y = 2x + 1</code>), the slope is constant everywhere. The slope is 2 no matter which point you pick.
+    </p>
+    <p>
+      Curved graphs (like parabolas <code>y = x²</code>) don't have a single slope—they curve and steepen. If you draw a line that brushes against the curve at a single point without slicing through it, that line is called the <strong>tangent line</strong>.
+    </p>
+    <div class="bg-[#EFEBE9] dark:bg-[#3E2723] p-4 rounded-lg my-4 text-center font-mono text-base sm:text-lg">
+      The Derivative at x = The Slope of the Tangent Line at (x, f(x))
+    </div>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">3. The Formal Definition</h2>
+    <p>
+      In calculus, mathematicians define the derivative by taking the slope between two nearby points on a curve and letting the horizontal distance (<code>h</code>) shrink toward zero:
+    </p>
+    <div class="bg-[#EFEBE9] dark:bg-[#3E2723] p-4 rounded-lg my-4 text-center font-mono text-base sm:text-lg">
+      f'(x) = lim (h &rarr; 0) [f(x + h) - f(x)] / h
+    </div>
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-8 mb-4">4. Essential Rules You Must Know</h2>
+    <p>Rather than computing limits by hand every time, calculus provides shortcuts:</p>
+    <ul>
+      <li><strong>Power Rule:</strong> <code>d/dx [xⁿ] = n · xⁿ⁻¹</code> &mdash; Example: derivative of <code>x⁴</code> is <code>4x³</code>.</li>
+      <li><strong>Constant Rule:</strong> <code>d/dx [c] = 0</code> &mdash; A flat number never changes.</li>
+      <li><strong>Constant Multiple Rule:</strong> <code>d/dx [c · f(x)] = c · f'(x)</code> &mdash; Example: derivative of <code>5x³</code> is <code>5(3x²) = 15x²</code>.</li>
+      <li><strong>Sum & Difference Rule:</strong> <code>d/dx [f(x) &plusmn; g(x)] = f'(x) &plusmn; g'(x)</code>.</li>
+    </ul>
+
+    <div class="not-prose my-8 p-6 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl shadow-sm">
+      <h3 class="text-xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2">Try it Live: Graphing a Function and Its Slope</h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        Below is our interactive graphing tool. Try graphing <code>f(x) = x^2</code>. Notice that at <code>x = 0</code> the curve is completely flat (derivative = 0). For <code>x &gt; 0</code> it slopes upwards, and for <code>x &lt; 0</code> it slopes downwards!
+      </p>
+      <div class="h-[500px] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl overflow-hidden">
+        <GraphModuleClient client:only="react" />
+      </div>
+    </div>
+
+    <AdBanner />
+
+    <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-12 mb-6">Frequently Asked Questions</h2>
+    <div class="space-y-4">
+      {faqSchema.mainEntity.map((item) => (
+        <div class="border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg p-4 bg-white dark:bg-[#1B1B1B]">
+          <h3 class="font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-2 text-base">{item.name}</h3>
+          <p class="text-sm text-[#131313] dark:text-[#E0E0E0] m-0">{item.acceptedAnswer.text}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-[#E0E0E0] dark:border-[#2E2825]">
+      <h3 class="text-lg font-bold text-[#5D4037] dark:text-[#EFEBE9] mb-4">Practice with Solvers & Next Guides:</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-prose">
+        <a href="/derivative-calculator" class="p-4 border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#1B1B1B]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">INTERACTIVE TOOL &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">Derivative Calculator with Steps</span>
+        </a>
+        <a href="/learn/how-to-find-limits" class="p-4 border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl hover:shadow-md transition-shadow bg-white dark:bg-[#1B1B1B]">
+          <span class="text-xs text-[#5D4037] dark:text-[#D7CCC8] font-bold block mb-1">CALCULUS GUIDE &rarr;</span>
+          <span class="font-bold text-[#131313] dark:text-white">How to Find Limits Step-by-Step</span>
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
