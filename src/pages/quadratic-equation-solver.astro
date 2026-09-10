@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import EquationSolver from '@/components/solver/EquationSolver';
+import AdBanner from '@/components/ads/AdBanner.astro';
 
 const title = 'Quadratic Equation Solver with Steps | EasyEquate';
 const description = 'Free step-by-step quadratic equation solver. Shows factoring, quadratic formula, discriminant (Δ), vertex, and complex roots with complete working steps.';
@@ -94,6 +95,9 @@ const jsonLd = {
       <section class="w-full">
         <EquationSolver client:load initialMode="polynomial" initialEquation="x^2 - 5x + 6 = 0" hideHeader wideLayout />
       </section>
+
+      <!-- Clean Empty Space: AdBanner below solver widget -->
+      <AdBanner />
 
       <section class="bg-white dark:bg-[#1B1B1B] p-4 sm:p-6 rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs space-y-3">
         <h2 class="text-base sm:text-lg font-bold text-[#131313] dark:text-white">Understanding Quadratic Equations</h2>

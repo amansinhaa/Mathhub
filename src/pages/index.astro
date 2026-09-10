@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import AdBanner from '@/components/ads/AdBanner.astro';
 import {
   Calculator,
   LineChart,
@@ -258,6 +259,9 @@ const POPULAR_PROBLEMS = [
         })}
       </div>
     </section>
+
+    <!-- Clean Empty Space: AdBanner between workstations and features -->
+    <AdBanner />
 
     <!-- Trust & Educational Principles Section -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">

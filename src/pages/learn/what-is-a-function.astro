@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import GraphModuleClient from '@/components/shared/GraphModuleClient';
+import AdBanner from '@/components/ads/AdBanner.astro';
 
 const title = 'What is a Function? Definition & Examples | EasyEquate';
 const description = 'Learn what a function is in maths with simple examples, domain & range explained, and a live interactive graph you can try yourself. Free guide.';
@@ -122,6 +123,9 @@ const faqSchema = {
         <GraphModuleClient client:only="react" />
       </div>
     </div>
+
+    <!-- Clean Empty Space: AdBanner between interactive graph and FAQs -->
+    <AdBanner />
 
     <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#EFEBE9] mt-12 mb-6">Frequently Asked Questions</h2>
     <div class="space-y-4">

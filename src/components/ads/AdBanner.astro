@@ -1,0 +1,35 @@
+---
+interface Props {
+  slotId?: string;
+  format?: 'auto' | 'horizontal' | 'rectangle';
+  className?: string;
+}
+
+const {
+  slotId = '4268675734',
+  format = 'auto',
+  className = '',
+} = Astro.props;
+---
+
+<div class={`w-full my-8 flex flex-col items-center justify-center overflow-hidden ${className}`}>
+  <span class="text-[10px] font-mono uppercase tracking-widest text-[#A89F91] dark:text-[#7D7568] mb-1.5 select-none">
+    Advertisement
+  </span>
+  <div class="w-full max-w-4xl min-h-[90px] bg-[#F5F2E9]/40 dark:bg-[#1C1B1A]/40 border border-[#E6E0D4] dark:border-[#2E2B27] rounded-xl flex items-center justify-center p-2">
+    <!-- EasyEquate-Horizontal-Banner -->
+    <ins
+      class="adsbygoogle"
+      style="display:block; width:100%; text-align:center;"
+      data-ad-client="ca-pub-2475081427029279"
+      data-ad-slot={slotId}
+      data-ad-format={format}
+      data-full-width-responsive="true"
+    ></ins>
+    <script is:inline>
+      try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {}
+    </script>
+  </div>
+</div>
