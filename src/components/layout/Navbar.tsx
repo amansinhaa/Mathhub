@@ -69,6 +69,7 @@ const TOOL_GROUPS: NavCategory[] = [
   {
     category: 'Study Guides & Formulas',
     items: [
+      { href: '/solve', label: 'Solved Problems Library', icon: BookOpen, badge: '65+' },
       { href: '/learn', label: 'Math Learning Guides', icon: HelpCircle, badge: 'Learn' },
       { href: '/formulas', label: 'Formula Library (150+)', icon: BookOpen, badge: 'Σ' },
       { href: '/formula-sheet/gcse', label: 'GCSE Formula Sheet', icon: GraduationCap },

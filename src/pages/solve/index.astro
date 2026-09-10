@@ -1,0 +1,160 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { ALL_PROBLEMS, type SolvedProblem } from '@/data/problems';
+import { BookOpen, ArrowRight, Calculator, CheckCircle2, ArrowLeft, Search } from 'lucide-react';
+
+const title = 'Solved Math Problems Library — Step-by-Step Solutions | EasyEquate';
+const description = 'Explore 65+ step-by-step solved math problems. Detailed derivatives, integrals, and quadratic equation solutions with formulas and explanations.';
+const canonical = 'https://www.easyequate.com/solve';
+
+const derivatives = ALL_PROBLEMS.filter((p) => p.toolType === 'derivative');
+const integrals = ALL_PROBLEMS.filter((p) => p.toolType === 'integral');
+const quadratics = ALL_PROBLEMS.filter((p) => p.category === 'algebra');
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <div class="max-w-5xl mx-auto py-6 sm:py-10 px-4 space-y-8 animate-fade-in pt-10 sm:pt-6 sm:pl-36 md:pl-44">
+    <!-- Breadcrumb Navigation -->
+    <div class="flex items-center gap-2 text-xs font-mono text-[#757575] dark:text-[#A19891]">
+      <a href="/" class="hover:text-[#5D4037] dark:hover:text-white flex items-center gap-1 transition-colors">
+        <ArrowLeft size={14} /> Back to EasyEquate
+      </a>
+      <span>/</span>
+      <span class="text-[#5D4037] dark:text-[#D7CCC8] font-bold">Solved Problems Library</span>
+    </div>
+
+    <!-- Title Header -->
+    <header class="space-y-3 border-b border-[#E0E0E0] dark:border-[#2E2825] pb-5">
+      <div class="flex items-center gap-2.5">
+        <div class="p-2 rounded-xl bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8]">
+          <BookOpen size={24} />
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#131313] dark:text-white">
+            Solved Math Problems Library
+          </h1>
+          <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] mt-0.5">
+            Step-by-step solutions for 65+ textbook calculus, derivative, integral, and quadratic problems.
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Derivatives Section -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+            Derivatives with Steps (d/dx)
+          </h2>
+          <p class="text-xs text-[#616161] dark:text-[#A19891]">
+            Power rule, product rule, quotient rule, chain rule, and trig derivatives.
+          </p>
+        </div>
+        <span class="text-xs font-mono text-[#5D4037] dark:text-[#D7CCC8] font-bold">
+          {derivatives.length} Problems
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {derivatives.map((p) => (
+          <a
+            href={`/solve/${p.category}/${p.slug}`}
+            class="group p-3 rounded-xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] hover:border-[#5D4037] dark:hover:border-[#D7CCC8] transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-[#131313] dark:text-white group-hover:text-[#5D4037] dark:group-hover:text-[#D7CCC8]">
+                {p.problemText}
+              </div>
+              <div class="text-[11px] text-[#757575] dark:text-[#A19891] mt-0.5 line-clamp-1">
+                {p.requiredFormula.name}
+              </div>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-[10px] font-mono text-[#8D6E63] dark:text-[#A19891]">
+              <span>View steps</span>
+              <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Integrals Section -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+            Integrals with Steps (∫ dx)
+          </h2>
+          <p class="text-xs text-[#616161] dark:text-[#A19891]">
+            Power rule, antiderivatives, u-substitution, and standard trigonometric integrals.
+          </p>
+        </div>
+        <span class="text-xs font-mono text-[#5D4037] dark:text-[#D7CCC8] font-bold">
+          {integrals.length} Problems
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {integrals.map((p) => (
+          <a
+            href={`/solve/${p.category}/${p.slug}`}
+            class="group p-3 rounded-xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] hover:border-[#5D4037] dark:hover:border-[#D7CCC8] transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-[#131313] dark:text-white group-hover:text-[#5D4037] dark:group-hover:text-[#D7CCC8]">
+                {p.problemText}
+              </div>
+              <div class="text-[11px] text-[#757575] dark:text-[#A19891] mt-0.5 line-clamp-1">
+                {p.requiredFormula.name}
+              </div>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-[10px] font-mono text-[#8D6E63] dark:text-[#A19891]">
+              <span>View steps</span>
+              <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Quadratics Section -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-[#131313] dark:text-white">
+            Quadratic & Polynomial Equations with Steps
+          </h2>
+          <p class="text-xs text-[#616161] dark:text-[#A19891]">
+            Factoring, quadratic formula, difference of squares, repeated roots, and complex roots.
+          </p>
+        </div>
+        <span class="text-xs font-mono text-[#5D4037] dark:text-[#D7CCC8] font-bold">
+          {quadratics.length} Problems
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {quadratics.map((p) => (
+          <a
+            href={`/solve/${p.category}/${p.slug}`}
+            class="group p-3 rounded-xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] hover:border-[#5D4037] dark:hover:border-[#D7CCC8] transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div class="font-bold text-xs sm:text-sm text-[#131313] dark:text-white group-hover:text-[#5D4037] dark:group-hover:text-[#D7CCC8]">
+                {p.problemText}
+              </div>
+              <div class="text-[11px] text-[#757575] dark:text-[#A19891] mt-0.5 line-clamp-1">
+                {p.requiredFormula.name}
+              </div>
+            </div>
+            <div class="pt-2 flex items-center justify-between text-[10px] font-mono text-[#8D6E63] dark:text-[#A19891]">
+              <span>View steps</span>
+              <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
