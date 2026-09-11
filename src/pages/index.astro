@@ -151,6 +151,15 @@ const WORKSTATIONS = [
     Icon: GraduationCap,
     tags: ['Functions', 'Domain & Range', 'Derivatives', 'Limits'],
   },
+  {
+    title: 'Solved Problems Library',
+    href: '/solve',
+    badge: '65+ Worked',
+    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+    description: 'Over 65 textbook problems worked out line-by-line: derivatives, integrals, and quadratic equations with step-by-step proofs.',
+    Icon: BookOpen,
+    tags: ['Calculus Steps', 'Quadratic Solutions', 'Integrals', 'Derivatives'],
+  },
 ];
 
 const POPULAR_PROBLEMS = [
@@ -210,7 +219,7 @@ const POPULAR_PROBLEMS = [
             <span>Step-by-Step Math</span>
           </div>
           <span class="text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8] font-semibold sm:hidden">
-            9 Solvers
+            {WORKSTATIONS.length} Solvers
           </span>
         </div>
 

@@ -5,14 +5,15 @@ import { MathDisplay } from '@/components/shared/MathDisplay';
 
 // ─── 1. Section Formula Interactive Mini-Calculator ─────────────────────────
 export function SectionFormulaCalculator() {
-  const [x1, setX1] = useState('1');
-  const [y1, setY1] = useState('2');
-  const [x2, setX2] = useState('4');
-  const [y2, setY2] = useState('8');
-  const [m, setM] = useState('1');
-  const [n, setN] = useState('2');
+  const [x1, setX1] = useState('');
+  const [y1, setY1] = useState('');
+  const [x2, setX2] = useState('');
+  const [y2, setY2] = useState('');
+  const [m, setM] = useState('');
+  const [n, setN] = useState('');
   const [isExternal, setIsExternal] = useState(false);
 
+  const hasInputs = x1 !== '' && y1 !== '' && x2 !== '' && y2 !== '' && m !== '' && n !== '';
   const numX1 = parseFloat(x1) || 0;
   const numY1 = parseFloat(y1) || 0;
   const numX2 = parseFloat(x2) || 0;
@@ -102,7 +103,7 @@ export function SectionFormulaCalculator() {
       <div className="p-2 bg-white dark:bg-[#1B1B1B] rounded-lg border border-[#E0E0E0] dark:border-[#2E2825] text-center">
         <span className="text-[10px] text-[#757575] block">Point P:</span>
         <span className="font-bold text-sm text-[#5D4037] dark:text-[#D7CCC8]">
-          ({denom !== 0 ? Number(px.toFixed(3)) : 'Undefined'}, {denom !== 0 ? Number(py.toFixed(3)) : 'Undefined'})
+          {hasInputs ? `(${denom !== 0 ? Number(px.toFixed(3)) : 'Undefined'}, ${denom !== 0 ? Number(py.toFixed(3)) : 'Undefined'})` : '—'}
         </span>
       </div>
     </div>
@@ -111,11 +112,12 @@ export function SectionFormulaCalculator() {
 
 // ─── 2. Distance, Midpoint & Slope Mini-Calculator ──────────────────────────
 export function DistanceMidpointCalculator() {
-  const [x1, setX1] = useState('0');
-  const [y1, setY1] = useState('0');
-  const [x2, setX2] = useState('3');
-  const [y2, setY2] = useState('4');
+  const [x1, setX1] = useState('');
+  const [y1, setY1] = useState('');
+  const [x2, setX2] = useState('');
+  const [y2, setY2] = useState('');
 
+  const hasInputs = x1 !== '' && y1 !== '' && x2 !== '' && y2 !== '';
   const numX1 = parseFloat(x1) || 0;
   const numY1 = parseFloat(y1) || 0;
   const numX2 = parseFloat(x2) || 0;
@@ -141,12 +143,14 @@ export function DistanceMidpointCalculator() {
               value={x1}
               onChange={(e) => setX1(e.target.value)}
               className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+              placeholder="x1"
             />
             <input
               type="number"
               value={y1}
               onChange={(e) => setY1(e.target.value)}
               className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+              placeholder="y1"
             />
           </div>
         </div>
@@ -159,12 +163,14 @@ export function DistanceMidpointCalculator() {
               value={x2}
               onChange={(e) => setX2(e.target.value)}
               className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+              placeholder="x2"
             />
             <input
               type="number"
               value={y2}
               onChange={(e) => setY2(e.target.value)}
               className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+              placeholder="y2"
             />
           </div>
         </div>
@@ -173,15 +179,15 @@ export function DistanceMidpointCalculator() {
       <div className="grid grid-cols-3 gap-1.5 text-center text-[10.5px]">
         <div className="p-1.5 bg-white dark:bg-[#1B1B1B] rounded-lg border border-[#E0E0E0] dark:border-[#2E2825]">
           <span className="text-[#757575] block text-[9.5px]">Distance:</span>
-          <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">{Number(distance.toFixed(3))}</span>
+          <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">{hasInputs ? Number(distance.toFixed(3)) : '—'}</span>
         </div>
         <div className="p-1.5 bg-white dark:bg-[#1B1B1B] rounded-lg border border-[#E0E0E0] dark:border-[#2E2825]">
           <span className="text-[#757575] block text-[9.5px]">Midpoint:</span>
-          <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">({midX}, {midY})</span>
+          <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">{hasInputs ? `(${midX}, ${midY})` : '—'}</span>
         </div>
         <div className="p-1.5 bg-white dark:bg-[#1B1B1B] rounded-lg border border-[#E0E0E0] dark:border-[#2E2825]">
           <span className="text-[#757575] block text-[9.5px]">Slope (m):</span>
-          <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">{slope !== null ? Number(slope.toFixed(3)) : 'Undefined'}</span>
+          <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">{hasInputs ? (slope !== null ? Number(slope.toFixed(3)) : 'Undefined') : '—'}</span>
         </div>
       </div>
     </div>
@@ -190,10 +196,11 @@ export function DistanceMidpointCalculator() {
 
 // ─── 3. Sine & Cosine Rule Mini-Calculator ──────────────────────────────────
 export function TriangleLawCalculator() {
-  const [a, setA] = useState('5');
-  const [b, setB] = useState('6');
-  const [angleC, setAngleC] = useState('60'); // degrees
+  const [a, setA] = useState('');
+  const [b, setB] = useState('');
+  const [angleC, setAngleC] = useState(''); // degrees
 
+  const hasInputs = a !== '' && b !== '' && angleC !== '';
   const numA = parseFloat(a) || 0;
   const numB = parseFloat(b) || 0;
   const degC = parseFloat(angleC) || 0;
@@ -215,6 +222,7 @@ export function TriangleLawCalculator() {
             value={a}
             onChange={(e) => setA(e.target.value)}
             className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+            placeholder="a"
           />
         </div>
         <div>
@@ -224,6 +232,7 @@ export function TriangleLawCalculator() {
             value={b}
             onChange={(e) => setB(e.target.value)}
             className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+            placeholder="b"
           />
         </div>
         <div>
@@ -233,14 +242,15 @@ export function TriangleLawCalculator() {
             value={angleC}
             onChange={(e) => setAngleC(e.target.value)}
             className="w-full px-2 py-1 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-lg text-center"
+            placeholder="deg"
           />
         </div>
       </div>
 
       <div className="p-2 bg-white dark:bg-[#1B1B1B] rounded-lg border border-[#E0E0E0] dark:border-[#2E2825] text-center">
-        <span className="text-[10px] text-[#757575] block">Computed Side c:</span>
+        <span className="text-[10px] text-[#757575] block">Side c (opposite to ∠C):</span>
         <span className="font-bold text-sm text-[#5D4037] dark:text-[#D7CCC8]">
-          c = {Number(sideC.toFixed(3))}
+          {hasInputs ? Number(sideC.toFixed(3)) : '—'}
         </span>
       </div>
     </div>

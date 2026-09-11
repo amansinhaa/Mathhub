@@ -32,16 +32,16 @@ export default function MatrixSolverWidget() {
   const [op, setOp] = useState<MatrixOperation>('determinant');
   const [scalar, setScalar] = useState<number>(2);
 
-  // Matrix states
+  // Matrix states (empty default inputs)
   const [matrixA, setMatrixA] = useState<string[][]>([
-    ['1', '2', '3'],
-    ['0', '1', '4'],
-    ['5', '6', '0'],
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
   ]);
   const [matrixB, setMatrixB] = useState<string[][]>([
-    ['2', '0', '-1'],
-    ['1', '3', '2'],
-    ['0', '-2', '1'],
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
   ]);
 
   const [result, setResult] = useState<MatrixResult | null>(null);
