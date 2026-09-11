@@ -1141,20 +1141,46 @@ export function generateQuarticSteps(
     math: `${formatPolynomial(coeffs, variable)} = 0`,
   });
 
-  // Special Case: Bi-quadratic ax^4 + cx^2 + e = 0 (b = 0 and d = 0)
   if (Math.abs(b) < 1e-6 && Math.abs(d) < 1e-6) {
+    const aLead = a === 1 ? '' : a === -1 ? '-' : `${fmt(a)}`;
+    const bPart = c === 0 ? '' : `${c > 0 ? '+ ' : '- '}${Math.abs(c) === 1 ? '' : fmt(Math.abs(c))}u `;
+    const cPart = e === 0 ? '' : `${e > 0 ? '+ ' : '- '}${fmt(Math.abs(e))} `;
+    const quadEqU = `${aLead}u^2 ${bPart}${cPart}= 0`;
     steps.push({
       stepNumber: stepCount++,
       explanation: `Notice that only even powers of $${variable}$ appear. Substitute $u = ${variable}^2$ to transform into a quadratic equation in $u$.`,
-      math: `${fmt(a)}u^2 ${c >= 0 ? `+ ${fmt(c)}` : `- ${fmt(Math.abs(c))}`}u ${e >= 0 ? `+ ${fmt(e)}` : `- ${fmt(Math.abs(e))}`} = 0`,
+      math: quadEqU,
     });
 
     const deltaU = c * c - 4 * a * e;
+    const bTerm = c < 0 ? `(-${Math.abs(c)})` : `${c}`;
+    const cTerm = e < 0 ? `(-${Math.abs(e)})` : `${e}`;
+
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Solve the quadratic in $u$ using the quadratic formula with discriminant $\\Delta = ${fmt(deltaU)}$.`,
-      math: `u = \\frac{${fmt(-c)} \\pm \\sqrt{${fmt(deltaU)}}}{${fmt(2 * a)}}`,
+      explanation: `Identify coefficients $A = ${fmt(a)}$, $B = ${fmt(c)}$, $C = ${fmt(e)}$ and calculate the discriminant $\\Delta = B^2 - 4AC$:`,
+      math: `\\Delta = ${bTerm}^2 - 4(${fmt(a)})(${cTerm}) = ${fmt(c * c)} - ${fmt(4 * a * e)} = ${fmt(deltaU)}`,
     });
+
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Apply the quadratic formula $u = \\frac{-B \\pm \\sqrt{\\Delta}}{2A}$ to solve for $u$:`,
+      math: `u = \\frac{-(${bTerm}) \\pm \\sqrt{${fmt(deltaU)}}}{2(${fmt(a)})} = \\frac{${fmt(-c)} \\pm \\sqrt{${fmt(deltaU)}}}{${fmt(2 * a)}}`,
+    });
+
+    // Compute real u roots if deltaU >= 0
+    if (deltaU >= 0) {
+      const sqrtDelta = Math.sqrt(deltaU);
+      const u1 = (-c + sqrtDelta) / (2 * a);
+      const u2 = (-c - sqrtDelta) / (2 * a);
+      const u1Str = fmt(u1);
+      const u2Str = fmt(u2);
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Simplify to obtain the values for $u$:`,
+        math: `u_1 = ${u1Str}, \\quad u_2 = ${u2Str}`,
+      });
+    }
 
     const distinctReal: number[] = [];
     roots.real.forEach((r) => {
@@ -1168,7 +1194,7 @@ export function generateQuarticSteps(
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Take the square roots $${variable} = \\pm \\sqrt{u}$ to find all 4 roots:`,
+      explanation: `Since $u = ${variable}^2$, take the square roots $${variable} = \\pm \\sqrt{u}$ to find all 4 roots:`,
       math: `${variable} = ${rootStrs.join(', \\; ')}`,
     });
 

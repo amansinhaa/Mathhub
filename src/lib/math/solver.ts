@@ -23,6 +23,7 @@ import { detectTranscendental, solveTranscendental } from './transcendentalSolve
 import { isNonlinearSystem, solveNonlinearSystem } from './nonlinearSystemSolver';
 import { detectParametricEquation, solveParametricEquation } from './parametricSolver';
 import { trySimplifyRationalExpression, trySolveRationalEquation } from './rationalSolver';
+import { trySolveExponentialEquation } from './exponentialSolver';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -810,15 +811,6 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     }
   }
 
-  // Check if this is a Transcendental Equation
-  if (detectTranscendental(cleanEq).isTranscendental && cleanEq.includes('=')) {
-    try {
-      return solveTranscendental(cleanEq);
-    } catch {
-      // fall through to algebraic solver
-    }
-  }
-
   // Auto-interpret expression without = as = 0
   const interpretation = autoInterpretEquals(cleanEq);
   if (interpretation.interpreted) {
@@ -838,6 +830,24 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       ],
       finalAnswer: '\\text{Empty equation}',
     };
+  }
+
+  // Check if this is an Exponential Equation (e.g. 3^(2x+1) - 10*3^x + 3 = 0, 4^x - 3*2^x + 2 = 0)
+  const exponentialResult = trySolveExponentialEquation(cleanEq, equation);
+  if (exponentialResult) {
+    if (interpretation.interpreted) {
+      exponentialResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}`;
+    }
+    return exponentialResult;
+  }
+
+  // Check if this is a Transcendental Equation
+  if (detectTranscendental(cleanEq).isTranscendental && cleanEq.includes('=')) {
+    try {
+      return solveTranscendental(cleanEq);
+    } catch {
+      // fall through to algebraic solver
+    }
   }
 
   // Check if this is a parametric equation (e.g. 2x^2 + 3x - m + 2 = 0)

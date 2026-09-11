@@ -34,7 +34,7 @@ export function normalizeExpression(input: string): string {
   if (!expr) return '';
 
   // 1. Replace Unicode math operators and symbols
-  expr = expr.replace(/×/g, '*');
+  expr = expr.replace(/[×·⋅∙•]/g, '*');
   expr = expr.replace(/\\div\b/g, '÷');
   if (expr.includes('÷')) {
     const divParts = expr.split('÷');
@@ -44,7 +44,8 @@ export function normalizeExpression(input: string): string {
       expr = expr.replace(/÷/g, '/');
     }
   }
-  expr = expr.replace(/−/g, '-');    // Unicode minus
+  expr = expr.replace(/[−–—]/g, '-');    // Unicode minus, en-dash, em-dash
+  expr = expr.replace(/＝/g, '=');       // Fullwidth equals
   expr = expr.replace(/π/g, 'pi');
   expr = expr.replace(/∛/g, 'cbrt');  // Cube root symbol
   expr = expr.replace(/√/g, 'sqrt');  // Square root symbol
@@ -55,8 +56,10 @@ export function normalizeExpression(input: string): string {
   expr = expr.replace(/\\cbrt\s*\{([^\}]+)\}/g, 'cbrt($1)');
   expr = expr.replace(/\\cbrt\s*\(/g, 'cbrt(');
   expr = expr.replace(/\\sqrt\b/g, 'sqrt');
-  expr = expr.replace(/\\cdot/g, '*');
-  expr = expr.replace(/\\times/g, '*');
+  expr = expr.replace(/\\cdot\b/g, '*');
+  expr = expr.replace(/\\times\b/g, '*');
+  expr = expr.replace(/\\ast\b/g, '*');
+  expr = expr.replace(/\\bullet\b/g, '*');
   expr = expr.replace(/\\left\b/g, '');
   expr = expr.replace(/\\right\b/g, '');
 

@@ -62,5 +62,46 @@ describe('Transcendental Equation Solver', () => {
       expect(res.numericRoots).toBeDefined();
       expect(res.numericRoots![0]).toBeCloseTo(1.3267, 2);
     });
+
+    it('solves exponential equation 3^(2x+1) - 10*3^x + 3 = 0', () => {
+      const res = solvePolynomial('3^(2x+1) - 10*3^x + 3 = 0');
+      expect(res.finalAnswer).toContain('x_1 = -1');
+      expect(res.finalAnswer).toContain('x_2 = 1');
+      expect(res.steps.length).toBeGreaterThanOrEqual(5);
+    });
+
+    it('solves exponential expression without equals sign 3^(2x+1) - 10*3^x + 3', () => {
+      const res = solvePolynomial('3^(2x+1) - 10*3^x + 3');
+      expect(res.finalAnswer).toContain('x_1 = -1');
+      expect(res.finalAnswer).toContain('x_2 = 1');
+      expect(res.steps.length).toBeGreaterThanOrEqual(5);
+    });
+
+    it('handles unicode middle dot in exponential expression 3^(2x+1)-10·3^x+3', () => {
+      const res = solvePolynomial('3^(2x+1)-10·3^x+3');
+      expect(res.finalAnswer).toContain('x_1 = -1');
+      expect(res.finalAnswer).toContain('x_2 = 1');
+    });
+
+    it('solves exponential equation with base unification 4^x - 3*2^x + 2 = 0', () => {
+      const res = solvePolynomial('4^x - 3*2^x + 2 = 0');
+      expect(res.numericRoots).toBeDefined();
+      expect(res.numericRoots).toContain(0);
+      expect(res.numericRoots).toContain(1);
+    });
+
+    it('solves single exponential equation 2^(x+3) = 16', () => {
+      const res = solvePolynomial('2^(x+3) = 16');
+      expect(res.numericRoots).toBeDefined();
+      expect(res.numericRoots).toContain(1);
+      expect(res.finalAnswer).toContain('1');
+    });
+
+    it('solves exponential equation in natural base e^(2x) - 4*e^x + 3 = 0', () => {
+      const res = solvePolynomial('e^(2x) - 4*e^x + 3 = 0');
+      expect(res.numericRoots).toBeDefined();
+      expect(res.numericRoots).toContain(0);
+      expect(res.finalAnswer).toContain('\\ln(3)');
+    });
   });
 });
