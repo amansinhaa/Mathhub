@@ -576,6 +576,12 @@ export function generateQuadraticSteps(
           });
         }
 
+        steps.push({
+          stepNumber: stepCount++,
+          explanation: `Structural Insight (Vieta's Formulas): Notice how the sum and product of the roots directly confirm the original coefficients.`,
+          math: `\\text{Sum of roots: } x_1 + x_2 = -\\frac{b}{a} = ${fmt(-b / a)}, \\quad \\text{Product: } x_1 \\cdot x_2 = \\frac{c}{a} = ${fmt(c / a)}`,
+        });
+
         return steps;
       }
     }
@@ -722,6 +728,13 @@ export function generateQuadraticSteps(
       math: `f(${fmt(realPart)} \\pm ${fmt(imaginaryPart)}i) = (${fmt(a)})(${fmt(realPart)} \\pm ${fmt(imaginaryPart)}i)^2 + (${fmt(b)})(${fmt(realPart)} \\pm ${fmt(imaginaryPart)}i) + (${fmt(c)}) = 0 \\;\\checkmark`,
     });
   }
+
+  // Structural Connection: Vieta's Relations
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Structural Insight (Vieta's Formulas): The roots directly mirror the coefficients of the polynomial.`,
+    math: `\\text{Sum of roots: } x_1 + x_2 = -\\frac{b}{a} = ${fmt(-b / a)}, \\quad \\text{Product of roots: } x_1 \\cdot x_2 = \\frac{c}{a} = ${fmt(c / a)}`,
+  });
 
   return steps;
 }
@@ -983,6 +996,12 @@ export function generateCubicSteps(
       math: rootStrs.join(', \\quad '),
     });
   }
+
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: `Structural Insight (Vieta's Relations for Cubics): Sum of roots = -b/a, Product of roots = -d/a.`,
+    math: `\\sum x_i = -\\frac{b}{a} = ${fmt(-b / a)}, \\quad \\prod x_i = -\\frac{d}{a} = ${fmt(-d / a)}`,
+  });
 
   return steps;
 }

@@ -110,150 +110,99 @@ export default function StepByStep() {
       >
         <div className="absolute top-0 left-0 w-1.5 sm:w-2 h-full bg-[#5D4037] dark:bg-[#A1887F]" />
 
-        {/* Given Problem header strip */}
-        {result.inputInterpretation && (
-          <div className="mb-2.5 pb-2 border-b border-[#E0E0E0]/80 dark:border-[#282422] flex items-center justify-between gap-2 text-xs font-mono text-[#616161] dark:text-[#A19891]">
+        {/* Clean Problem Header */}
+        {(equation || result.inputInterpretation) && (
+          <div className="mb-2 pb-2 border-b border-[#E0E0E0]/80 dark:border-[#282422] flex items-center justify-between gap-2 text-xs font-mono text-[#616161] dark:text-[#A19891]">
             <div className="flex items-center gap-1.5 shrink-0">
               <Info size={13} className="text-[#5D4037] dark:text-[#D7CCC8]" />
-              <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8] uppercase text-[10px] sm:text-xs">Given Problem:</span>
+              <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8] uppercase text-[10px] sm:text-xs">Problem:</span>
             </div>
-            <div className="flex items-center gap-1.5 overflow-hidden">
-              <span className="overflow-x-auto text-right text-xs font-bold text-[#131313] dark:text-white truncate">{result.inputInterpretation}</span>
-              <button
-                type="button"
-                onClick={copyQuestion}
-                className="p-1 rounded hover:bg-[#EFEBE9] dark:hover:bg-[#2A2320] text-[#5D4037] dark:text-[#D7CCC8] transition-colors shrink-0"
-                title="Copy Question"
-                aria-label="Copy Question"
-              >
-                {copiedQuestion ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
-              </button>
+            <div className="overflow-x-auto scrollbar-none text-right text-xs font-bold text-[#131313] dark:text-white max-w-full">
+              {equation || result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim()}
             </div>
           </div>
         )}
 
-        <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex justify-between items-center gap-2 mb-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <h3 className="text-xs sm:text-sm font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
               Solution
             </h3>
-            <span className="px-2.5 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[11px] font-mono font-bold uppercase">
+            <span className="px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase">
               {result.type}
             </span>
-            {result.type === 'polynomial' && (
-              <span className="px-2.5 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[11px] font-mono font-semibold">
-                Method: {quadraticMethod === 'factoring' ? 'Factoring (AC)' : quadraticMethod === 'completing_square' ? 'Completing the Square' : quadraticMethod === 'formula' ? 'Quadratic Formula' : 'Auto'}
+            {result.type === 'polynomial' && quadraticMethod && quadraticMethod !== 'auto' && (
+              <span className="hidden sm:inline px-2 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold">
+                {quadraticMethod === 'factoring' ? 'Factoring' : quadraticMethod === 'completing_square' ? 'Completing Square' : 'Formula'}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {/* Copy Question Button */}
-            <button
-              type="button"
-              onClick={copyQuestion}
-              className="text-xs font-mono font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white transition-all flex items-center gap-1.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs"
-              title="Copy Question Problem"
-              aria-label="Copy Question Problem"
-            >
-              {copiedQuestion ? (
-                <>
-                  <Check size={13} className="text-emerald-600 dark:text-[#81C784]" />
-                  <span className="text-emerald-600 dark:text-[#81C784] font-bold">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={13} />
-                  <span>Copy Question</span>
-                </>
-              )}
-            </button>
-
-            {/* Copy Solution Button */}
+          <div className="flex items-center gap-1 shrink-0">
+            {/* Direct Solution Copy Button */}
             <button
               type="button"
               onClick={copySolution}
-              className="text-xs font-mono font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white transition-all flex items-center gap-1.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs"
-              title="Copy Final Solution"
-              aria-label="Copy Final Solution"
+              className="p-1.5 rounded-lg bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] transition-all border border-[#E0E0E0] dark:border-[#2E2825]"
+              title="Copy Solution"
+              aria-label="Copy Solution"
             >
-              {copiedSolution ? (
-                <>
-                  <Check size={13} className="text-emerald-600 dark:text-[#81C784]" />
-                  <span className="text-emerald-600 dark:text-[#81C784] font-bold">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={13} />
-                  <span>Copy Solution</span>
-                </>
-              )}
-            </button>
-
-            {/* Copy Full Steps Button */}
-            <button
-              type="button"
-              onClick={copySteps}
-              className="hidden sm:flex text-xs font-mono font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white transition-all items-center gap-1.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs"
-              title="Copy All Steps"
-              aria-label="Copy All Steps"
-            >
-              {copiedSteps ? (
-                <>
-                  <Check size={13} className="text-emerald-600 dark:text-[#81C784]" />
-                  <span className="text-emerald-600 dark:text-[#81C784] font-bold">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={13} />
-                  <span>Copy Steps</span>
-                </>
-              )}
+              {copiedSolution ? <Check size={14} className="text-emerald-600 dark:text-[#81C784]" /> : <Copy size={14} />}
             </button>
 
             {/* Share Link Button */}
             <button
               type="button"
               onClick={copyShareLink}
-              className="text-xs font-mono font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white transition-all flex items-center gap-1.5 border border-[#E0E0E0] dark:border-[#2E2825] shadow-xs"
+              className="p-1.5 rounded-lg bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] transition-all border border-[#E0E0E0] dark:border-[#2E2825]"
               title="Share Link"
               aria-label="Share problem URL"
             >
-              {copiedLink ? (
-                <>
-                  <Check size={13} className="text-emerald-600 dark:text-[#81C784]" />
-                  <span className="text-emerald-600 dark:text-[#81C784] font-bold">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Share2 size={13} />
-                  <span>Share</span>
-                </>
-              )}
+              {copiedLink ? <Check size={14} className="text-emerald-600 dark:text-[#81C784]" /> : <Share2 size={14} />}
             </button>
 
-            {/* Plot in Graph Button (for polynomial or inequality) */}
+            {/* Plot in Graph Button */}
             {(result.type === 'polynomial' || result.type === 'inequality') && (
               <Link
                 href={getGraphLink()}
-                className="text-xs font-mono font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#EFEBE9] dark:bg-[#2A2220] hover:bg-[#D7CCC8] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white transition-all flex items-center gap-1.5 border border-[#D7CCC8] dark:border-[#5D4037]/50 shadow-xs"
+                className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#EFEBE9] dark:bg-[#2A2220] hover:bg-[#D7CCC8] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] transition-all flex items-center gap-1 border border-[#D7CCC8] dark:border-[#5D4037]/50"
                 title="Plot in Graph"
               >
                 <LineChart size={14} />
-                <span className="hidden sm:inline">Plot in Graph</span>
+                <span className="hidden sm:inline text-xs font-mono font-medium">Graph</span>
               </Link>
             )}
           </div>
         </div>
 
-        {/* Direct Solution Mathematical Output */}
-        <div className="overflow-x-auto py-3 text-lg sm:text-2xl font-bold text-[#131313] dark:text-white tracking-wide">
-          <MathDisplay math={result.finalAnswer} block />
-        </div>
-
-        <div className="mt-2 pt-2 border-t border-[#E0E0E0] dark:border-[#24201E] flex items-center justify-between text-xs font-mono text-[#757575] dark:text-[#8D827A]">
-          <span>Solution verified</span>
-          <span className="font-semibold text-[#5D4037] dark:text-[#D7CCC8]">EasyEquate Math Engine</span>
+        {/* Direct Solution Output - Responsive Multi-Root Layout (No Mobile Cutoff) */}
+        <div className="py-2 text-base sm:text-xl font-bold text-[#131313] dark:text-white">
+          {(() => {
+            // Check if finalAnswer has multiple roots separated by comma or quad
+            const ans = result.finalAnswer || '';
+            if (ans.includes('\\quad') || ans.includes(',')) {
+              const rootParts = ans.split(/\\quad|,/).map(s => s.trim()).filter(Boolean);
+              if (rootParts.length > 1) {
+                return (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {rootParts.map((rp, idx) => (
+                      <div
+                        key={idx}
+                        className="px-3 py-1.5 bg-white dark:bg-[#1A1A1A] border border-[#E0E0E0] dark:border-[#2C2724] rounded-xl shadow-xs"
+                      >
+                        <MathDisplay math={rp} />
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
+            }
+            return (
+              <div className="overflow-x-auto scrollbar-none max-w-full">
+                <MathDisplay math={ans} block />
+              </div>
+            );
+          })()}
         </div>
       </div>
 
