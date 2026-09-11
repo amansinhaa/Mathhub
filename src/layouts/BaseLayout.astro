@@ -45,6 +45,16 @@ const defaultJsonLd = {
 <!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
+    <!-- Google Tag Manager -->
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-MJQ8M6GD');
+    </script>
+    <!-- End Google Tag Manager -->
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <title>{title}</title>
@@ -155,6 +165,11 @@ const defaultJsonLd = {
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd || defaultJsonLd)} />
   </head>
   <body class="font-sans bg-white dark:bg-[#131313] text-[#131313] dark:text-[#F5F5F5] antialiased">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MJQ8M6GD"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <div class="relative flex h-dvh min-h-screen flex-col overflow-hidden bg-[#FAFAFA] dark:bg-[#131313] transition-colors duration-150">
       <!-- Single Universal Top-Right Theme Toggle Island -->
       <div class="fixed top-3 right-3 z-50">
