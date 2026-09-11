@@ -896,8 +896,8 @@ export function generateCubicSteps(
     // Step 2: Rational Root Theorem testing
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods): Factors of constant term $d = ${fmt(d)}$ are $p \\in \\{${dFactorsStr}\\}$ and factors of leading coefficient $a = ${fmt(a)}$ are $q \\in \\{${aFactorsStr}\\}$. Candidate rational roots are $\\pm \\frac{p}{q} \\in \\{${candidatesDisplay}\\}$. We test candidates sequentially and find $${variable} = ${r0Disp}$ satisfies $f(${r0Disp}) = 0$, so $(${r0SignStr})$ is a factor by the Factor Theorem.`,
-      math: testTrail.join(' \\\\[4pt] '),
+      explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). Testing $${variable} = ${r0Disp}$, we find $f(${r0Disp}) = 0$, which proves that $(${r0SignStr})$ is a factor by the Factor Theorem.`,
+      math: `\\begin{aligned} f(${r0Disp}) &= ${formatPolyEvaluation([a, b, c, d], r0, variable)} \\\\[4pt] &\\implies (${r0SignStr}) \\text{ is a factor} \\end{aligned}`,
     });
 
     // Step 3: Polynomial Division (Long Division + Synthetic Division side-by-side)
@@ -1266,8 +1266,8 @@ export function generateQuarticSteps(
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Apply the Rational Root Theorem to find possible roots $\\frac{p}{q}$, where $p$ is a factor of constant term $e = ${fmt(e)}$ ($p \\in \\{${eFactorsStr}\\}$) and $q$ is a factor of leading coefficient $a = ${fmt(a)}$ ($q \\in \\{${aFactorsStr}\\}$). The candidate rational roots are $\\pm \\frac{p}{q} \\in \\{${candidatesDisplay}\\}$. Testing candidates sequentially, we find $${variable} = ${r1DispStr}$ satisfies $f(${r1DispStr}) = 0$, which proves that $(${divisor1Str})$ is a factor by the Factor Theorem.`,
-      math: testTrail1.join(' \\\\[4pt] '),
+      explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). Testing $${variable} = ${r1DispStr}$, we find $f(${r1DispStr}) = 0$, which proves that $(${divisor1Str})$ is a factor by the Factor Theorem.`,
+      math: `\\begin{aligned} f(${r1DispStr}) &= ${formatPolyEvaluation(coeffs, r1, variable)} \\\\[4pt] &\\implies (${divisor1Str}) \\text{ is a factor} \\end{aligned}`,
     });
 
     // Synthetic division to degree 3
@@ -1380,8 +1380,8 @@ export function generateQuarticSteps(
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Apply the Rational Root Theorem to the depressed cubic factor $${q3Poly} = 0$. Testing candidate roots from $\\pm \\frac{\\text{factors of } |${fmt(q3Const)}|}{\\text{factors of } |${fmt(q3Lead)}|}$, we find $${variable} = ${r2DispStr}$ satisfies $f(${r2DispStr}) = 0$, so $(${divisor2Str})$ is another factor.`,
-        math: testTrail2.join(' \\\\[4pt] '),
+        explanation: `Find a root of the depressed cubic factor $${q3Poly} = 0$ using the Factor Theorem. Testing $${variable} = ${r2DispStr}$, we find $f(${r2DispStr}) = 0$, so $(${divisor2Str})$ is another factor.`,
+        math: `\\begin{aligned} f(${r2DispStr}) &= ${formatPolyEvaluation(q3, r2, variable)} \\\\[4pt] &\\implies (${divisor2Str}) \\text{ is a factor} \\end{aligned}`,
       });
 
       // Synthetic division to degree 2
