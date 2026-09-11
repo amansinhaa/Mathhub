@@ -441,6 +441,11 @@ export function expressionToLatex(expr: string): string {
 
   const toTexSingle = (s: string) => {
     let res = convertBalancedFunctions(s);
+    // Format trig powers: sin^2(x) -> \sin^2(x), sin^2 x -> \sin^2(x)
+    res = res.replace(/(?<![a-zA-Z])(sin|cos|tan|sec|csc|cot)\^(\d+)\s*\(([^)]+)\)/gi, '\\$1^{$2}($3)');
+    res = res.replace(/(?<![a-zA-Z])(sin|cos|tan|sec|csc|cot)\^(\d+)\s*([a-zA-Z])(?![a-zA-Z])/gi, '\\$1^{$2}($3)');
+    res = res.replace(/(?<![a-zA-Z])(sin|cos|tan|sec|csc|cot)\s*\(([^)]+)\)/gi, '\\$1($2)');
+    res = res.replace(/(?<![a-zA-Z])(sin|cos|tan|sec|csc|cot)\s*([a-zA-Z])(?![a-zA-Z])/gi, '\\$1($2)');
     // Powers with parentheses: ^(-2) or ^(7) -> ^{...}
     res = res.replace(/\^\(([^)]+)\)/g, '^{$1}');
     // Powers with single token / number / var without braces: x^2, y^12 -> ^{...}
