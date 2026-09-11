@@ -607,6 +607,163 @@ export function trySimplifyRadicalExpression(cleanEq: string, rawEq: string): So
   }
 }
 
+function cleanLatexMath(tex: string): string {
+  let s = tex
+    .replace(/\\cdot\s*([a-zA-Z])/g, '$1')
+    .replace(/([0-9])\s+([a-zA-Z])/g, '$1$2')
+    .replace(/\s*([+-])\s*/g, ' $1 ')
+    .trim();
+  if (s.startsWith('- ')) {
+    s = '-' + s.slice(2);
+  }
+  return s;
+}
+
+function formatTermsDisplay(terms: string[]): string {
+  return terms.map((t, idx) => {
+    let s = t.trim();
+    if (idx > 0 && !s.startsWith('+') && !s.startsWith('-')) {
+      s = '+ ' + s;
+    } else if (idx > 0) {
+      s = s[0] + ' ' + s.slice(1);
+    }
+    return s;
+  }).join(' ');
+}
+
+export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): SolverResult | null {
+  if (cleanEq.includes('=')) return null;
+
+  const reserved = new Set([
+    'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+    'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh',
+    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs',
+    'ceil', 'floor', 'round', 'sign', 'min', 'max',
+    'pi', 'PI', 'e', 'i',
+    'nthRoot', 'pow', 'mod',
+  ]);
+
+  const tokens = cleanEq.match(/[a-zA-Z]+/g) || [];
+  const varsFound = new Set<string>();
+  for (const tok of tokens) {
+    if (tok.length === 1 && !reserved.has(tok)) {
+      varsFound.add(tok);
+    }
+  }
+
+  const hasMultipleVars = varsFound.size > 1;
+  const hasParenthesizedSigns = /\(\s*[+-]\s*\d*[a-zA-Z]?\s*\)/.test(cleanEq);
+  const hasDistribution = /\d+\s*\*?\s*\([^()]+\)/.test(cleanEq);
+
+  // If single variable and no parens / like terms, let autoInterpretEquals solve it (e.g. x^2 - 5x + 6)
+  if (!hasMultipleVars && !hasParenthesizedSigns && !hasDistribution) {
+    return null;
+  }
+
+  try {
+    const steps: SolutionStep[] = [];
+    let stepNumber = 1;
+    let currentExpr = cleanEq;
+
+    // 1. If expression has distribution, e.g. 2*(x + 3)
+    if (hasDistribution) {
+      const expanded = (nerdamer as any).expand(currentExpr).toString();
+      if (expanded !== currentExpr) {
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: 'Expand and distribute factors across parentheses: $a(b + c) = ab + ac$.',
+          math: cleanLatexMath((nerdamer as any)(expanded).toTeX()),
+        });
+        currentExpr = expanded;
+      }
+    }
+
+    // 2. Remove parentheses and apply sign rules
+    let step1Expr = currentExpr
+      .replace(/\+\s*\(\s*\+\s*([^()]+)\s*\)/g, ' + $1')
+      .replace(/\+\s*\(\s*-\s*([^()]+)\s*\)/g, ' - $1')
+      .replace(/-\s*\(\s*\+\s*([^()]+)\s*\)/g, ' - $1')
+      .replace(/-\s*\(\s*-\s*([^()]+)\s*\)/g, ' + $1')
+      .replace(/\(\s*\+\s*([^()]+)\s*\)/g, '$1')
+      .replace(/\(\s*-\s*([^()]+)\s*\)/g, '-$1')
+      .trim();
+
+    step1Expr = step1Expr.replace(/^\+\s*/, '');
+
+    if (step1Expr !== currentExpr.trim() && !hasDistribution) {
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Remove parentheses and apply sign rules: $+(-a) = -a$ and $+(+a) = +a$.',
+        math: cleanLatexMath(step1Expr.replace(/\*/g, '')),
+      });
+    }
+
+    // 3. Parse terms and group by variable/power
+    const normalizedTerms = step1Expr.replace(/\s+/g, '');
+    const termMatches = normalizedTerms.match(/([+-]?[^+-]+)/g) || [];
+
+    const groups: Record<string, string[]> = {};
+    for (const term of termMatches) {
+      const vMatch = term.match(/[a-zA-Z](\^[0-9]+)?/g);
+      const key = vMatch ? vMatch.sort().join('') : '_const';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(term);
+    }
+
+    const groupKeys = Object.keys(groups);
+    const hasCombineableTerms = groupKeys.some(k => groups[k].length > 1);
+
+    if (hasCombineableTerms) {
+      const groupedLatexParts: string[] = [];
+      for (const k of groupKeys) {
+        const terms = groups[k];
+        const label = k === '_const' ? '\\text{constants}' : `\\mathbf{${k}}`;
+        groupedLatexParts.push(`\\text{${label}: } (${formatTermsDisplay(terms)})`);
+      }
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Group like terms containing the same variables together.',
+        math: groupedLatexParts.join(' \\quad '),
+      });
+
+      for (const k of groupKeys) {
+        const terms = groups[k];
+        if (terms.length > 1) {
+          const sumExpr = terms.join(' + ');
+          const groupResult = (nerdamer as any)(sumExpr).toString();
+          const cleanGroupResult = cleanLatexMath((nerdamer as any)(groupResult).toTeX());
+          steps.push({
+            stepNumber: stepNumber++,
+            explanation: `Combine coefficients for like terms in $${k === '_const' ? '\\text{constants}' : k}$:`,
+            math: `${formatTermsDisplay(terms)} = ${cleanGroupResult}`,
+          });
+        }
+      }
+    }
+
+    // 4. Final simplified expression using nerdamer
+    const simplified = (nerdamer as any)(cleanEq).toString();
+    const finalLatex = cleanLatexMath((nerdamer as any)(simplified).toTeX());
+
+    steps.push({
+      stepNumber: stepNumber++,
+      explanation: 'Combine all simplified terms to get the final simplified expression.',
+      math: finalLatex,
+    });
+
+    return {
+      type: 'polynomial',
+      steps,
+      finalAnswer: finalLatex,
+      inputInterpretation: `\\text{Simplify: } ${expressionToLatex(rawEq)}`,
+      numericRoots: [],
+    };
+  } catch (err) {
+    return null;
+  }
+}
+
 // ─── Main Solver Functions ──────────────────────────────────────────────────
 
 export function solvePolynomial(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
@@ -618,6 +775,11 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     const radicalResult = trySimplifyRadicalExpression(cleanEq, equation);
     if (radicalResult) {
       return radicalResult;
+    }
+
+    const algebraicResult = trySimplifyAlgebraicExpression(cleanEq, equation);
+    if (algebraicResult) {
+      return algebraicResult;
     }
   }
 

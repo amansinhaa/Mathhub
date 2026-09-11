@@ -291,10 +291,21 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
     'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e'
   ]);
   const tokens = clean.match(/[a-zA-Z]+/g) || [];
-  const hasVariable = tokens.some((t) => t.length === 1 && !reserved.has(t.toLowerCase()));
+  const varsFound = new Set(tokens.filter((t) => t.length === 1 && !reserved.has(t.toLowerCase())));
+  const hasVariable = varsFound.size > 0;
 
   // If there is NO variable, this is just arithmetic numbers, NOT an algebraic equation!
   if (!hasVariable) return null;
+
+  // Detect multivariate or algebraic expressions without equals
+  if (!clean.includes('=')) {
+    if (varsFound.size > 1) {
+      return { degree: 0, label: 'Algebraic Expression' };
+    }
+    if (/\(\s*[+-]\s*\d*[a-zA-Z]?\s*\)/.test(clean) || /\d+\s*\*?\s*\([^()]+\)/.test(clean)) {
+      return { degree: 0, label: 'Algebraic Simplification' };
+    }
+  }
 
   // Check for powers like x^4, x^(3), x^2, x³, x²
   const powerMatches = clean.match(/[a-zA-Z]\s*\^\s*\(?([0-9]+)\)?/g);

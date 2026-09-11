@@ -344,4 +344,41 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(res.finalAnswer).toBe('2x\\sqrt{2x}');
     });
   });
+
+  // ─── Algebraic Expressions Simplification (Combining Like Terms) ────────
+  describe('Algebraic Expression Simplification (Combining Like Terms)', () => {
+    it('simplifies -26r+(+7r)+(-15p)+(-7p) to -19r - 22p with step-by-step grouping', () => {
+      const input = '-26r+(+7r)+(-15p)+(-7p)';
+      const res = solvePolynomial(input);
+
+      expect(res.finalAnswer).toBe('-19r - 22p');
+      expect(res.steps.length).toBeGreaterThanOrEqual(4);
+
+      // Step 1: Parentheses removal
+      expect(res.steps[0].explanation).toContain('Remove parentheses');
+      expect(res.steps[0].math).toContain('-26r + 7r - 15p - 7p');
+
+      // Step 2: Grouping like terms
+      expect(res.steps[1].explanation).toContain('Group like terms');
+      expect(res.steps[1].math).toContain('r');
+      expect(res.steps[1].math).toContain('p');
+
+      // Step 3 & 4: Combining coefficients
+      const rStep = res.steps.find(s => s.explanation.includes('$r$'));
+      const pStep = res.steps.find(s => s.explanation.includes('$p$'));
+      expect(rStep?.math).toContain('-19r');
+      expect(pStep?.math).toContain('-22p');
+    });
+
+    it('simplifies 3x + 5y - 2x + 4y to x + 9y', () => {
+      const res = solvePolynomial('3x + 5y - 2x + 4y');
+      expect(['x + 9y', '9y + x']).toContain(res.finalAnswer);
+    });
+
+    it('simplifies 2*(x + 3) + 4*(x - 1) with distribution', () => {
+      const res = solvePolynomial('2*(x + 3) + 4*(x - 1)');
+      expect(res.finalAnswer).toBe('6x + 2');
+      expect(res.steps.some(s => s.explanation.includes('distribute'))).toBe(true);
+    });
+  });
 });
