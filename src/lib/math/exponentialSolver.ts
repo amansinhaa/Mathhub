@@ -393,18 +393,19 @@ export function trySolveExponentialEquation(
         for (let i = 0; i < uCandidates.length; i++) {
           const uVal = uCandidates[i];
           const res = solveBasePower(targetBaseVal, targetBaseStr, uVal, variable);
+          const caseLabel = uCandidates.length > 1 ? `\\textbf{Case ${i + 1}: }` : '';
           if (res.solvable && res.xVal !== undefined && res.exactLatex !== undefined) {
             solvedRoots.push({ xVal: res.xVal, exact: res.exactLatex });
-            subSteps.push('\\text{For } u = ' + formatNum(uVal) + ': \\quad ' + res.stepExplanation);
+            subSteps.push(`&${caseLabel} u = ${formatNum(uVal)} \\implies ${res.stepExplanation}`);
           } else if (res.stepExplanation) {
-            subSteps.push('\\text{For } u = ' + formatNum(uVal) + ': \\quad ' + res.stepExplanation);
+            subSteps.push(`&${caseLabel} u = ${formatNum(uVal)} \\implies ${res.stepExplanation}`);
           }
         }
 
         steps.push({
           stepNumber: stepNumber++,
-          explanation: 'Back-substitute $u = ' + targetBaseStr + '^{' + variable + '}$ to solve for $' + variable + '$:',
-          math: subSteps.join(' \\[8pt] '),
+          explanation: `Back-substitute $u = ${targetBaseStr}^{${variable}}$ into each value of $u$ to solve for $${variable}$ (using $a = a^1$ and $\\frac{1}{a} = a^{-1}$):`,
+          math: `\\begin{aligned} ${subSteps.join(' \\\\[6pt] ')} \\end{aligned}`,
         });
 
         if (solvedRoots.length === 0) {
