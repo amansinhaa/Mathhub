@@ -125,7 +125,7 @@ export function normalizeExpression(input: string): string {
   const reservedFuncs = [
     'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
     'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh',
-    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs',
+    'log', 'ln', 'log2', 'log10', 'exp', 'sqrt', 'cbrt', 'abs',
     'ceil', 'floor', 'round', 'sign', 'min', 'max',
     'nthRoot', 'pow', 'mod'
   ];
@@ -141,8 +141,8 @@ export function normalizeExpression(input: string): string {
 
   // Letter followed by opening paren (exclude known function names like sin(, cos(, etc.)
   // Match a word preceding '(' and check if it's a known function
-  expr = expr.replace(/\b([a-zA-Z]+)\s*\(/g, (match, word) => {
-    if (reservedFuncs.includes(word.toLowerCase())) {
+  expr = expr.replace(/\b([a-zA-Z0-9_]+)\s*\(/g, (match, word) => {
+    if (reservedFuncs.includes(word.toLowerCase()) || /^log_\d+$/i.test(word) || /^log_\{\d+\}$/i.test(word)) {
       return `${word}(`;
     }
     // E.g. x(x+1) -> x*(x+1) or 2a(b) -> 2a*(b)
@@ -153,8 +153,13 @@ export function normalizeExpression(input: string): string {
   expr = expr.replace(/\)([a-zA-Z(])/g, ')*$1');
   // Closing paren followed by digit: )2 → )*2
   expr = expr.replace(/\)(\d)/g, ')*$1');
-  // Digit followed by opening paren: 2(x+1) → 2*(x+1)
-  expr = expr.replace(/(\d)(\()/g, '$1*$2');
+  // Digit followed by opening paren: 2(x+1) → 2*(x+1) (except subscript bases like log_2(x))
+  expr = expr.replace(/(\d+)\s*\(/g, (m, digits, offset, str) => {
+    if (offset > 0 && str[offset - 1] === '_') {
+      return `${digits}(`;
+    }
+    return `${digits}*(`;
+  });
 
   // 5. Replace common function shorthand
   // "√(expr)" is already handled by step 1 (√ → sqrt)

@@ -103,5 +103,27 @@ describe('Transcendental Equation Solver', () => {
       expect(res.numericRoots).toContain(0);
       expect(res.finalAnswer).toContain('\\ln(3)');
     });
+
+    it('solves user logarithmic equation log_2(x-1)+log_2(x+1)=3 step-by-step', () => {
+      const res = solvePolynomial('log_2(x-1)+log_2(x+1)=3');
+      expect(res.numericRoots).toEqual([3]);
+      expect(res.finalAnswer).toBe('x = 3');
+      expect(res.steps.length).toBeGreaterThanOrEqual(4);
+      // Verify step mentioning extraneous root
+      const hasExtraneousCheck = res.steps.some((s) => s.math.includes('Extraneous') || s.explanation.includes('extraneous') || s.explanation.includes('domain'));
+      expect(hasExtraneousCheck).toBe(true);
+    });
+
+    it('solves quotient logarithmic equation log_3(x+5)-log_3(x-1)=2', () => {
+      const res = solvePolynomial('log_3(x+5)-log_3(x-1)=2');
+      expect(res.numericRoots).toBeDefined();
+      expect(res.numericRoots![0]).toBeCloseTo(1.75, 2);
+    });
+
+    it('solves one-to-one logarithmic equation log(2x+3) = log(x+7)', () => {
+      const res = solvePolynomial('log(2x+3) = log(x+7)');
+      expect(res.numericRoots).toEqual([4]);
+      expect(res.finalAnswer).toBe('x = 4');
+    });
   });
 });

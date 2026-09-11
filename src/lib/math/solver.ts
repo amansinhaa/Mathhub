@@ -24,6 +24,7 @@ import { isNonlinearSystem, solveNonlinearSystem } from './nonlinearSystemSolver
 import { detectParametricEquation, solveParametricEquation } from './parametricSolver';
 import { trySimplifyRationalExpression, trySolveRationalEquation } from './rationalSolver';
 import { trySolveExponentialEquation } from './exponentialSolver';
+import { trySolveLogarithmicEquation } from './logarithmicSolver';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -839,6 +840,15 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       exponentialResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}`;
     }
     return exponentialResult;
+  }
+
+  // Check if this is a Logarithmic Equation (e.g. log_2(x-1) + log_2(x+1) = 3)
+  const logarithmicResult = trySolveLogarithmicEquation(cleanEq, equation);
+  if (logarithmicResult) {
+    if (interpretation.interpreted) {
+      logarithmicResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}`;
+    }
+    return logarithmicResult;
   }
 
   // Check if this is a Transcendental Equation
