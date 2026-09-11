@@ -22,6 +22,12 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       const res = solvePolynomial('3y + 9');
       expect(res.finalAnswer).toContain('-3');
     });
+
+    it('solves user quartic: 2 x^4 - 9 x^3 + 14 x^2 - 9 x + 2 = 0', () => {
+      const res = solvePolynomial('2  x^4  -  9  x^3  +  14  x^2  -  9  x  +  2  =0');
+      console.log('USER QUARTIC WITH DOUBLE SPACES RESULT:', JSON.stringify(res, null, 2));
+      expect(res.finalAnswer).not.toContain('No solution found');
+    });
   });
 
   // ─── Quadratic Equations (Degree 2) ──────────────────────────────────────

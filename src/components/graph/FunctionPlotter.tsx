@@ -68,11 +68,18 @@ const COMPACT_PADDING = { top: 16, right: 16, bottom: 22, left: 24 };
 export interface FunctionPlotterProps {
   compact?: boolean;
   mobileHeight?: number;
+  height?: number;
   initialExpression?: string;
   initialRoots?: number[];
 }
 
-export default function FunctionPlotter({ compact = false, mobileHeight, initialExpression, initialRoots }: FunctionPlotterProps = {}) {
+export default function FunctionPlotter({
+  compact = false,
+  mobileHeight,
+  height,
+  initialExpression,
+  initialRoots,
+}: FunctionPlotterProps = {}) {
   const {
     equations,
     bounds,
@@ -132,7 +139,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
 
   const [containerDimensions, setContainerDimensions] = useState({
     width: 800,
-    height: TOTAL_HEIGHT,
+    height: compact ? (height ?? 250) : TOTAL_HEIGHT,
   });
 
   const [mousePos, setMousePos] = useState<{
@@ -166,11 +173,12 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
   const updateDims = useCallback(() => {
     if (chartContainerRef.current) {
       const w = chartContainerRef.current.clientWidth || 800;
-      const defaultMobH = mobileHeight ?? (compact ? 295 : 380);
-      const h = typeof window !== 'undefined' && window.innerWidth < 768 ? defaultMobH : DEFAULT_DESKTOP_HEIGHT;
+      const defaultMobH = mobileHeight ?? (compact ? 220 : 380);
+      const defaultDeskH = height ?? (compact ? 250 : DEFAULT_DESKTOP_HEIGHT);
+      const h = typeof window !== 'undefined' && window.innerWidth < 768 ? defaultMobH : defaultDeskH;
       setContainerDimensions({ width: w, height: h });
     }
-  }, [compact, mobileHeight]);
+  }, [compact, mobileHeight, height]);
 
   useEffect(() => {
     updateDims();
@@ -289,6 +297,11 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
 
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) {
+        if (compact) {
+          // In compact mode, allow single-finger gestures to scroll the page naturally
+          touchState.current.isDragging = false;
+          return;
+        }
         touchState.current = {
           startX: e.touches[0].clientX,
           startY: e.touches[0].clientY,
@@ -312,10 +325,11 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
 
     const onTouchMove = (e: TouchEvent) => {
       if (!touchState.current.isDragging) return;
+      if (compact && e.touches.length === 1) return;
       if (e.cancelable) e.preventDefault();
 
       const width = container.clientWidth || 600;
-      const height = TOTAL_HEIGHT;
+      const height = container.clientHeight || containerDimensions.height;
 
       if (e.touches.length === 1 && touchState.current.initialDist === 0) {
         const dx = e.touches[0].clientX - touchState.current.startX;
@@ -370,7 +384,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
       container.removeEventListener('touchend', onTouchEnd);
       container.removeEventListener('touchcancel', onTouchEnd);
     };
-  }, [setBounds]);
+  }, [setBounds, compact, containerDimensions.height]);
 
   // Non-passive Native Mouse Wheel & Pinch-to-Zoom Listener (Stops Browser Page Zoom Leak)
   useEffect(() => {
@@ -378,7 +392,13 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
     if (!container) return;
 
     const onWheel = (e: WheelEvent) => {
-      // Prevent browser native page zoom and page scroll when hovering graph canvas
+      // In compact mode, do not hijack normal mouse wheel scrolling of the page.
+      // Allow wheel zoom only if user is holding Ctrl/Cmd key or using trackpad pinch gesture.
+      if (compact && !e.ctrlKey && !e.metaKey) {
+        return;
+      }
+
+      // Prevent browser native page zoom and page scroll when intentionally zooming
       e.preventDefault();
       e.stopPropagation();
 
@@ -419,7 +439,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
     return () => {
       container.removeEventListener('wheel', onWheel);
     };
-  }, [fromPxX, fromPxY, setBounds]);
+  }, [fromPxX, fromPxY, setBounds, compact]);
 
   // Extract dynamic slider parameters (e.g. i = 0.4, a = 2, m = -1.5)
   const parameters = useMemo(() => {
@@ -790,7 +810,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
     if (!isMouseDown || !touchState.current.isDragging) return;
 
     const width = container.clientWidth || 600;
-    const height = TOTAL_HEIGHT;
+    const height = container.clientHeight || containerDimensions.height;
 
     const dx = e.clientX - touchState.current.startX;
     const dy = e.clientY - touchState.current.startY;
@@ -1243,8 +1263,13 @@ export default function FunctionPlotter({ compact = false, mobileHeight, initial
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
-          style={{ touchAction: 'none', height: containerDimensions.height }}
-          className={`w-full relative select-none touch-none bg-white dark:bg-[#131313] rounded-2xl overflow-hidden border border-[#E0E0E0] dark:border-[#2E2825] shadow-inner transition-colors ${
+          style={{
+            touchAction: compact ? 'pan-y' : 'none',
+            height: containerDimensions.height,
+          }}
+          className={`w-full relative select-none bg-white dark:bg-[#131313] rounded-2xl overflow-hidden border border-[#E0E0E0] dark:border-[#2E2825] shadow-inner transition-colors ${
+            compact ? 'touch-pan-y' : 'touch-none'
+          } ${
             isMouseDown ? 'cursor-grabbing' : 'cursor-crosshair'
           }`}
         >

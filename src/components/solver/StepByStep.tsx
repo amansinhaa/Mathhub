@@ -290,26 +290,29 @@ export default function StepByStep() {
         if (!fn) return null;
 
         return (
-          <div className="bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-3 sm:p-4 shadow-xs overflow-hidden">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E0E0E0] dark:border-[#2C2724]">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
-                <LineChart size={14} />
-                <span>Visual Curve &amp; Roots</span>
+          <div className="flex justify-end my-2">
+            <div className="w-full sm:max-w-md lg:max-w-lg bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-2.5 sm:p-3 shadow-xs overflow-hidden">
+              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[#E0E0E0] dark:border-[#2C2724]">
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
+                  <LineChart size={13} />
+                  <span>Visual Curve &amp; Roots</span>
+                </div>
+                <Link
+                  href={getGraphLink()}
+                  className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
+                >
+                  Full Graph Studio &rarr;
+                </Link>
               </div>
-              <Link
-                href={getGraphLink()}
-                className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
-              >
-                Full Graph Studio &rarr;
-              </Link>
-            </div>
-            <div className="w-full h-[320px] sm:h-[380px]">
-              <FunctionPlotter
-                compact
-                initialExpression={fn}
-                initialRoots={cleanRoots}
-                mobileHeight={300}
-              />
+              <div className="w-full h-[220px] sm:h-[250px]">
+                <FunctionPlotter
+                  compact
+                  initialExpression={fn}
+                  initialRoots={cleanRoots}
+                  height={250}
+                  mobileHeight={220}
+                />
+              </div>
             </div>
           </div>
         );
