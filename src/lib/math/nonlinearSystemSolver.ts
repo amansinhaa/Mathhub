@@ -153,7 +153,7 @@ export function solveNonlinearSystem(equations: string[], variables: string[] = 
   const solutionPairs: SolutionPair[] = [];
   for (const r of roots) {
     try {
-      const backVal = Number(nerdamer(isolatedExpr, { [remainingVar]: r }).evaluate().text());
+      const backVal = Number((nerdamer as any)(isolatedExpr, { [remainingVar]: r }).evaluate().text());
       const rClean = Number(r.toFixed(4));
       const backClean = Number(backVal.toFixed(4));
 

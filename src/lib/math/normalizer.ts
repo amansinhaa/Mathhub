@@ -35,7 +35,15 @@ export function normalizeExpression(input: string): string {
 
   // 1. Replace Unicode math operators and symbols
   expr = expr.replace(/×/g, '*');
-  expr = expr.replace(/÷/g, '/');
+  expr = expr.replace(/\\div\b/g, '÷');
+  if (expr.includes('÷')) {
+    const divParts = expr.split('÷');
+    if (divParts.length === 2) {
+      expr = `(${divParts[0].trim()})/(${divParts[1].trim()})`;
+    } else {
+      expr = expr.replace(/÷/g, '/');
+    }
+  }
   expr = expr.replace(/−/g, '-');    // Unicode minus
   expr = expr.replace(/π/g, 'pi');
   expr = expr.replace(/∛/g, 'cbrt');  // Cube root symbol

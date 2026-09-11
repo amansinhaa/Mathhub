@@ -22,6 +22,7 @@ import { detectODE, solveODE } from './odeSolver';
 import { detectTranscendental, solveTranscendental } from './transcendentalSolver';
 import { isNonlinearSystem, solveNonlinearSystem } from './nonlinearSystemSolver';
 import { detectParametricEquation, solveParametricEquation } from './parametricSolver';
+import { trySimplifyRationalExpression, trySolveRationalEquation } from './rationalSolver';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -774,16 +775,29 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
   let cleanEq = equation.trim();
   cleanEq = autoBalanceParens(cleanEq);
 
-  // If expression without = contains radicals, simplify radical expression directly
+  // If expression without = contains radicals or rational expressions, simplify directly
   if (!cleanEq.includes('=')) {
     const radicalResult = trySimplifyRadicalExpression(cleanEq, equation);
     if (radicalResult) {
       return radicalResult;
     }
 
+    const rationalResult = trySimplifyRationalExpression(cleanEq, equation);
+    if (rationalResult) {
+      return rationalResult;
+    }
+
     const algebraicResult = trySimplifyAlgebraicExpression(cleanEq, equation);
     if (algebraicResult) {
       return algebraicResult;
+    }
+  }
+
+  // If equation WITH = is a rational equation (contains fractions with variables in denominator)
+  if (cleanEq.includes('=')) {
+    const rationalEqResult = trySolveRationalEquation(cleanEq, equation);
+    if (rationalEqResult) {
+      return rationalEqResult;
     }
   }
 
@@ -998,11 +1012,13 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     // fall through
   }
 
-  // Attempt transcendental numerical Newton-Raphson before giving up
-  try {
-    return solveTranscendental(cleanEq, variable);
-  } catch {
-    // fall through
+  // Attempt transcendental numerical Newton-Raphson ONLY if transcendental functions are detected
+  if (detectTranscendental(cleanEq).isTranscendental) {
+    try {
+      return solveTranscendental(cleanEq, variable);
+    } catch {
+      // fall through
+    }
   }
 
   return {

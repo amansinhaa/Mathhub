@@ -100,6 +100,7 @@ export default function EquationInput() {
     inequality:  'e.g. 2x - 3 > 0  or  x² ≤ 9',
     symbolic:    'e.g. v = u + a*t',
     system:      '',
+    ode:         'e.g. y\'\' + 4y = 0',
   };
 
   const exampleChips: Partial<Record<SolverType, string[]>> = {
