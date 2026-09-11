@@ -277,6 +277,16 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
   if (!input || !input.trim()) return null;
   const clean = normalizeExpression(input);
 
+  // Detect ODEs (y', dy/dx, y'')
+  if (/y''|y'|dy\/dx|d\^2y\/dx\^2/i.test(input)) {
+    return { degree: 0, label: 'Differential Equation (ODE)' };
+  }
+
+  // Detect transcendental equations (exponential, trig, log with equals)
+  if (/(?:exp\b|e\^|\bsin\b|\bcos\b|\btan\b|\bln\b|\blog\b)/i.test(clean) && clean.includes('=')) {
+    return { degree: 0, label: 'Transcendental Equation' };
+  }
+
   // Detect radical expressions/equations
   if (/sqrt|cbrt|√|∛/.test(clean)) {
     if (clean.includes('=')) {

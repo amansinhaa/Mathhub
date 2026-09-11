@@ -1,4 +1,4 @@
-export type SolverType = 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic';
+export type SolverType = 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic' | 'ode';
 
 export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';
 

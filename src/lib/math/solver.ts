@@ -18,6 +18,9 @@ import * as math from 'mathjs';
 // @ts-ignore
 import nerdamer from 'nerdamer/all.min.js';
 import { normalizeExpression, autoBalanceParens, autoInterpretEquals, expressionToLatex } from './normalizer';
+import { detectODE, solveODE } from './odeSolver';
+import { detectTranscendental, solveTranscendental } from './transcendentalSolver';
+import { isNonlinearSystem, solveNonlinearSystem } from './nonlinearSystemSolver';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -783,6 +786,24 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     }
   }
 
+  // Check if this is an Ordinary Differential Equation (ODE)
+  if (detectODE(cleanEq).isODE) {
+    try {
+      return solveODE(cleanEq);
+    } catch {
+      // fall through
+    }
+  }
+
+  // Check if this is a Transcendental Equation
+  if (detectTranscendental(cleanEq).isTranscendental && cleanEq.includes('=')) {
+    try {
+      return solveTranscendental(cleanEq);
+    } catch {
+      // fall through to algebraic solver
+    }
+  }
+
   // Auto-interpret expression without = as = 0
   const interpretation = autoInterpretEquals(cleanEq);
   if (interpretation.interpreted) {
@@ -974,6 +995,13 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     // fall through
   }
 
+  // Attempt transcendental numerical Newton-Raphson before giving up
+  try {
+    return solveTranscendental(cleanEq, variable);
+  } catch {
+    // fall through
+  }
+
   return {
     type: 'polynomial',
     steps: [
@@ -990,6 +1018,16 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
 
 export function solveSystem(equations: string[], variables: string[]): SolverResult {
   const vars = variables.length > 0 ? variables : ['x', 'y'];
+
+  // Check if system contains nonlinear equations (circles, parabolas, product terms, etc.)
+  if (isNonlinearSystem(equations)) {
+    try {
+      return solveNonlinearSystem(equations, vars);
+    } catch {
+      // fall back to linear approximation if possible
+    }
+  }
+
   const n = Math.min(equations.length, vars.length);
 
   const matA: number[][] = [];

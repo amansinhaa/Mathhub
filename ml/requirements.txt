@@ -1,0 +1,8 @@
+sympy>=1.13
+numpy>=2.0
+pandas>=2.2
+datasets>=3.0
+transformers>=4.45
+torch>=2.4
+scikit-learn>=1.5
+antlr4-python3-runtime==4.11

@@ -1,0 +1,1628 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "generator": "MathHub ML Pipeline",
+    "datasets": [
+      "openai/gsm8k",
+      "TIGER-Lab/MATH-plus",
+      "hendrycks/MATH"
+    ],
+    "total_templates": 39
+  },
+  "feature_names": [
+    "degree",
+    "num_terms",
+    "coeff_sign_hash",
+    "discriminant_sign",
+    "has_complex_roots",
+    "is_factorable",
+    "max_coeff_magnitude",
+    "gcd_of_coefficients"
+  ],
+  "templates": {
+    "linear": [
+      {
+        "templateId": "linear_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We can rewrite x^2 - y^2 as (x+y)(x-y).",
+            "math": "x^2 - y^2; (x+y)(x-y)"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Using the given equations, we have (x+y)(x-y) = a(b) = c.",
+            "math": "(x+y)(x-y) = a(b) = \\boxed{c}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "The answer is c",
+            "math": ""
+          }
+        ]
+      },
+      {
+        "templateId": "linear_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We can rewrite x^2 - y^2 as (x+y)(x-y).",
+            "math": "x^2 - y^2; (x+y)(x-y)"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Using the given equations, we have (x+y)(x-y) = a(b) = c.",
+            "math": "(x+y)(x-y) = a(b) = \\boxed{c}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "The answer is c",
+            "math": ""
+          }
+        ]
+      },
+      {
+        "templateId": "linear_4",
+        "source": "ml_cluster",
+        "clusterId": "4",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "First calculate the number of eggs laid in b week: c X d = a eggs",
+            "math": "c X d = a eggs"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Now let\u2019s put these eggs in the boxes: a / e = f boxes",
+            "math": "a/e=f"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Step g",
+            "math": "f"
+          }
+        ]
+      },
+      {
+        "templateId": "linear_2",
+        "source": "ml_cluster",
+        "clusterId": "2",
+        "totalSteps": 4,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "In a day, John uses 75x b = c watts.",
+            "math": "d*b=c"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "So in a month, he uses c x e = f g watts.",
+            "math": "he uses c x e = f g watts."
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Since there are h watts in k kilowatt, then John uses a/h = f.",
+            "math": "a/h=f"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Step m",
+            "math": "f"
+          }
+        ]
+      },
+      {
+        "templateId": "linear_3",
+        "source": "ml_cluster",
+        "clusterId": "3",
+        "totalSteps": 8,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "If we let X represent the number of pounds of coal that the blue boxcar can hold, then a=(c/b)X.",
+            "math": "then a=(c/b)X."
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Solving for X, we get X=d pounds of coal, which represents what the blue car can hold.",
+            "math": "d=d"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Thus, the red boxcar can hold e*d=f,g pounds of coal.",
+            "math": "e*d=h"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "e red boxcars can carry e*f,g=k,g pounds of coal.",
+            "math": "e*h=m"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "n black boxcars can carry n*p,g=q,g pounds of coal.",
+            "math": "n*a=r"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "p blue boxcars carry p*s,g=t,g pounds of coal.",
+            "math": "p*d=c_16"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Together, all the trains boxcars can carry k,g+q,g+t,g=c_17,g pounds of coal.",
+            "math": "m+r+c_16=c_18"
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "Step s",
+            "math": "c_17,g"
+          }
+        ]
+      }
+    ],
+    "quadratic": [
+      {
+        "type": "quadratic",
+        "templateId": "quadratic_quadratic_formula",
+        "name": "Quadratic Formula General Solution",
+        "condition": {
+          "degree": 2,
+          "is_factorable": false
+        },
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Write the quadratic in standard form $ax^2 + bx + c = 0$ and identify coefficients.",
+            "math": "a = {a}, \\quad b = {b}, \\quad c = {c}"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Compute the discriminant $\\Delta = b^2 - 4ac$.",
+            "math": "\\Delta = ({b})^2 - 4({a})({c}) = {delta}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Apply the Quadratic Formula: $x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$.",
+            "math": "{var} = \\frac{-({b}) \\pm \\sqrt{{delta}}}{2({a})}"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Simplify radical and compute individual roots.",
+            "math": "{var} = {final_roots}"
+          }
+        ]
+      },
+      {
+        "type": "quadratic",
+        "templateId": "quadratic_standard_factoring",
+        "name": "Factoring by Inspection",
+        "condition": {
+          "degree": 2,
+          "is_factorable": true,
+          "discriminant_sign": 1
+        },
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Identify coefficients: $a = {a}$, $b = {b}$, $c = {c}$ and ensure standard form $ax^2 + bx + c = 0$.",
+            "math": "{a}{var}^2 + {b}{var} + {c} = 0"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Calculate discriminant: $\\Delta = b^2 - 4ac$ to check for rational roots.",
+            "math": "\\Delta = ({b})^2 - 4({a})({c}) = {delta}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Factor the quadratic into linear binomial factors: $a(x - r_1)(x - r_2) = 0$.",
+            "math": "({p_1}{var} + {q_1})({p_2}{var} + {q_2}) = 0"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Apply the Zero Product Property: set each factor to zero and solve.",
+            "math": "{var}_1 = {sol_1}, \\quad {var}_2 = {sol_2}"
+          }
+        ]
+      },
+      {
+        "templateId": "quadratic_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 6,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Jerry mows b acres x \u00be = a acres with a riding mower.",
+            "math": "= a acres with a riding mower."
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "It will take him a acres / c each hour = d hours.",
+            "math": "a/c=d"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Jerry mows b acres \u2013 a acres mowed with a riding mower = c acres with a push mower.",
+            "math": "b-a=c"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "It will take him c acres x e hour = c hours.",
+            "math": "c*e=c"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "It takes Jerry a total of d hours on the riding mower + c hours on the push mower = f hours.",
+            "math": "d+c=f"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Step a",
+            "math": "f"
+          }
+        ]
+      },
+      {
+        "templateId": "quadratic_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 6,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Jerry mows b acres x \u00be = a acres with a riding mower.",
+            "math": "= a acres with a riding mower."
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "It will take him a acres / c each hour = d hours.",
+            "math": "a/c=d"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Jerry mows b acres \u2013 a acres mowed with a riding mower = c acres with a push mower.",
+            "math": "b-a=c"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "It will take him c acres x e hour = c hours.",
+            "math": "c*e=c"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "It takes Jerry a total of d hours on the riding mower + c hours on the push mower = f hours.",
+            "math": "d+c=f"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Step a",
+            "math": "f"
+          }
+        ]
+      }
+    ],
+    "cubic": [
+      {
+        "type": "cubic",
+        "templateId": "cubic_rational_root_synthetic_division",
+        "name": "Rational Root Theorem & Synthetic Division",
+        "condition": {
+          "degree": 3
+        },
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Write the cubic in standard form $ax^3 + bx^2 + cx + d = 0$.",
+            "math": "{a}{var}^3 + {b}{var}^2 + {c}{var} + {d} = 0"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Test candidate rational roots $\\pm p/q$ where $p \\mid d$ and $q \\mid a$ to find a root $r_1$.",
+            "math": "f({r_1}) = {a}({r_1})^3 + {b}({r_1})^2 + {c}({r_1}) + {d} = 0 \\quad \\checkmark"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Perform polynomial synthetic division by $({var} - r_1)$ to extract the quotient quadratic.",
+            "math": "\\frac{f({var})}{{var} - {r_1}} = {q_a}{var}^2 + {q_b}{var} + {q_c}"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Solve the resulting quadratic equation using the quadratic formula.",
+            "math": "{q_a}{var}^2 + {q_b}{var} + {q_c} = 0 \\implies {var} = \\frac{-{q_b} \\pm \\sqrt{\\Delta_q}}{2{q_a}}"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Collect all three roots (real and complex).",
+            "math": "{var} = {all_roots}"
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_4",
+        "source": "ml_cluster",
+        "clusterId": "4",
+        "totalSteps": 8,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Samantha, Aira, and Joe have c x d = e rubber bands altogether.",
+            "math": "c*d=e"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "If we let x be the number of bands that Aira had, then Samantha had x + b.",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Since Aira had f fewer band than Joe, then Joe had x + f.",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Since the total number of bands is e, then the equation is x + (x + b) + (x + f) = e.",
+            "math": "then the equation is x + (x + b) + (x + f) = e."
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "By simplifying the left side of the equation, we have 3x + c = e.",
+            "math": "d*+c=e"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Putting all the constant terms on the right side gives 3x = g.",
+            "math": "Putting all the constant terms on the right side gives 3x = g."
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "So the value of x is g/d = h. Hence, Aira had h rubber bands.",
+            "math": "So the value of x is g/d = h. Hence"
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "Step k",
+            "math": "h"
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 8,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Samantha, Aira, and Joe have c x d = e rubber bands altogether.",
+            "math": "c*d=e"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "If we let x be the number of bands that Aira had, then Samantha had x + b.",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Since Aira had f fewer band than Joe, then Joe had x + f.",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Since the total number of bands is e, then the equation is x + (x + b) + (x + f) = e.",
+            "math": "then the equation is x + (x + b) + (x + f) = e."
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "By simplifying the left side of the equation, we have 3x + c = e.",
+            "math": "d*+c=e"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Putting all the constant terms on the right side gives 3x = g.",
+            "math": "Putting all the constant terms on the right side gives 3x = g."
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "So the value of x is g/d = h. Hence, Aira had h rubber bands.",
+            "math": "So the value of x is g/d = h. Hence"
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "Step k",
+            "math": "h"
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_3",
+        "source": "ml_cluster",
+        "clusterId": "3",
+        "totalSteps": 8,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let x be the age of Nina.",
+            "math": "c x - \\left(- i s x - x + d\\right) = a"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "So, Leonard's age is x - d.",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "And Jerome's age is 2x.",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Since the sum of their ages is e, then the equation is x + x - d + 2x = e.",
+            "math": "then the equation is x + x - d + 2x = e."
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "By combining like terms, the equation becomes 4x = f.",
+            "math": "the equation becomes 4x = f."
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "So the value of x which represents the age of Nina is x = f/d = g.",
+            "math": "f/d=g"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Therefore, Leonard is g - d = h years old.",
+            "math": "g-d=h"
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "Step k",
+            "math": "h"
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 2,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "The given polynomial can be rewritten in the form a^3-b^3, which is the difference of cubes for a=2x^3 and b=5y^2.",
+            "math": "a^3-b^3; a=2x^3; b=5y^2"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Therefore, the expression can be factored as a^3-b^3=(a-b)(a^2+ab+b^2)=(2x^3-5y^2)(4x^6+10x^3y^2+25y^4)..",
+            "math": "a^3-b^3=(a-b)(a^2+ab+b^2)=(2x^3-5y^2)(4x^6+10x^3y^2+25y^4)"
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_1",
+        "source": "ml_cluster",
+        "clusterId": "1",
+        "totalSteps": 26,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "**",
+            "math": "a Diamond b = \\left(a b^{a} - b\\right) + b"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "To find the value of Y, we substitute a = a and (-a)\\Diamond Y = c into the definition of the operation \\Diamond:",
+            "math": "Y; a = a; (-a)\\Diamond Y = c; \\Diamond"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "(a)\\Diamond Y = (a)(Y^2) - Y + b",
+            "math": "Diamond Y = (a)(Y^2) - Y + b"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Given that (a)\\Diamond Y = c, we substitute it into the equation:",
+            "math": "(a)\\Diamond Y = c"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "c = (a)(Y^2) - Y + b",
+            "math": "c = (a)(Y^2) - Y + b"
+          },
+          {
+            "stepNumber": 9,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 10,
+            "explanation": "Simplifying, we get:",
+            "math": ""
+          },
+          {
+            "stepNumber": 11,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 12,
+            "explanation": "d = 2Y^2 - Y",
+            "math": "d = 2Y^2 - Y"
+          },
+          {
+            "stepNumber": 13,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 14,
+            "explanation": "Rearranging the equation, we get a quadratic equation:",
+            "math": ""
+          },
+          {
+            "stepNumber": 15,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 16,
+            "explanation": "2Y^2 - Y - d = e",
+            "math": "2Y^2 - Y - d = e"
+          },
+          {
+            "stepNumber": 17,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 18,
+            "explanation": "Factoring the equation, we have:",
+            "math": ""
+          },
+          {
+            "stepNumber": 19,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 20,
+            "explanation": "(2Y - f)(Y + a) = e",
+            "math": "(2Y - f)(Y + a) = e"
+          },
+          {
+            "stepNumber": 21,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 22,
+            "explanation": "Setting each factor equal to zero, we find:",
+            "math": ""
+          },
+          {
+            "stepNumber": 23,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 24,
+            "explanation": "Y = f/a or Y = -a",
+            "math": "Y = f/a or Y"
+          },
+          {
+            "stepNumber": 25,
+            "explanation": "```",
+            "math": ""
+          },
+          {
+            "stepNumber": 26,
+            "explanation": "Therefore, the possible values of Y are f/a and -a.",
+            "math": "Y; f/a; -a"
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_5",
+        "source": "ml_cluster",
+        "clusterId": "5",
+        "totalSteps": 23,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let x = a - b. Then a = x + b, so",
+            "math": "x = a - b.; a = x + b,"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "(x + b)^3 - d(x + b)^2 + a(x + b) - f = g,which simplifies to x^3 - 55x - h = g.",
+            "math": "(x + b)^3 - d(x + b)^2 + a(x + b) - f = g,; x^3 - 55x - h = g."
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Let y = b - \\frac{b}{e}. Then b = y + \\frac{b}{e}, so",
+            "math": "y = b - \\frac{b}{e}.; b = y + \\frac{b}{e},"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "k \\left( y + \\frac{b}{e} \\right)^3 - m \\left( y + \\frac{b}{e} \\right)^2 - n \\left( y + \\frac{b}{e} \\right) + p = g,which simplifies to y^3 - 55y + q = g.",
+            "math": "k \\left( y + \\frac{b}{e} \\right)^3 - m \\left( y + \\frac{b}{e} \\right)^2 - n \\left( y + \\frac{b}{e} \\right) + p = g,; y^3 - 55y + q = g."
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Consider the function f(t) = t^3 - 55t. Observe that the polynomial f(t) has three roots g, \\sqrt{r}, and -\\sqrt{r}. Its graph is shown below.",
+            "math": "f(t) = t^3 - 55t.; f(t); \\sqrt{r},; -\\sqrt{r}."
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "[asy]",
+            "math": ""
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "unitsize (s cm);",
+            "math": ""
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "real cubic (real x) {",
+            "math": ""
+          },
+          {
+            "stepNumber": 9,
+            "explanation": "return ((x^3 - r*x)/t);",
+            "math": ""
+          },
+          {
+            "stepNumber": 10,
+            "explanation": "}",
+            "math": ""
+          },
+          {
+            "stepNumber": 11,
+            "explanation": "draw(graph(cubic,-c_16,c_16));",
+            "math": ""
+          },
+          {
+            "stepNumber": 12,
+            "explanation": "draw((-c_17,g)--(c_17,g));",
+            "math": ""
+          },
+          {
+            "stepNumber": 13,
+            "explanation": "draw((g,-c_17)--(g,c_17));",
+            "math": ""
+          },
+          {
+            "stepNumber": 14,
+            "explanation": "dot(\"\\sqrt{r}\", (sqrt(r),g), SE);",
+            "math": "\\sqrt{r}"
+          },
+          {
+            "stepNumber": 15,
+            "explanation": "dot(\"-\\sqrt{r}\", (-sqrt(r),g), SW);",
+            "math": "-\\sqrt{r}"
+          },
+          {
+            "stepNumber": 16,
+            "explanation": "[/asy]",
+            "math": ""
+          },
+          {
+            "stepNumber": 17,
+            "explanation": "Let g \\le t \\le \\sqrt{r}. Then",
+            "math": "g \\le t \\le \\sqrt{r}."
+          },
+          {
+            "stepNumber": 18,
+            "explanation": "[f(t)]^2 = (t^3 - 55t)^2 = t^2 (t^2 - r)^2 = t^2 (r - t^2)^2 = t^2 (r - t^2)(r - t^2).By AM-GM,",
+            "math": "[f(t)]^2 = (t^3 - 55t)^2 = t^2 (t^2 - r)^2 = t^2 (r - t^2)^2 = t^2 (r - t^2)(r - t^2)."
+          },
+          {
+            "stepNumber": 19,
+            "explanation": "2t^2 (r - t^2)(r - t^2) \\le \\left( \\frac{(2t^2) + (r - t^2) + (r - t^2)}{c} \\right)^3 = \\left( \\frac{c_18}{c} \\right)^3 < c_19^3,so",
+            "math": "2t^2 (r - t^2)(r - t^2) \\le \\left( \\frac{(2t^2) + (r - t^2) + (r - t^2)}{c} \\right)^3 = \\left( \\frac{c_18}{c} \\right)^3 < c_19^3,"
+          },
+          {
+            "stepNumber": 20,
+            "explanation": "[f(t)]^2 < c_20 < c_21,which means |f(t)| < c_22.",
+            "math": "[f(t)]^2 < c_20 < c_21,; |f(t)| < c_22."
+          },
+          {
+            "stepNumber": 21,
+            "explanation": "Since f(t) is an odd function, |f(t)| < c_22 for -\\sqrt{r} \\le t \\le g as well. This means that the equation f(t) = q has exactly one real root. Similarly, f(t) = -q has exactly one real root. Furthermore, since f(t) is an odd function, these roots add up to g.",
+            "math": "f(t); |f(t)| < c_22; -\\sqrt{r} \\le t \\le g; f(t) = q; f(t) = -q"
+          },
+          {
+            "stepNumber": 22,
+            "explanation": "Then",
+            "math": ""
+          },
+          {
+            "stepNumber": 23,
+            "explanation": "a - b + b - \\frac{b}{e} = g,so a + b = b + \\frac{b}{e} = \\frac{d{e}}. The answer is \\frac{d}{e}.",
+            "math": "a - b + b - \\frac{b}{e} = g,; a + b = b + \\frac{b}{e} = \\boxed{\\frac{d}{e}}."
+          }
+        ]
+      },
+      {
+        "templateId": "cubic_2",
+        "source": "ml_cluster",
+        "clusterId": "2",
+        "totalSteps": 4,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We cross-multiply to get c \\cdot d = x^2 \\cdot x.",
+            "math": "c   d = x^2   x"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Simplifying, we have a = x^3.",
+            "math": "a = x^3"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Taking the cube root of both sides, we find x = c.",
+            "math": "x = \\boxed{c}"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "The answer is c",
+            "math": ""
+          }
+        ]
+      }
+    ],
+    "quartic": [
+      {
+        "templateId": "quartic_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 7,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let R = Roman's gallons",
+            "math": "Let R = Roman"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Remy = 3R + b",
+            "math": "Remy = 3R + b"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "4R + b = c",
+            "math": "4R + b = c"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "4R = d",
+            "math": "d=d"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "R = e",
+            "math": "e=e"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Remy used f gallons of water for his shower.",
+            "math": ""
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Step g",
+            "math": "f"
+          }
+        ]
+      },
+      {
+        "templateId": "quartic_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 7,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let R = Roman's gallons",
+            "math": "Let R = Roman"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Remy = 3R + b",
+            "math": "Remy = 3R + b"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "4R + b = c",
+            "math": "4R + b = c"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "4R = d",
+            "math": "d=d"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "R = e",
+            "math": "e=e"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Remy used f gallons of water for his shower.",
+            "math": ""
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Step g",
+            "math": "f"
+          }
+        ]
+      }
+    ],
+    "higher_order": [
+      {
+        "templateId": "higher_order_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 9,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let her previous monthly income be p",
+            "math": "b y c g i v e d p s = b p"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "The cost of her rent and utilities was e% of p which is (e/f)*p = 2p/b",
+            "math": "of p which is (e/f)*p = 2p/b"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Her income was increased by g so it is now p+g",
+            "math": "g so it is now p+"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "The cost of her rent and utilities now amount to h% of (p+g) which is (h/f)*(p+g) = (p+g)/k",
+            "math": "g) which is (h/f)*(p+"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Equating both expressions for cost of rent and utilities: 2p/b = (p+g)/k",
+            "math": "2p/b = (p+"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Multiplying both sides of the equation by c gives 8p = 5p+m",
+            "math": "Multiplying both sides of the equation by c gives 8p = 5p+"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Subtracting 5p from both sides gives: 3p = m",
+            "math": "3p ="
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "Dividing both sides by n gives p = p",
+            "math": "Dividing both sides by n gives p ="
+          },
+          {
+            "stepNumber": 9,
+            "explanation": "Step q",
+            "math": "p"
+          }
+        ]
+      },
+      {
+        "templateId": "higher_order_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 9,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let her previous monthly income be p",
+            "math": "b y c g i v e d p s = b p"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "The cost of her rent and utilities was e% of p which is (e/f)*p = 2p/b",
+            "math": "of p which is (e/f)*p = 2p/b"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Her income was increased by g so it is now p+g",
+            "math": "g so it is now p+"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "The cost of her rent and utilities now amount to h% of (p+g) which is (h/f)*(p+g) = (p+g)/k",
+            "math": "g) which is (h/f)*(p+"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Equating both expressions for cost of rent and utilities: 2p/b = (p+g)/k",
+            "math": "2p/b = (p+"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Multiplying both sides of the equation by c gives 8p = 5p+m",
+            "math": "Multiplying both sides of the equation by c gives 8p = 5p+"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Subtracting 5p from both sides gives: 3p = m",
+            "math": "3p ="
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "Dividing both sides by n gives p = p",
+            "math": "Dividing both sides by n gives p ="
+          },
+          {
+            "stepNumber": 9,
+            "explanation": "Step q",
+            "math": "p"
+          }
+        ]
+      },
+      {
+        "templateId": "higher_order_4",
+        "source": "ml_cluster",
+        "clusterId": "4",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Observe that for a natural number n we have \\lfloor -n -.e \\rfloor \\cdot \\lceil n +.e \\rceil = -n(n+d).",
+            "math": "n; \\lfloor -n -.e \\rfloor   \\lceil n +.e \\rceil = -n(n+d)"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Hence, the expression in question reduces to (-f\\cdot6)(-g\\cdot5) (-b\\cdot4) (-c\\cdot3) (-d\\cdot2) = - e! = -h.",
+            "math": "(-f 6)(-g 5) (-b 4) (-c 3) (-d 2) = - e! = \\boxed{-h}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "The answer is -h.",
+            "math": ""
+          }
+        ]
+      }
+    ],
+    "inequality": [
+      {
+        "templateId": "inequality_3",
+        "source": "ml_cluster",
+        "clusterId": "3",
+        "totalSteps": 6,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We have c^2=d, so c is the smallest positive integer which satisfies the inequalities. From here, we can compute the next few perfect squares: \\begin{align*}",
+            "math": "c^2=d; c"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "e^2 &= f, \\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "g^2 &= h, \\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "k^2 &= m, \\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "n^2 &= p.",
+            "math": ""
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "\\end{align*} The last x for which x^2\\le b is x=k. In all, our solutions in positive integers are x=c,e,g,k, so there are q such x. The answer is q.",
+            "math": "x; x^2\\le b; x=k; x=c,e,g,k,; \\boxed{q}"
+          }
+        ]
+      },
+      {
+        "templateId": "inequality_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 6,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We have c^2=d, so c is the smallest positive integer which satisfies the inequalities. From here, we can compute the next few perfect squares: \\begin{align*}",
+            "math": "c^2=d; c"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "e^2 &= f, \\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "g^2 &= h, \\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "k^2 &= m, \\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "n^2 &= p.",
+            "math": ""
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "\\end{align*} The last x for which x^2\\le b is x=k. In all, our solutions in positive integers are x=c,e,g,k, so there are q such x. The answer is q.",
+            "math": "x; x^2\\le b; x=k; x=c,e,g,k,; \\boxed{q}"
+          }
+        ]
+      },
+      {
+        "templateId": "inequality_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let the other c numbers be y_1, y_2, \\dots, y_{c}. Then y_1 +y_2 + \\dots + y_{c} = a - x and \\frac{d}{y_1} + \\frac{d}{y_2} + \\dots + \\frac{d}{y_{c}} = a - \\frac{d}{x}. By Cauchy-Schwarz,",
+            "math": "y_1,; y_2,; \\dots,; y_{c}.; y_1 +y_2 + \\dots + y_{c} = a - x; \\frac{d}{y_1} + \\frac{d}{y_2} + \\dots + \\frac{d}{y_{c}} = a - \\frac{d}{x}."
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "\\left( \\sum_{i = d}^{c} y_i \\right) \\left( \\sum_{i = d}^{c} \\frac{d}{y_i} \\right) = (a - x) \\left( a - \\frac{d}{x} \\right) \\ge c^2.Then a^2 - a \\left( x + \\frac{d}{x} \\right) + d \\ge c^2, which leads to",
+            "math": "\\left( \\sum_{i = d}^{c} y_i \\right) \\left( \\sum_{i = d}^{c} \\frac{d}{y_i} \\right) = (a - x) \\left( a - \\frac{d}{x} \\right) \\ge c^2.; a^2 - a \\left( x + \\frac{d}{x} \\right) + d \\ge c^2,"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "x + \\frac{d}{x} \\le \\frac{e}{a}.The equation x + \\frac{d}{x} = \\frac{e}{a} reduces to x^2 - \\frac{e}{a} x + d = f, which has real roots. We can then set y_i = \\frac{a - x}{c} in order to achieve equality. Thus, the maximum value is \\frac{e{a}}. The answer is \\frac{e}{a}.",
+            "math": "x + \\frac{d}{x} \\le \\frac{e}{a}.; x + \\frac{d}{x} = \\frac{e}{a}; x^2 - \\frac{e}{a} x + d = f,; y_i = \\frac{a - x}{c}; \\boxed{\\frac{e}{a}}."
+          }
+        ]
+      },
+      {
+        "templateId": "inequality_4",
+        "source": "ml_cluster",
+        "clusterId": "4",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "** Let x=y=a. Then \\cos(a+y) \\geq \\cos(a) + \\cos(y), which reduces to \\cos y \\geq \\cos y.",
+            "math": "x=y=a.; \\cos(a+y) \\geq \\cos(a) + \\cos(y),; \\cos y \\geq \\cos y."
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "This is true for all values of y in the interval [-\\pi,\\pi].",
+            "math": "y; [-\\pi,\\pi]."
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Now let x=\\pi and y=a. Then \\cos(\\pi+y) \\geq \\cos(\\pi) + \\cos(y), which reduces to \\cos(\\pi+y) \\geq \\cos y.",
+            "math": "x=\\pi; y=a.; \\cos(\\pi+y) \\geq \\cos(\\pi) + \\cos(y),; \\cos(\\pi+y) \\geq \\cos y."
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "This is true for all values of y in the interval [-\\pi,\\pi].",
+            "math": "y; [-\\pi,\\pi]."
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Therefore, the inequality holds for all values of x in the interval [-\\pi,\\pi], so the possible values of x are [-\\pi,\\pi].",
+            "math": "x; [-\\pi,\\pi],; \\boxed{[-\\pi,\\pi]}."
+          }
+        ]
+      }
+    ],
+    "algebraic_simplification": [
+      {
+        "type": "algebraic_simplification",
+        "templateId": "algebraic_distribute_and_combine",
+        "name": "Distribution and Like-Terms Combination",
+        "condition": {
+          "has_variables": true
+        },
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Expand all distributed factors across parentheses: $k(u + v) = ku + kv$.",
+            "math": "{expanded_expression}"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Remove redundant signs and group like terms with identical variables and powers.",
+            "math": "{grouped_terms}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Combine numerical coefficients for each variable group.",
+            "math": "{combined_groups}"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Assemble the final simplified algebraic expression.",
+            "math": "{final_simplified}"
+          }
+        ]
+      },
+      {
+        "templateId": "algebraic_simplification_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "An hour has a minutes.",
+            "math": "a"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "If each call lasts an hour, the total amount of money charged is a*.b = c for d customer.",
+            "math": "a*.b=c"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "When she talks to e clients in a week, the total amount of money charged is e*c = f.",
+            "math": "e*c=f"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "In a month of g weeks, the phone bill is f*g = h.",
+            "math": "f*g=h"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Step k",
+            "math": "h"
+          }
+        ]
+      },
+      {
+        "templateId": "algebraic_simplification_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "An hour has a minutes.",
+            "math": "a"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "If each call lasts an hour, the total amount of money charged is a*.b = c for d customer.",
+            "math": "a*.b=c"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "When she talks to e clients in a week, the total amount of money charged is e*c = f.",
+            "math": "e*c=f"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "In a month of g weeks, the phone bill is f*g = h.",
+            "math": "f*g=h"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Step k",
+            "math": "h"
+          }
+        ]
+      }
+    ],
+    "system": [],
+    "constant": [
+      {
+        "templateId": "constant_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let X be the wholesale price.",
+            "math": ""
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "The retail price of a pair of pants is X + X*a% = b.",
+            "math": "="
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Thus c*X = b.",
+            "math": "Thus c*X ="
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Thus X = b / c = d.",
+            "math": "b / c ="
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Step e",
+            "math": "d"
+          }
+        ]
+      },
+      {
+        "templateId": "constant_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "Let X be the wholesale price.",
+            "math": ""
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "The retail price of a pair of pants is X + X*a% = b.",
+            "math": "="
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Thus c*X = b.",
+            "math": "Thus c*X ="
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Thus X = b / c = d.",
+            "math": "b / c ="
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Step e",
+            "math": "d"
+          }
+        ]
+      }
+    ],
+    "other": [
+      {
+        "templateId": "other_5",
+        "source": "ml_cluster",
+        "clusterId": "5",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "First, evaluating g(a) = a(a)^2 - b = c.",
+            "math": "g(a) = a(a)^2 - b = c"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Then, evaluating h(c) = d(c)^3 + e = f.",
+            "math": "h(c) = d(c)^3 + e = \\boxed{f}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "The answer is f.",
+            "math": ""
+          }
+        ]
+      },
+      {
+        "templateId": "other_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 3,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "First, evaluating g(a) = a(a)^2 - b = c.",
+            "math": "g(a) = a(a)^2 - b = c"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Then, evaluating h(c) = d(c)^3 + e = f.",
+            "math": "h(c) = d(c)^3 + e = \\boxed{f}"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "The answer is f.",
+            "math": ""
+          }
+        ]
+      },
+      {
+        "templateId": "other_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 7,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "The bike repairs cost a because d x .e = a",
+            "math": "d*.e=a"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Call the amount he earns e. We know that e - a = b/5e",
+            "math": "Call the amount he earns e. We know that e - a = b/5e"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Therefore 5e - f = e",
+            "math": "Therefore 5e - f = e"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Therefore, 4e = f",
+            "math": "4e = f"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Therefore, e = e",
+            "math": "e=e"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "Therefore, he sold a apples because e / g = a",
+            "math": "e/g=a"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Step h",
+            "math": "a"
+          }
+        ]
+      },
+      {
+        "templateId": "other_4",
+        "source": "ml_cluster",
+        "clusterId": "4",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "If x-d is a factor of P(x), then P(d)=e.",
+            "math": "x-d; P(x); P(d)=e"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Plugging x=d into the expression for P(x) gives P(d)=d^3+b(d^2)+5c+c=e.",
+            "math": "x=d; P(x); P(d)=d^3+b(d^2)+5c+c=e"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Simplifying this equation, we have f+g+5c+c=e, or 5c=-h.",
+            "math": "f+g+5c+c=e; 5c=-h"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "Therefore, c=-k.",
+            "math": "c=\\boxed{-k}"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "The answer is -k",
+            "math": ""
+          }
+        ]
+      }
+    ],
+    "radical": [
+      {
+        "templateId": "radical_0",
+        "source": "ml_cluster",
+        "clusterId": "0",
+        "totalSteps": 8,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We begin by cross multiplying and then squaring both sides \\begin{align*}",
+            "math": "\\frac{\\sqrt{a x + b}}{\\sqrt{c x + b}} = \\frac{\\sqrt{b}}{a}"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "\\frac{\\sqrt{3x+b}}{\\sqrt{6x+b}}&=\\frac{\\sqrt{b}}{a}\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "a\\sqrt{3x+b}&=\\sqrt{b}\\cdot\\sqrt{6x+b}\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "\\left(a\\sqrt{3x+b}\\right)^2&=\\left(\\sqrt{b}\\cdot\\sqrt{6x+b}\\right)^2\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "d(3x+b) &=b(6x+b)\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "e &= 3x\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "x&=\\frac{e{a}}.\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "\\end{align*}Checking, we see that this value of x satisfies the original equation, so it is not an extraneous solution.",
+            "math": "x"
+          }
+        ]
+      },
+      {
+        "templateId": "radical_default",
+        "source": "ml_cluster",
+        "clusterId": "default",
+        "totalSteps": 8,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We begin by cross multiplying and then squaring both sides \\begin{align*}",
+            "math": "\\frac{\\sqrt{a x + b}}{\\sqrt{c x + b}} = \\frac{\\sqrt{b}}{a}"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "\\frac{\\sqrt{3x+b}}{\\sqrt{6x+b}}&=\\frac{\\sqrt{b}}{a}\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "a\\sqrt{3x+b}&=\\sqrt{b}\\cdot\\sqrt{6x+b}\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "\\left(a\\sqrt{3x+b}\\right)^2&=\\left(\\sqrt{b}\\cdot\\sqrt{6x+b}\\right)^2\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "d(3x+b) &=b(6x+b)\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "e &= 3x\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "x&=\\frac{e{a}}.\\\\",
+            "math": ""
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "\\end{align*}Checking, we see that this value of x satisfies the original equation, so it is not an extraneous solution.",
+            "math": "x"
+          }
+        ]
+      },
+      {
+        "templateId": "radical_4",
+        "source": "ml_cluster",
+        "clusterId": "4",
+        "totalSteps": 5,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "If the quadratic equation x^2 + (2a+c)x + a^2 = d has two integer solutions, then x = \\frac{-2a-c \\pm \\sqrt{(2a+c)^2 - 4a^2}}{b}is an integer, so it follows that the discriminant (2a+c)^2 - 4a^2 = 4a + c must be a perfect square.",
+            "math": "x^2 + (2a+c)x + a^2 = d; x = \\frac{-2a-c \\pm \\sqrt{(2a+c)^2 - 4a^2}}{b}; (2a+c)^2 - 4a^2 = 4a + c"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Also, c \\le a \\le e, so it follows that f \\le 4a+c \\le g.",
+            "math": "c \\le a \\le e; f \\le 4a+c \\le g"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Clearly 4a+c can only be the square of an odd integer; conversely, the square of any odd integer (2n+c)^2 is of the form 4n^2 + 4n+c = a(n^2 + n) + c and so can be written as 4a+c.",
+            "math": "4a+c; (2n+c)^2; 4n^2 + 4n+c = a(n^2 + n) + c"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "The odd perfect squares from f to g are given by h = k^2, f^2, m^2, h^2, n^2, p^2, q^2, r^2, s^2, so it follows that there are h such values of a.",
+            "math": "f; g; h = k^2, f^2, m^2, h^2, n^2, p^2, q^2, r^2, s^2; \\boxed{h}; a"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "The answer is h.",
+            "math": ""
+          }
+        ]
+      },
+      {
+        "templateId": "radical_3",
+        "source": "ml_cluster",
+        "clusterId": "3",
+        "totalSteps": 9,
+        "steps": [
+          {
+            "stepNumber": 1,
+            "explanation": "We have a\\star b = a^b + ab = a.",
+            "math": "a\\star b = a^b + ab = a"
+          },
+          {
+            "stepNumber": 2,
+            "explanation": "Since a and b are positive integers greater than or equal to b, we can start by testing different values of a and b.",
+            "math": "a; b"
+          },
+          {
+            "stepNumber": 3,
+            "explanation": "Let's start with a=b and b=c.",
+            "math": "a=b; b=c"
+          },
+          {
+            "stepNumber": 4,
+            "explanation": "We have b\\star c = b^3 + b(c) = d + e = f, which is close but not equal to a.",
+            "math": "b\\star c = b^3 + b(c) = d + e = f"
+          },
+          {
+            "stepNumber": 5,
+            "explanation": "Let's try a=c and b=b.",
+            "math": "a=c; b=b"
+          },
+          {
+            "stepNumber": 6,
+            "explanation": "We have c\\star b = c^2 + c(b) = g + e = a, which is equal to a.",
+            "math": "c\\star b = c^2 + c(b) = g + e = a"
+          },
+          {
+            "stepNumber": 7,
+            "explanation": "Therefore, a=c and b=b satisfy the equation a\\star b = a.",
+            "math": "a=c; b=b; a\\star b = a"
+          },
+          {
+            "stepNumber": 8,
+            "explanation": "The desired sum is a+b = c+b = h.",
+            "math": "a+b = c+b = \\boxed{h}"
+          },
+          {
+            "stepNumber": 9,
+            "explanation": "The answer is h",
+            "math": ""
+          }
+        ]
+      }
+    ]
+  }
+}

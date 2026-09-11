@@ -3,6 +3,7 @@ import nerdamer from 'nerdamer/all.min.js';
 import { SolverResult, SolutionStep } from '@/types/solver';
 import { normalizeExpression, autoBalanceParens } from './normalizer';
 import { detectVariable } from './solver';
+import { detectODE, solveODE } from './odeSolver';
 
 /**
  * Common differentiation rules and their LaTeX representations.
@@ -127,6 +128,14 @@ function splitTopLevelTerms(expr: string): string[] {
  * Solve step-by-step differentiation of any function f(x).
  */
 export function solveDerivative(expression: string): SolverResult {
+  if (detectODE(expression).isODE) {
+    try {
+      return solveODE(expression);
+    } catch {
+      // fall through to normal derivative
+    }
+  }
+
   let clean = expression.trim();
   clean = autoBalanceParens(clean);
   // Remove f(x)= or y= if user typed it

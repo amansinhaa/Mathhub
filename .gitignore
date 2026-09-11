@@ -40,3 +40,9 @@ scratch/
 /.astro/
 /dist/
 
+# ml
+ml/.venv/
+ml/data/
+__pycache__/
+*.pyc
+
