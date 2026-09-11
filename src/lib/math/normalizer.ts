@@ -120,7 +120,27 @@ export function normalizeExpression(input: string): string {
     expr = expr.replace(new RegExp(sub, 'g'), digit);
   }
 
-  // 4. Handle implicit multiplication
+  // 4. FIRST: Normalize trig notation BEFORE implicit multiplication
+  //    (otherwise implicit mul rules mangle sin^2(x) → sin^2*(x))
+  const trigNames = 'sin|cos|tan|sec|csc|cot|sinh|cosh|tanh|asin|acos|atan';
+
+  // 4a. Convert trig powers: sin^2(x) → (sin(x))^2, sin^(2)(x) → (sin(x))^2
+  //     Use (?<![a-zA-Z]) instead of \b because \b doesn't fire between digit+letter (e.g. "2sin")
+  expr = expr.replace(new RegExp(`(?<![a-zA-Z])(${trigNames})\\^\\(?([0-9.]+)\\)?\\s*\\(([^)]+)\\)`, 'gi'), '($1($3))^$2');
+  // Without parentheses on argument: sin^2x → (sin(x))^2, sin^2 x → (sin(x))^2
+  expr = expr.replace(new RegExp(`(?<![a-zA-Z])(${trigNames})\\^\\(?([0-9.]+)\\)?\\s*([a-zA-Z])(?![a-zA-Z(])`, 'gi'), '($1($3))^$2');
+
+  // 4b. Handle bare trig without parentheses: sinx → sin(x), cos 2x → cos(2x), cot x → cot(x)
+  //     Match trig name followed by optional space + argument (letter or digit+letter)
+  //     Only when NOT already followed by '(' or '^'
+  expr = expr.replace(new RegExp(`(?<![a-zA-Z])(${trigNames})\\s*([0-9]*[a-zA-Z])(?![a-zA-Z(^])`, 'gi'), (match, fn, arg) => {
+    // Don't match if arg itself forms a longer reserved word (e.g. 'sine' shouldn't match 'sin' + 'e')
+    const remaining = match.slice(fn.length).trim();
+    if (remaining.length > 2) return match; // likely not a single-var argument
+    return `${fn}(${arg})`;
+  });
+
+  // 5. Handle implicit multiplication
   // Known function names to preserve before opening parenthesis
   const reservedFuncs = [
     'sin', 'cos', 'tan', 'sec', 'csc', 'cot',
@@ -147,7 +167,7 @@ export function normalizeExpression(input: string): string {
     if (reservedFuncs.includes(word.toLowerCase()) || /^log_\d+$/i.test(word) || /^log_\{\d+\}$/i.test(word)) {
       return `${word}(`;
     }
-    // E.g. x(x+1) -> x*(x+1) or 2a(b) -> 2a*(b)
+    // E.g. x(x+1) → x*(x+1) or 2a(b) → 2a*(b)
     return `${word}*(`;
   });
 
@@ -163,17 +183,7 @@ export function normalizeExpression(input: string): string {
     return `${digits}*(`;
   });
 
-  // Convert trig powers: sin^2(x) -> (sin(x))^2, sin^2 x -> (sin(x))^2, cos^2(x) -> (cos(x))^2, etc.
-  const trigNames = 'sin|cos|tan|sec|csc|cot|sinh|cosh|tanh|asin|acos|atan';
-  // With parentheses: sin^2(x) or sin^(2)(x)
-  expr = expr.replace(new RegExp(`\\b(${trigNames})\\^\\(?([0-9.]+)\\)?\\s*\\(([^)]+)\\)`, 'gi'), '($1($3))^$2');
-  // Without parentheses on argument: sin^2 x -> (sin(x))^2
-  expr = expr.replace(new RegExp(`\\b(${trigNames})\\^\\(?([0-9.]+)\\)?\\s*([a-zA-Z])\\b`, 'gi'), '($1($3))^$2');
-
-  // Also handle basic trig without parentheses: sin x -> sin(x), cos 2x -> cos(2*x), cot x -> cot(x)
-  expr = expr.replace(new RegExp(`\\b(${trigNames})\\s+([0-9]*[a-zA-Z])\\b`, 'gi'), '$1($2)');
-
-  // 5. Replace common function shorthand
+  // 6. Replace common function shorthand
   // "√(expr)" is already handled by step 1 (√ → sqrt)
   // "cbrt(expr)" works natively in mathjs
 

@@ -158,90 +158,97 @@ describe('Math Solver Accuracy Audit', () => {
     });
   });
 
-  describe('PDF 20 Equations Suite', () => {
-    test('run all 20 questions and log solver output', () => {
+  describe('PDF 20 Equations Suite - E2E Diagnostic', () => {
+    test('trace normalizer output and solver dispatch for all questions', () => {
       const fs = require('fs');
+      const { normalizeExpression, autoBalanceParens, autoInterpretEquals } = require('@/lib/math/normalizer');
       const { solvePolynomial, solveSystem } = require('@/lib/math/solver');
       const { solveNonlinearSystem } = require('@/lib/math/nonlinearSystemSolver');
+      const { trySolveTrigonometricEquation } = require('@/lib/math/trigonometricSolver');
 
-      const questions = [
-        { id: 1, type: 'poly', input: '2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0' },
-        { id: 2, type: 'poly', input: 'x^3 - 6x^2 + 11x - 6 = 0' },
-        { id: 3, type: 'poly', input: 'sqrt(x+7) - sqrt(x-5) = 2' },
-        { id: 4, type: 'poly', input: '3/(x-2) + 2/(x+1) = 7/(x^2 - x - 2)' },
-        { id: 5, type: 'poly', input: 'x^4 - 5x^2 + 4 = 0' },
-        { id: 6, type: 'poly', input: '3^(2x+1) - 10*3^x + 3 = 0' },
-        { id: 7, type: 'poly', input: 'log_2(x-1) + log_2(x+1) = 3' },
-        { id: 8, type: 'poly', input: '5^x = 2^(x+3)' },
-        { id: 9, type: 'poly', input: 'ln(x^2) - ln(x+2) = ln(3)' },
-        { id: 10, type: 'poly', input: '2^x + 2^(-x) = 5/2' },
-        { id: 11, type: 'poly', input: '2*sin(x)^2 - 3*sin(x) + 1 = 0' },
-        { id: 12, type: 'poly', input: 'cos(2x) + sin(x) = 0' },
-        { id: 13, type: 'poly', input: 'tan(x) + cot(x) = 2' },
-        { id: 14, type: 'sys_nonlin', eqs: ['x^2 + y^2 = 25', 'x + y = 7'] },
-        { id: 15, type: 'sys_nonlin', eqs: ['x*y = 12', 'x^2 + y^2 = 40'] },
-        { id: 16, type: 'sys_lin', eqs: ['2x + 3y - z = 5', 'x - y + 2z = -1', '3x + y + z = 8'], vars: ['x', 'y', 'z'] },
-        { id: 17, type: 'poly', input: 'sqrt(2x+3) = x - 3' },
-        { id: 18, type: 'poly', input: '(x+1)/(x-1) - (x-1)/(x+1) = 5/6' },
-        { id: 19, type: 'poly', input: 'x^2 + 4x + 13 = 0' },
-        { id: 20, type: 'poly', input: '4^x - 3*2^(x+2) + 32 = 0' }
+      // Raw inputs exactly as a user would type them on the site
+      const rawInputs = [
+        { id: 1, raw: '2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0', expected: 'x = 1/2, 1, 2' },
+        { id: 2, raw: 'x^3 - 6x^2 + 11x - 6 = 0', expected: 'x = 1, 2, 3' },
+        { id: 3, raw: 'sqrt(x+7) - sqrt(x-5) = 2', expected: 'x = 9' },
+        { id: 4, raw: '3/(x-2) + 2/(x+1) = 7/(x^2 - x - 2)', expected: 'x = 8/5' },
+        { id: 5, raw: 'x^4 - 5x^2 + 4 = 0', expected: 'x = -2, -1, 1, 2' },
+        { id: 6, raw: '3^(2x+1) - 10*3^x + 3 = 0', expected: 'x = -1, 1' },
+        { id: 7, raw: 'log_2(x-1) + log_2(x+1) = 3', expected: 'x = 3' },
+        { id: 8, raw: '5^x = 2^(x+3)', expected: 'x ≈ 2.269' },
+        { id: 9, raw: 'ln(x^2) - ln(x+2) = ln(3)', expected: 'x ≈ 4.37, -1.37' },
+        { id: 10, raw: '2^x + 2^(-x) = 5/2', expected: 'x = ±1' },
+        { id: 11, raw: '2sin^2(x) - 3sin(x) + 1 = 0', expected: 'π/6, π/2, 5π/6' },
+        { id: 12, raw: 'cos(2x) + sin(x) = 0', expected: 'π/2, 7π/6, 11π/6' },
+        { id: 13, raw: 'tan(x) + cot(x) = 2', expected: 'π/4, 5π/4' },
+        { id: 17, raw: 'sqrt(2x+3) = x - 3', expected: 'x = 4+√10' },
+        { id: 18, raw: '(x+1)/(x-1) - (x-1)/(x+1) = 5/6', expected: 'x = -1/5, 5' },
+        { id: 19, raw: 'x^2 + 4x + 13 = 0', expected: 'x = -2 ± 3i' },
+        { id: 20, raw: '4^x - 3*2^(x+2) + 32 = 0', expected: 'x = 2, 3' },
+      ];
+
+      // Also test user-typed variants
+      const userVariants = [
+        { id: '11a', raw: '2*sin(x)^2 - 3*sin(x) + 1 = 0', expected: 'with explicit mul' },
+        { id: '11b', raw: '2sin²(x) - 3sin(x) + 1 = 0', expected: 'unicode superscript' },
+        { id: '11c', raw: '2sin^2x - 3sinx + 1 = 0', expected: 'no-paren shorthand' },
+        { id: '13a', raw: 'tanx + cotx = 2', expected: 'no-paren shorthand' },
       ];
 
       const report: any[] = [];
 
-      for (const q of questions) {
+      for (const item of [...rawInputs, ...userVariants]) {
+        const entry: any = { id: item.id, raw: item.raw, expected: item.expected };
+
+        // Trace normalizer pipeline (same as solvePolynomial internals)
+        const balanced = autoBalanceParens(item.raw.trim());
+        entry.balanced = balanced;
+
+        const interp = autoInterpretEquals(balanced);
+        const preNorm = interp.interpreted ? interp.expr : balanced;
+        entry.interpreted = interp.interpreted;
+
+        const normalized = normalizeExpression(preNorm);
+        entry.normalized = normalized;
+
+        // Check trig solver claim on the normalized input
         try {
-          if (q.type === 'poly') {
-            const res = solvePolynomial(q.input);
-            report.push({
-              id: q.id,
-              input: q.input,
-              finalAnswer: res.finalAnswer,
-              decimalAnswer: res.decimalAnswer,
-              numericRoots: res.numericRoots,
-              steps: res.steps.map(s => ({
-                stepNumber: s.stepNumber,
-                explanation: s.explanation,
-                math: s.math
-              }))
-            });
-          } else if (q.type === 'sys_lin') {
-            const res = solveSystem(q.eqs, q.vars);
-            report.push({
-              id: q.id,
-              input: q.eqs.join(' ; '),
-              finalAnswer: res.finalAnswer,
-              steps: res.steps.map(s => ({
-                stepNumber: s.stepNumber,
-                explanation: s.explanation,
-                math: s.math
-              }))
-            });
-          } else if (q.type === 'sys_nonlin') {
-            const res = solveNonlinearSystem(q.eqs);
-            report.push({
-              id: q.id,
-              input: q.eqs.join(' ; '),
-              finalAnswer: res.finalAnswer,
-              steps: res.steps.map(s => ({
-                stepNumber: s.stepNumber,
-                explanation: s.explanation,
-                math: s.math
-              }))
-            });
+          const trigResult = trySolveTrigonometricEquation(normalized, item.raw);
+          entry.trigClaimed = trigResult !== null;
+          if (trigResult) {
+            entry.trigFinalAnswer = trigResult.finalAnswer;
+            entry.trigNumericRoots = trigResult.numericRoots;
           }
-        } catch (err: any) {
-          report.push({
-            id: q.id,
-            input: q.input || q.eqs?.join(' ; '),
-            error: err.message
-          });
+        } catch (e: any) {
+          entry.trigClaimed = 'error: ' + e.message;
         }
+
+        // Full pipeline
+        try {
+          const result = solvePolynomial(item.raw);
+          entry.finalAnswer = result.finalAnswer;
+          entry.numericRoots = result.numericRoots;
+          entry.stepCount = result.steps.length;
+        } catch (e: any) {
+          entry.error = e.message;
+        }
+
+        report.push(entry);
       }
 
-      fs.writeFileSync('C:/Users/amans/.gemini/antigravity/scratch/mathhub/pdf_solver_results.json', JSON.stringify(report, null, 2), 'utf-8');
-      expect(report.length).toBe(20);
+      // Write results
+      fs.writeFileSync(
+        'C:/Users/amans/.gemini/antigravity/scratch/mathhub/e2e_diagnostic.json',
+        JSON.stringify(report, null, 2),
+        'utf-8'
+      );
+
+      // Print summary
+      for (const r of report) {
+        console.log(`Q${r.id} | norm="${(r.normalized || '').substring(0,60)}" | answer="${(r.finalAnswer || r.error || 'N/A').substring(0,60)}" | expected="${r.expected}"`);
+      }
+
+      expect(report.length).toBe(rawInputs.length + userVariants.length);
     });
   });
-
 });

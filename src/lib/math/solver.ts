@@ -12,6 +12,7 @@ import {
   fmtFraction,
   toFraction,
   evalPoly,
+  gcd,
 } from './stepGenerator';
 import { evaluate } from 'mathjs';
 import * as math from 'mathjs';
@@ -615,6 +616,196 @@ export function trySimplifyRadicalExpression(cleanEq: string, rawEq: string): So
   }
 }
 
+/**
+ * Solves radical equations of the form sqrt(A) = B or sqrt(A) - sqrt(B) = C.
+ * Shows squaring both sides, collecting terms, solving resulting polynomial,
+ * and checking for extraneous solutions.
+ */
+export function trySolveRadicalEquation(cleanEq: string, rawEq: string): SolverResult | null {
+  if (!cleanEq.includes('=')) return null;
+  const hasRadical = /sqrt|√/.test(cleanEq);
+  if (!hasRadical) return null;
+
+  try {
+    const parts = cleanEq.split('=');
+    let lhs = parts[0].trim();
+    let rhs = parts[1].trim();
+    const variable = detectVariable(cleanEq);
+
+    // Form 1: sqrt(A) = B
+    const sqrtMatch = lhs.match(/^sqrt\(([^)]+)\)$/);
+    if (sqrtMatch && !rhs.includes('sqrt')) {
+      const radicand = sqrtMatch[1];
+      const steps: SolutionStep[] = [];
+      let stepNumber = 1;
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Isolate the radical on one side of the equation:',
+        math: `\\sqrt{${expressionToLatex(radicand)}} = ${expressionToLatex(rhs)}`,
+      });
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Square both sides of the equation to eliminate the square root (note: this may introduce extraneous solutions):',
+        math: `\\left(\\sqrt{${expressionToLatex(radicand)}}\\right)^2 = \\left(${expressionToLatex(rhs)}\\right)^2`,
+      });
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Simplify both sides:',
+        math: `${expressionToLatex(radicand)} = ${expressionToLatex(`(${rhs})^2`)}`,
+      });
+
+      // Resulting polynomial equation: (radicand) - (rhs)^2 = 0
+      const polyEq = `(${radicand}) - (${rhs})^2 = 0`;
+      const polyRes = solvePolynomial(polyEq);
+
+      // Check if resulting polynomial is quadratic with exact radical roots
+      const candidateList: { exact: string; num: number }[] = [];
+      try {
+        const cObj = (nerdamer as any).coeffs(`(${radicand}) - (${rhs})^2`, variable);
+        const cStr = cObj.toString();
+        if (cStr.startsWith('[') && cStr.endsWith(']')) {
+          const arr = cStr.slice(1, -1).split(',').map((s: string) => {
+            const val = Number((nerdamer as any)(s.trim()).evaluate().text());
+            return isNaN(val) ? 0 : val;
+          });
+          if (arr.length === 3 && Math.abs(arr[2]) > 1e-9) {
+            const c = arr[0];
+            const b = arr[1];
+            const a = arr[2];
+            const delta = b * b - 4 * a * c;
+            if (delta >= 0) {
+              const sqrtD = Math.sqrt(delta);
+              const r1 = (-b + sqrtD) / (2 * a);
+              const r2 = (-b - sqrtD) / (2 * a);
+              const isSq = Math.abs(Math.round(sqrtD) - sqrtD) < 1e-6;
+              if (isSq) {
+                const frac1 = toFraction(r1);
+                const frac2 = toFraction(r2);
+                candidateList.push({ exact: frac1 && frac1.d > 1 ? fmtFraction(r1) : fmt(r1), num: r1 });
+                if (Math.abs(r1 - r2) > 1e-6) {
+                  candidateList.push({ exact: frac2 && frac2.d > 1 ? fmtFraction(r2) : fmt(r2), num: r2 });
+                }
+              } else {
+                let outside = 1;
+                let inside = Math.round(delta);
+                for (let i = Math.floor(Math.sqrt(inside)); i >= 2; i--) {
+                  if (inside % (i * i) === 0) {
+                    outside = i;
+                    inside = Math.round(inside / (i * i));
+                    break;
+                  }
+                }
+                let numCoeff = -b;
+                let denCoeff = 2 * a;
+                let outCoeff = outside;
+                if (denCoeff < 0) {
+                  numCoeff = -numCoeff;
+                  denCoeff = -denCoeff;
+                }
+
+                // Check common divisor among numCoeff, outCoeff, and denCoeff
+                const g = gcd(gcd(numCoeff, outCoeff), denCoeff);
+                const simNum = numCoeff / g;
+                const simOut = outCoeff / g;
+                const simDen = denCoeff / g;
+
+                const radPart1 = simOut === 1 ? `\\sqrt{${inside}}` : `${simOut}\\sqrt{${inside}}`;
+
+                let exact1 = '';
+                let exact2 = '';
+                if (simDen === 1) {
+                  exact1 = `${simNum} + ${radPart1}`;
+                  exact2 = `${simNum} - ${radPart1}`;
+                } else {
+                  exact1 = `\\frac{${simNum} + ${radPart1}}{${simDen}}`;
+                  exact2 = `\\frac{${simNum} - ${radPart1}}{${simDen}}`;
+                }
+
+                candidateList.length = 0;
+                candidateList.push({ exact: r1 >= r2 ? exact1 : exact2, num: r1 });
+                candidateList.push({ exact: r1 >= r2 ? exact2 : exact1, num: r2 });
+              }
+            }
+          }
+        }
+      } catch {}
+
+      if (candidateList.length === 0) {
+        for (const numR of (polyRes.numericRoots || [])) {
+          const frac = toFraction(numR);
+          candidateList.push({
+            exact: frac && frac.d > 1 ? fmtFraction(numR) : fmt(numR),
+            num: numR,
+          });
+        }
+      }
+
+      // Check each candidate root against original equation
+      const validRoots: { exact: string; num: number }[] = [];
+      const extraneousRoots: { exact: string; num: number }[] = [];
+      const checkSteps: string[] = [];
+
+      for (const cand of candidateList) {
+        const numR = cand.num;
+        let leftVal = NaN;
+        let rightVal = NaN;
+        try {
+          leftVal = math.evaluate(`sqrt(${radicand})`, { [variable]: numR });
+          rightVal = math.evaluate(rhs, { [variable]: numR });
+        } catch {}
+
+        const diff = Math.abs(leftVal - rightVal);
+        const isMatch = !isNaN(diff) && diff < 1e-4;
+
+        if (isMatch) {
+          validRoots.push({ exact: cand.exact, num: numR });
+          checkSteps.push(
+            `\\text{Test } ${variable} = ${cand.exact} \\; (\\approx ${fmt(numR)}): \\quad \\sqrt{${fmt(leftVal * leftVal)}} = ${fmt(rightVal)} \\implies \\checkmark \\text{ (Valid)}`
+          );
+        } else {
+          extraneousRoots.push({ exact: cand.exact, num: numR });
+          checkSteps.push(
+            `\\text{Test } ${variable} = ${cand.exact} \\; (\\approx ${fmt(numR)}): \\quad \\sqrt{${fmt(Math.max(0, leftVal * leftVal))}} = ${fmt(leftVal)} \\neq ${fmt(rightVal)} \\implies \\times \\text{ (Extraneous root, rejected)}`
+          );
+        }
+      }
+
+      if (checkSteps.length > 0) {
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: 'Check candidate solutions in the original equation to discard extraneous roots:',
+          math: `\\begin{aligned} ${checkSteps.join(' \\\\[6pt] ')} \\end{aligned}`,
+        });
+      }
+
+      const finalAnswer = validRoots.length > 0
+        ? validRoots.map((r) => `${variable} = ${r.exact}`).join(', \\quad ')
+        : '\\text{No real solution}';
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'State the final valid solution:',
+        math: finalAnswer,
+      });
+
+      return {
+        type: 'polynomial',
+        steps,
+        finalAnswer,
+        numericRoots: validRoots.map((r) => r.num),
+        inputInterpretation: `\\text{Solve radical equation: } ${expressionToLatex(cleanEq)}`,
+      };
+    }
+  } catch {
+    // fallback
+  }
+
+  return null;
+}
+
 function cleanLatexMath(tex: string): string {
   let s = tex
     .replace(/\\cdot\s*([a-zA-Z])/g, '$1')
@@ -801,6 +992,11 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     const rationalEqResult = trySolveRationalEquation(cleanEq, equation);
     if (rationalEqResult) {
       return rationalEqResult;
+    }
+
+    const radicalEqResult = trySolveRadicalEquation(cleanEq, equation);
+    if (radicalEqResult) {
+      return radicalEqResult;
     }
   }
 

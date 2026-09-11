@@ -236,6 +236,108 @@ export function trySolveExponentialEquation(
     return null;
   }
 
+  // ─── TWO EXPONENTIAL TERMS: a1 * b1^(c1*x+d1) = a2 * b2^(c2*x+d2) ────────
+  if (terms.length === 2 && norm.includes('=')) {
+    const t1 = terms[0];
+    const t2 = terms[1];
+    // Check if both sides each consist of a single exponential term
+    const cleanL = lhsStr.replace(/\s+/g, '');
+    const cleanR = rhsStr.replace(/\s+/g, '');
+    const isSingleTermL = cleanL === t1.full.replace(/\s+/g, '') || cleanL === t2.full.replace(/\s+/g, '');
+    const isSingleTermR = cleanR === t1.full.replace(/\s+/g, '') || cleanR === t2.full.replace(/\s+/g, '');
+
+    if (isSingleTermL && isSingleTermR) {
+      // Equation: b1^(c1*x + d1) = b2^(c2*x + d2)
+      // Take natural log of both sides: (c1*x + d1)*ln(b1) = (c2*x + d2)*ln(b2)
+      // x * [c1*ln(b1) - c2*ln(b2)] = d2*ln(b2) - d1*ln(b1)
+      const b1 = t1.baseStr;
+      const b2 = t2.baseStr;
+      const c1 = t1.c;
+      const d1 = t1.d;
+      const c2 = t2.c;
+      const d2 = t2.d;
+
+      const numVal = d2 * Math.log(t2.baseVal) - d1 * Math.log(t1.baseVal);
+      const denVal = c1 * Math.log(t1.baseVal) - c2 * Math.log(t2.baseVal);
+
+      if (Math.abs(denVal) > 1e-9) {
+        const xVal = numVal / denVal;
+        const steps: SolutionStep[] = [];
+        let stepNumber = 1;
+
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: 'Write the exponential equation:',
+          math: `${b1}^{${t1.expStr}} = ${b2}^{${t2.expStr}}`,
+        });
+
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: 'Take the natural logarithm ($\\ln$) of both sides:',
+          math: `\\ln\\left(${b1}^{${t1.expStr}}\\right) = \\ln\\left(${b2}^{${t2.expStr}}\\right)`,
+        });
+
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: 'Apply the power rule of logarithms $\\ln(a^b) = b \\ln(a)$ to bring exponents down:',
+          math: `(${t1.expStr}) \\ln(${b1}) = (${t2.expStr}) \\ln(${b2})`,
+        });
+
+        // Expand and collect x terms
+        let expL = c1 === 1 ? `${variable} \\ln(${b1})` : `${c1}${variable} \\ln(${b1})`;
+        if (d1 !== 0) expL += d1 > 0 ? ` + ${d1} \\ln(${b1})` : ` - ${Math.abs(d1)} \\ln(${b1})`;
+
+        let expR = c2 === 1 ? `${variable} \\ln(${b2})` : `${c2}${variable} \\ln(${b2})`;
+        if (d2 !== 0) expR += d2 > 0 ? ` + ${d2} \\ln(${b2})` : ` - ${Math.abs(d2)} \\ln(${b2})`;
+
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: 'Expand both sides:',
+          math: `${expL} = ${expR}`,
+        });
+
+        // Exact symbolic representation
+        // Numerator: d2*ln(b2) - d1*ln(b1)
+        let numLatex = '';
+        if (d2 !== 0 && d1 === 0) {
+          numLatex = d2 === 1 ? `\\ln(${b2})` : `${d2}\\ln(${b2})`;
+        } else if (d2 === 0 && d1 !== 0) {
+          numLatex = d1 === 1 ? `-\\ln(${b1})` : `-${d1}\\ln(${b1})`;
+        } else {
+          numLatex = `${d2}\\ln(${b2}) - ${d1}\\ln(${b1})`;
+        }
+
+        // Denominator: c1*ln(b1) - c2*ln(b2)
+        let denLatex = '';
+        const c1Part = c1 === 1 ? `\\ln(${b1})` : `${c1}\\ln(${b1})`;
+        const c2Part = c2 === 1 ? `\\ln(${b2})` : `${c2}\\ln(${b2})`;
+        denLatex = `${c1Part} - ${c2Part}`;
+
+        const exactLatex = `\\frac{${numLatex}}{${denLatex}}`;
+
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: `Collect terms with $${variable}$ on the left-hand side and factor out $${variable}$:` ,
+          math: `${variable}\\left(${denLatex}\\right) = ${numLatex}`,
+        });
+
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: `Divide by $\\left(${denLatex}\\right)$ to isolate $${variable}$:` ,
+          math: `${variable} = ${exactLatex} \\approx ${xVal.toFixed(4)}`,
+        });
+
+        return {
+          type: 'polynomial',
+          steps,
+          finalAnswer: `${variable} = ${exactLatex}`,
+          decimalAnswer: `${variable} \\approx ${xVal.toFixed(4)}`,
+          numericRoots: [xVal],
+        };
+      }
+    }
+  }
+
   // ─── UNIFY BASES (e.g. 4^x and 2^x -> base 2) ──────────────────────────────
   let targetBaseStr = terms[0].baseStr;
   let targetBaseVal = terms[0].baseVal;
@@ -272,7 +374,9 @@ export function trySolveExponentialEquation(
 
   // ─── CHECK FOR QUADRATIC REDUCIBLE PATTERN: u = base^x ────────────────────
   const cValues = Array.from(new Set(terms.map((t) => t.c))).sort((a, b) => a - b);
+  const isInverseQuadratic = cValues.length === 2 && cValues[0] === -1 && cValues[1] === 1;
   const isQuadraticForm =
+    isInverseQuadratic ||
     (cValues.length === 2 && cValues[0] === 1 && cValues[1] === 2) ||
     (cValues.length === 1 && cValues[0] === 2) ||
     (cValues.length === 1 && cValues[0] === 1);
@@ -283,8 +387,19 @@ export function trySolveExponentialEquation(
 
     for (const t of sortedTerms) {
       const coeff = Math.pow(t.baseVal, t.d);
-      const replacement = '(' + coeff + ' * u^' + t.c + ')';
+      const replacement = isInverseQuadratic && t.c === -1
+        ? `(${coeff} / u)`
+        : `(${coeff} * u^${t.c})`;
       uExpr = uExpr.slice(0, t.index) + replacement + uExpr.slice(t.index + t.full.length);
+    }
+
+    // If equation has 1/u, multiply entire expression by u to clear fraction
+    if (isInverseQuadratic) {
+      try {
+        uExpr = (nerdamer as any)(`expand((${uExpr}) * u)`).toString();
+      } catch {
+        uExpr = `(${uExpr}) * u`;
+      }
     }
 
     try {

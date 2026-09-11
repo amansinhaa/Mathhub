@@ -261,8 +261,13 @@ export function trySolveLogarithmicEquation(
   });
 
   // Step 4: Solve the resulting algebraic equation
-  // (combinedArg) - rhsPowerVal = 0
-  const algEquation = '(' + combinedArg + ') - (' + rhsPowerVal + ') = 0';
+  // If combinedArg is of the form P(x)/Q(x) = rhsPowerVal, cross-multiply: P(x) - rhsPowerVal * Q(x) = 0
+  let algEquation = '';
+  if (denExpr !== '1') {
+    algEquation = `(${numExpr}) - (${rhsPowerVal}) * (${denExpr}) = 0`;
+  } else {
+    algEquation = `(${numExpr}) - (${rhsPowerVal}) = 0`;
+  }
   return finishLogSolution(algEquation, allTerms, variable, steps, stepNumber);
 }
 
@@ -278,49 +283,135 @@ function finishLogSolution(
 ): SolverResult | null {
   let stepNumber = startStepNumber;
 
-  // Solve algebraic equation with nerdamer
-  let rawSolStr: string;
-  try {
-    const sol = (nerdamer as any).solve(algEquation, variable);
-    rawSolStr = String(sol || '');
-  } catch {
-    return null;
-  }
-
-  if (!rawSolStr || rawSolStr === '[]' || rawSolStr.includes('solve(')) {
-    return null;
-  }
-
-  const rawRoots: string[] = rawSolStr
-    .replace(/^\[|\]$/g, '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (rawRoots.length === 0) return null;
-
-  // Evaluate candidate roots
+  // Solve algebraic equation
   const candidateRoots: { latex: string; num: number }[] = [];
-  for (const rStr of rawRoots) {
-    let num = NaN;
+
+  // Check if algEquation is quadratic in variable: a*x^2 + b*x + c = 0
+  let isQuadraticSolved = false;
+  try {
+    const exprStandard = algEquation.replace(/=\s*0\s*$/, '').trim();
+    const cObj = (nerdamer as any).coeffs(exprStandard, variable);
+    const cStr = cObj.toString();
+    if (cStr.startsWith('[') && cStr.endsWith(']')) {
+      const arr = cStr.slice(1, -1).split(',').map((s: string) => {
+        const val = Number((nerdamer as any)(s.trim()).evaluate().text());
+        return isNaN(val) ? 0 : val;
+      });
+      // arr is [c, b, a]
+      if (arr.length === 3 && Math.abs(arr[2]) > 1e-9) {
+        const c = arr[0];
+        const b = arr[1];
+        const a = arr[2];
+        const delta = b * b - 4 * a * c;
+        if (delta >= 0) {
+          isQuadraticSolved = true;
+          const sqrtD = Math.sqrt(delta);
+          const r1 = (-b + sqrtD) / (2 * a);
+          const r2 = (-b - sqrtD) / (2 * a);
+
+          // Format roots: check if delta is a perfect square
+          const isSq = Math.abs(Math.round(sqrtD) - sqrtD) < 1e-6;
+          if (isSq) {
+            candidateRoots.push({ latex: (nerdamer as any)(r1.toString()).toTeX(), num: r1 });
+            if (Math.abs(r1 - r2) > 1e-6) {
+              candidateRoots.push({ latex: (nerdamer as any)(r2.toString()).toTeX(), num: r2 });
+            }
+          } else {
+            // Simplify radical \sqrt{delta} = outside * \sqrt{inside}
+            let outside = 1;
+            let inside = Math.round(delta);
+            for (let i = Math.floor(Math.sqrt(inside)); i >= 2; i--) {
+              if (inside % (i * i) === 0) {
+                outside = i;
+                inside = Math.round(inside / (i * i));
+                break;
+              }
+            }
+
+            const radStr = outside === 1 ? `\\sqrt{${inside}}` : `${outside}\\sqrt{${inside}}`;
+            const bStr = b === 0 ? '' : `${-b}`;
+            const den = 2 * a;
+
+            if (den === 2) {
+              candidateRoots.push({
+                latex: bStr ? `\\frac{${bStr} + ${radStr}}{2}` : `\\frac{${radStr}}{2}`,
+                num: r1,
+              });
+              candidateRoots.push({
+                latex: bStr ? `\\frac{${bStr} - ${radStr}}{2}` : `-\\frac{${radStr}}{2}`,
+                num: r2,
+              });
+            } else if (den === -2) {
+              candidateRoots.push({
+                latex: bStr ? `\\frac{${-Number(bStr)} - ${radStr}}{2}` : `-\\frac{${radStr}}{2}`,
+                num: r1,
+              });
+              candidateRoots.push({
+                latex: bStr ? `\\frac{${-Number(bStr)} + ${radStr}}{2}` : `\\frac{${radStr}}{2}`,
+                num: r2,
+              });
+            } else {
+              candidateRoots.push({
+                latex: `\\frac{${bStr ? bStr + ' + ' : ''}${radStr}}{${den}}`,
+                num: r1,
+              });
+              candidateRoots.push({
+                latex: `\\frac{${bStr ? bStr + ' - ' : ''}${radStr}}{${den}}`,
+                num: r2,
+              });
+            }
+          }
+        }
+      }
+    }
+  } catch {
+    // fallback
+  }
+
+  if (!isQuadraticSolved) {
+    let rawSolStr: string;
     try {
-      const evalRes = math.evaluate(rStr);
-      num = typeof evalRes === 'number' ? evalRes : parseFloat(rStr);
+      const sol = (nerdamer as any).solve(algEquation, variable);
+      rawSolStr = String(sol || '');
     } catch {
-      num = parseFloat(rStr);
+      return null;
     }
 
-    let latex = rStr;
-    try {
-      latex = nerdamer(rStr).toTeX();
-    } catch {
-      latex = rStr;
+    if (!rawSolStr || rawSolStr === '[]' || rawSolStr.includes('solve(')) {
+      return null;
     }
 
-    if (!isNaN(num)) {
-      candidateRoots.push({ latex, num });
+    const rawRoots: string[] = rawSolStr
+      .replace(/^\[|\]$/g, '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (rawRoots.length === 0) return null;
+
+    for (const rStr of rawRoots) {
+      let num = NaN;
+      try {
+        const evalRes = math.evaluate(rStr);
+        num = typeof evalRes === 'number' ? evalRes : parseFloat(rStr);
+      } catch {
+        num = parseFloat(rStr);
+      }
+
+      let latex = rStr;
+      try {
+        latex = nerdamer(rStr).toTeX();
+      } catch {
+        latex = rStr;
+      }
+
+      if (!isNaN(num)) {
+        candidateRoots.push({ latex, num });
+      }
     }
   }
+
+  if (candidateRoots.length === 0) return null;
 
   // Step: Show candidate algebraic solutions
   const candidateStrs = candidateRoots.map((c, i) =>
