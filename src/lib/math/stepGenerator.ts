@@ -843,9 +843,16 @@ export function generateCubicSteps(
     }
   }
 
-  // Sort candidate list nicely: 1, -1, 2, -2, etc.
-  candidateFractions.sort((f1, f2) => Math.abs(f1.val) - Math.abs(f2.val) || f2.val - f1.val);
+  // Sort candidate list nicely: integers first (1, -1, 2, -2, etc.), then fractions
+  candidateFractions.sort((f1, f2) => {
+    const f1IsInt = Math.abs(f1.val - Math.round(f1.val)) < 1e-6;
+    const f2IsInt = Math.abs(f2.val - Math.round(f2.val)) < 1e-6;
+    if (f1IsInt !== f2IsInt) return f1IsInt ? -1 : 1;
+    return Math.abs(f1.val) - Math.abs(f2.val) || f2.val - f1.val;
+  });
 
+  const dFactorsStr = dFactors.map((f) => `\\pm ${f}`).join(', ');
+  const aFactorsStr = aFactors.map((f) => `\\pm ${f}`).join(', ');
   const candidatesDisplay = candidateFractions
     .slice(0, 12)
     .map((c) => c.str)
@@ -879,12 +886,17 @@ export function generateCubicSteps(
 
   if (rationalRoot !== null) {
     const r0 = rationalRoot;
+    const frac0 = toFraction(r0);
+    const r0Disp = frac0 ? (frac0.d === 1 ? `${frac0.n}` : `\\frac{${frac0.n}}{${frac0.d}}`) : fmt(r0);
     const r0Sign = r0 >= 0 ? `- ${fmt(Math.abs(r0))}` : `+ ${fmt(Math.abs(r0))}`;
+    const r0SignStr = frac0 && frac0.d === 1
+      ? (r0 >= 0 ? `${variable} - ${Math.abs(r0)}` : `${variable} + ${Math.abs(r0)}`)
+      : (frac0 ? (frac0.n >= 0 ? `${variable} - \\frac{${Math.abs(frac0.n)}}{${frac0.d}}` : `${variable} + \\frac{${Math.abs(frac0.n)}}{${frac0.d}}`) : `${variable} ${r0Sign}`);
 
     // Step 2: Rational Root Theorem testing
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Use the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). Candidate rational roots are $\\pm \\frac{\\text{factors of } |d = ${fmt(d)}|}{\\text{factors of } |a = ${fmt(a)}|}$: $${candidatesDisplay}$. We test candidates and find $${variable} = ${fmt(r0)}$ is a root, so $(${variable} ${r0Sign})$ is a factor.`,
+      explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods): Factors of constant term $d = ${fmt(d)}$ are $p \\in \\{${dFactorsStr}\\}$ and factors of leading coefficient $a = ${fmt(a)}$ are $q \\in \\{${aFactorsStr}\\}$. Candidate rational roots are $\\pm \\frac{p}{q} \\in \\{${candidatesDisplay}\\}$. We test candidates sequentially and find $${variable} = ${r0Disp}$ satisfies $f(${r0Disp}) = 0$, so $(${r0SignStr})$ is a factor by the Factor Theorem.`,
       math: testTrail.join(' \\\\[4pt] '),
     });
 
@@ -1166,49 +1178,96 @@ export function generateQuarticSteps(
   // General Quartic: Try Rational Root Theorem
   const eFactors = getFactors(e, 100);
   const aFactors = getFactors(a, 50);
-  const candidates: number[] = [];
-  const seen = new Set<number>();
+
+  const candidateFractions: { p: number; q: number; val: number; str: string; isInt: boolean }[] = [];
+  const seenVals = new Set<number>();
 
   for (const p of eFactors) {
     for (const q of aFactors) {
-      const v1 = p / q;
-      const v2 = -p / q;
-      if (!seen.has(v1)) {
-        seen.add(v1);
-        candidates.push(v1);
+      const g = gcd(p, q);
+      const sp = p / g;
+      const sq = q / g;
+      const vPos = sp / sq;
+      const vNeg = -sp / sq;
+
+      if (!seenVals.has(vPos)) {
+        seenVals.add(vPos);
+        candidateFractions.push({
+          p: sp,
+          q: sq,
+          val: vPos,
+          str: sq === 1 ? `${sp}` : `\\frac{${sp}}{${sq}}`,
+          isInt: sq === 1,
+        });
       }
-      if (!seen.has(v2)) {
-        seen.add(v2);
-        candidates.push(v2);
+      if (!seenVals.has(vNeg)) {
+        seenVals.add(vNeg);
+        candidateFractions.push({
+          p: -sp,
+          q: sq,
+          val: vNeg,
+          str: sq === 1 ? `-${sp}` : `-\\frac{${sp}}{${sq}}`,
+          isInt: sq === 1,
+        });
       }
     }
   }
 
-  candidates.sort((x1, x2) => Math.abs(x1) - Math.abs(x2) || x2 - x1);
+  // Prioritize integers first (1, -1, 2, -2, etc.), then fractions (1/2, -1/2, etc.)
+  candidateFractions.sort((f1, f2) => {
+    if (f1.isInt !== f2.isInt) return f1.isInt ? -1 : 1;
+    return Math.abs(f1.val) - Math.abs(f2.val) || f2.val - f1.val;
+  });
+
+  const eFactorsStr = eFactors.map((f) => `\\pm ${f}`).join(', ');
+  const aFactorsStr = aFactors.map((f) => `\\pm ${f}`).join(', ');
+  const candidatesDisplay = candidateFractions
+    .slice(0, 10)
+    .map((c) => c.str)
+    .join(', ') + (candidateFractions.length > 10 ? ', \\dots' : '');
 
   // Find first rational root
-  let r1: number | null = null;
-  for (const cand of candidates) {
-    if (Math.abs(evalPoly(coeffs, cand)) < 1e-7) {
-      r1 = cand;
+  let r1Cand: { p: number; q: number; val: number; str: string; isInt: boolean } | null = null;
+  const testTrail1: string[] = [];
+
+  for (const cand of candidateFractions) {
+    const val = evalPoly(coeffs, cand.val);
+    if (Math.abs(val) < 1e-7) {
+      r1Cand = cand;
+      testTrail1.push(`\\text{Testing } ${variable} = ${cand.str}: \\; ${formatPolyEvaluation(coeffs, cand.val, variable)}`);
       break;
+    } else {
+      if (testTrail1.length < 2) {
+        testTrail1.push(`\\text{Testing } ${variable} = ${cand.str}: \\; f(${cand.str}) = ${fmt(val)} \\ne 0 \\text{ (not a root)}`);
+      }
     }
   }
+
+  let r1: number | null = r1Cand ? r1Cand.val : null;
 
   // Fallback to roots.real if any is a clean rational
   if (r1 === null) {
     const ratRoot = roots.real.find((r) => toFraction(r) !== null && Math.abs(evalPoly(coeffs, r)) < 1e-5);
     if (ratRoot !== undefined) {
       r1 = ratRoot;
+      const frac = toFraction(r1);
+      const fracStr = frac ? (frac.d === 1 ? `${frac.n}` : `\\frac{${frac.n}}{${frac.d}}`) : fmt(r1);
+      r1Cand = { p: frac ? frac.n : r1, q: frac ? frac.d : 1, val: r1, str: fracStr, isInt: frac ? frac.d === 1 : false };
+      testTrail1.push(`\\text{Testing } ${variable} = ${fracStr}: \\; ${formatPolyEvaluation(coeffs, r1, variable)}`);
     }
   }
 
-  if (r1 !== null) {
-    const r1Sign = r1 >= 0 ? `- ${fmt(Math.abs(r1))}` : `+ ${fmt(Math.abs(r1))}`;
+  if (r1 !== null && r1Cand !== null) {
+    const r1Frac = toFraction(r1);
+    const r1DispStr = r1Cand.str;
+    const divisor1Str = r1Frac && r1Frac.d === 1
+      ? (r1 >= 0 ? `${variable} - ${Math.abs(r1)}` : `${variable} + ${Math.abs(r1)}`)
+      : (r1Frac ? (r1Frac.n >= 0 ? `${variable} - \\frac{${Math.abs(r1Frac.n)}}{${r1Frac.d}}` : `${variable} + \\frac{${Math.abs(r1Frac.n)}}{${r1Frac.d}}`) : `${variable} - ${fmt(r1)}`);
+
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). We find $${variable} = ${fmt(r1)}$ is a root, so $(${variable} ${r1Sign})$ is a factor.`,
-      math: formatPolyEvaluation(coeffs, r1, variable),
+      explanation: `Apply the Rational Root Theorem to find possible roots $\\frac{p}{q}$, where $p$ is a factor of constant term $e = ${fmt(e)}$ ($p \\in \\{${eFactorsStr}\\}$) and $q$ is a factor of leading coefficient $a = ${fmt(a)}$ ($q \\in \\{${aFactorsStr}\\}$). The candidate rational roots are $\\pm \\frac{p}{q} \\in \\{${candidatesDisplay}\\}$. Testing candidates sequentially, we find $${variable} = ${r1DispStr}$ satisfies $f(${r1DispStr}) = 0$, which proves that $(${divisor1Str})$ is a factor by the Factor Theorem.`,
+      math: testTrail1.join(' \\\\[4pt] '),
     });
 
     // Synthetic division to degree 3
@@ -1217,7 +1276,6 @@ export function generateQuarticSteps(
       q3.push(coeffs[i] + q3[i - 1] * r1);
     }
     const q3Poly = formatPolynomial(q3, variable);
-    const divisor1Str = `${variable} ${r1Sign}`;
     const dividend1Str = formatPolynomial(coeffs, variable);
 
     const longDiv1Math = generatePolynomialLongDivisionLatex(coeffs, r1, variable);
@@ -1225,7 +1283,7 @@ export function generateQuarticSteps(
 
     steps.push({
       stepNumber: stepCount++,
-      explanation: `Divide the quartic polynomial by $(${divisor1Str})$ to obtain the depressed cubic factor $${q3Poly}$. Both Long Division (NCERT standard) and Synthetic Division (shortcut) are shown:`,
+      explanation: `Divide the quartic polynomial $${dividend1Str}$ by $(${divisor1Str})$ using algebraic division to obtain the depressed cubic factor $${q3Poly}$. Both Long Division (NCERT standard) and Synthetic Division (shortcut) are shown:`,
       math: `\\begin{aligned} &\\textbf{Method 1: Long Division (NCERT)} \\\\[4pt] &${longDiv1Math} \\\\[10pt] &\\textbf{Method 2: Synthetic Division (Shortcut)} \\\\[4pt] &${synth1Math} \\end{aligned}`,
       divisionDetails: {
         longDivisionMath: longDiv1Math,
@@ -1238,28 +1296,92 @@ export function generateQuarticSteps(
       },
     });
 
-    // Try finding second rational root in q3
-    let r2: number | null = null;
-    for (const cand of candidates) {
-      if (Math.abs(evalPoly(q3, cand)) < 1e-7) {
-        r2 = cand;
-        break;
+    // Try finding second rational root in q3 using Rational Root Theorem on q3
+    const q3Const = q3[q3.length - 1];
+    const q3Lead = q3[0];
+    const q3ConstFactors = getFactors(q3Const, 100);
+    const q3LeadFactors = getFactors(q3Lead, 50);
+
+    const q3CandidateFractions: { p: number; q: number; val: number; str: string; isInt: boolean }[] = [];
+    const seenQ3Vals = new Set<number>();
+
+    for (const p of q3ConstFactors) {
+      for (const q of q3LeadFactors) {
+        const g = gcd(p, q);
+        const sp = p / g;
+        const sq = q / g;
+        const vPos = sp / sq;
+        const vNeg = -sp / sq;
+
+        if (!seenQ3Vals.has(vPos)) {
+          seenQ3Vals.add(vPos);
+          q3CandidateFractions.push({
+            p: sp,
+            q: sq,
+            val: vPos,
+            str: sq === 1 ? `${sp}` : `\\frac{${sp}}{${sq}}`,
+            isInt: sq === 1,
+          });
+        }
+        if (!seenQ3Vals.has(vNeg)) {
+          seenQ3Vals.add(vNeg);
+          q3CandidateFractions.push({
+            p: -sp,
+            q: sq,
+            val: vNeg,
+            str: sq === 1 ? `-${sp}` : `-\\frac{${sp}}{${sq}}`,
+            isInt: sq === 1,
+          });
+        }
       }
     }
+
+    // Prioritize integers first
+    q3CandidateFractions.sort((f1, f2) => {
+      if (f1.isInt !== f2.isInt) return f1.isInt ? -1 : 1;
+      return Math.abs(f1.val) - Math.abs(f2.val) || f2.val - f1.val;
+    });
+
+    let r2Cand: { p: number; q: number; val: number; str: string; isInt: boolean } | null = null;
+    const testTrail2: string[] = [];
+
+    for (const cand of q3CandidateFractions) {
+      const val = evalPoly(q3, cand.val);
+      if (Math.abs(val) < 1e-7) {
+        r2Cand = cand;
+        testTrail2.push(`\\text{Testing } ${variable} = ${cand.str}: \\; ${formatPolyEvaluation(q3, cand.val, variable)}`);
+        break;
+      } else {
+        if (testTrail2.length < 2) {
+          testTrail2.push(`\\text{Testing } ${variable} = ${cand.str}: \\; f(${cand.str}) = ${fmt(val)} \\ne 0 \\text{ (not a root)}`);
+        }
+      }
+    }
+
+    let r2: number | null = r2Cand ? r2Cand.val : null;
 
     if (r2 === null) {
       const ratRoot2 = roots.real.find((r) => toFraction(r) !== null && Math.abs(evalPoly(q3, r)) < 1e-5);
       if (ratRoot2 !== undefined) {
         r2 = ratRoot2;
+        const frac = toFraction(r2);
+        const fracStr = frac ? (frac.d === 1 ? `${frac.n}` : `\\frac{${frac.n}}{${frac.d}}`) : fmt(r2);
+        r2Cand = { p: frac ? frac.n : r2, q: frac ? frac.d : 1, val: r2, str: fracStr, isInt: frac ? frac.d === 1 : false };
+        testTrail2.push(`\\text{Testing } ${variable} = ${fracStr}: \\; ${formatPolyEvaluation(q3, r2, variable)}`);
       }
     }
 
-    if (r2 !== null) {
-      const r2Sign = r2 >= 0 ? `- ${fmt(Math.abs(r2))}` : `+ ${fmt(Math.abs(r2))}`;
+    if (r2 !== null && r2Cand !== null) {
+      const r2Frac = toFraction(r2);
+      const r2DispStr = r2Cand.str;
+      const divisor2Str = r2Frac && r2Frac.d === 1
+        ? (r2 >= 0 ? `${variable} - ${Math.abs(r2)}` : `${variable} + ${Math.abs(r2)}`)
+        : (r2Frac ? (r2Frac.n >= 0 ? `${variable} - \\frac{${Math.abs(r2Frac.n)}}{${r2Frac.d}}` : `${variable} + \\frac{${Math.abs(r2Frac.n)}}{${r2Frac.d}}`) : `${variable} - ${fmt(r2)}`);
+
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Test rational candidates on the cubic factor $${q3Poly} = 0$. We find $${variable} = ${fmt(r2)}$ is another root, so $(${variable} ${r2Sign})$ is a factor.`,
-        math: formatPolyEvaluation(q3, r2, variable),
+        explanation: `Apply the Rational Root Theorem to the depressed cubic factor $${q3Poly} = 0$. Testing candidate roots from $\\pm \\frac{\\text{factors of } |${fmt(q3Const)}|}{\\text{factors of } |${fmt(q3Lead)}|}$, we find $${variable} = ${r2DispStr}$ satisfies $f(${r2DispStr}) = 0$, so $(${divisor2Str})$ is another factor.`,
+        math: testTrail2.join(' \\\\[4pt] '),
       });
 
       // Synthetic division to degree 2
@@ -1268,7 +1390,6 @@ export function generateQuarticSteps(
         q2.push(q3[i] + q2[i - 1] * r2);
       }
       const q2Poly = formatPolynomial(q2, variable);
-      const divisor2Str = `${variable} ${r2Sign}`;
       const dividend2Str = q3Poly;
 
       const longDiv2Math = generatePolynomialLongDivisionLatex(q3, r2, variable);
@@ -1276,7 +1397,7 @@ export function generateQuarticSteps(
 
       steps.push({
         stepNumber: stepCount++,
-        explanation: `Divide the cubic factor by $(${divisor2Str})$ to obtain the quadratic factor $${q2Poly}$. Both Long Division and Synthetic Division methods:`,
+        explanation: `Divide the cubic factor $${dividend2Str}$ by $(${divisor2Str})$ to obtain the quadratic factor $${q2Poly}$. Both Long Division and Synthetic Division methods:`,
         math: `\\begin{aligned} &\\textbf{Method 1: Long Division (NCERT)} \\\\[4pt] &${longDiv2Math} \\\\[10pt] &\\textbf{Method 2: Synthetic Division (Shortcut)} \\\\[4pt] &${synth2Math} \\end{aligned}`,
         divisionDetails: {
           longDivisionMath: longDiv2Math,

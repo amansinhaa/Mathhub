@@ -274,69 +274,116 @@ export default function StepByStep() {
         );
       })()}
 
-      {/* Embedded Interactive Function Graph (Default Visual for Polynomials and Inequalities) */}
+      {/* Visual Graph & Step-by-Step Controller Section */}
       {(() => {
-        if (!equation || (result.type !== 'polynomial' && result.type !== 'inequality')) return null;
-        if (!equation.includes('=') && (!result.numericRoots || result.numericRoots.length === 0) && !result.finalAnswer.includes('=')) {
-          return null;
+        // Extract graph if applicable
+        let graphCard: React.ReactNode = null;
+        if (equation && (result.type === 'polynomial' || result.type === 'inequality')) {
+          const hasEqOrRoots = equation.includes('=') || (result.numericRoots && result.numericRoots.length > 0) || result.finalAnswer.includes('=');
+          if (hasEqOrRoots) {
+            const nlData = parseNumberLineData(result.type, result.finalAnswer);
+            const roots = (result.numericRoots && result.numericRoots.length > 0)
+              ? result.numericRoots
+              : nlData.roots;
+            const { fn, roots: cleanRoots } = extractPlotFunction(equation, roots);
+            if (fn) {
+              graphCard = (
+                <div className="w-full md:w-[380px] lg:w-[440px] shrink-0 bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-2.5 sm:p-3 shadow-xs overflow-hidden">
+                  <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[#E0E0E0] dark:border-[#2C2724]">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
+                      <LineChart size={13} />
+                      <span>Visual Curve &amp; Roots</span>
+                    </div>
+                    <Link
+                      href={getGraphLink()}
+                      className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
+                    >
+                      Full Graph Studio &rarr;
+                    </Link>
+                  </div>
+                  <div className="w-full h-[220px] sm:h-[250px]">
+                    <FunctionPlotter
+                      compact
+                      initialExpression={fn}
+                      initialRoots={cleanRoots}
+                      height={250}
+                      mobileHeight={220}
+                    />
+                  </div>
+                </div>
+              );
+            }
+          }
         }
 
-        const nlData = parseNumberLineData(result.type, result.finalAnswer);
-        const roots = (result.numericRoots && result.numericRoots.length > 0)
-          ? result.numericRoots
-          : nlData.roots;
+        const hasSteps = result.steps && result.steps.length > 0;
 
-        const { fn, roots: cleanRoots } = extractPlotFunction(equation, roots);
-        if (!fn) return null;
-
-        return (
-          <div className="flex justify-end my-2">
-            <div className="w-full sm:max-w-md lg:max-w-lg bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-2.5 sm:p-3 shadow-xs overflow-hidden">
-              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[#E0E0E0] dark:border-[#2C2724]">
-                <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
-                  <LineChart size={13} />
-                  <span>Visual Curve &amp; Roots</span>
+        if (graphCard && hasSteps) {
+          return (
+            <div className="flex flex-col md:flex-row items-stretch gap-3 my-2">
+              {/* Left: Step Box */}
+              <div className="flex-1 flex flex-col justify-between bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-4 sm:p-5 shadow-xs">
+                <div>
+                  <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#E0E0E0] dark:border-[#2C2724]">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
+                      <span>Step-by-Step Solution</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#EFEBE9] text-[#5D4037] dark:bg-[#3E2723] dark:text-[#D7CCC8]">
+                      {result.steps!.length} {result.steps!.length === 1 ? 'step' : 'steps'}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#616161] dark:text-[#9E9E9E] leading-relaxed">
+                    Step-by-step mathematical working showing factoring, Rational Root Theorem testing, polynomial division, and formulas.
+                  </p>
                 </div>
-                <Link
-                  href={getGraphLink()}
-                  className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
-                >
-                  Full Graph Studio &rarr;
-                </Link>
+                <div className="pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowSteps(!showSteps)}
+                    className="w-full py-3 px-4 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#1B1B1B] dark:hover:bg-[#EFEBE9] font-mono font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2"
+                  >
+                    <ChevronDown
+                      size={16}
+                      className={`transform transition-transform duration-200 ${showSteps ? 'rotate-180' : ''}`}
+                    />
+                    <span>{showSteps ? 'Hide Working Steps' : 'Show Step-by-Step Solution'}</span>
+                  </button>
+                </div>
               </div>
-              <div className="w-full h-[220px] sm:h-[250px]">
-                <FunctionPlotter
-                  compact
-                  initialExpression={fn}
-                  initialRoots={cleanRoots}
-                  height={250}
-                  mobileHeight={220}
-                />
-              </div>
-            </div>
-          </div>
-        );
-      })()}
 
-      {/* 3. Collapsible Steps Controller Button */}
-      {result.steps && result.steps.length > 0 && (
-        <div className="pt-1">
-          <button
-            type="button"
-            onClick={() => setShowSteps(!showSteps)}
-            className="w-full py-3 px-4 rounded-xl bg-white dark:bg-[#1B1B1B] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] border border-[#E0E0E0] dark:border-[#2E2825] text-[#5D4037] dark:text-[#D7CCC8] font-mono font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2"
-          >
-            <ChevronDown
-              size={16}
-              className={`transform transition-transform duration-200 ${showSteps ? 'rotate-180' : ''}`}
-            />
-            <span>{showSteps ? 'Hide Step-by-Step Solution' : 'Show Step-by-Step Solution'}</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EFEBE9] text-[#5D4037] dark:bg-[#3E2723] dark:text-[#D7CCC8]">
-              {result.steps.length} {result.steps.length === 1 ? 'step' : 'steps'}
-            </span>
-          </button>
-        </div>
-      )}
+              {/* Right: Graph Box */}
+              {graphCard}
+            </div>
+          );
+        }
+
+        if (graphCard) {
+          return <div className="flex justify-end my-2">{graphCard}</div>;
+        }
+
+        if (hasSteps) {
+          return (
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={() => setShowSteps(!showSteps)}
+                className="w-full py-3 px-4 rounded-xl bg-white dark:bg-[#1B1B1B] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] border border-[#E0E0E0] dark:border-[#2E2825] text-[#5D4037] dark:text-[#D7CCC8] font-mono font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2"
+              >
+                <ChevronDown
+                  size={16}
+                  className={`transform transition-transform duration-200 ${showSteps ? 'rotate-180' : ''}`}
+                />
+                <span>{showSteps ? 'Hide Step-by-Step Solution' : 'Show Step-by-Step Solution'}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EFEBE9] text-[#5D4037] dark:bg-[#3E2723] dark:text-[#D7CCC8]">
+                  {result.steps!.length} {result.steps!.length === 1 ? 'step' : 'steps'}
+                </span>
+              </button>
+            </div>
+          );
+        }
+
+        return null;
+      })()}
 
       {/* 4. Unified Step-by-Step Solution Document Box */}
       {showSteps && result.steps && result.steps.length > 0 && (
