@@ -107,18 +107,27 @@ describe('Rational Expression & Equation Solver', () => {
       const result = solvePolynomial('3/(x-2) + 2/(x+1) = 7/(x^2-x-2)');
       expect(result).toBeDefined();
       expect(result.finalAnswer).toContain('\\frac{8}{5}');
-      expect(result.steps.length).toBeGreaterThanOrEqual(3);
+      expect(result.steps.length).toBeGreaterThanOrEqual(4);
 
       // Verify domain restrictions step mentions -1 and 2
-      const step1 = result.steps.find((s) => s.explanation.includes('restriction') || s.explanation.includes('excluded'));
-      expect(step1).toBeDefined();
-      expect(step1?.math).toContain('-1');
-      expect(step1?.math).toContain('2');
+      const stepRestr = result.steps.find((s) => s.explanation.includes('restriction') || s.explanation.includes('excluded'));
+      expect(stepRestr).toBeDefined();
+      expect(stepRestr?.math).toContain('-1');
+      expect(stepRestr?.math).toContain('2');
 
       // Verify LCD multiplication step
-      const step2 = result.steps.find((s) => s.explanation.includes('LCD') || s.explanation.includes('Least Common Denominator'));
-      expect(step2).toBeDefined();
-      expect(step2?.math).toContain('5x - 8 = 0');
+      const stepLCD = result.steps.find((s) => s.explanation.includes('LCD') || s.explanation.includes('Least Common Denominator'));
+      expect(stepLCD).toBeDefined();
+
+      // Verify expand / simplify step with 5x - 8 = 0
+      const stepExpand = result.steps.find((s) => s.explanation.includes('Expand') || s.explanation.includes('collect'));
+      expect(stepExpand).toBeDefined();
+      expect(stepExpand?.math).toContain('5x - 8 = 0');
+
+      // Verify linear solve step
+      const stepIsolate = result.steps.find((s) => s.explanation.includes('isolating') || s.explanation.includes('Isolate') || s.explanation.includes('Solve for the variable'));
+      expect(stepIsolate).toBeDefined();
+      expect(stepIsolate?.math).toContain('x = \\frac{8}{5}');
     });
   });
 });

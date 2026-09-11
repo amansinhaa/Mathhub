@@ -506,6 +506,30 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
       denExpr = denTerms.length > 0 ? denTerms.join('*') : '1';
     }
 
+    // Step: Show factored denominators if any quadratic denominator exists
+    const factorableDens: { raw: string; factored: string }[] = [];
+    for (const match of denMatches) {
+      const denExpr = stripOuterParens(match.replace(/^\//, '').trim());
+      try {
+        const factored = cleanLatex((nerdamer as any)(`factor(${denExpr})`).toTeX());
+        const rawTeX = cleanLatex((nerdamer as any)(denExpr).toTeX());
+        if (factored !== rawTeX && factored.includes('(')) {
+          factorableDens.push({ raw: rawTeX, factored });
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    if (factorableDens.length > 0) {
+      const factorEqs = factorableDens.map((fd) => `${fd.raw} = ${fd.factored}`).join(', \\quad ');
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Factor the denominators to identify the common denominator:',
+        math: factorEqs,
+      });
+    }
+
     const lcdFactoredTeX = cleanLatex((nerdamer as any)(`factor(${denExpr})`).toTeX());
     const numExpandedStr = (nerdamer as any)(`expand(${numExpr})`).toString();
     const numExpandedTeX = cleanLatex((nerdamer as any)(`expand(${numExpr})`).toTeX())
@@ -513,10 +537,17 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const numFactoredTeX = cleanLatex((nerdamer as any)(`factor(${numExpr})`).toTeX())
       .replace(/\s*([+-])\s*/g, ' $1 ');
 
-    // Show step clearing fractions with LCD
+    // Step: Multiply by LCD to clear fractions
     steps.push({
       stepNumber: stepNumber++,
       explanation: `Find the Least Common Denominator (LCD) and multiply both sides of the equation by $\\text{LCD} = ${lcdFactoredTeX}$ to clear all fractions:`,
+      math: `${lcdFactoredTeX} \\cdot \\left[ ${expressionToLatex(lhs)} \\right] = ${lcdFactoredTeX} \\cdot \\left[ ${expressionToLatex(rhs)} \\right]`,
+    });
+
+    // Step: Simplify and combine like terms
+    steps.push({
+      stepNumber: stepNumber++,
+      explanation: 'Expand the terms and collect like terms to simplify the equation:',
       math: `${numExpandedTeX} = 0`,
     });
 
@@ -535,6 +566,22 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
       .split(',')
       .map((s: string) => s.trim())
       .filter(Boolean);
+
+    // If it's a linear equation like ax + b = 0, show the linear isolation step: ax = -b -> x = -b/a
+    try {
+      const deg = Number((nerdamer as any)(`deg(${numExpandedStr}, ${variable})`).toString());
+      if (deg === 1 && cleanSols.length === 1) {
+        const solVal = cleanSols[0];
+        const solTeX = cleanLatex((nerdamer as any)(solVal).toTeX());
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: `Solve for the variable $${variable}$ by isolating it:`,
+          math: `${variable} = ${solTeX}`,
+        });
+      }
+    } catch {
+      // ignore
+    }
 
     // Filter extraneous roots
     const validRoots: string[] = [];
