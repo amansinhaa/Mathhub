@@ -123,8 +123,10 @@ export function normalizeExpression(input: string): string {
   // 4. Handle implicit multiplication
   // Known function names to preserve before opening parenthesis
   const reservedFuncs = [
-    'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
-    'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh',
+    'sin', 'cos', 'tan', 'sec', 'csc', 'cot',
+    'asin', 'acos', 'atan', 'asec', 'acsc', 'acot',
+    'sinh', 'cosh', 'tanh', 'sech', 'csch', 'coth',
+    'asinh', 'acosh', 'atanh',
     'log', 'ln', 'log2', 'log10', 'exp', 'sqrt', 'cbrt', 'abs',
     'ceil', 'floor', 'round', 'sign', 'min', 'max',
     'nthRoot', 'pow', 'mod'
@@ -160,6 +162,16 @@ export function normalizeExpression(input: string): string {
     }
     return `${digits}*(`;
   });
+
+  // Convert trig powers: sin^2(x) -> (sin(x))^2, sin^2 x -> (sin(x))^2, cos^2(x) -> (cos(x))^2, etc.
+  const trigNames = 'sin|cos|tan|sec|csc|cot|sinh|cosh|tanh|asin|acos|atan';
+  // With parentheses: sin^2(x) or sin^(2)(x)
+  expr = expr.replace(new RegExp(`\\b(${trigNames})\\^\\(?([0-9.]+)\\)?\\s*\\(([^)]+)\\)`, 'gi'), '($1($3))^$2');
+  // Without parentheses on argument: sin^2 x -> (sin(x))^2
+  expr = expr.replace(new RegExp(`\\b(${trigNames})\\^\\(?([0-9.]+)\\)?\\s*([a-zA-Z])\\b`, 'gi'), '($1($3))^$2');
+
+  // Also handle basic trig without parentheses: sin x -> sin(x), cos 2x -> cos(2*x), cot x -> cot(x)
+  expr = expr.replace(new RegExp(`\\b(${trigNames})\\s+([0-9]*[a-zA-Z])\\b`, 'gi'), '$1($2)');
 
   // 5. Replace common function shorthand
   // "√(expr)" is already handled by step 1 (√ → sqrt)

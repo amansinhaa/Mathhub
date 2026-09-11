@@ -158,4 +158,90 @@ describe('Math Solver Accuracy Audit', () => {
     });
   });
 
+  describe('PDF 20 Equations Suite', () => {
+    test('run all 20 questions and log solver output', () => {
+      const fs = require('fs');
+      const { solvePolynomial, solveSystem } = require('@/lib/math/solver');
+      const { solveNonlinearSystem } = require('@/lib/math/nonlinearSystemSolver');
+
+      const questions = [
+        { id: 1, type: 'poly', input: '2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0' },
+        { id: 2, type: 'poly', input: 'x^3 - 6x^2 + 11x - 6 = 0' },
+        { id: 3, type: 'poly', input: 'sqrt(x+7) - sqrt(x-5) = 2' },
+        { id: 4, type: 'poly', input: '3/(x-2) + 2/(x+1) = 7/(x^2 - x - 2)' },
+        { id: 5, type: 'poly', input: 'x^4 - 5x^2 + 4 = 0' },
+        { id: 6, type: 'poly', input: '3^(2x+1) - 10*3^x + 3 = 0' },
+        { id: 7, type: 'poly', input: 'log_2(x-1) + log_2(x+1) = 3' },
+        { id: 8, type: 'poly', input: '5^x = 2^(x+3)' },
+        { id: 9, type: 'poly', input: 'ln(x^2) - ln(x+2) = ln(3)' },
+        { id: 10, type: 'poly', input: '2^x + 2^(-x) = 5/2' },
+        { id: 11, type: 'poly', input: '2*sin(x)^2 - 3*sin(x) + 1 = 0' },
+        { id: 12, type: 'poly', input: 'cos(2x) + sin(x) = 0' },
+        { id: 13, type: 'poly', input: 'tan(x) + cot(x) = 2' },
+        { id: 14, type: 'sys_nonlin', eqs: ['x^2 + y^2 = 25', 'x + y = 7'] },
+        { id: 15, type: 'sys_nonlin', eqs: ['x*y = 12', 'x^2 + y^2 = 40'] },
+        { id: 16, type: 'sys_lin', eqs: ['2x + 3y - z = 5', 'x - y + 2z = -1', '3x + y + z = 8'], vars: ['x', 'y', 'z'] },
+        { id: 17, type: 'poly', input: 'sqrt(2x+3) = x - 3' },
+        { id: 18, type: 'poly', input: '(x+1)/(x-1) - (x-1)/(x+1) = 5/6' },
+        { id: 19, type: 'poly', input: 'x^2 + 4x + 13 = 0' },
+        { id: 20, type: 'poly', input: '4^x - 3*2^(x+2) + 32 = 0' }
+      ];
+
+      const report: any[] = [];
+
+      for (const q of questions) {
+        try {
+          if (q.type === 'poly') {
+            const res = solvePolynomial(q.input);
+            report.push({
+              id: q.id,
+              input: q.input,
+              finalAnswer: res.finalAnswer,
+              decimalAnswer: res.decimalAnswer,
+              numericRoots: res.numericRoots,
+              steps: res.steps.map(s => ({
+                stepNumber: s.stepNumber,
+                explanation: s.explanation,
+                math: s.math
+              }))
+            });
+          } else if (q.type === 'sys_lin') {
+            const res = solveSystem(q.eqs, q.vars);
+            report.push({
+              id: q.id,
+              input: q.eqs.join(' ; '),
+              finalAnswer: res.finalAnswer,
+              steps: res.steps.map(s => ({
+                stepNumber: s.stepNumber,
+                explanation: s.explanation,
+                math: s.math
+              }))
+            });
+          } else if (q.type === 'sys_nonlin') {
+            const res = solveNonlinearSystem(q.eqs);
+            report.push({
+              id: q.id,
+              input: q.eqs.join(' ; '),
+              finalAnswer: res.finalAnswer,
+              steps: res.steps.map(s => ({
+                stepNumber: s.stepNumber,
+                explanation: s.explanation,
+                math: s.math
+              }))
+            });
+          }
+        } catch (err: any) {
+          report.push({
+            id: q.id,
+            input: q.input || q.eqs?.join(' ; '),
+            error: err.message
+          });
+        }
+      }
+
+      fs.writeFileSync('C:/Users/amans/.gemini/antigravity/scratch/mathhub/pdf_solver_results.json', JSON.stringify(report, null, 2), 'utf-8');
+      expect(report.length).toBe(20);
+    });
+  });
+
 });

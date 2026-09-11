@@ -25,6 +25,7 @@ import { detectParametricEquation, solveParametricEquation } from './parametricS
 import { trySimplifyRationalExpression, trySolveRationalEquation } from './rationalSolver';
 import { trySolveExponentialEquation } from './exponentialSolver';
 import { trySolveLogarithmicEquation } from './logarithmicSolver';
+import { trySolveTrigonometricEquation } from './trigonometricSolver';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -849,6 +850,15 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       logarithmicResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}`;
     }
     return logarithmicResult;
+  }
+
+  // Check if this is a Trigonometric Equation (e.g. 2sin^2(x) - 3sin(x) + 1 = 0, cos(2x) + sin(x) = 0, tan(x) + cot(x) = 2)
+  const trigResult = trySolveTrigonometricEquation(cleanEq, equation);
+  if (trigResult) {
+    if (interpretation.interpreted) {
+      trigResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)} \\text{ on } [0, 2\\pi)`;
+    }
+    return trigResult;
   }
 
   // Check if this is a Transcendental Equation
