@@ -282,17 +282,26 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
     return { degree: 0, label: 'Differential Equation (ODE)' };
   }
 
-  // Detect transcendental equations (exponential, trig, log with equals)
-  if (/(?:exp\b|e\^|\bsin\b|\bcos\b|\btan\b|\bln\b|\blog\b)/i.test(clean) && clean.includes('=')) {
-    return { degree: 0, label: 'Transcendental Equation' };
-  }
-
   // Detect radical expressions/equations
   if (/sqrt|cbrt|√|∛/.test(clean)) {
     if (clean.includes('=')) {
       return { degree: 0, label: 'Radical Equation' };
     }
     return { degree: 0, label: 'Radical Expression' };
+  }
+
+  // Detect transcendental equations (exponential, trig, log with equals)
+  if (/(?:exp\b|e\^|\bsin\b|\bcos\b|\btan\b|\bln\b|\blog\b)/i.test(clean) && clean.includes('=')) {
+    return { degree: 0, label: 'Transcendental Equation' };
+  }
+
+  // Detect parametric equations (e.g. 2x^2 + 3x - m + 2)
+  const alphaTokens = (clean.match(/[a-zA-Z]+/g) || []).filter(
+    (t) => t.length === 1 && !/^(sin|cos|tan|log|ln|exp|sqrt|abs|pi|e|i)$/i.test(t)
+  );
+  const uniqueVars = Array.from(new Set(alphaTokens));
+  if (uniqueVars.length > 1) {
+    return { degree: 0, label: 'Parametric Equation' };
   }
 
   // Extract variables: must have single-letter variables not part of functions (sin, cos, sqrt, etc.)

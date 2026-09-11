@@ -21,6 +21,7 @@ import { normalizeExpression, autoBalanceParens, autoInterpretEquals, expression
 import { detectODE, solveODE } from './odeSolver';
 import { detectTranscendental, solveTranscendental } from './transcendentalSolver';
 import { isNonlinearSystem, solveNonlinearSystem } from './nonlinearSystemSolver';
+import { detectParametricEquation, solveParametricEquation } from './parametricSolver';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -825,6 +826,15 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     };
   }
 
+  // Check if this is a parametric equation (e.g. 2x^2 + 3x - m + 2 = 0)
+  if (detectParametricEquation(cleanEq).isParametric) {
+    try {
+      return solveParametricEquation(cleanEq);
+    } catch {
+      // fall through to standard numeric/symbolic solver
+    }
+  }
+
   const variable = detectVariable(cleanEq);
   const hasSubscripts = /[a-zA-Z]_\d+/.test(cleanEq);
   
@@ -891,19 +901,12 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
         } else {
           const sorted = [x1, x2].sort((n1, n2) => n1 - n2);
           numericRoots.push(sorted[0], sorted[1]);
-          if (hasSubscripts) {
-            finalAnswer = `${variable}_1 = ${fmtFraction(x1)}, \\quad ${variable}_2 = ${fmtFraction(x2)}`;
-            decimalAnswer = `${variable}_1 = ${fmt(x1)}, \\quad ${variable}_2 = ${fmt(x2)}`;
-          } else {
-            const frac1 = toFraction(x1);
-            const frac2 = toFraction(x2);
-            const disp1 = frac1 && frac1.d > 1 ? fmtFraction(x1) : fmt(x1);
-            const disp2 = frac2 && frac2.d > 1 ? fmtFraction(x2) : fmt(x2);
-            finalAnswer = `${variable} = ${disp1}, \\; ${disp2}`;
-            if ((frac1 && frac1.d > 1) || (frac2 && frac2.d > 1)) {
-              decimalAnswer = `${variable} = ${fmt(x1)}, \\; ${fmt(x2)}`;
-            }
-          }
+          const frac1 = toFraction(sorted[0]);
+          const frac2 = toFraction(sorted[1]);
+          const disp1 = frac1 && frac1.d > 1 ? fmtFraction(sorted[0]) : fmt(sorted[0]);
+          const disp2 = frac2 && frac2.d > 1 ? fmtFraction(sorted[1]) : fmt(sorted[1]);
+          finalAnswer = `${variable}_1 = ${disp1}, \\quad ${variable}_2 = ${disp2}`;
+          decimalAnswer = `${variable}_1 = ${fmt(sorted[0])}, \\quad ${variable}_2 = ${fmt(sorted[1])}`;
         }
       } else {
         const realPart = -b / (2 * a);

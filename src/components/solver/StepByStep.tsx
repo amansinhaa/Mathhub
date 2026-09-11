@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from '@/components/shared/Link';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
+import { MathText } from '@/components/shared/MathText';
 import { Check, Copy, ChevronDown, Share2, LineChart, Info } from 'lucide-react';
 import dynamic from '@/components/shared/DynamicShim';
 import { extractPlotFunction } from '@/utils/mathSanitizer';
@@ -318,166 +319,128 @@ export default function StepByStep() {
         </div>
       )}
 
-      {/* 4. Collapsible Step-by-Step Stepper Accordion */}
+      {/* 4. Unified Step-by-Step Solution Document Box */}
       {showSteps && result.steps && result.steps.length > 0 && (
-        <div className="space-y-5 pt-3 animate-fade-in">
+        <div className="bg-[#FBF9F8] dark:bg-[#151515] rounded-2xl border border-[#E0E0E0] dark:border-[#282422] p-5 sm:p-7 shadow-xs space-y-6 animate-fade-in divide-y divide-[#E0E0E0]/80 dark:divide-[#282422]">
           {result.steps.map((step, index) => {
-            const isExpanded = expandedSteps[index] !== false; // Default individual step to open inside expanded stepper
-
             return (
-              <div key={index} className="flex gap-3 sm:gap-4 items-start">
-                {/* Stepper Node & Vertical Line */}
-                <div className="flex flex-col items-center shrink-0 pt-1">
-                  <div className="w-8 h-8 rounded-full bg-[#5D4037] text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 shadow-xs border-2 border-[#795548]/40">
-                    {step.stepNumber || index + 1}
+              <div key={index} className={index === 0 ? '' : 'pt-6'}>
+                {/* Step Header */}
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-xs sm:text-sm font-bold text-[#5D4037] dark:text-[#D7CCC8] uppercase tracking-wider shrink-0">
+                    Step {step.stepNumber || index + 1}:
+                  </span>
+                  <div className="text-sm sm:text-base font-semibold text-[#131313] dark:text-[#EAEAEA] leading-relaxed">
+                    <MathText text={step.explanation} />
                   </div>
-                  {index < result.steps.length - 1 && (
-                    <div className="w-0.5 min-h-[2.5rem] h-full bg-[#E0E0E0] dark:bg-[#2E2825] my-1" />
-                  )}
                 </div>
 
-                {/* Step Card */}
-                <div className="flex-1 min-w-0 bg-[#FBF9F8] dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-4 sm:p-5 shadow-xs transition-all">
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => toggleStep(index)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleStep(index);
-                      }
-                    }}
-                    className="flex justify-between items-start cursor-pointer gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5D4037] rounded-lg p-0.5"
-                    aria-expanded={isExpanded}
-                    aria-label={`Step ${step.stepNumber || index + 1}: ${step.explanation}`}
-                  >
-                    <p className="text-[#131313] dark:text-[#EAEAEA] font-semibold text-sm sm:text-base leading-relaxed">
-                      {step.explanation}
-                    </p>
-                    <div className="text-[#616161] hover:text-[#131313] dark:text-[#A19891] dark:hover:text-white p-1 shrink-0">
-                      <ChevronDown
-                        size={18}
-                        className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-                      />
+                {/* Division Details or Standard Step Content */}
+                {step.divisionDetails ? (
+                  <div className="mt-3 space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Method 1: Long Division */}
+                      <div className="bg-white dark:bg-[#1B1B1B] border border-[#D7CCC8] dark:border-[#5D4037]/40 rounded-xl p-3.5 flex flex-col justify-between shadow-2xs min-w-0">
+                        <div>
+                          <div className="flex items-center justify-between gap-1.5 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                              Method 1: Long Division
+                            </span>
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] rounded-full dark:border-[#5D4037]/50 shrink-0">
+                              NCERT standard
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#616161] dark:text-[#8D827A] mb-2">
+                            Standard step-by-step division (divide, multiply, subtract, bring down).
+                          </p>
+                          <div className="overflow-x-auto py-2 flex justify-center max-w-full text-xs text-[#131313] dark:text-white">
+                            <MathDisplay math={step.divisionDetails.longDivisionMath} block />
+                          </div>
+                        </div>
+                        <div className="mt-2.5 pt-2 border-t border-[#E0E0E0] dark:border-[#2E2825] text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8] flex flex-wrap justify-between items-center gap-1">
+                          <span>Quotient: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.quotientMath}</span></span>
+                          <span>Remainder: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.remainderMath}</span></span>
+                        </div>
+                      </div>
+
+                      {/* Method 2: Synthetic Division */}
+                      <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-3.5 flex flex-col justify-between shadow-2xs min-w-0">
+                        <div>
+                          <div className="flex items-center justify-between gap-1.5 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#BCAAA4]">
+                              Method 2: Synthetic Division
+                            </span>
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-[#F5F5F5] text-[#757575] border border-[#E0E0E0] dark:bg-[#24201E] dark:text-[#BCAAA4] rounded-full dark:border-[#3E2723] shrink-0">
+                              Shortcut
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#616161] dark:text-[#8D827A] mb-2">
+                            {step.divisionDetails.explainer || 'A faster shortcut version of long division — same result, fewer written steps.'}
+                          </p>
+                          <div className="overflow-x-auto py-2 flex justify-center max-w-full text-xs text-[#131313] dark:text-white">
+                            <MathDisplay math={step.divisionDetails.syntheticMath} block />
+                          </div>
+                        </div>
+                        <div className="mt-2.5 pt-2 border-t border-[#E0E0E0] dark:border-[#2E2825] text-[10px] font-mono text-[#757575] dark:text-[#BCAAA4] flex flex-wrap justify-between items-center gap-1">
+                          <span>Quotient: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.quotientMath}</span></span>
+                          <span>Remainder: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.remainderMath}</span></span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-
-                  {isExpanded && (
-                    <div className="mt-3 pt-3 border-t border-[#E0E0E0] dark:border-[#24201E] space-y-4">
-                      {step.divisionDetails ? (
-                        <div className="space-y-3">
-                          {/* Two-Column Side-by-Side on Desktop, Stacked on Mobile */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {/* Method 1: Long Division (NCERT Method) */}
-                            <div className="bg-white dark:bg-[#1B1B1B] border border-[#D7CCC8] dark:border-[#5D4037]/40 rounded-xl p-3.5 flex flex-col justify-between shadow-xs min-w-0">
-                              <div>
-                                <div className="flex items-center justify-between gap-1.5 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
-                                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
-                                    Method 1: Long Division
-                                  </span>
-                                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] rounded-full dark:border-[#5D4037]/50 shrink-0">
-                                    NCERT standard
-                                  </span>
-                                </div>
-                                <p className="text-[11px] text-[#616161] dark:text-[#8D827A] mb-2">
-                                  Standard step-by-step division (divide, multiply, subtract, bring down).
-                                </p>
-                                <div className="overflow-x-auto py-2 flex justify-center max-w-full text-xs text-[#131313] dark:text-white">
-                                  <MathDisplay math={step.divisionDetails.longDivisionMath} block />
-                                </div>
-                              </div>
-                              <div className="mt-2.5 pt-2 border-t border-[#E0E0E0] dark:border-[#2E2825] text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8] flex flex-wrap justify-between items-center gap-1">
-                                <span>Quotient: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.quotientMath}</span></span>
-                                <span>Remainder: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.remainderMath}</span></span>
-                              </div>
-                            </div>
-
-                            {/* Method 2: Synthetic Division (Shortcut) */}
-                            <div className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-3.5 flex flex-col justify-between shadow-xs min-w-0">
-                              <div>
-                                <div className="flex items-center justify-between gap-1.5 mb-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
-                                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#BCAAA4]">
-                                    Method 2: Synthetic Division
-                                  </span>
-                                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-[#F5F5F5] text-[#757575] border border-[#E0E0E0] dark:bg-[#24201E] dark:text-[#BCAAA4] rounded-full dark:border-[#3E2723] shrink-0">
-                                    Shortcut
-                                  </span>
-                                </div>
-                                <p className="text-[11px] text-[#616161] dark:text-[#8D827A] mb-2">
-                                  {step.divisionDetails.explainer || 'A faster shortcut version of long division — same result, fewer written steps.'}
-                                </p>
-                                <div className="overflow-x-auto py-2 flex justify-center max-w-full text-xs text-[#131313] dark:text-white">
-                                  <MathDisplay math={step.divisionDetails.syntheticMath} block />
-                                </div>
-                              </div>
-                              <div className="mt-2.5 pt-2 border-t border-[#E0E0E0] dark:border-[#2E2825] text-[10px] font-mono text-[#757575] dark:text-[#BCAAA4] flex flex-wrap justify-between items-center gap-1">
-                                <span>Quotient: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.quotientMath}</span></span>
-                                <span>Remainder: <span className="font-bold text-[#131313] dark:text-white">{step.divisionDetails.remainderMath}</span></span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Agreement Note */}
-                          <div className="text-[11px] font-mono text-[#616161] dark:text-[#A19891] bg-white dark:bg-[#1B1B1B] p-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] text-center shadow-xs">
-                            Both methods agree: <span className="font-semibold text-[#131313] dark:text-white">({step.divisionDetails.dividendMath}) ÷ ({step.divisionDetails.divisorMath}) = {step.divisionDetails.quotientMath}</span> (Remainder: {step.divisionDetails.remainderMath})
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          {/* Dedicated Formula Used Callout for Calculus & Step Rules */}
-                          {step.formulaUsed && (
-                            <div className="bg-[#EFEBE9]/70 dark:bg-[#3E2723]/40 border border-[#D7CCC8] dark:border-[#5D4037]/60 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-                              <div className="flex flex-col">
-                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
-                                  Formula Applied: {step.formulaUsed.name}
-                                </span>
-                                {step.formulaUsed.description && (
-                                  <span className="text-[11px] text-[#616161] dark:text-[#A19891]">
-                                    {step.formulaUsed.description}
-                                  </span>
-                                )}
-                              </div>
-                              <div className="bg-white dark:bg-[#1B1B1B] px-2.5 py-1 rounded-lg border border-[#E0E0E0] dark:border-[#2E2825] text-xs shrink-0 self-start sm:self-auto">
-                                <MathDisplay math={step.formulaUsed.latex} />
-                              </div>
-                            </div>
-                          )}
-
-                          {step.math && (
-                            <div className="overflow-x-auto max-w-full text-xs sm:text-sm py-1 text-[#131313] dark:text-white">
-                              <MathDisplay math={step.math} block />
-                            </div>
-                          )}
-
-                          {/* Symbolab-style Zero Factor Sub-Steps */}
-                          {step.subSteps && step.subSteps.length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-[#E0E0E0]/80 dark:border-[#2C2724] space-y-2">
-                              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
-                                Zero Factor Principle — Solve each factor:
-                              </span>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                                {step.subSteps.map((sub, sIdx) => (
-                                  <div
-                                    key={sIdx}
-                                    className="bg-white dark:bg-[#151515] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl p-3 shadow-2xs"
-                                  >
-                                    <div className="text-xs font-semibold text-[#5D4037] dark:text-[#D7CCC8] mb-1">
-                                      {sub.title}
-                                    </div>
-                                    <div className="overflow-x-auto text-xs sm:text-sm font-mono text-[#131313] dark:text-white">
-                                      <MathDisplay math={sub.math} />
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+                ) : (
+                  <div className="mt-2.5 space-y-3">
+                    {/* Dedicated Formula Applied Callout */}
+                    {step.formulaUsed && (
+                      <div className="bg-[#EFEBE9]/70 dark:bg-[#3E2723]/40 border border-[#D7CCC8] dark:border-[#5D4037]/60 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                            Formula Applied: {step.formulaUsed.name}
+                          </span>
+                          {step.formulaUsed.description && (
+                            <span className="text-[11px] text-[#616161] dark:text-[#A19891]">
+                              {step.formulaUsed.description}
+                            </span>
                           )}
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                        <div className="bg-white dark:bg-[#1B1B1B] px-2.5 py-1 rounded-lg border border-[#E0E0E0] dark:border-[#2E2825] text-xs shrink-0 self-start sm:self-auto">
+                          <MathDisplay math={step.formulaUsed.latex} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step Math Block */}
+                    {step.math && (
+                      <div className="overflow-x-auto max-w-full py-1 text-center sm:text-left text-[#131313] dark:text-white">
+                        <MathDisplay math={step.math} block />
+                      </div>
+                    )}
+
+                    {/* Sub-Steps (Zero factor principle, Newton iterations, etc.) */}
+                    {step.subSteps && step.subSteps.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-[#E0E0E0]/80 dark:border-[#2C2724] space-y-2">
+                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                          Detailed Breakdown:
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                          {step.subSteps.map((sub, sIdx) => (
+                            <div
+                              key={sIdx}
+                              className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl p-3 shadow-2xs"
+                            >
+                              <div className="text-xs font-semibold text-[#5D4037] dark:text-[#D7CCC8] mb-1">
+                                {sub.title}
+                              </div>
+                              <div className="overflow-x-auto text-xs sm:text-sm font-mono text-[#131313] dark:text-white">
+                                <MathDisplay math={sub.math} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
