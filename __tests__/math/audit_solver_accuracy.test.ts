@@ -1,14 +1,17 @@
 import { solvePolynomial, solveSystem, solveInequality, solveSymbolic, extractCoefficients, solvePolynomialNumerical } from '@/lib/math/solver';
+import { parseNumberLineData } from '@/components/solver/NumberLine';
 
 describe('Math Solver Accuracy Audit', () => {
 
   describe('1. solvePolynomial accuracy', () => {
     test('Linear: fractional roots and large coefficients', () => {
       const res = solvePolynomial('3x + 7 = 0');
-      expect(res.finalAnswer).toBe('x = -2.333333');
+      expect(res.finalAnswer).toBe('x = -\\frac{7}{3}');
+      expect(res.decimalAnswer).toBe('x = -2.333333');
       
       const res2 = solvePolynomial('1000000x - 500000 = 0');
-      expect(res2.finalAnswer).toBe('x = 0.5');
+      expect(res2.finalAnswer).toBe('x = \\frac{1}{2}');
+      expect(res2.decimalAnswer).toBe('x = 0.5');
     });
 
     test('Quadratic: discriminant = 0', () => {
@@ -27,22 +30,29 @@ describe('Math Solver Accuracy Audit', () => {
 
     test('Cubic: 3 real roots', () => {
       const res = solvePolynomial('x^3 - 6x^2 + 11x - 6 = 0');
-      expect(res.finalAnswer).toContain('x_1 = 1, \\quad x_2 = 2, \\quad x_3 = 3');
+      expect(res.finalAnswer).toContain('x = 1, \\; 2, \\; 3');
     });
 
     test('Cubic: case where d=0', () => {
       const res = solvePolynomial('x^3 - x = 0');
-      expect(res.finalAnswer).toContain('x_1 = -1, \\quad x_2 = 0, \\quad x_3 = 1');
+      expect(res.finalAnswer).toContain('x = -1, \\; 0, \\; 1');
     });
 
     test('Quartic: roots ±2, ±2i', () => {
       const res = solvePolynomial('x^4 - 16 = 0');
-      expect(res.finalAnswer).toContain('x_1 = -2, \\quad x_2 = 2, \\quad x_{3,4} = \\pm 2\\,i');
+      expect(res.finalAnswer).toContain('x = -2, \\; 2, \\; \\pm 2\\,i');
+    });
+
+    test('Quartic with fractional roots and multiplicity: 2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0', () => {
+      const res = solvePolynomial('2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0');
+      expect(res.finalAnswer).toBe('x = \\frac{1}{2}, \\; 1, \\; 2');
+      expect(res.decimalAnswer).toBe('x = 0.5, \\; 1, \\; 2');
+      expect(res.numericRoots).toEqual([0.5, 1, 2]);
     });
 
     test('Higher: roots of unity', () => {
       const res = solvePolynomial('x^6 - 1 = 0');
-      expect(res.finalAnswer).toContain('x_1 = -1, \\quad x_2 = 1');
+      expect(res.finalAnswer).toContain('x = -1, \\; 1');
     });
   });
 
@@ -119,6 +129,32 @@ describe('Math Solver Accuracy Audit', () => {
       const res = solveInequality('-x^2 + 4 > 0');
       // roots -2, 2, a < 0, > 0 => -2 < x < 2
       expect(res.finalAnswer).toBe('-2 < x < 2');
+    });
+  });
+
+  describe('6. NumberLine data parsing accuracy', () => {
+    test('correctly parses fractions in single-variable notation: x = \\frac{1}{2}, \\; 1, \\; 2', () => {
+      const data = parseNumberLineData('polynomial', 'x = \\frac{1}{2}, \\; 1, \\; 2');
+      expect(data.roots).toEqual([0.5, 1, 2]);
+      expect(data.intervals).toHaveLength(0);
+    });
+
+    test('correctly parses and deduplicates old subscript format with fractions: x_1 = \\frac{1}{2}, \\quad x_2 = 1, \\quad x_3 = 1, \\quad x_4 = 2', () => {
+      const data = parseNumberLineData(
+        'polynomial',
+        'x_1 = \\frac{1}{2}, \\quad x_2 = 1, \\quad x_3 = 1, \\quad x_4 = 2'
+      );
+      expect(data.roots).toEqual([0.5, 1, 2]);
+    });
+
+    test('correctly parses negative fractions: x = -\\frac{3}{4}, \\; 2', () => {
+      const data = parseNumberLineData('polynomial', 'x = -\\frac{3}{4}, \\; 2');
+      expect(data.roots).toEqual([-0.75, 2]);
+    });
+
+    test('ignores complex numbers with imaginary i', () => {
+      const data = parseNumberLineData('polynomial', 'x = 1, \\; -0.5 \\pm 0.866\\,i');
+      expect(data.roots).toEqual([1]);
     });
   });
 

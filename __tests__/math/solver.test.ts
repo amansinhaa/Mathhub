@@ -1,4 +1,5 @@
 import { solvePolynomial, solveSystem, solveInequality, solveSymbolic } from '@/lib/math/solver';
+import { expressionToLatex, quickDegreeDetect } from '@/lib/math/normalizer';
 
 describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
   // ─── Linear Equations (Degree 1) ─────────────────────────────────────────
@@ -176,7 +177,7 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(divStep?.math).toContain('72t^2 + 72t + 76');
 
       // Roots check
-      expect(res.finalAnswer).toMatch(/t_1\s*=\s*1/);
+      expect(res.finalAnswer).toMatch(/t\s*=\s*1/);
       expect(res.finalAnswer).toContain('i');
     });
 
@@ -305,6 +306,42 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       const res = solveSymbolic('v = u + a*t', 't');
       expect(res.type).toBe('symbolic');
       expect(res.finalAnswer).toContain('t');
+    });
+  });
+
+  // ─── Radical Expressions Simplification ──────────────────────────────────
+  describe('Radical Expression Simplification', () => {
+    it('simplifies sqrt(9x^(7)y^(-2))*\\sqrt(12x^(2)y^(12)) to 6x^{4}y^{5}\\sqrt{3x} with clear steps', () => {
+      const input = 'sqrt(9x^(7)y^(-2))*\\sqrt(12x^(2)y^(12))';
+
+      // Question preview formatting
+      const preview = expressionToLatex(input);
+      expect(preview).toBe('\\sqrt{9x^{7}y^{-2}} \\cdot \\sqrt{12x^{2}y^{12}}');
+
+      // Badge detection
+      const badge = quickDegreeDetect(input);
+      expect(badge?.label).toBe('Radical Expression');
+
+      // Solver output
+      const res = solvePolynomial(input);
+      expect(res.finalAnswer).toBe('6x^{4}y^{5}\\sqrt{3x}');
+      expect(res.steps.length).toBeGreaterThanOrEqual(3);
+      expect(res.steps[0].explanation).toContain('product rule');
+    });
+
+    it('simplifies sqrt(50) to 5\\sqrt{2}', () => {
+      const res = solvePolynomial('sqrt(50)');
+      expect(res.finalAnswer).toBe('5\\sqrt{2}');
+    });
+
+    it('simplifies sqrt(18) * sqrt(2) to 6', () => {
+      const res = solvePolynomial('sqrt(18) * sqrt(2)');
+      expect(res.finalAnswer).toBe('6');
+    });
+
+    it('simplifies sqrt(8x^3) to 2x\\sqrt{2x}', () => {
+      const res = solvePolynomial('sqrt(8x^3)');
+      expect(res.finalAnswer).toBe('2x\\sqrt{2x}');
     });
   });
 });

@@ -90,19 +90,10 @@ export default function StepByStep() {
   const getGraphLink = () => {
     if (!equation) return '/graph';
 
-    // Parse roots from result.finalAnswer if present (e.g. t = 1, t_1 = 2, t_2 = 3)
-    const roots: number[] = [];
-    if (result && result.finalAnswer) {
-      const matches = result.finalAnswer.match(/=\s*(-?\d+(\.\d+)?)/g);
-      if (matches) {
-        matches.forEach((m) => {
-          const val = parseFloat(m.replace('=', '').trim());
-          if (!isNaN(val) && !roots.includes(val)) {
-            roots.push(val);
-          }
-        });
-      }
-    }
+    const nlData = parseNumberLineData(result?.type || 'polynomial', result?.finalAnswer || '');
+    const roots: number[] = (result?.numericRoots && result.numericRoots.length > 0)
+      ? result.numericRoots
+      : nlData.roots;
 
     const { fn, roots: cleanRoots } = extractPlotFunction(equation, roots);
     const params = new URLSearchParams();
@@ -141,9 +132,9 @@ export default function StepByStep() {
               Solution
             </h3>
             <span className="px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase">
-              {result.type}
+              {!equation.includes('=') && !result.finalAnswer.includes('=') ? 'Simplification' : result.type}
             </span>
-            {result.type === 'polynomial' && quadraticMethod && quadraticMethod !== 'auto' && (
+            {result.type === 'polynomial' && equation.includes('=') && quadraticMethod && quadraticMethod !== 'auto' && (
               <span className="hidden sm:inline px-2 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold">
                 {quadraticMethod === 'factoring' ? 'Factoring' : quadraticMethod === 'completing_square' ? 'Completing Square' : 'Formula'}
               </span>
@@ -220,12 +211,13 @@ export default function StepByStep() {
           <div className="text-base sm:text-xl font-bold text-[#131313] dark:text-white">
             {(() => {
               const activeAns = (showDecimal && result.decimalAnswer) ? result.decimalAnswer : (result.finalAnswer || '');
-              if (activeAns.includes('\\quad') || activeAns.includes(',')) {
-                const rootParts = activeAns.split(/\\quad|,/).map((s) => s.trim()).filter(Boolean);
-                if (rootParts.length > 1) {
+              // If activeAns contains multiple separate variable assignments (e.g. "x = 2, \quad y = 3" or "x_1 = 1, \quad x_2 = 2")
+              if (activeAns.includes('\\quad')) {
+                const parts = activeAns.split(/\\quad/).map((s) => s.trim().replace(/^,\s*|,\s*$/g, '')).filter(Boolean);
+                if (parts.length > 1 && parts.every((p) => p.includes('='))) {
                   return (
                     <div className="flex flex-wrap items-center gap-2">
-                      {rootParts.map((rp, idx) => (
+                      {parts.map((rp, idx) => (
                         <div
                           key={idx}
                           className="px-3 py-1.5 bg-white dark:bg-[#1A1A1A] border border-[#E0E0E0] dark:border-[#2C2724] rounded-xl shadow-xs"
@@ -251,11 +243,15 @@ export default function StepByStep() {
       {(() => {
         if (result.type !== 'polynomial' && result.type !== 'inequality') return null;
         const nlData = parseNumberLineData(result.type, result.finalAnswer);
-        if (nlData.roots.length === 0 && nlData.intervals.length === 0) return null;
+        const roots = (result.numericRoots && result.numericRoots.length > 0)
+          ? result.numericRoots
+          : nlData.roots;
+        if (roots.length === 0 && nlData.intervals.length === 0) return null;
+        const eqVar = equation?.match(/[a-zA-Z]/)?.[0] || 'x';
         return (
           <NumberLine
-            variable="x"
-            roots={nlData.roots}
+            variable={eqVar}
+            roots={roots}
             intervals={nlData.intervals}
           />
         );
@@ -264,20 +260,14 @@ export default function StepByStep() {
       {/* Embedded Interactive Function Graph (Default Visual for Polynomials and Inequalities) */}
       {(() => {
         if (!equation || (result.type !== 'polynomial' && result.type !== 'inequality')) return null;
-
-        // Parse roots for highlighting
-        const roots: number[] = [];
-        if (result && result.finalAnswer) {
-          const matches = result.finalAnswer.match(/=\s*(-?\d+(\.\d+)?)/g);
-          if (matches) {
-            matches.forEach((m) => {
-              const val = parseFloat(m.replace('=', '').trim());
-              if (!isNaN(val) && !roots.includes(val)) {
-                roots.push(val);
-              }
-            });
-          }
+        if (!equation.includes('=') && (!result.numericRoots || result.numericRoots.length === 0) && !result.finalAnswer.includes('=')) {
+          return null;
         }
+
+        const nlData = parseNumberLineData(result.type, result.finalAnswer);
+        const roots = (result.numericRoots && result.numericRoots.length > 0)
+          ? result.numericRoots
+          : nlData.roots;
 
         const { fn, roots: cleanRoots } = extractPlotFunction(equation, roots);
         if (!fn) return null;

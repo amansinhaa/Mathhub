@@ -982,7 +982,7 @@ export function generateCubicSteps(
       steps.push({
         stepNumber: stepCount++,
         explanation: 'Final summary: All three real roots of the cubic equation are:',
-        math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_2 = ${fmt(r2)}, \\quad ${variable}_3 = ${fmt(r3)}`,
+        math: `${variable} = ${fmt(r0)}, \\; ${fmt(r2)}, \\; ${fmt(r3)}`,
       });
     } else if (Math.abs(deltaQ) < 1e-8) {
       const r2 = -sB / (2 * sA);
@@ -996,7 +996,7 @@ export function generateCubicSteps(
       steps.push({
         stepNumber: stepCount++,
         explanation: 'Final summary: All roots of the cubic equation (including repeated root):',
-        math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_2 = ${fmt(r2)}, \\quad ${variable}_3 = ${fmt(r2)}`,
+        math: `${variable} = ${fmt(r0)}, \\; ${fmt(r2)}`,
       });
     } else {
       const realPart = -sB / (2 * sA);
@@ -1011,13 +1011,13 @@ export function generateCubicSteps(
       steps.push({
         stepNumber: stepCount++,
         explanation: 'Evaluate the two complex conjugate roots:',
-        math: `${variable}_2 = ${fmt(realPart)} + ${fmt(imagPart)}\\,i, \\quad ${variable}_3 = ${fmt(realPart)} - ${fmt(imagPart)}\\,i`,
+        math: `${variable} = ${fmt(realPart)} + ${fmt(imagPart)}\\,i, \\quad ${variable} = ${fmt(realPart)} - ${fmt(imagPart)}\\,i`,
       });
 
       steps.push({
         stepNumber: stepCount++,
         explanation: 'Final summary: All roots of the cubic equation (one real root and two complex conjugate roots):',
-        math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_{2,3} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`,
+        math: `${variable} = ${fmt(r0)}, \\quad ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`,
       });
     }
 
@@ -1144,16 +1144,20 @@ export function generateQuarticSteps(
       math: `u = \\frac{${fmt(-c)} \\pm \\sqrt{${fmt(deltaU)}}}{${fmt(2 * a)}}`,
     });
 
-    const rootStrs: string[] = [];
-    roots.real.forEach((r, i) => rootStrs.push(`${variable}_${i + 1} = ${fmt(r)}`));
-    roots.complex.forEach((comp) =>
-      rootStrs.push(`${variable} = ${fmt(comp.re)} \\pm ${fmt(comp.im)}\\,i`)
-    );
+    const distinctReal: number[] = [];
+    roots.real.forEach((r) => {
+      if (!distinctReal.some((dr) => Math.abs(dr - r) < 1e-5)) distinctReal.push(r);
+    });
+    const rootStrs: string[] = distinctReal.map((r) => fmt(r));
+    roots.complex.forEach((comp) => {
+      const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+      rootStrs.push(Math.abs(comp.re) < 1e-6 ? `\\pm ${imStr}` : `${fmt(comp.re)} \\pm ${imStr}`);
+    });
 
     steps.push({
       stepNumber: stepCount++,
       explanation: `Take the square roots $${variable} = \\pm \\sqrt{u}$ to find all 4 roots:`,
-      math: rootStrs.join(', \\quad '),
+      math: `${variable} = ${rootStrs.join(', \\; ')}`,
     });
 
     return steps;
@@ -1390,18 +1394,23 @@ export function generateQuarticSteps(
   }
 
   // Summary
-  const rootStrs: string[] = [];
-  roots.real.forEach((r, i) => rootStrs.push(`${variable}_${i + 1} = ${fmt(r)}`));
-  roots.complex.forEach((comp, i) =>
-    rootStrs.push(
-      `${variable}_${roots.real.length + i + 1} = ${fmt(comp.re)} \\pm ${fmt(comp.im)}\\,i`
-    )
-  );
+  const distinctReal: number[] = [];
+  roots.real.forEach((r) => {
+    if (!distinctReal.some((dr) => Math.abs(dr - r) < 1e-5)) distinctReal.push(r);
+  });
+  const rootStrs: string[] = distinctReal.map((r) => {
+    const frac = toFraction(r);
+    return frac && frac.d > 1 ? fmtFraction(r) : fmt(r);
+  });
+  roots.complex.forEach((comp) => {
+    const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+    rootStrs.push(Math.abs(comp.re) < 1e-6 ? `\\pm ${imStr}` : `${fmt(comp.re)} \\pm ${imStr}`);
+  });
 
   steps.push({
     stepNumber: stepCount++,
     explanation: r1 !== null ? 'Final summary: All roots of the quartic equation are:' : 'Solved numerically. All roots of the quartic equation are:',
-    math: rootStrs.join(', \\quad '),
+    math: `${variable} = ${rootStrs.join(', \\; ')}`,
   });
 
   return steps;
@@ -1430,18 +1439,20 @@ export function generateDegree5PlusSteps(
     math: `\\text{Degree } n = ${degree} \\ge 5 \\implies \\text{No general radical formula (Abel–Ruffini Theorem)}`,
   });
 
-  const rootStrs: string[] = [];
-  roots.real.forEach((r, i) => rootStrs.push(`${variable}_${i + 1} = ${fmt(r)}`));
-  roots.complex.forEach((comp, i) =>
-    rootStrs.push(
-      `${variable}_${roots.real.length + i + 1} = ${fmt(comp.re)} \\pm ${fmt(comp.im)}\\,i`
-    )
-  );
+  const distinctReal5: number[] = [];
+  roots.real.forEach((r) => {
+    if (!distinctReal5.some((dr) => Math.abs(dr - r) < 1e-5)) distinctReal5.push(r);
+  });
+  const rootStrs5: string[] = distinctReal5.map((r) => fmt(r));
+  roots.complex.forEach((comp) => {
+    const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+    rootStrs5.push(Math.abs(comp.re) < 1e-6 ? `\\pm ${imStr}` : `${fmt(comp.re)} \\pm ${imStr}`);
+  });
 
   steps.push({
     stepNumber: stepCount++,
     explanation: `Extracted all ${degree} roots (real and complex) using numerical eigenvalue computation:`,
-    math: rootStrs.join(', \\quad '),
+    math: `${variable} = ${rootStrs5.join(', \\; ')}`,
   });
 
   return steps;

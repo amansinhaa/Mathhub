@@ -1,4 +1,4 @@
-import { SolverResult, QuadraticMethod } from '@/types/solver';
+import { SolverResult, QuadraticMethod, SolutionStep } from '@/types/solver';
 import {
   generateLinearSteps,
   generateQuadraticSteps,
@@ -17,7 +17,7 @@ import { evaluate } from 'mathjs';
 import * as math from 'mathjs';
 // @ts-ignore
 import nerdamer from 'nerdamer/all.min.js';
-import { normalizeExpression, autoBalanceParens, autoInterpretEquals } from './normalizer';
+import { normalizeExpression, autoBalanceParens, autoInterpretEquals, expressionToLatex } from './normalizer';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -318,38 +318,293 @@ export function solvePolynomialNumerical(coeffs: number[]): {
 /** Helper to format final answer roots into clean LaTeX string (exact fractions and decimals). */
 function formatFinalRoots(
   roots: { real: number[]; complex: { re: number; im: number }[] },
-  variable: string
-): { exact: string; decimal?: string } {
-  const exactParts: string[] = [];
-  const decimalParts: string[] = [];
-  let hasFraction = false;
+  variable: string,
+  hasSubscripts: boolean = false
+): { exact: string; decimal?: string; numericRoots: number[] } {
+  const numericRoots: number[] = [];
+  const distinctReal: number[] = [];
+  roots.real.forEach((rawR) => {
+    const r = Math.round(rawR * 1e8) / 1e8;
+    if (!distinctReal.some((dr) => Math.abs(dr - r) < 1e-5)) {
+      distinctReal.push(r);
+      numericRoots.push(r);
+    }
+  });
 
-  roots.real.forEach((r, i) => {
+  if (hasSubscripts) {
+    const exactParts: string[] = [];
+    const decimalParts: string[] = [];
+    let hasFraction = false;
+
+    roots.real.forEach((r, i) => {
+      const frac = toFraction(r);
+      if (frac && frac.d > 1) {
+        hasFraction = true;
+        exactParts.push(`${variable}_${i + 1} = ${fmtFraction(r)}`);
+      } else {
+        exactParts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+      }
+      decimalParts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+    });
+
+    roots.complex.forEach((comp, i) => {
+      const idx = roots.real.length + i * 2 + 1;
+      const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+      const exactStr =
+        Math.abs(comp.re) < 1e-6
+          ? `${variable}_{${idx},${idx + 1}} = \\pm ${imStr}`
+          : `${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${imStr}`;
+      exactParts.push(exactStr);
+      decimalParts.push(exactStr);
+    });
+
+    const exact = exactParts.length > 0 ? exactParts.join(', \\quad ') : `${variable} = 0`;
+    const decimal = hasFraction && decimalParts.length > 0 ? decimalParts.join(', \\quad ') : undefined;
+    return { exact, decimal, numericRoots };
+  }
+
+  // Single variable mode without artificial subscripts: "x = sol1, sol2, ..."
+  let hasFraction = false;
+  const exactItems: string[] = [];
+  const decimalItems: string[] = [];
+
+  distinctReal.forEach((r) => {
     const frac = toFraction(r);
     if (frac && frac.d > 1) {
       hasFraction = true;
-      exactParts.push(`${variable}_${i + 1} = ${fmtFraction(r)}`);
+      exactItems.push(fmtFraction(r));
     } else {
-      exactParts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+      exactItems.push(fmt(r));
     }
-    decimalParts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+    decimalItems.push(fmt(r));
   });
 
-  roots.complex.forEach((comp, i) => {
-    const idx = roots.real.length + i * 2 + 1;
+  roots.complex.forEach((comp) => {
     const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
     const exactStr =
       Math.abs(comp.re) < 1e-6
-        ? `${variable}_{${idx},${idx + 1}} = \\pm ${imStr}`
-        : `${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${imStr}`;
-    exactParts.push(exactStr);
-    decimalParts.push(exactStr);
+        ? `\\pm ${imStr}`
+        : `${fmt(comp.re)} \\pm ${imStr}`;
+    exactItems.push(exactStr);
+    decimalItems.push(exactStr);
   });
 
-  const exact = exactParts.length > 0 ? exactParts.join(', \\quad ') : `${variable} = 0`;
-  const decimal = hasFraction && decimalParts.length > 0 ? decimalParts.join(', \\quad ') : undefined;
+  const exact = exactItems.length > 0 ? `${variable} = ${exactItems.join(', \\; ')}` : `${variable} = 0`;
+  const decimal = hasFraction && decimalItems.length > 0 ? `${variable} = ${decimalItems.join(', \\; ')}` : undefined;
 
-  return { exact, decimal };
+  return { exact, decimal, numericRoots };
+}
+
+// ─── Radical Expression Simplifier ─────────────────────────────────────────
+
+function factorSquare(n: number): { outside: number; inside: number } {
+  let outside = 1;
+  let inside = n;
+  for (let i = Math.floor(Math.sqrt(n)); i >= 2; i--) {
+    if (n % (i * i) === 0) {
+      outside = i;
+      inside = Math.round(n / (i * i));
+      break;
+    }
+  }
+  return { outside, inside };
+}
+
+interface MonomialRadicand {
+  coeff: number;
+  cOut: number;
+  cIn: number;
+  outsideVars: string[];
+  insideVars: string[];
+  perfectVars: string[];
+  remainVars: string[];
+  outsideLatex: string;
+  insideLatex: string;
+  perfStr: string;
+  remStr: string;
+  finalLatex: string;
+}
+
+function parseMonomialRadicand(monomialStr: string): MonomialRadicand {
+  let coeff = 1;
+  const coeffMatch = monomialStr.match(/^([0-9.]+)/);
+  let rest = monomialStr;
+  if (coeffMatch) {
+    coeff = parseInt(coeffMatch[1], 10);
+    rest = monomialStr.slice(coeffMatch[0].length);
+  }
+
+  const { outside: cOut, inside: cIn } = factorSquare(coeff);
+
+  const varMatches = [...rest.matchAll(/([a-zA-Z])(?:\^(\d+))?/g)];
+  const outsideVars: string[] = [];
+  const insideVars: string[] = [];
+  const perfectVars: string[] = [];
+  const remainVars: string[] = [];
+
+  for (const m of varMatches) {
+    const v = m[1];
+    const power = m[2] ? parseInt(m[2], 10) : 1;
+    const q = Math.floor(power / 2);
+    const r = power % 2;
+
+    if (q > 0) {
+      outsideVars.push(q === 1 ? v : `${v}^{${q}}`);
+      perfectVars.push(`${v}^{${q * 2}}`);
+    }
+    if (r > 0) {
+      insideVars.push(r === 1 ? v : `${v}^{${r}}`);
+      remainVars.push(r === 1 ? v : `${v}^{${r}}`);
+    }
+  }
+
+  // Outside latex
+  const outCoeffStr = cOut > 1 || (outsideVars.length === 0 && cIn === 1 && insideVars.length === 0) ? cOut.toString() : '';
+  let outsideLatex = (outCoeffStr + outsideVars.join('')).trim();
+  if (outsideLatex === '1' && (cIn > 1 || insideVars.length > 0)) outsideLatex = '';
+
+  // Inside latex
+  const inCoeffStr = cIn > 1 || (insideVars.length === 0) ? cIn.toString() : '';
+  const insideLatex = (inCoeffStr + insideVars.join('')).trim();
+
+  // Perfect square part inside
+  const perfCoeff = cOut * cOut;
+  const perfStr = (perfCoeff > 1 || perfectVars.length > 0) ? (perfCoeff > 1 ? perfCoeff.toString() : '') + perfectVars.join('') : '';
+
+  // Remaining non-square part inside
+  const remStr = (cIn > 1 || remainVars.length > 0) ? (cIn > 1 ? cIn.toString() : '') + remainVars.join('') : '';
+
+  let finalLatex = '';
+  if (insideLatex === '' || insideLatex === '1') {
+    finalLatex = outsideLatex || '1';
+  } else if (!outsideLatex) {
+    finalLatex = `\\sqrt{${insideLatex}}`;
+  } else {
+    finalLatex = `${outsideLatex}\\sqrt{${insideLatex}}`;
+  }
+
+  return {
+    coeff,
+    cOut,
+    cIn,
+    outsideVars,
+    insideVars,
+    perfectVars,
+    remainVars,
+    outsideLatex,
+    insideLatex,
+    perfStr,
+    remStr,
+    finalLatex,
+  };
+}
+
+export function trySimplifyRadicalExpression(cleanEq: string, rawEq: string): SolverResult | null {
+  const hasRadical = /sqrt|cbrt|√|∛/.test(cleanEq);
+  if (!hasRadical) return null;
+
+  // Extract all top-level sqrt(...)
+  let clean = cleanEq
+    .replace(/\\sqrt\s*\{/g, 'sqrt(')
+    .replace(/\\sqrt\s*\(/g, 'sqrt(')
+    .replace(/√\s*\(/g, 'sqrt(')
+    .replace(/\\cdot/g, '*')
+    .replace(/×/g, '*')
+    .replace(/\s+/g, '')
+    .trim();
+
+  const radicands: string[] = [];
+  let i = 0;
+  while (i < clean.length) {
+    if (clean.startsWith('sqrt(', i)) {
+      const startIdx = i + 5;
+      let depth = 1;
+      let j = startIdx;
+      while (j < clean.length && depth > 0) {
+        if (clean[j] === '(') depth++;
+        else if (clean[j] === ')') depth--;
+        j++;
+      }
+      if (depth === 0) {
+        radicands.push(clean.slice(startIdx, j - 1).trim());
+        i = j;
+        continue;
+      }
+    }
+    i++;
+  }
+
+  if (radicands.length === 0) return null;
+
+  try {
+    const steps: SolutionStep[] = [];
+    let stepNumber = 1;
+
+    // Expand combined radicand with nerdamer
+    const combinedRadicandExpr = radicands.map((r) => `(${r})`).join(' * ');
+    const expanded = (nerdamer as any)(`expand(${combinedRadicandExpr})`).toString();
+    const parsed = parseMonomialRadicand(expanded);
+
+    // If multiple radicals combined
+    if (radicands.length > 1) {
+      const combinedLatex = radicands
+        .map((r) => `(${r.replace(/\^(\d+)/g, '^{$1}').replace(/\^\(([^)]+)\)/g, '^{$1}')})`)
+        .join(' \\cdot ');
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Combine terms under a single radical using the product rule: \\sqrt{a} \\cdot \\sqrt{b} = \\sqrt{a \\cdot b}.',
+        math: `\\sqrt{${combinedLatex}}`,
+      });
+
+      // Show multiplication/exponent addition
+      const formattedExpanded = expanded.replace(/\*/g, '').replace(/\^(\d+)/g, '^{$1}');
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Multiply coefficients and combine variables with like bases by adding exponents ($x^m \\cdot x^n = x^{m+n}$).',
+        math: `\\sqrt{${formattedExpanded}}`,
+      });
+    }
+
+    // Step: Factor out perfect squares
+    if (parsed.cOut > 1 || parsed.perfectVars.length > 0) {
+      let splitInside = '';
+      if (parsed.perfStr && parsed.remStr) {
+        splitInside = `(${parsed.perfStr}) \\cdot (${parsed.remStr})`;
+      } else if (parsed.perfStr) {
+        splitInside = parsed.perfStr;
+      } else {
+        splitInside = parsed.remStr;
+      }
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Decompose the radicand into perfect square factors and remaining non-square terms.',
+        math: `\\sqrt{${splitInside}}`,
+      });
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Extract the square roots of the perfect square factors outside the radical (\\sqrt{a^2} = a).',
+        math: parsed.finalLatex,
+      });
+    } else {
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'The expression is already in simplest radical form with no perfect square factors remaining under the radical.',
+        math: parsed.finalLatex,
+      });
+    }
+
+    return {
+      type: 'polynomial',
+      steps,
+      finalAnswer: parsed.finalLatex,
+      inputInterpretation: expressionToLatex(rawEq),
+      numericRoots: [],
+    };
+  } catch (e) {
+    return null;
+  }
 }
 
 // ─── Main Solver Functions ──────────────────────────────────────────────────
@@ -357,13 +612,21 @@ function formatFinalRoots(
 export function solvePolynomial(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
   let cleanEq = equation.trim();
   cleanEq = autoBalanceParens(cleanEq);
-  
+
+  // If expression without = contains radicals, simplify radical expression directly
+  if (!cleanEq.includes('=')) {
+    const radicalResult = trySimplifyRadicalExpression(cleanEq, equation);
+    if (radicalResult) {
+      return radicalResult;
+    }
+  }
+
   // Auto-interpret expression without = as = 0
   const interpretation = autoInterpretEquals(cleanEq);
   if (interpretation.interpreted) {
     cleanEq = interpretation.expr;
   }
-  
+
   cleanEq = normalizeExpression(cleanEq);
   if (!cleanEq) {
     return {
@@ -380,6 +643,7 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
   }
 
   const variable = detectVariable(cleanEq);
+  const hasSubscripts = /[a-zA-Z]_\d+/.test(cleanEq);
   
   // Generate input interpretation string
   const displayEq = cleanEq
@@ -408,11 +672,15 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     // ─── DEGREE 1 (LINEAR): ax + b = 0 ──────────────────────────────────────
     if (degree === 1) {
       const [a, b] = coeffs;
+      const rootVal = -b / a;
+      const frac = toFraction(rootVal);
       const steps = generateLinearSteps(a, b, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer: `${variable} = ${fmt(-b / a)}`,
+        finalAnswer: `${variable} = ${frac && frac.d > 1 ? fmtFraction(rootVal) : fmt(rootVal)}`,
+        decimalAnswer: frac && frac.d > 1 ? `${variable} = ${fmt(rootVal)}` : undefined,
+        numericRoots: [rootVal],
         inputInterpretation: interpretationLatex,
       };
     }
@@ -423,26 +691,52 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       const steps = generateQuadraticSteps(a, b, c, variable, method);
       const delta = b * b - 4 * a * c;
       let finalAnswer = '';
+      let decimalAnswer: string | undefined = undefined;
+      const numericRoots: number[] = [];
 
       if (delta >= 0) {
         const rootDelta = Math.sqrt(delta);
         const x1 = (-b + rootDelta) / (2 * a);
         const x2 = (-b - rootDelta) / (2 * a);
         if (Math.abs(delta) < 1e-8) {
-          finalAnswer = `${variable} = ${fmt(x1)}`;
+          numericRoots.push(x1);
+          const frac1 = toFraction(x1);
+          finalAnswer = `${variable} = ${frac1 && frac1.d > 1 ? fmtFraction(x1) : fmt(x1)}`;
+          if (frac1 && frac1.d > 1) {
+            decimalAnswer = `${variable} = ${fmt(x1)}`;
+          }
         } else {
-          finalAnswer = `${variable}_1 = ${fmt(x1)}, \\quad ${variable}_2 = ${fmt(x2)}`;
+          const sorted = [x1, x2].sort((n1, n2) => n1 - n2);
+          numericRoots.push(sorted[0], sorted[1]);
+          if (hasSubscripts) {
+            finalAnswer = `${variable}_1 = ${fmtFraction(x1)}, \\quad ${variable}_2 = ${fmtFraction(x2)}`;
+            decimalAnswer = `${variable}_1 = ${fmt(x1)}, \\quad ${variable}_2 = ${fmt(x2)}`;
+          } else {
+            const frac1 = toFraction(x1);
+            const frac2 = toFraction(x2);
+            const disp1 = frac1 && frac1.d > 1 ? fmtFraction(x1) : fmt(x1);
+            const disp2 = frac2 && frac2.d > 1 ? fmtFraction(x2) : fmt(x2);
+            finalAnswer = `${variable} = ${disp1}, \\; ${disp2}`;
+            if ((frac1 && frac1.d > 1) || (frac2 && frac2.d > 1)) {
+              decimalAnswer = `${variable} = ${fmt(x1)}, \\; ${fmt(x2)}`;
+            }
+          }
         }
       } else {
         const realPart = -b / (2 * a);
         const imagPart = Math.sqrt(-delta) / (2 * Math.abs(a));
-        finalAnswer = `${variable} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`;
+        const realStr = Math.abs(realPart) < 1e-6 ? '' : `${fmt(realPart)} \\pm `;
+        const pmStr = Math.abs(realPart) < 1e-6 ? '\\pm ' : '';
+        const imStr = Math.abs(imagPart - 1) < 1e-6 ? 'i' : `${fmt(imagPart)}\\,i`;
+        finalAnswer = `${variable} = ${realStr}${pmStr}${imStr}`;
       }
 
       return {
         type: 'polynomial',
         steps,
         finalAnswer,
+        decimalAnswer,
+        numericRoots,
         inputInterpretation: interpretationLatex,
         quadraticMethod: method,
       };
@@ -453,12 +747,13 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       const [a, b, c, d] = coeffs;
       const roots = solvePolynomialNumerical(coeffs);
       const steps = generateCubicSteps(a, b, c, d, roots, variable);
-      const { exact, decimal } = formatFinalRoots(roots, variable);
+      const { exact, decimal, numericRoots } = formatFinalRoots(roots, variable, hasSubscripts);
       return {
         type: 'polynomial',
         steps,
         finalAnswer: exact,
         decimalAnswer: decimal,
+        numericRoots,
         inputInterpretation: interpretationLatex,
       };
     }
@@ -467,12 +762,13 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     if (degree === 4) {
       const roots = solvePolynomialNumerical(coeffs);
       const steps = generateQuarticSteps(coeffs, roots, variable);
-      const { exact, decimal } = formatFinalRoots(roots, variable);
+      const { exact, decimal, numericRoots } = formatFinalRoots(roots, variable, hasSubscripts);
       return {
         type: 'polynomial',
         steps,
         finalAnswer: exact,
         decimalAnswer: decimal,
+        numericRoots,
         inputInterpretation: interpretationLatex,
       };
     }
@@ -481,12 +777,13 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     if (degree >= 5) {
       const roots = solvePolynomialNumerical(coeffs);
       const steps = generateDegree5PlusSteps(coeffs, roots, variable);
-      const { exact, decimal } = formatFinalRoots(roots, variable);
+      const { exact, decimal, numericRoots } = formatFinalRoots(roots, variable, hasSubscripts);
       return {
         type: 'polynomial',
         steps,
         finalAnswer: exact,
         decimalAnswer: decimal,
+        numericRoots,
         inputInterpretation: interpretationLatex,
       };
     }

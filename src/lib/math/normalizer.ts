@@ -41,6 +41,17 @@ export function normalizeExpression(input: string): string {
   expr = expr.replace(/∛/g, 'cbrt');  // Cube root symbol
   expr = expr.replace(/√/g, 'sqrt');  // Square root symbol
 
+  // LaTeX conversions
+  expr = expr.replace(/\\sqrt\s*\{([^\}]+)\}/g, 'sqrt($1)');
+  expr = expr.replace(/\\sqrt\s*\(/g, 'sqrt(');
+  expr = expr.replace(/\\cbrt\s*\{([^\}]+)\}/g, 'cbrt($1)');
+  expr = expr.replace(/\\cbrt\s*\(/g, 'cbrt(');
+  expr = expr.replace(/\\sqrt\b/g, 'sqrt');
+  expr = expr.replace(/\\cdot/g, '*');
+  expr = expr.replace(/\\times/g, '*');
+  expr = expr.replace(/\\left\b/g, '');
+  expr = expr.replace(/\\right\b/g, '');
+
   // Inverse trig and hyperbolic unicode notations
   expr = expr.replace(/sin⁻¹/g, 'asin');
   expr = expr.replace(/cos⁻¹/g, 'acos');
@@ -266,6 +277,14 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
   if (!input || !input.trim()) return null;
   const clean = normalizeExpression(input);
 
+  // Detect radical expressions/equations
+  if (/sqrt|cbrt|√|∛/.test(clean)) {
+    if (clean.includes('=')) {
+      return { degree: 0, label: 'Radical Equation' };
+    }
+    return { degree: 0, label: 'Radical Expression' };
+  }
+
   // Extract variables: must have single-letter variables not part of functions (sin, cos, sqrt, etc.)
   const reserved = new Set([
     'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
@@ -302,6 +321,49 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
   return null;
 }
 
+function convertBalancedFunctions(s: string): string {
+  let result = '';
+  let i = 0;
+  while (i < s.length) {
+    if (s.startsWith('sqrt(', i) || s.startsWith('\\sqrt(', i)) {
+      const isBackslash = s.startsWith('\\sqrt(', i);
+      const startIdx = i + (isBackslash ? 6 : 5);
+      let depth = 1;
+      let j = startIdx;
+      while (j < s.length && depth > 0) {
+        if (s[j] === '(') depth++;
+        else if (s[j] === ')') depth--;
+        j++;
+      }
+      if (depth === 0) {
+        const inner = s.slice(startIdx, j - 1);
+        result += '\\sqrt{' + convertBalancedFunctions(inner) + '}';
+        i = j;
+        continue;
+      }
+    } else if (s.startsWith('cbrt(', i) || s.startsWith('\\cbrt(', i)) {
+      const isBackslash = s.startsWith('\\cbrt(', i);
+      const startIdx = i + (isBackslash ? 6 : 5);
+      let depth = 1;
+      let j = startIdx;
+      while (j < s.length && depth > 0) {
+        if (s[j] === '(') depth++;
+        else if (s[j] === ')') depth--;
+        j++;
+      }
+      if (depth === 0) {
+        const inner = s.slice(startIdx, j - 1);
+        result += '\\sqrt[3]{' + convertBalancedFunctions(inner) + '}';
+        i = j;
+        continue;
+      }
+    }
+    result += s[i];
+    i++;
+  }
+  return result;
+}
+
 /**
  * Convert an ASCII math expression (with sqrt, *, /, ^) into beautiful formatted LaTeX.
  */
@@ -309,15 +371,18 @@ export function expressionToLatex(expr: string): string {
   if (!expr || !expr.trim()) return '';
   let tex = expr.trim();
 
-  // If already pure LaTeX
-  if (tex.includes('\\frac') || tex.includes('\\sqrt')) return tex;
-
   const toTexSingle = (s: string) => {
-    return s
-      .replace(/\*/g, ' \\cdot ')
-      .replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}')
-      .replace(/cbrt\(([^)]+)\)/g, '\\sqrt[3]{$1}')
-      .replace(/\^(\d+)/g, '^{$1}');
+    let res = convertBalancedFunctions(s);
+    // Powers with parentheses: ^(-2) or ^(7) -> ^{...}
+    res = res.replace(/\^\(([^)]+)\)/g, '^{$1}');
+    // Powers with single token / number / var without braces: x^2, y^12 -> ^{...}
+    res = res.replace(/\^([0-9a-zA-Z]+)/g, '^{$1}');
+    // Fix double braces if any e.g. ^{{7}}
+    res = res.replace(/\^\{\{([^}]+)\}\}/g, '^{$1}');
+    // Multiplication
+    res = res.replace(/\*/g, ' \\cdot ');
+    res = res.replace(/\\times/g, ' \\cdot ');
+    return res;
   };
 
   if (tex.includes('=')) {

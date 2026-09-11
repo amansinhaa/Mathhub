@@ -69,27 +69,76 @@ export function parseNumberLineData(
     }
   }
 
-  // 2. Discrete equation roots parsing: e.g. "x = 2", "x_1 = -3, \quad x_2 = 4"
-  const matches = finalAnswer.matchAll(/(?:^|[^a-zA-Z0-9])(?:[a-zA-Z](?:_\d+)?)\s*=\s*(-?\d+(?:\.\d+)?)/g);
-  for (const match of matches) {
-    const val = parseFloat(match[1]);
-    if (!isNaN(val) && !roots.includes(val)) {
+  // 2. Discrete equation roots parsing: e.g. "x = 1/2, 1, 2", "x_1 = \frac{1}{2}, \quad x_2 = 1"
+  const addRoot = (val: number) => {
+    if (isFinite(val) && !isNaN(val) && !roots.some((r) => Math.abs(r - val) < 1e-5)) {
       roots.push(val);
     }
-  }
+  };
 
-  // Fallback: match any "= num"
-  if (roots.length === 0 && type === 'polynomial') {
-    const rawMatches = finalAnswer.matchAll(/=\s*(-?\d+(?:\.\d+)?)/g);
-    for (const match of rawMatches) {
-      const val = parseFloat(match[1]);
-      if (!isNaN(val) && !roots.includes(val)) {
-        roots.push(val);
-      }
+  const parseTokenValue = (raw: string): number | null => {
+    const s = raw.trim();
+    if (!s) return null;
+    // Discard complex parts with imaginary unit 'i'
+    if (s.includes('i') || s.includes('\\pm')) return null;
+
+    // Check LaTeX fraction: optional sign + \frac{n}{d}
+    const fracMatch = s.match(/^([+-]?)\s*\\frac\{([+-]?\d+(?:\.\d+)?)\}\{([+-]?\d+(?:\.\d+)?)\}/);
+    if (fracMatch) {
+      const sign = fracMatch[1] === '-' ? -1 : 1;
+      const num = parseFloat(fracMatch[2]);
+      const den = parseFloat(fracMatch[3]);
+      if (den !== 0) return sign * (num / den);
+    }
+
+    // Check slash fraction: n/d
+    const slashMatch = s.match(/^([+-]?\d+(?:\.\d+)?)\s*\/\s*([+-]?\d+(?:\.\d+)?)/);
+    if (slashMatch) {
+      const num = parseFloat(slashMatch[1]);
+      const den = parseFloat(slashMatch[2]);
+      if (den !== 0) return num / den;
+    }
+
+    // Check standard integer / decimal: e.g. -2.5, 3
+    const numMatch = s.match(/^[+-]?\d+(?:\.\d+)?/);
+    if (numMatch) {
+      return parseFloat(numMatch[0]);
+    }
+
+    return null;
+  };
+
+  const normalized = finalAnswer
+    .replace(/\\quad/g, ' , ')
+    .replace(/\\;/g, ' , ')
+    .replace(/\\,/g, ' , ')
+    .replace(/;/g, ' , ');
+
+  const segments = normalized.split(',');
+  for (const seg of segments) {
+    const trimmed = seg.trim();
+    if (!trimmed) continue;
+    const cleaned = trimmed.replace(/^[\\a-zA-Z_0-9\s]*=\s*/, '').trim();
+    const val = parseTokenValue(cleaned);
+    if (val !== null) {
+      addRoot(val);
     }
   }
 
+  roots.sort((a, b) => a - b);
   return { roots, intervals };
+}
+
+function formatRootLabel(val: number): string {
+  const rounded = Math.round(val);
+  if (Math.abs(val - rounded) < 1e-6) return rounded.toString();
+  for (let d = 2; d <= 16; d++) {
+    const n = Math.round(val * d);
+    if (Math.abs(val - n / d) < 1e-5) {
+      return `${n}/${d}`;
+    }
+  }
+  return Number(val.toFixed(2)).toString();
 }
 
 export const NumberLine: React.FC<NumberLineProps> = ({
@@ -199,42 +248,42 @@ export const NumberLine: React.FC<NumberLineProps> = ({
             markerEnd="url(#arrow-right)"
           />
 
-          {/* Ticks and Labels */}
-          {ticks.map((val) => {
-            const x = toSvgX(val);
-            const isZero = val === 0;
+          {/* Integer Coordinate Ticks & Labels */}
+          {ticks.map((t) => {
+            const x = toSvgX(t);
             return (
-              <g key={`tick-${val}`}>
+              <g key={`tick-${t}`}>
                 <line
                   x1={x}
-                  y1={axisY - (isZero ? 10 : 6)}
+                  y1={axisY - 6}
                   x2={x}
-                  y2={axisY + (isZero ? 10 : 6)}
+                  y2={axisY + 6}
                   stroke="currentColor"
-                  strokeWidth={isZero ? 2.5 : 1.5}
-                  className={isZero ? 'text-[#5D4037] dark:text-[#D7CCC8]' : 'text-[#A19891] dark:text-[#5A504B]'}
+                  strokeWidth="2"
+                  className="text-[#8D827A] dark:text-[#757575]"
                 />
                 <text
                   x={x}
-                  y={axisY + 24}
+                  y={axisY + 22}
                   textAnchor="middle"
-                  fontSize="12"
+                  fontSize="11"
                   fontFamily="monospace"
-                  className={isZero ? 'fill-[#5D4037] dark:fill-white font-bold' : 'fill-[#757575] dark:fill-[#A19891]'}
+                  fill="currentColor"
+                  className="text-[#757575] dark:text-[#A19891] select-none font-semibold"
                 >
-                  {val}
+                  {t}
                 </text>
               </g>
             );
           })}
 
-          {/* Continuous Inequality Shaded Intervals */}
+          {/* Inequality Shaded Regions */}
           {intervals.map((iv, idx) => {
             const hasStart = iv.start !== undefined;
             const hasEnd = iv.end !== undefined;
 
-            const startX = hasStart ? toSvgX(iv.start!) : paddingX - 20;
-            const endX = hasEnd ? toSvgX(iv.end!) : width - paddingX + 20;
+            const startX = hasStart ? toSvgX(iv.start!) : paddingX - 18;
+            const endX = hasEnd ? toSvgX(iv.end!) : width - paddingX + 18;
 
             return (
               <g key={`interval-${idx}`}>
@@ -245,8 +294,9 @@ export const NumberLine: React.FC<NumberLineProps> = ({
                   y2={axisY}
                   stroke="#5D4037"
                   strokeWidth="6"
-                  strokeLinecap={hasStart && hasEnd ? 'round' : 'square'}
-                  className="text-[#5D4037] dark:text-[#D7CCC8]"
+                  strokeLinecap="round"
+                  className="dark:stroke-[#D7CCC8]"
+                  opacity="0.85"
                 />
 
                 {hasStart && (
@@ -279,6 +329,8 @@ export const NumberLine: React.FC<NumberLineProps> = ({
           {/* Discrete Root Pins with Coordinates */}
           {roots.map((r, idx) => {
             const x = toSvgX(r);
+            const label = `${variable}=${formatRootLabel(r)}`;
+            const badgeWidth = Math.max(46, label.length * 8 + 12);
             return (
               <g key={`root-${idx}`}>
                 {/* Dashed connector line */}
@@ -294,9 +346,9 @@ export const NumberLine: React.FC<NumberLineProps> = ({
                 />
                 {/* Pin Badge Background */}
                 <rect
-                  x={x - 22}
+                  x={x - badgeWidth / 2}
                   y={axisY - 48}
-                  width="44"
+                  width={badgeWidth}
                   height="20"
                   rx="6"
                   fill="#5D4037"
@@ -312,7 +364,7 @@ export const NumberLine: React.FC<NumberLineProps> = ({
                   fill="#FFFFFF"
                   className="font-bold dark:fill-[#131313]"
                 >
-                  {variable}={r}
+                  {label}
                 </text>
                 {/* Root Point Marker on the line */}
                 <circle
@@ -335,7 +387,7 @@ export const NumberLine: React.FC<NumberLineProps> = ({
           {roots.length > 0 && (
             <span className="flex items-center gap-1.5 font-medium text-[#5D4037] dark:text-[#D7CCC8]">
               <span className="w-2.5 h-2.5 rounded-full bg-[#5D4037] dark:bg-[#D7CCC8]" />
-              <span>Real Roots: {roots.map((r) => `${variable} = ${r}`).join(', ')}</span>
+              <span>Real Roots: {roots.map((r) => `${variable} = ${formatRootLabel(r)}`).join(', ')}</span>
             </span>
           )}
           {intervals.length > 0 && (

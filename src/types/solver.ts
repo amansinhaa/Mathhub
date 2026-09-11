@@ -36,6 +36,7 @@ export interface SolverResult {
   steps: SolutionStep[];
   finalAnswer: string; // LaTeX
   decimalAnswer?: string; // Decimal representation for roots
+  numericRoots?: number[]; // Extracted numerical real roots for visualizer & graph
   type: SolverType;
   inputInterpretation?: string; // LaTeX description of what the engine parsed
   quadraticMethod?: QuadraticMethod;
