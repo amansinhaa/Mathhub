@@ -63,6 +63,14 @@ export function splitTopLevel(expr: string, delimiter: string): [string, string]
   return null;
 }
 
+export function polyToLatex(expr: string): string {
+  try {
+    return cleanLatex((nerdamer as any)(expr).toTeX());
+  } catch {
+    return expr;
+  }
+}
+
 export function factorToLatex(expr: string): string {
   try {
     const f = (nerdamer as any)(`factor(${expr})`).toTeX();
@@ -160,34 +168,29 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
       const num2Tex = factorToLatex(num2);
       const den2Tex = factorToLatex(den2);
 
-      // Step 1: Reciprocal multiplication
+      // Step 1: Reciprocal multiplication (showing unfactored polynomials flipped)
       steps.push({
         stepNumber: stepNumber++,
-        explanation: 'Rewrite the division of rational expressions as multiplication by the reciprocal of the divisor: $\\frac{A}{B} \\div \\frac{C}{D} = \\frac{A}{B} \\cdot \\frac{D}{C}$.',
-        math: `\\frac{${factorToLatex(num1)}}{${factorToLatex(den1)}} \\cdot \\frac{${factorToLatex(den2)}}{${factorToLatex(num2)}}`,
+        explanation: 'Rewrite division as multiplication by the reciprocal of the divisor fraction (flip the second fraction):',
+        math: `\\frac{${polyToLatex(num1)}}{${polyToLatex(den1)}} \\cdot \\frac{${polyToLatex(den2)}}{${polyToLatex(num2)}}`,
       });
 
-      // Step 2: Factor each polynomial
-      const factorLines: string[] = [];
-      if (num1 !== '1') factorLines.push(`\\text{Numerator 1: } ${num1} = ${num1Tex}`);
-      if (den1 !== '1') factorLines.push(`\\text{Denominator 1: } ${den1} = ${den1Tex}`);
-      if (den2 !== '1') factorLines.push(`\\text{Reciprocal Numerator: } ${den2} = ${den2Tex}`);
-      if (num2 !== '1') factorLines.push(`\\text{Reciprocal Denominator: } ${num2} = ${num2Tex}`);
-
-      steps.push({
-        stepNumber: stepNumber++,
-        explanation: 'Factor every polynomial in the numerators and denominators completely:',
-        math: factorLines.join(' \\\\[6pt] '),
-      });
-
-      // Step 3: Combine into a single fraction
+      // Step 2: Factor each polynomial and combine into a single fraction
       const combNumTex = `(${num1Tex}) \\cdot (${den2Tex})`.replace(/\(1\) \\cdot /g, '').replace(/ \\cdot \(1\)/g, '');
       const combDenTex = `(${den1Tex}) \\cdot (${num2Tex})`.replace(/\(1\) \\cdot /g, '').replace(/ \\cdot \(1\)/g, '');
 
+      const subSteps = [
+        ...(num1 !== '1' && num1 !== num1Tex ? [{ title: 'Factor Numerator 1', math: `${polyToLatex(num1)} = ${num1Tex}` }] : []),
+        ...(den1 !== '1' && den1 !== den1Tex ? [{ title: 'Factor Denominator 1', math: `${polyToLatex(den1)} = ${den1Tex}` }] : []),
+        ...(den2 !== '1' && den2 !== den2Tex ? [{ title: 'Factor Reciprocal Numerator', math: `${polyToLatex(den2)} = ${den2Tex}` }] : []),
+        ...(num2 !== '1' && num2 !== num2Tex ? [{ title: 'Factor Reciprocal Denominator', math: `${polyToLatex(num2)} = ${num2Tex}` }] : []),
+      ];
+
       steps.push({
         stepNumber: stepNumber++,
-        explanation: 'Combine the factors into a single rational fraction:',
+        explanation: 'Factor every polynomial completely and write as a single combined fraction:',
         math: `\\frac{${combNumTex}}{${combDenTex}}`,
+        ...(subSteps.length > 0 ? { subSteps } : {}),
       });
 
       // Step 4: Expand and compute GCD for exact cancellation
