@@ -68,9 +68,11 @@ const COMPACT_PADDING = { top: 16, right: 16, bottom: 22, left: 24 };
 export interface FunctionPlotterProps {
   compact?: boolean;
   mobileHeight?: number;
+  initialExpression?: string;
+  initialRoots?: number[];
 }
 
-export default function FunctionPlotter({ compact = false, mobileHeight }: FunctionPlotterProps = {}) {
+export default function FunctionPlotter({ compact = false, mobileHeight, initialExpression, initialRoots }: FunctionPlotterProps = {}) {
   const {
     equations,
     bounds,
@@ -86,10 +88,24 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
   } = useGraphStore();
 
   const searchParams = useSearchParams();
-  const [highlightedRoots, setHighlightedRoots] = useState<number[]>([]);
+  const [highlightedRoots, setHighlightedRoots] = useState<number[]>(() => initialRoots || []);
+
+  // Synchronize initialExpression if provided as prop
+  useEffect(() => {
+    if (initialExpression) {
+      const firstEq = useGraphStore.getState().equations[0];
+      if (firstEq && firstEq.expression !== initialExpression) {
+        updateEquation(firstEq.id, initialExpression, true);
+      }
+    }
+    if (initialRoots && initialRoots.length > 0) {
+      setHighlightedRoots(initialRoots);
+    }
+  }, [initialExpression, initialRoots, updateEquation]);
 
   // Synchronize URL parameters (e.g. from Solver or Formulas quick launch)
   useEffect(() => {
+    if (initialExpression) return; // Prop takes precedence when embedded
     const fn = searchParams.get('fn') || searchParams.get('eq');
     if (fn) {
       const firstEq = useGraphStore.getState().equations[0];
@@ -108,7 +124,7 @@ export default function FunctionPlotter({ compact = false, mobileHeight }: Funct
         return parsed;
       });
     }
-  }, [searchParams, updateEquation]);
+  }, [searchParams, updateEquation, initialExpression]);
 
   const [hoveredEqId, setHoveredEqId] = useState<string | null>(null);
   const chartContainerRef = useRef<HTMLDivElement>(null);

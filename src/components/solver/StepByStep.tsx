@@ -5,22 +5,32 @@ import Link from '@/components/shared/Link';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
 import { Check, Copy, ChevronDown, Share2, LineChart, Info } from 'lucide-react';
+import dynamic from '@/components/shared/DynamicShim';
 import { extractPlotFunction } from '@/utils/mathSanitizer';
 import { NumberLine, parseNumberLineData } from './NumberLine';
+
+const FunctionPlotter = dynamic(() => import('@/components/graph/FunctionPlotter'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 rounded-2xl bg-[#F5F5F5] dark:bg-[#1A1A1A] flex items-center justify-center text-xs font-mono text-[#757575]">
+      Rendering Graph...
+    </div>
+  ),
+});
 
 export default function StepByStep() {
   const { result, solverType, equation, quadraticMethod } = useSolverStore();
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({});
-  const [showSteps, setShowSteps] = useState(true);
+  const [showSteps, setShowSteps] = useState(false);
   const [copiedQuestion, setCopiedQuestion] = useState(false);
   const [copiedSolution, setCopiedSolution] = useState(false);
   const [copiedSteps, setCopiedSteps] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showDecimal, setShowDecimal] = useState(false);
 
-  // Keep showSteps open when result or method changes so user immediately sees the new steps
+  // Keep steps collapsed by default when result or method changes
   useEffect(() => {
-    setShowSteps(true);
+    setShowSteps(false);
     setShowDecimal(false);
     setExpandedSteps({});
   }, [result, solverType, equation, quadraticMethod]);
@@ -248,6 +258,53 @@ export default function StepByStep() {
             roots={nlData.roots}
             intervals={nlData.intervals}
           />
+        );
+      })()}
+
+      {/* Embedded Interactive Function Graph (Default Visual for Polynomials and Inequalities) */}
+      {(() => {
+        if (!equation || (result.type !== 'polynomial' && result.type !== 'inequality')) return null;
+
+        // Parse roots for highlighting
+        const roots: number[] = [];
+        if (result && result.finalAnswer) {
+          const matches = result.finalAnswer.match(/=\s*(-?\d+(\.\d+)?)/g);
+          if (matches) {
+            matches.forEach((m) => {
+              const val = parseFloat(m.replace('=', '').trim());
+              if (!isNaN(val) && !roots.includes(val)) {
+                roots.push(val);
+              }
+            });
+          }
+        }
+
+        const { fn, roots: cleanRoots } = extractPlotFunction(equation, roots);
+        if (!fn) return null;
+
+        return (
+          <div className="bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-3 sm:p-4 shadow-xs overflow-hidden">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E0E0E0] dark:border-[#2C2724]">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
+                <LineChart size={14} />
+                <span>Visual Curve &amp; Roots</span>
+              </div>
+              <Link
+                href={getGraphLink()}
+                className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
+              >
+                Full Graph Studio &rarr;
+              </Link>
+            </div>
+            <div className="w-full h-[320px] sm:h-[380px]">
+              <FunctionPlotter
+                compact
+                initialExpression={fn}
+                initialRoots={cleanRoots}
+                mobileHeight={300}
+              />
+            </div>
+          </div>
         );
       })()}
 
