@@ -16,10 +16,12 @@ export default function StepByStep() {
   const [copiedSolution, setCopiedSolution] = useState(false);
   const [copiedSteps, setCopiedSteps] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showDecimal, setShowDecimal] = useState(false);
 
   // Keep showSteps open when result or method changes so user immediately sees the new steps
   useEffect(() => {
     setShowSteps(true);
+    setShowDecimal(false);
     setExpandedSteps({});
   }, [result, solverType, equation, quadraticMethod]);
 
@@ -175,34 +177,63 @@ export default function StepByStep() {
           </div>
         </div>
 
-        {/* Direct Solution Output - Responsive Multi-Root Layout (No Mobile Cutoff) */}
-        <div className="py-2 text-base sm:text-xl font-bold text-[#131313] dark:text-white">
-          {(() => {
-            // Check if finalAnswer has multiple roots separated by comma or quad
-            const ans = result.finalAnswer || '';
-            if (ans.includes('\\quad') || ans.includes(',')) {
-              const rootParts = ans.split(/\\quad|,/).map(s => s.trim()).filter(Boolean);
-              if (rootParts.length > 1) {
-                return (
-                  <div className="flex flex-wrap items-center gap-2">
-                    {rootParts.map((rp, idx) => (
-                      <div
-                        key={idx}
-                        className="px-3 py-1.5 bg-white dark:bg-[#1A1A1A] border border-[#E0E0E0] dark:border-[#2C2724] rounded-xl shadow-xs"
-                      >
-                        <MathDisplay math={rp} />
-                      </div>
-                    ))}
-                  </div>
-                );
+        {/* Direct Solution Output - Responsive Multi-Root Layout with Decimal Toggle (Symbolab style) */}
+        <div className="py-2">
+          {result.decimalAnswer && (
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-mono text-[#757575] dark:text-[#A19891]">Format:</span>
+              <button
+                type="button"
+                onClick={() => setShowDecimal(false)}
+                className={`px-2.5 py-0.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+                  !showDecimal
+                    ? 'bg-[#5D4037] text-white shadow-xs'
+                    : 'bg-[#EFEBE9] dark:bg-[#25201E] text-[#5D4037] dark:text-[#D7CCC8] hover:bg-[#E0D7D2]'
+                }`}
+              >
+                Exact (Fractions)
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDecimal(true)}
+                className={`px-2.5 py-0.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+                  showDecimal
+                    ? 'bg-[#5D4037] text-white shadow-xs'
+                    : 'bg-[#EFEBE9] dark:bg-[#25201E] text-[#5D4037] dark:text-[#D7CCC8] hover:bg-[#E0D7D2]'
+                }`}
+              >
+                Decimal
+              </button>
+            </div>
+          )}
+
+          <div className="text-base sm:text-xl font-bold text-[#131313] dark:text-white">
+            {(() => {
+              const activeAns = (showDecimal && result.decimalAnswer) ? result.decimalAnswer : (result.finalAnswer || '');
+              if (activeAns.includes('\\quad') || activeAns.includes(',')) {
+                const rootParts = activeAns.split(/\\quad|,/).map((s) => s.trim()).filter(Boolean);
+                if (rootParts.length > 1) {
+                  return (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {rootParts.map((rp, idx) => (
+                        <div
+                          key={idx}
+                          className="px-3 py-1.5 bg-white dark:bg-[#1A1A1A] border border-[#E0E0E0] dark:border-[#2C2724] rounded-xl shadow-xs"
+                        >
+                          <MathDisplay math={rp} />
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
               }
-            }
-            return (
-              <div className="overflow-x-auto scrollbar-none max-w-full">
-                <MathDisplay math={ans} block />
-              </div>
-            );
-          })()}
+              return (
+                <div className="overflow-x-auto scrollbar-none max-w-full">
+                  <MathDisplay math={activeAns} block />
+                </div>
+              );
+            })()}
+          </div>
         </div>
       </div>
 
@@ -369,6 +400,30 @@ export default function StepByStep() {
                           {step.math && (
                             <div className="overflow-x-auto max-w-full text-xs sm:text-sm py-1 text-[#131313] dark:text-white">
                               <MathDisplay math={step.math} block />
+                            </div>
+                          )}
+
+                          {/* Symbolab-style Zero Factor Sub-Steps */}
+                          {step.subSteps && step.subSteps.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-[#E0E0E0]/80 dark:border-[#2C2724] space-y-2">
+                              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                                Zero Factor Principle — Solve each factor:
+                              </span>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                                {step.subSteps.map((sub, sIdx) => (
+                                  <div
+                                    key={sIdx}
+                                    className="bg-white dark:bg-[#151515] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl p-3 shadow-2xs"
+                                  >
+                                    <div className="text-xs font-semibold text-[#5D4037] dark:text-[#D7CCC8] mb-1">
+                                      {sub.title}
+                                    </div>
+                                    <div className="overflow-x-auto text-xs sm:text-sm font-mono text-[#131313] dark:text-white">
+                                      <MathDisplay math={sub.math} />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>

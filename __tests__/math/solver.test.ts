@@ -228,6 +228,27 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(res.finalAnswer).toContain('-1');
       expect(res.finalAnswer).toContain('i');
     });
+
+    it('solves 2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0 with Factored Form and Zero Factor Principle sub-steps', () => {
+      const res = solvePolynomial('2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0');
+      expect(res.type).toBe('polynomial');
+
+      // Check for factored form / Zero Factor Principle step
+      const zfpStep = res.steps.find((s) => s.explanation.includes('Zero Factor Principle'));
+      expect(zfpStep).toBeDefined();
+      expect(zfpStep?.subSteps).toBeDefined();
+      expect(zfpStep?.subSteps!.length).toBeGreaterThanOrEqual(3);
+
+      // Verify sub-steps solve each factor
+      const subStepMath = zfpStep!.subSteps!.map((s) => s.math).join(' ');
+      expect(subStepMath).toContain('x = 1');
+      expect(subStepMath).toContain('x = 2');
+      expect(subStepMath).toContain('\\frac{1}{2}');
+
+      // Final answer shows fractional exact roots and provides decimalAnswer
+      expect(res.finalAnswer).toContain('\\frac{1}{2}');
+      expect(res.decimalAnswer).toContain('0.5');
+    });
   });
 
   // ─── Higher Order Polynomials (Degree 5+) ────────────────────────────────

@@ -59,6 +59,39 @@ export function fmt(n: number): string {
   return s;
 }
 
+/** Try to represent a floating point number as a simple fraction {n, d}. */
+export function toFraction(val: number, maxDenominator: number = 100): { n: number; d: number } | null {
+  if (!Number.isFinite(val) || isNaN(val)) return null;
+  const sign = val < 0 ? -1 : 1;
+  const absVal = Math.abs(val);
+  const rounded = Math.round(absVal);
+  if (Math.abs(absVal - rounded) < 1e-6) {
+    return { n: sign * rounded, d: 1 };
+  }
+
+  // Check common small denominators
+  for (let d = 2; d <= maxDenominator; d++) {
+    const n = Math.round(absVal * d);
+    if (Math.abs(absVal - n / d) < 1e-6) {
+      const g = gcd(n, d);
+      return { n: sign * (n / g), d: d / g };
+    }
+  }
+  return null;
+}
+
+/** Format a number as exact fraction LaTeX if rational, else fall back to fmt(). */
+export function fmtFraction(n: number): string {
+  if (!Number.isFinite(n) || isNaN(n)) return '0';
+  const frac = toFraction(n);
+  if (frac) {
+    if (frac.d === 1) return frac.n.toString();
+    const signStr = frac.n < 0 ? '-' : '';
+    return `${signStr}\\frac{${Math.abs(frac.n)}}{${frac.d}}`;
+  }
+  return fmt(n);
+}
+
 /** Compute GCD of two integers. */
 export function gcd(a: number, b: number): number {
   a = Math.abs(Math.round(a));
@@ -77,6 +110,21 @@ function isPerfectSquare(n: number): boolean {
   if (rounded < 0) return false;
   const s = Math.round(Math.sqrt(rounded));
   return s * s === rounded;
+}
+
+/** Formats a linear factor (qx - p) for a rational root r = p/q */
+export function formatLinearFactor(root: number, variable: string = 'x'): string {
+  const frac = toFraction(root);
+  if (frac) {
+    const { n, d } = frac;
+    // (d*x - n)
+    const varPart = d === 1 ? variable : `${d}${variable}`;
+    if (n === 0) return varPart;
+    const sign = n > 0 ? '-' : '+';
+    return `(${varPart} ${sign} ${Math.abs(n)})`;
+  }
+  const rootStr = fmt(Math.abs(root));
+  return root >= 0 ? `(${variable} - ${rootStr})` : `(${variable} + ${rootStr})`;
 }
 
 /** Find all positive integer factors of n up to cap. */
@@ -972,6 +1020,63 @@ export function generateCubicSteps(
         math: `${variable}_1 = ${fmt(r0)}, \\quad ${variable}_{2,3} = ${fmt(realPart)} \\pm ${fmt(imagPart)}\\,i`,
       });
     }
+
+    // Symbolab Factored Form & Zero Factor Principle for cubic
+    const f0 = formatLinearFactor(r0, variable);
+    const cubicSubSteps: { title: string; math: string }[] = [];
+    let cubicFactoredLhs = '';
+
+    if (deltaQ >= 0) {
+      const sqrtDeltaQ = Math.sqrt(deltaQ);
+      const r2 = (-sB + sqrtDeltaQ) / (2 * sA);
+      const r3 = (-sB - sqrtDeltaQ) / (2 * sA);
+      const allRoots = Math.abs(deltaQ) < 1e-8 ? [r0, r2] : [r0, r2, r3];
+
+      const factorCounts = new Map<string, { count: number; root: number }>();
+      for (const rootVal of allRoots) {
+        const factorStr = formatLinearFactor(rootVal, variable);
+        const existing = factorCounts.get(factorStr);
+        if (existing) {
+          existing.count++;
+        } else {
+          factorCounts.set(factorStr, { count: 1, root: rootVal });
+        }
+      }
+
+      const factorParts: string[] = [];
+      factorCounts.forEach(({ count, root }, factorStr) => {
+        if (count > 1) {
+          factorParts.push(`${factorStr}^${count}`);
+        } else {
+          factorParts.push(factorStr);
+        }
+        const frac = toFraction(root);
+        const rootDisplay = frac ? fmtFraction(root) : fmt(root);
+        cubicSubSteps.push({
+          title: `Solve ${factorStr.replace(/[()]/g, '')} = 0:`,
+          math: `${factorStr.replace(/[()]/g, '')} = 0 \\implies ${variable} = ${rootDisplay}`,
+        });
+      });
+      cubicFactoredLhs = (sA !== 1 ? `${fmt(sA)}` : '') + factorParts.join('');
+    } else {
+      cubicFactoredLhs = `${f0}(${simplifiedQuadratic})`;
+      const frac0 = toFraction(r0);
+      cubicSubSteps.push({
+        title: `Solve ${f0.replace(/[()]/g, '')} = 0:`,
+        math: `${f0.replace(/[()]/g, '')} = 0 \\implies ${variable} = ${frac0 ? fmtFraction(r0) : fmt(r0)}`,
+      });
+      cubicSubSteps.push({
+        title: `Solve ${simplifiedQuadratic} = 0:`,
+        math: `${variable} = \\frac{${fmt(-sB)} \\pm \\sqrt{${fmt(deltaQ)}}}{${fmt(2 * sA)}}`,
+      });
+    }
+
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: `Combine into completely factored form and apply the Zero Factor Principle (if $a \\cdot b = 0$, then $a = 0$ or $b = 0$).`,
+      math: `${cubicFactoredLhs} = 0`,
+      subSteps: cubicSubSteps,
+    });
   } else {
     // No rational roots exist — Clean numerical output without raw Cardano clutter
     steps.push({
@@ -1086,6 +1191,14 @@ export function generateQuarticSteps(
     }
   }
 
+  // Fallback to roots.real if any is a clean rational
+  if (r1 === null) {
+    const ratRoot = roots.real.find((r) => toFraction(r) !== null && Math.abs(evalPoly(coeffs, r)) < 1e-5);
+    if (ratRoot !== undefined) {
+      r1 = ratRoot;
+    }
+  }
+
   if (r1 !== null) {
     const r1Sign = r1 >= 0 ? `- ${fmt(Math.abs(r1))}` : `+ ${fmt(Math.abs(r1))}`;
     steps.push({
@@ -1127,6 +1240,13 @@ export function generateQuarticSteps(
       if (Math.abs(evalPoly(q3, cand)) < 1e-7) {
         r2 = cand;
         break;
+      }
+    }
+
+    if (r2 === null) {
+      const ratRoot2 = roots.real.find((r) => toFraction(r) !== null && Math.abs(evalPoly(q3, r)) < 1e-5);
+      if (ratRoot2 !== undefined) {
+        r2 = ratRoot2;
       }
     }
 
@@ -1172,6 +1292,93 @@ export function generateQuarticSteps(
         stepNumber: stepCount++,
         explanation: `Solve the quadratic equation $${q2Poly} = 0$ using the quadratic formula with discriminant $\\Delta = ${fmt(deltaQ)}$ (tells us how many real roots exist).`,
         math: `${variable} = \\frac{${fmt(-qb)} \\pm \\sqrt{${fmt(deltaQ)}}}{${fmt(2 * qa)}}`,
+      });
+
+      // Factor Form & Zero Factor Principle (Symbolab approach)
+      let quadRoots: number[] = [];
+      if (deltaQ >= 0) {
+        const sq = Math.sqrt(deltaQ);
+        quadRoots.push((-qb + sq) / (2 * qa));
+        if (deltaQ > 1e-8) {
+          quadRoots.push((-qb - sq) / (2 * qa));
+        }
+      }
+
+      // Check if all roots are rational to construct full product of factors
+      const f1 = formatLinearFactor(r1, variable);
+      const f2 = formatLinearFactor(r2, variable);
+      const subSteps: { title: string; math: string }[] = [];
+      const distinctRoots: number[] = [];
+      const addDistinct = (val: number) => {
+        if (!distinctRoots.some((dr) => Math.abs(dr - val) < 1e-5)) {
+          distinctRoots.push(val);
+        }
+      };
+      addDistinct(r1);
+      addDistinct(r2);
+
+      let factoredLhs = '';
+      if (quadRoots.length === 2 && toFraction(quadRoots[0]) && toFraction(quadRoots[1])) {
+        const r3 = quadRoots[0];
+        const r4 = quadRoots[1];
+        addDistinct(r3);
+        addDistinct(r4);
+
+        // Group identical factors into powers (e.g. (x - 1)^2)
+        const allRationalRoots = [r1, r2, r3, r4];
+        const factorCounts = new Map<string, { count: number; root: number }>();
+        for (const rootVal of allRationalRoots) {
+          const factorStr = formatLinearFactor(rootVal, variable);
+          const existing = factorCounts.get(factorStr);
+          if (existing) {
+            existing.count++;
+          } else {
+            factorCounts.set(factorStr, { count: 1, root: rootVal });
+          }
+        }
+
+        const factorParts: string[] = [];
+        factorCounts.forEach(({ count, root }, factorStr) => {
+          if (count > 1) {
+            factorParts.push(`${factorStr}^${count}`);
+          } else {
+            factorParts.push(factorStr);
+          }
+          const frac = toFraction(root);
+          const rootDisplay = frac ? fmtFraction(root) : fmt(root);
+          subSteps.push({
+            title: `Solve ${factorStr.replace(/[()]/g, '')} = 0:`,
+            math: `${factorStr.replace(/[()]/g, '')} = 0 \\implies ${variable} = ${rootDisplay}`,
+          });
+        });
+
+        factoredLhs = factorParts.join('');
+      } else {
+        // Quadratic factor is not completely rational or has complex roots
+        factoredLhs = `${f1}${f2}(${q2Poly})`;
+        const frac1 = toFraction(r1);
+        const frac2 = toFraction(r2);
+        subSteps.push({
+          title: `Solve ${f1.replace(/[()]/g, '')} = 0:`,
+          math: `${f1.replace(/[()]/g, '')} = 0 \\implies ${variable} = ${frac1 ? fmtFraction(r1) : fmt(r1)}`,
+        });
+        if (Math.abs(r1 - r2) >= 1e-5) {
+          subSteps.push({
+            title: `Solve ${f2.replace(/[()]/g, '')} = 0:`,
+            math: `${f2.replace(/[()]/g, '')} = 0 \\implies ${variable} = ${frac2 ? fmtFraction(r2) : fmt(r2)}`,
+          });
+        }
+        subSteps.push({
+          title: `Solve ${q2Poly} = 0:`,
+          math: `${variable} = \\frac{${fmt(-qb)} \\pm \\sqrt{${fmt(deltaQ)}}}{${fmt(2 * qa)}}`,
+        });
+      }
+
+      steps.push({
+        stepNumber: stepCount++,
+        explanation: `Combine into completely factored form and apply the Zero Factor Principle (if $a \\cdot b = 0$, then $a = 0$ or $b = 0$).`,
+        math: `${factoredLhs} = 0`,
+        subSteps,
       });
     }
   } else {

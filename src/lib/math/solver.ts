@@ -9,6 +9,8 @@ import {
   generateSystemSteps,
   generateInequalitySteps,
   fmt,
+  fmtFraction,
+  toFraction,
   evalPoly,
 } from './stepGenerator';
 import { evaluate } from 'mathjs';
@@ -313,28 +315,41 @@ export function solvePolynomialNumerical(coeffs: number[]): {
   return { real: realRoots, complex: groupedComplex };
 }
 
-/** Helper to format final answer roots into clean LaTeX string. */
+/** Helper to format final answer roots into clean LaTeX string (exact fractions and decimals). */
 function formatFinalRoots(
   roots: { real: number[]; complex: { re: number; im: number }[] },
   variable: string
-): string {
-  const parts: string[] = [];
+): { exact: string; decimal?: string } {
+  const exactParts: string[] = [];
+  const decimalParts: string[] = [];
+  let hasFraction = false;
 
   roots.real.forEach((r, i) => {
-    parts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+    const frac = toFraction(r);
+    if (frac && frac.d > 1) {
+      hasFraction = true;
+      exactParts.push(`${variable}_${i + 1} = ${fmtFraction(r)}`);
+    } else {
+      exactParts.push(`${variable}_${i + 1} = ${fmt(r)}`);
+    }
+    decimalParts.push(`${variable}_${i + 1} = ${fmt(r)}`);
   });
 
   roots.complex.forEach((comp, i) => {
     const idx = roots.real.length + i * 2 + 1;
     const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
-    if (Math.abs(comp.re) < 1e-6) {
-      parts.push(`${variable}_{${idx},${idx + 1}} = \\pm ${imStr}`);
-    } else {
-      parts.push(`${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${imStr}`);
-    }
+    const exactStr =
+      Math.abs(comp.re) < 1e-6
+        ? `${variable}_{${idx},${idx + 1}} = \\pm ${imStr}`
+        : `${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${imStr}`;
+    exactParts.push(exactStr);
+    decimalParts.push(exactStr);
   });
 
-  return parts.length > 0 ? parts.join(', \\quad ') : `${variable} = 0`;
+  const exact = exactParts.length > 0 ? exactParts.join(', \\quad ') : `${variable} = 0`;
+  const decimal = hasFraction && decimalParts.length > 0 ? decimalParts.join(', \\quad ') : undefined;
+
+  return { exact, decimal };
 }
 
 // ─── Main Solver Functions ──────────────────────────────────────────────────
@@ -438,11 +453,12 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       const [a, b, c, d] = coeffs;
       const roots = solvePolynomialNumerical(coeffs);
       const steps = generateCubicSteps(a, b, c, d, roots, variable);
-      const finalAnswer = formatFinalRoots(roots, variable);
+      const { exact, decimal } = formatFinalRoots(roots, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer,
+        finalAnswer: exact,
+        decimalAnswer: decimal,
         inputInterpretation: interpretationLatex,
       };
     }
@@ -451,11 +467,12 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     if (degree === 4) {
       const roots = solvePolynomialNumerical(coeffs);
       const steps = generateQuarticSteps(coeffs, roots, variable);
-      const finalAnswer = formatFinalRoots(roots, variable);
+      const { exact, decimal } = formatFinalRoots(roots, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer,
+        finalAnswer: exact,
+        decimalAnswer: decimal,
         inputInterpretation: interpretationLatex,
       };
     }
@@ -464,11 +481,12 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     if (degree >= 5) {
       const roots = solvePolynomialNumerical(coeffs);
       const steps = generateDegree5PlusSteps(coeffs, roots, variable);
-      const finalAnswer = formatFinalRoots(roots, variable);
+      const { exact, decimal } = formatFinalRoots(roots, variable);
       return {
         type: 'polynomial',
         steps,
-        finalAnswer,
+        finalAnswer: exact,
+        decimalAnswer: decimal,
         inputInterpretation: interpretationLatex,
       };
     }

@@ -18,17 +18,24 @@ export interface FormulaUsed {
   description?: string;
 }
 
+export interface SubStep {
+  title: string;
+  math: string;
+}
+
 export interface SolutionStep {
   stepNumber?: number;
   explanation: string;
   math: string; // LaTeX
   divisionDetails?: DivisionDetails;
   formulaUsed?: FormulaUsed;
+  subSteps?: SubStep[];
 }
 
 export interface SolverResult {
   steps: SolutionStep[];
   finalAnswer: string; // LaTeX
+  decimalAnswer?: string; // Decimal representation for roots
   type: SolverType;
   inputInterpretation?: string; // LaTeX description of what the engine parsed
   quadraticMethod?: QuadraticMethod;
