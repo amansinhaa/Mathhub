@@ -21,6 +21,7 @@ import {
 import { isImplicitEquation } from '@/lib/math/implicitPlot';
 import { isSliderParameter, findUnboundVariables } from '@/lib/math/graphData';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
+import { cleanPastedMath } from '@/lib/math/normalizer';
 
 export default function EquationInput() {
   const { equations, addEquation, updateEquation, removeEquation } = useGraphStore();
@@ -301,6 +302,22 @@ export default function EquationInput() {
                   onFocus={() => setActiveEqId(eq.id)}
                   onBlur={(e) => handleInputBlur(eq.id, e)}
                   onChange={(e) => updateEquation(eq.id, e.target.value)}
+                  onPaste={(e) => {
+                    const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
+                    if (pasted) {
+                      e.preventDefault();
+                      const cleaned = cleanPastedMath(pasted);
+                      const inputEl = e.currentTarget;
+                      const start = inputEl.selectionStart ?? eq.expression.length;
+                      const end = inputEl.selectionEnd ?? eq.expression.length;
+                      const nextVal = eq.expression.slice(0, start) + cleaned + eq.expression.slice(end);
+                      updateEquation(eq.id, nextVal);
+                      setTimeout(() => {
+                        const newPos = start + cleaned.length;
+                        inputEl.setSelectionRange(newPos, newPos);
+                      }, 0);
+                    }
+                  }}
                   className="bg-transparent border-none outline-none w-full font-mono text-xs sm:text-sm text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
                   placeholder={
                     idx === 0

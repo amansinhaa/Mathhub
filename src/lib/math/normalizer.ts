@@ -476,4 +476,46 @@ export function formatExpressionForDisplay(rawExpr: string): string {
   return str;
 }
 
+/**
+ * Clean and normalize copied/pasted mathematical text into standard caret/math notation:
+ * - Detects equations pasted from web/LaTeX/Word where powers lost carets:
+ *   e.g. "2x4 - 9x3 + 14x2 - 9x + 2 = 0" -> "2x^4 - 9x^3 + 14x^2 - 9x + 2 = 0"
+ * - Converts HTML <sup>...</sup> and <sub>...</sub>
+ * - Converts LaTeX ^{...} braces
+ * - Converts Unicode superscripts (x², x³, x⁴)
+ */
+export function cleanPastedMath(rawText: string): string {
+  if (!rawText) return '';
+  let text = rawText;
+
+  // 1. Clean HTML markup if pasted from rich text (Google Docs, Wikipedia, Web pages)
+  text = text.replace(/<sup[^>]*>([\s\S]*?)<\/sup>/gi, (_m, g1) => `^(${g1.trim()})`);
+  text = text.replace(/<sub[^>]*>([\s\S]*?)<\/sub>/gi, (_m, g1) => `_(${g1.trim()})`);
+  text = text.replace(/<[^>]+>/g, ' ');
+
+  // 2. Convert LaTeX superscript braces: x^{4} -> x^4, x^{12} -> x^(12)
+  text = text.replace(/([a-zA-Z0-9\)])\s*\^\s*\{([^{}]+)\}/g, (_m, p1, p2) => {
+    const trimmed = p2.trim();
+    return trimmed.length === 1 ? `${p1}^${trimmed}` : `${p1}^(${trimmed})`;
+  });
+
+  // 3. Convert Unicode superscripts to ^(digits)
+  text = text.replace(/([a-zA-Z0-9\)])([⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+)/g, (_, prefix, supers) => {
+    let exp = '';
+    for (const ch of supers) exp += SUPERSCRIPT_MAP[ch] || ch;
+    return exp.length === 1 ? `${prefix}^${exp}` : `${prefix}^(${exp})`;
+  });
+
+  // 4. Handle pasted plaintext math where powers lost their caret/superscript:
+  // e.g. "2x4 - 9x3 + 14x2 - 9x + 2 = 0" or "x2 - 5x + 6 = 0"
+  // When an algebraic variable (single letter like x, y, z, t, etc.) is directly
+  // followed by digits (degree/power) without an exponent sign:
+  text = text.replace(/(^|[^a-zA-Z])([a-zA-Z])(\d+)(?=[^a-zA-Z0-9]|$)/g, (match, prefix, letter, power) => {
+    if (prefix === '^' || prefix === '_') return match;
+    return `${prefix}${letter}^${power}`;
+  });
+
+  return text;
+}
+
 

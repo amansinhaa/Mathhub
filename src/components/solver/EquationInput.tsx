@@ -5,7 +5,7 @@ import { useSearchParams } from '@/components/shared/RouterShim';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
 import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2 } from 'lucide-react';
-import { SYNTAX_HELP, quickDegreeDetect, expressionToLatex } from '@/lib/math/normalizer';
+import { SYNTAX_HELP, quickDegreeDetect, expressionToLatex, cleanPastedMath } from '@/lib/math/normalizer';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 import { SolverType } from '@/types/solver';
 
@@ -207,6 +207,22 @@ export default function EquationInput() {
             type="text"
             value={equation}
             onChange={(e) => setEquation(e.target.value)}
+            onPaste={(e) => {
+              const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
+              if (pasted) {
+                e.preventDefault();
+                const cleaned = cleanPastedMath(pasted);
+                const inputEl = e.currentTarget;
+                const start = inputEl.selectionStart ?? equation.length;
+                const end = inputEl.selectionEnd ?? equation.length;
+                const nextVal = equation.slice(0, start) + cleaned + equation.slice(end);
+                setEquation(nextVal);
+                setTimeout(() => {
+                  const newPos = start + cleaned.length;
+                  inputEl.setSelectionRange(newPos, newPos);
+                }, 0);
+              }
+            }}
             className="w-full px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-xs"
             placeholder={placeholders[solverType]}
           />
@@ -297,6 +313,22 @@ export default function EquationInput() {
                 type="text"
                 value={eq}
                 onChange={(e) => updateSystemEquation(idx, e.target.value)}
+                onPaste={(e) => {
+                  const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
+                  if (pasted) {
+                    e.preventDefault();
+                    const cleaned = cleanPastedMath(pasted);
+                    const inputEl = e.currentTarget;
+                    const start = inputEl.selectionStart ?? eq.length;
+                    const end = inputEl.selectionEnd ?? eq.length;
+                    const nextVal = eq.slice(0, start) + cleaned + eq.slice(end);
+                    updateSystemEquation(idx, nextVal);
+                    setTimeout(() => {
+                      const newPos = start + cleaned.length;
+                      inputEl.setSelectionRange(newPos, newPos);
+                    }, 0);
+                  }
+                }}
                 className="flex-1 px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-xs"
                 placeholder={`Equation ${idx + 1}  e.g. 2x + y = 5`}
                 required

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { MathDisplay } from './MathDisplay';
 import { VirtualMathKeyboard } from './VirtualMathKeyboard';
 import { Keyboard as KeyboardIcon, Sparkles } from 'lucide-react';
+import { cleanPastedMath } from '@/lib/math/normalizer';
 
 interface MathInputProps {
   value: string;
@@ -66,6 +67,22 @@ export function MathInput({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onPaste={(e) => {
+            const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
+            if (pasted) {
+              e.preventDefault();
+              const cleaned = cleanPastedMath(pasted);
+              const inputEl = e.currentTarget;
+              const start = inputEl.selectionStart ?? value.length;
+              const end = inputEl.selectionEnd ?? value.length;
+              const nextVal = value.slice(0, start) + cleaned + value.slice(end);
+              onChange(nextVal);
+              setTimeout(() => {
+                const newPos = start + cleaned.length;
+                inputEl.setSelectionRange(newPos, newPos);
+              }, 0);
+            }
+          }}
           placeholder={placeholder}
           className="w-full px-3.5 py-2.5 bg-transparent border-none outline-none font-mono text-sm text-[#131313] dark:text-white placeholder-[#9E9E9E] dark:placeholder-[#8D827A]"
         />
