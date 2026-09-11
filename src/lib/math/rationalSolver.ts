@@ -430,7 +430,10 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const parts = cleanEq.split('=');
     const lhs = parts[0].trim();
     const rhs = parts[1].trim();
-    const variable = 'x';
+
+    // Detect variable
+    const varMatch = cleanEq.match(/[a-zA-Z]/);
+    const variable = varMatch ? varMatch[0] : 'x';
 
     // Form: LHS - RHS = 0
     const standardDiff = `(${lhs}) - (${rhs})`;
@@ -458,28 +461,75 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     if (restrictions.length > 0) {
       steps.push({
         stepNumber: stepNumber++,
-        explanation: 'Identify domain restrictions by setting all denominators equal to zero ($Q(x) \\neq 0$):',
+        explanation: 'Identify domain restrictions (excluded values) by setting all denominators not equal to zero ($Q(x) \\neq 0$):',
         math: `${variable} \\neq ${restrictions.join(', ')}`,
       });
     }
 
-    // Step 2: Clear fractions by simplifying to polynomial numerator = 0
-    let numeratorExpr = '';
-    try {
-      const rat = (math as any).rationalize(standardDiff, {}, true);
-      numeratorExpr = rat.numerator.toString();
-    } catch {
-      numeratorExpr = (nerdamer as any)(`expand(${standardDiff})`).toString();
+    // Step 2 & 3: Decompose the rational equation into numerator and LCD
+    let numExpr = '';
+    let denExpr = '';
+
+    const singleFracMatch = (rhs === '0' || rhs === '') ? lhs.match(/^(.+)\/([^/]+)$/) : null;
+    if (singleFracMatch) {
+      numExpr = stripOuterParens(singleFracMatch[1].trim());
+      denExpr = stripOuterParens(singleFracMatch[2].trim());
+    } else {
+      const simp = (nerdamer as any)(`simplify(${standardDiff})`);
+      const sym = simp.symbol;
+      const numTerms: string[] = [];
+      const denTerms: string[] = [];
+
+      if (sym.multiplier) {
+        const numVal = sym.multiplier.num ? sym.multiplier.num.toString() : '1';
+        const denVal = sym.multiplier.den ? sym.multiplier.den.toString() : '1';
+        if (numVal !== '1') numTerms.push(numVal);
+        if (denVal !== '1') denTerms.push(denVal);
+      }
+
+      if (sym.symbols) {
+        for (const k in sym.symbols) {
+          const s = sym.symbols[k];
+          const pNum = s.power && s.power.num ? s.power.num.toString() : '1';
+          if (pNum.startsWith('-')) {
+            const absP = pNum.replace(/^-/, '');
+            denTerms.push(absP === '1' ? `(${s.value})` : `(${s.value})^${absP}`);
+          } else {
+            numTerms.push(pNum === '1' ? `(${s.value})` : `(${s.value})^${pNum}`);
+          }
+        }
+      } else {
+        numTerms.push(sym.text());
+      }
+
+      numExpr = numTerms.length > 0 ? numTerms.join('*') : '0';
+      denExpr = denTerms.length > 0 ? denTerms.join('*') : '1';
     }
 
+    const lcdFactoredTeX = cleanLatex((nerdamer as any)(`factor(${denExpr})`).toTeX());
+    const numExpandedStr = (nerdamer as any)(`expand(${numExpr})`).toString();
+    const numExpandedTeX = cleanLatex((nerdamer as any)(`expand(${numExpr})`).toTeX())
+      .replace(/\s*([+-])\s*/g, ' $1 ');
+    const numFactoredTeX = cleanLatex((nerdamer as any)(`factor(${numExpr})`).toTeX())
+      .replace(/\s*([+-])\s*/g, ' $1 ');
+
+    // Show step clearing fractions with LCD
     steps.push({
       stepNumber: stepNumber++,
-      explanation: 'Clear fractions by multiplying both sides of the equation by the common denominator:',
-      math: `${factorToLatex(numeratorExpr)} = 0`,
+      explanation: `Find the Least Common Denominator (LCD) and multiply both sides of the equation by $\\text{LCD} = ${lcdFactoredTeX}$ to clear all fractions:`,
+      math: `${numExpandedTeX} = 0`,
     });
 
-    // Step 3: Solve the polynomial numerator
-    const rawSols = (nerdamer as any)(`solve(${numeratorExpr}, ${variable})`).toString();
+    if (numFactoredTeX !== numExpandedTeX && numFactoredTeX.includes('(')) {
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Factor the resulting polynomial equation:',
+        math: `${numFactoredTeX} = 0`,
+      });
+    }
+
+    // Step: Solve the polynomial numerator
+    const rawSols = (nerdamer as any)(`solve(${numExpandedStr}, ${variable})`).toString();
     const cleanSols: string[] = rawSols
       .replace(/^\[|\]$/g, '')
       .split(',')
@@ -510,7 +560,7 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     if (extraneousRoots.length > 0) {
       steps.push({
         stepNumber: stepNumber++,
-        explanation: `Check candidate roots against domain restrictions. The candidate root(s) $${variable} = ${extraneousRoots.join(', ')}$ make the denominator zero and must be rejected as extraneous:`,
+        explanation: `Check candidate roots against the domain restrictions. The candidate root(s) $${variable} = ${extraneousRoots.join(', ')}$ make the denominator zero and must be rejected as extraneous:`,
         math: `\\text{Extraneous root(s): } ${variable} = ${extraneousRoots.join(', ')} \\quad (\\text{rejected})`,
       });
     }

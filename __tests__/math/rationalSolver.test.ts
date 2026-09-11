@@ -102,5 +102,23 @@ describe('Rational Expression & Equation Solver', () => {
       const stepExtr = result.steps.find((s) => s.explanation.includes('Extraneous') || s.explanation.includes('extraneous'));
       expect(stepExtr).toBeDefined();
     });
+
+    it('solves user rational equation 3/(x-2) + 2/(x+1) = 7/(x^2-x-2) with LCD and clear steps', () => {
+      const result = solvePolynomial('3/(x-2) + 2/(x+1) = 7/(x^2-x-2)');
+      expect(result).toBeDefined();
+      expect(result.finalAnswer).toContain('\\frac{8}{5}');
+      expect(result.steps.length).toBeGreaterThanOrEqual(3);
+
+      // Verify domain restrictions step mentions -1 and 2
+      const step1 = result.steps.find((s) => s.explanation.includes('restriction') || s.explanation.includes('excluded'));
+      expect(step1).toBeDefined();
+      expect(step1?.math).toContain('-1');
+      expect(step1?.math).toContain('2');
+
+      // Verify LCD multiplication step
+      const step2 = result.steps.find((s) => s.explanation.includes('LCD') || s.explanation.includes('Least Common Denominator'));
+      expect(step2).toBeDefined();
+      expect(step2?.math).toContain('5x - 8 = 0');
+    });
   });
 });
