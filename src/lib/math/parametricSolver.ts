@@ -286,6 +286,7 @@ function solveParametricQuadratic(opts: {
     type: 'polynomial',
     steps,
     finalAnswer,
+    natureOfRoots: natureOfRootsSteps,
     inputInterpretation: interpretationLatex,
   };
 }

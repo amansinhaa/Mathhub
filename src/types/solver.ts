@@ -40,5 +40,6 @@ export interface SolverResult {
   type: SolverType;
   inputInterpretation?: string; // LaTeX description of what the engine parsed
   quadraticMethod?: QuadraticMethod;
+  natureOfRoots?: string[]; // Parametric/discriminant nature of roots cases
 }
 

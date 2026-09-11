@@ -381,7 +381,14 @@ export default function EquationInput() {
         disabled={isLoading || (isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim())}
         className="w-full py-2.5 sm:py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] sm:min-h-[44px] flex items-center justify-center gap-2 border border-[#795548]/50"
       >
-        {isLoading ? 'Working…' : currentAction ? `${currentAction.emoji} ${currentAction.label}` : 'Go'}
+        {isLoading ? (
+          'Calculating Solution…'
+        ) : (
+          <>
+            <span>{currentAction ? `${currentAction.emoji} ${currentAction.label}` : 'Solve Equation'}</span>
+            <span className="text-xs font-normal opacity-85 hidden sm:inline">— See Answer & Steps ↓</span>
+          </>
+        )}
       </button>
     </form>
   );

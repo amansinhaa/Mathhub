@@ -32,6 +32,13 @@ describe('Parametric Equation Solver & Step Formatting', () => {
     const lastStep = res.steps[res.steps.length - 1];
     expect(lastStep.explanation).toContain('Nature of the Roots');
     expect(lastStep.math).toContain('distinct real roots');
+
+    // Check top-level natureOfRoots field
+    expect(res.natureOfRoots).toBeDefined();
+    expect(res.natureOfRoots?.length).toBe(3);
+    expect(res.natureOfRoots?.[0]).toContain('distinct real roots');
+    expect(res.natureOfRoots?.[1]).toContain('repeated real root');
+    expect(res.natureOfRoots?.[2]).toContain('complex conjugate');
   });
 
   test('solves k*x^2 + 4x + 1 = 0 with parametric k', () => {

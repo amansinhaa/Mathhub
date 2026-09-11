@@ -110,7 +110,7 @@ export default function StepByStep() {
       {/* 1. Direct Solution Summary Card (Direct Answer-First View) */}
       <div
         id="direct-solution"
-        className="bg-[#FBF9F8] dark:bg-[#151515] rounded-2xl p-4 sm:p-6 border-2 border-[#5D4037]/70 dark:border-[#5D4037]/80 relative overflow-hidden shadow-sm"
+        className="bg-[#FBF9F8] dark:bg-[#151515] rounded-2xl p-4 sm:p-6 border-2 border-[#5D4037]/70 dark:border-[#5D4037]/80 relative overflow-hidden shadow-sm scroll-mt-6"
       >
         <div className="absolute top-0 left-0 w-1.5 sm:w-2 h-full bg-[#5D4037] dark:bg-[#A1887F]" />
 
@@ -237,6 +237,22 @@ export default function StepByStep() {
               );
             })()}
           </div>
+
+          {/* If parametric Nature of Roots analysis is present, show it directly in Solution Bar */}
+          {result.natureOfRoots && result.natureOfRoots.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-[#E0E0E0] dark:border-[#282422]">
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] mb-1.5 flex items-center gap-1.5">
+                <span>Nature of the Roots:</span>
+              </div>
+              <div className="space-y-1.5 bg-white dark:bg-[#1A1A1A] rounded-xl p-2.5 sm:p-3 border border-[#E0E0E0] dark:border-[#282422]">
+                {result.natureOfRoots.map((natureLine, idx) => (
+                  <div key={idx} className="text-xs sm:text-sm text-[#333333] dark:text-[#E0E0E0] overflow-x-auto scrollbar-none py-0.5">
+                    <MathDisplay math={natureLine} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

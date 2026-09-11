@@ -43,15 +43,20 @@ export default function EquationSolver({
     }
   }, [initialMode, initialEquation]);
 
-  // On mobile/Android, smoothly scroll to direct solution as soon as result is ready
+  // Automatically scroll smoothly to direct solution as soon as result is ready
   useEffect(() => {
-    if (result && typeof window !== 'undefined' && window.innerWidth < 768) {
-      setTimeout(() => {
+    if (result && typeof window !== 'undefined') {
+      const timer = setTimeout(() => {
         const el = document.getElementById('direct-solution');
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const rect = el.getBoundingClientRect();
+          // If the top of the solution card is below the visible viewport or outside immediate focus
+          if (rect.top > window.innerHeight * 0.45 || rect.bottom > window.innerHeight) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         }
-      }, 120);
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [result]);
 
