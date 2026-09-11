@@ -5,7 +5,7 @@ import SearchBar from './SearchBar';
 import CategoryFilter from './CategoryFilter';
 import FormulaCard from './FormulaCard';
 import { ALL_FORMULAS, getCategoryGroups } from '@/data/formulas';
-import { FormulaCategory, CurriculumLevel, CURRICULUM_LABELS } from '@/types/formula';
+import { FormulaCategory, CurriculumLevel, CURRICULUM_LABELS, formulaMatchesLevel } from '@/types/formula';
 import { BookOpen, Download, GraduationCap } from 'lucide-react';
 import { exportFormulaSheetPdf } from '@/lib/export/FormulaPdfExport';
 
@@ -14,7 +14,7 @@ export default function FormulaLibrary() {
   const [category, setCategory] = useState<FormulaCategory | 'all'>('all');
   const [curriculum, setCurriculum] = useState<CurriculumLevel>('all');
 
-  const groups = useMemo(() => getCategoryGroups(), []);
+  const groups = useMemo(() => getCategoryGroups(curriculum, query), [curriculum, query]);
 
   const filteredFormulas = useMemo(() => {
     let result = ALL_FORMULAS;
@@ -24,7 +24,7 @@ export default function FormulaLibrary() {
     }
 
     if (curriculum !== 'all') {
-      result = result.filter((f) => f.level === curriculum);
+      result = result.filter((f) => formulaMatchesLevel(f, curriculum));
     }
 
     if (query.trim()) {
@@ -89,7 +89,7 @@ export default function FormulaLibrary() {
             { id: 'all', label: 'All Levels' },
             { id: 'class10', label: 'Class 10 / GCSE' },
             { id: 'class12', label: 'Class 12 / A-Level' },
-            { id: 'higher_ed', label: 'Higher Ed / Calculus' },
+            { id: 'higher_ed', label: 'University / Higher Ed' },
           ] as const
         ).map((lvl) => (
           <button
@@ -138,14 +138,39 @@ export default function FormulaLibrary() {
           ) : (
             <div className="text-center py-16 bg-white dark:bg-[#1B1B1B] rounded-2xl border border-dashed border-[#E0E0E0] dark:border-[#2E2825] p-8 shadow-sm">
               <BookOpen size={28} className="mx-auto text-[#BCAAA4] dark:text-[#3E2723] mb-2" />
-              <p className="text-xs text-[#616161] dark:text-[#A19891]">No formulas found matching your search.</p>
-              <button 
-                type="button"
-                onClick={() => { setQuery(''); setCategory('all'); }}
-                className="mt-3 text-xs font-mono font-semibold text-white bg-[#5D4037] hover:bg-[#6D4C41] px-3.5 py-1.5 rounded-xl transition-colors border border-[#795548]/50 shadow-xs"
-              >
-                Reset Filters
-              </button>
+              <p className="text-xs text-[#616161] dark:text-[#A19891] mb-1">No formulas found matching your filter criteria.</p>
+              <p className="text-[11px] text-[#757575] dark:text-[#8D827A] mb-3">
+                {category !== 'all' && curriculum !== 'all'
+                  ? `There are no formulas in this category for ${CURRICULUM_LABELS[curriculum]}.`
+                  : 'Try switching to All Levels or clearing your search.'}
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {category !== 'all' && (
+                  <button 
+                    type="button"
+                    onClick={() => setCategory('all')}
+                    className="text-xs font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] bg-[#EFEBE9] dark:bg-[#25201E] hover:bg-[#D7CCC8] dark:hover:bg-[#332B27] px-3 py-1.5 rounded-xl transition-colors border border-[#D7CCC8] dark:border-[#3E2723]"
+                  >
+                    View All Categories
+                  </button>
+                )}
+                {curriculum !== 'all' && (
+                  <button 
+                    type="button"
+                    onClick={() => setCurriculum('all')}
+                    className="text-xs font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] bg-[#EFEBE9] dark:bg-[#25201E] hover:bg-[#D7CCC8] dark:hover:bg-[#332B27] px-3 py-1.5 rounded-xl transition-colors border border-[#D7CCC8] dark:border-[#3E2723]"
+                  >
+                    Show All Levels
+                  </button>
+                )}
+                <button 
+                  type="button"
+                  onClick={() => { setQuery(''); setCategory('all'); setCurriculum('all'); }}
+                  className="text-xs font-mono font-semibold text-white bg-[#5D4037] hover:bg-[#6D4C41] px-3.5 py-1.5 rounded-xl transition-colors border border-[#795548]/50 shadow-xs"
+                >
+                  Reset All Filters
+                </button>
+              </div>
             </div>
           )}
         </div>

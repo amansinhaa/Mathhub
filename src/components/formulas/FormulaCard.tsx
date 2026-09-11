@@ -37,7 +37,7 @@ export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
           <div className="flex items-center gap-1 shrink-0">
             {formula.level && (
               <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1.5 py-0.5 bg-[#F5F5F5] text-[#5D4037] border border-[#E0E0E0] dark:bg-[#131313] dark:text-[#D7CCC8] dark:border-[#2E2825] rounded-md">
-                {formula.level === 'class10' ? 'Class 10' : formula.level === 'class12' ? 'Class 12' : 'Calculus'}
+                {formula.level === 'class10' ? 'Class 10' : formula.level === 'class12' ? 'Class 12' : 'Higher Ed'}
               </span>
             )}
             <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-md">

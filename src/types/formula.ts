@@ -19,7 +19,7 @@ export const CURRICULUM_LABELS: Record<CurriculumLevel, string> = {
   all: 'All Levels',
   class10: 'Class 10 / GCSE',
   class12: 'Class 12 / A-Level',
-  higher_ed: 'Higher Education / Calculus',
+  higher_ed: 'University / Higher Ed',
 };
 
 /** Human-readable labels for each category. */
@@ -51,12 +51,22 @@ export interface FormulaEntry {
   category: FormulaCategory;
   /** Searchable keywords/tags */
   tags: string[];
-  /** Optional: curriculum level */
+  /** Optional: primary curriculum level */
   level?: 'class10' | 'class12' | 'higher_ed';
+  /** Optional: applicable curriculum levels */
+  levels?: ('class10' | 'class12' | 'higher_ed')[];
   /** Optional: expression that can be loaded into the calculator */
   calculatorExpression?: string;
   /** Optional: equation that can be loaded into the solver */
   solverExpression?: string;
+}
+
+/** Check if a formula matches a selected curriculum level. */
+export function formulaMatchesLevel(formula: FormulaEntry, level: CurriculumLevel): boolean {
+  if (level === 'all') return true;
+  if (formula.levels && formula.levels.includes(level)) return true;
+  if (formula.level === level) return true;
+  return false;
 }
 
 /** Category with its formulas and count, used for filtering UI. */

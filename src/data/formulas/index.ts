@@ -1,4 +1,4 @@
-import { FormulaEntry, FormulaCategory, CategoryGroup, CATEGORY_LABELS } from '@/types/formula';
+import { FormulaEntry, FormulaCategory, CategoryGroup, CATEGORY_LABELS, CurriculumLevel, formulaMatchesLevel } from '@/types/formula';
 import { algebra } from './algebra';
 import { trigonometry } from './trigonometry';
 import { calculus } from './calculus';
@@ -43,8 +43,8 @@ export function searchFormulas(query: string): FormulaEntry[] {
   );
 }
 
-/** Get all categories with their formulas and counts, ordered. */
-export function getCategoryGroups(): CategoryGroup[] {
+/** Get all categories with their formulas and counts, ordered, optionally filtered by level & query. */
+export function getCategoryGroups(level: CurriculumLevel = 'all', query: string = ''): CategoryGroup[] {
   const orderedCategories: FormulaCategory[] = [
     'algebra',
     'trigonometry',
@@ -59,8 +59,21 @@ export function getCategoryGroups(): CategoryGroup[] {
     'setsAndFunctions',
   ];
 
+  const q = query.toLowerCase().trim();
+
   return orderedCategories.map((category) => {
-    const formulas = getFormulasByCategory(category);
+    let formulas = getFormulasByCategory(category);
+    if (level !== 'all') {
+      formulas = formulas.filter((f) => formulaMatchesLevel(f, level));
+    }
+    if (q) {
+      formulas = formulas.filter(
+        (f) =>
+          f.name.toLowerCase().includes(q) ||
+          f.description.toLowerCase().includes(q) ||
+          f.tags.some((t) => t.toLowerCase().includes(q))
+      );
+    }
     return {
       category,
       label: CATEGORY_LABELS[category],
