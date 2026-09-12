@@ -262,6 +262,35 @@ class TestSympySolver(unittest.TestCase):
         self.assertEqual(classify_equation("x^3 - 6*x^2 + 11*x - 6 = 0"), "polynomial")
         self.assertEqual(classify_equation("x + y = 5, x - y = 1"), "system")
 
+    def test_23_regression_trig_interval_and_general(self):
+        """User regression: verify exact pi-based answers and full solution enumeration on [0, 2*pi] and general form."""
+        # 1. sin(x) = 1/2 -> domain [0, 2*pi] expect x = pi/6, 5*pi/6
+        res1 = solve_equation("sin(x) = 1/2")
+        self.assertEqual(res1["type"], "trigonometric")
+        self.assertEqual(set(res1["solutions"]), {sp.pi / 6, 5 * sp.pi / 6})
+
+        # 2. sin(x) + cos(x) = 1 -> domain [0, 2*pi] expect x = 0, pi/2, 2*pi
+        res2 = solve_equation("sin(x) + cos(x) = 1")
+        self.assertEqual(res2["type"], "trigonometric")
+        self.assertEqual(set(res2["solutions"]), {sp.Integer(0), sp.pi / 2, 2 * sp.pi})
+        # Check general solution has 2*k*pi and 2*k*pi + pi/2
+        k = sp.Symbol("k", integer=True)
+        gen2 = res2.get("general_solutions", [])
+        self.assertTrue(any(sp.simplify(g - 2 * sp.pi * k) == 0 for g in gen2))
+        self.assertTrue(any(sp.simplify(g - (2 * sp.pi * k + sp.pi / 2)) == 0 for g in gen2))
+
+        # 3. 2*sin(x)^2 + 3*sin(x) - 2 = 0 -> domain [0, 2*pi] expect x = pi/6, 5*pi/6
+        res3 = solve_equation("2*sin(x)**2 + 3*sin(x) - 2 = 0")
+        self.assertEqual(res3["type"], "trigonometric")
+        self.assertEqual(set(res3["solutions"]), {sp.pi / 6, 5 * sp.pi / 6})
+
+        # 4. tan(x) = 1 -> general solution expect x = pi/4 + k*pi
+        res4 = solve_equation("tan(x) = 1")
+        self.assertEqual(res4["type"], "trigonometric")
+        self.assertEqual(set(res4["solutions"]), {sp.pi / 4, 5 * sp.pi / 4})
+        gen4 = res4.get("general_solutions", [])
+        self.assertTrue(any(sp.simplify(g - (k * sp.pi + sp.pi / 4)) == 0 for g in gen4))
+
 
 if __name__ == "__main__":
     unittest.main()

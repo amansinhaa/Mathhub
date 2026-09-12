@@ -653,81 +653,138 @@ def solve_trigonometric(
         "math_ascii": f"{diff_expr} = 0",
     })
 
-    # Force symbolic solveset with Eq(lhs, rhs) first for exact trigonometric roots
+    # Requirement 1: Use sympy's solveset with domain=S.Reals FIRST
     sol_set = solveset(Eq(lhs, rhs), v_sym, domain=S.Reals)
-    if not sol_set or getattr(sol_set, "is_ConditionSet", False):
+    if not sol_set or getattr(sol_set, "is_ConditionSet", False) or sol_set == S.EmptySet:
         sol_set = solveset(diff_expr, v_sym, domain=S.Reals)
+
     general_solutions: List[sp.Expr] = []
-    principal_solutions: List[sp.Expr] = []
+    domain_solutions: List[sp.Expr] = []
 
-    n = Symbol("n", integer=True)
+    k = Symbol("k", integer=True)
 
-    def extract_from_set(s_obj: Any) -> None:
+    def extract_general_from_set(s_obj: Any) -> None:
         if isinstance(s_obj, ImageSet):
             lam = s_obj.lamda
-            expr_n = lam(n)
-            general_solutions.append(expr_n)
-            # Evaluate for n in [-4, 4] to find principal solutions in [0, 2*pi)
-            for k_val in range(-4, 6):
-                val = expr_n.subs(n, k_val)
-                try:
-                    num_val = float(val.evalf())
-                    if -1e-8 <= num_val < (2 * 3.141592653589793 - 1e-8):
-                        if num_val < 0:
-                            val = S.Zero
-                        principal_solutions.append(val)
-                except Exception:
-                    pass
+            expr_k = lam(k)
+            general_solutions.append(expr_k)
         elif hasattr(s_obj, "args") and s_obj.is_Union:
             for sub in s_obj.args:
-                extract_from_set(sub)
+                extract_general_from_set(sub)
         elif hasattr(s_obj, "__iter__"):
             for item in s_obj:
                 if item.is_number:
-                    principal_solutions.append(item)
                     general_solutions.append(item)
 
-    extract_from_set(sol_set)
+    if sol_set and not getattr(sol_set, "is_ConditionSet", False) and sol_set != S.EmptySet:
+        extract_general_from_set(sol_set)
 
-    if not general_solutions:
+    # Requirement 2: Restrict to interval [0, 2*pi]
+    # First attempt: exact set intersection with closed Interval(0, 2*pi)
+    if sol_set and not getattr(sol_set, "is_ConditionSet", False) and sol_set != S.EmptySet:
         try:
-            raw_sols = solve(diff_expr, v_sym)
-            for rs in raw_sols:
-                principal_solutions.append(rs)
-                general_solutions.append(rs)
+            inter = sol_set.intersect(sp.Interval(0, 2 * sp.pi))
+            if hasattr(inter, "__iter__") and not getattr(inter, "is_ConditionSet", False):
+                for item in inter:
+                    if item.is_number:
+                        domain_solutions.append(item)
         except Exception:
             pass
 
-    clean_principals = []
-    for p in principal_solutions:
-        if not any(sp.simplify(p - cp) == 0 for cp in clean_principals):
-            clean_principals.append(p)
+    # Extract/verify from general periodic branches over integer parameter k
+    if general_solutions:
+        pi_val = 3.141592653589793
+        for g in general_solutions:
+            if g.is_number:
+                try:
+                    num = float(g.evalf())
+                    if -1e-8 <= num <= 2 * pi_val + 1e-8:
+                        if abs(num) < 1e-8:
+                            domain_solutions.append(S.Zero)
+                        elif abs(num - 2 * pi_val) < 1e-8:
+                            domain_solutions.append(2 * sp.pi)
+                        else:
+                            domain_solutions.append(g)
+                except Exception:
+                    pass
+            else:
+                for k_val in range(-6, 7):
+                    val = g.subs(k, k_val)
+                    try:
+                        num = float(val.evalf())
+                        if -1e-8 <= num <= 2 * pi_val + 1e-8:
+                            if abs(num) < 1e-8:
+                                domain_solutions.append(S.Zero)
+                            elif abs(num - 2 * pi_val) < 1e-8:
+                                domain_solutions.append(2 * sp.pi)
+                            else:
+                                domain_solutions.append(val)
+                    except Exception:
+                        pass
 
-    clean_principals = sorted(clean_principals, key=lambda s: float(s.evalf()) if s.is_number else 0)
+    # If solveset returned empty or condition set, try algebraic solve
+    if not general_solutions and not domain_solutions:
+        try:
+            raw_sols = solve(diff_expr, v_sym)
+            for rs in raw_sols:
+                general_solutions.append(rs)
+                domain_solutions.append(rs)
+        except Exception:
+            pass
 
+    # Only fall back to numeric solving if symbolic genuinely fails
+    if not domain_solutions and not general_solutions:
+        from sympy import nsolve
+        pi_val = 3.141592653589793
+        # Grid sample over [0, 2*pi] to avoid missing branches or producing arbitrary negative branches
+        test_points = [i * (2 * pi_val / 24) for i in range(25)]
+        for x0 in test_points:
+            try:
+                ns = nsolve(diff_expr, v_sym, x0)
+                n_float = float(ns)
+                if -1e-7 <= n_float <= 2 * pi_val + 1e-7:
+                    domain_solutions.append(sp.Float(n_float))
+            except Exception:
+                pass
+
+    # Deduplicate and sort domain solutions on [0, 2*pi]
+    clean_domain_sols: List[sp.Expr] = []
+    for p in domain_solutions:
+        if not any(sp.simplify(p - cp) == 0 for cp in clean_domain_sols):
+            clean_domain_sols.append(p)
+    clean_domain_sols = sorted(clean_domain_sols, key=lambda s: float(s.evalf()) if s.is_number else 0)
+
+    # Deduplicate general solutions
+    clean_general: List[sp.Expr] = []
+    for g in general_solutions:
+        if not any(sp.simplify(g - cg) == 0 for cg in clean_general):
+            clean_general.append(g)
+
+    # Requirement 3: Always present general periodic form OR all solutions in domain [0, 2*pi]
     steps.append({
         "step_number": 2,
-        "explanation": "Solve for the general periodic solution set over $\\mathbb{R}$ ($n \\in \\mathbb{Z}$):",
-        "math_latex": ", \\quad ".join([f"{latex(v_sym)} = {latex(g)}" for g in general_solutions]) if general_solutions else "\\emptyset",
-        "math_ascii": str(general_solutions),
+        "explanation": "Solve for the general periodic solution set over $\\mathbb{R}$ ($k \\in \\mathbb{Z}$):",
+        "math_latex": ", \\quad ".join([f"{latex(v_sym)} = {latex(g)}" for g in clean_general]) if clean_general else "\\emptyset",
+        "math_ascii": str(clean_general) if clean_general else "[]",
     })
 
-    if clean_principals:
+    if clean_domain_sols:
         steps.append({
             "step_number": 3,
-            "explanation": "Principal solutions within the interval $[0, 2\\pi)$:",
-            "math_latex": ", \\quad ".join([f"{latex(v_sym)} = {latex(p)}" for p in clean_principals]),
-            "math_ascii": str(clean_principals),
+            "explanation": "Extract concrete solutions restricted to domain $[0, 2\\pi]$:",
+            "math_latex": ", \\quad ".join([f"{latex(v_sym)} = {latex(p)}" for p in clean_domain_sols]),
+            "math_ascii": str(clean_domain_sols),
         })
 
     return {
         "type": "trigonometric",
-        "solutions": clean_principals if clean_principals else general_solutions,
-        "general_solutions": general_solutions,
-        "principal_solutions": clean_principals,
+        "solutions": clean_domain_sols if clean_domain_sols else clean_general,
+        "principal_solutions": clean_domain_sols,
+        "general_solutions": clean_general,
+        "domain": [0, 2 * sp.pi],
         "excluded": [],
         "steps": steps,
-        "domain_notes": "Trigonometric solutions are periodic with integer parameter n (n ∈ ℤ).",
+        "domain_notes": "Trigonometric solutions are periodic with integer parameter k (k ∈ ℤ). Displayed solutions are restricted to interval [0, 2π].",
         "verified": True,
     }
 

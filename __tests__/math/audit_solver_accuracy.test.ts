@@ -251,4 +251,47 @@ describe('Math Solver Accuracy Audit', () => {
       expect(report.length).toBe(rawInputs.length + userVariants.length);
     });
   });
+
+  describe('7. Trigonometric Equation Solver Tests', () => {
+    test('sin(x) = 1/2 returns pi/6 and 5pi/6 on [0, 2pi]', () => {
+      const res = solvePolynomial('sin(x) = 1/2');
+      expect(res.equationType).toBe('trigonometric');
+      expect(res.finalAnswer).toContain('\\frac{\\pi}{6}');
+      expect(res.finalAnswer).toContain('\\frac{5\\pi}{6}');
+      expect(res.numericRoots).toBeDefined();
+      expect(res.numericRoots?.some(r => Math.abs(r - Math.PI / 6) < 1e-3)).toBe(true);
+      expect(res.numericRoots?.some(r => Math.abs(r - 5 * Math.PI / 6) < 1e-3)).toBe(true);
+    });
+
+    test('sin(x) + cos(x) = 1 returns 0, pi/2, and 2pi on [0, 2pi]', () => {
+      const res = solvePolynomial('sin(x) + cos(x) = 1');
+      expect(res.equationType).toBe('trigonometric');
+      expect(res.finalAnswer).toContain('0');
+      expect(res.finalAnswer).toContain('\\frac{\\pi}{2}');
+      expect(res.finalAnswer).toContain('2\\pi');
+      expect(res.numericRoots?.some(r => Math.abs(r - 0) < 1e-3)).toBe(true);
+      expect(res.numericRoots?.some(r => Math.abs(r - Math.PI / 2) < 1e-3)).toBe(true);
+      expect(res.numericRoots?.some(r => Math.abs(r - 2 * Math.PI) < 1e-3)).toBe(true);
+      // Ensure it NEVER returns a negative single root branch like -6.283185
+      expect(res.finalAnswer).not.toContain('-6.28');
+    });
+
+    test('2*sin(x)^2 + 3*sin(x) - 2 = 0 returns pi/6 and 5pi/6 on [0, 2pi]', () => {
+      const res = solvePolynomial('2*sin(x)^2 + 3*sin(x) - 2 = 0');
+      expect(res.equationType).toBe('trigonometric');
+      expect(res.finalAnswer).toContain('\\frac{\\pi}{6}');
+      expect(res.finalAnswer).toContain('\\frac{5\\pi}{6}');
+      expect(res.numericRoots?.some(r => Math.abs(r - Math.PI / 6) < 1e-3)).toBe(true);
+      expect(res.numericRoots?.some(r => Math.abs(r - 5 * Math.PI / 6) < 1e-3)).toBe(true);
+    });
+
+    test('tan(x) = 1 returns pi/4 and 5pi/4 on [0, 2pi]', () => {
+      const res = solvePolynomial('tan(x) = 1');
+      expect(res.equationType).toBe('trigonometric');
+      expect(res.finalAnswer).toContain('\\frac{\\pi}{4}');
+      expect(res.finalAnswer).toContain('\\frac{5\\pi}{4}');
+      expect(res.numericRoots?.some(r => Math.abs(r - Math.PI / 4) < 1e-3)).toBe(true);
+      expect(res.numericRoots?.some(r => Math.abs(r - 5 * Math.PI / 4) < 1e-3)).toBe(true);
+    });
+  });
 });
