@@ -456,10 +456,11 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     // Check denominators to find domain restrictions
     const denMatches = cleanEq.match(/\/\s*(\([^)]+\)|[a-zA-Z0-9^+-]+)/g) || [];
     const restrictionsSet = new Set<string>();
+    const denList = Array.from(new Set(denMatches.map((m) => stripOuterParens(m.replace(/^\//, '').trim()))))
+      .filter((d) => /[a-zA-Z]/.test(d));
 
-    for (const match of denMatches) {
-      const denExpr = stripOuterParens(match.replace(/^\//, '').trim());
-      const r = getDenominatorRoots(denExpr, variable);
+    for (const d of denList) {
+      const r = getDenominatorRoots(d, variable);
       r.forEach((val) => restrictionsSet.add(val));
     }
 
@@ -472,12 +473,30 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const steps: SolutionStep[] = [];
     let stepNumber = 1;
 
-    // Step 1: State domain restrictions
+    // Step 1: State domain restrictions with full derivation showing why denominators cannot be zero
     if (restrictions.length > 0) {
+      const restrDerivations = denList.map((d) => {
+        const roots = getDenominatorRoots(d, variable);
+        const rootsTeX = roots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ');
+        const dTeX = polyToLatex(d);
+        return `${dTeX} \\neq 0 \\implies ${variable} \\neq ${rootsTeX}`;
+      });
+
+      const subSteps = denList.map((d) => {
+        const roots = getDenominatorRoots(d, variable);
+        const rootsTeX = roots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ');
+        const dTeX = polyToLatex(d);
+        return {
+          title: `Why denominator (${d}) cannot be zero:`,
+          math: `\\text{In any fraction } \\frac{A}{B}, \\text{ division by zero is undefined } (B \\neq 0). \\\\ \\text{Setting the denominator } ${dTeX} \\neq 0 \\implies ${variable} \\neq ${rootsTeX}`,
+        };
+      });
+
       steps.push({
         stepNumber: stepNumber++,
-        explanation: 'Identify domain restrictions (excluded values) by setting all denominators not equal to zero ($Q(x) \\neq 0$):',
-        math: `${variable} \\neq ${restrictions.join(', ')}`,
+        explanation: `Identify domain restrictions (excluded values). In any rational fraction, division by zero is mathematically undefined, so every denominator containing the variable $${variable}$ must not equal zero ($Q(${variable}) \\neq 0$):`,
+        math: restrDerivations.join(' \\quad \\text{and} \\quad '),
+        subSteps,
       });
     }
 
