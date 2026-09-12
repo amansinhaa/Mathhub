@@ -656,17 +656,26 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     }
 
     if (extraneousRoots.length > 0) {
+      const extrDetails = extraneousRoots.map((r) => {
+        const rTeX = cleanLatex((nerdamer as any)(r).toTeX());
+        return {
+          title: `Verify candidate root ${variable} = ${rTeX} in original equation:`,
+          math: `\\text{Original denominator: } ${cleanLatex((nerdamer as any)(denExpr).toTeX())} \\implies \\text{when } ${variable} = ${rTeX}, \\; \\text{denominator } = 0 \\quad (\\text{undefined division by zero})`,
+        };
+      });
+
       steps.push({
         stepNumber: stepNumber++,
-        explanation: `Check candidate roots against the domain restrictions. The candidate root(s) $${variable} = ${extraneousRoots.join(', ')}$ make the denominator zero and must be rejected as extraneous:`,
-        math: `\\text{Extraneous root(s): } ${variable} = ${extraneousRoots.join(', ')} \\quad (\\text{rejected})`,
+        explanation: `Check candidate root(s) against the domain restrictions ($${variable} \\neq ${restrictions.join(', ')}$). An extraneous root is an apparent solution introduced by algebraic operations (like multiplying by a denominator) that fails the original equation because it causes division by zero:`,
+        math: `\\text{Extraneous root(s): } ${extraneousRoots.map((r) => `${variable} = ${cleanLatex((nerdamer as any)(r).toTeX())}`).join(', ')} \\quad (\\text{rejected})`,
+        subSteps: extrDetails,
       });
     }
 
     const finalAnswer = validRoots.length > 0
       ? validRoots.map((r) => `${variable} = ${cleanLatex((nerdamer as any)(r).toTeX())}`).join(', ')
       : (extraneousRoots.length > 0
-          ? `\\text{No real solution (extraneous root: } ${variable} = ${extraneousRoots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ')}\\text{)}`
+          ? `\\text{No real solution} \\quad (\\text{extraneous root: } ${variable} = ${extraneousRoots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ')}\\text{)}`
           : '\\text{No real solution (inconsistent equation)}');
 
     steps.push({

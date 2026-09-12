@@ -253,6 +253,19 @@ export default function StepByStep() {
               </div>
             </div>
           )}
+
+          {/* Educational Callout: What is an Extraneous Root? */}
+          {result.finalAnswer?.toLowerCase().includes('extraneous') && (
+            <div className="mt-3.5 p-3.5 sm:p-4 rounded-xl bg-[#EFEBE9]/70 dark:bg-[#251E1C] border border-[#D7CCC8] dark:border-[#4A3B37] text-[#5D4037] dark:text-[#D7CCC8] space-y-1.5 shadow-2xs">
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-[#4E342E] dark:text-[#EFEBE9]">
+                <Info size={15} className="shrink-0 text-[#8D6E63] dark:text-[#BCAAA4]" />
+                <span>Why is there no valid solution? (Extraneous Roots Explained)</span>
+              </div>
+              <p className="text-xs text-[#616161] dark:text-[#BCAAA4] leading-relaxed">
+                Algebraic operations (such as multiplying both sides of an equation by a denominator containing <span className="font-mono font-semibold text-[#131313] dark:text-white">x</span>) can produce candidate solutions that do not satisfy the original problem. If substituting a candidate back into the original expression results in <strong>division by zero</strong> (which is mathematically undefined), that candidate is an <strong>extraneous root</strong> and must be rejected.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
