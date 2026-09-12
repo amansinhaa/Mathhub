@@ -83,12 +83,10 @@ export function normalizeExpression(input: string): string {
   expr = expr.replace(/φ/g, 'phi');
   expr = expr.replace(/Δ/g, 'Delta');
 
-  // Natural log
-  expr = expr.replace(/\bln\s*\(/g, 'log(');
-
   // Ensure cbrt and sqrt with adjacent numbers without parens work: ∛27 -> cbrt(27), √16 -> sqrt(16)
   expr = expr.replace(/cbrt\s*([0-9.]+)/g, 'cbrt($1)');
   expr = expr.replace(/sqrt\s*([0-9.]+)/g, 'sqrt($1)');
+  expr = expr.replace(/\bln\s*\(/g, 'log(');
 
   // 2. Convert Unicode superscripts to ^(digits)
   // Match: a letter/digit/closing paren followed by one or more superscript chars

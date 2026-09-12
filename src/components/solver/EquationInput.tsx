@@ -95,6 +95,14 @@ export default function EquationInput() {
 
   const placeholders: Record<SolverType, string> = {
     polynomial: 'e.g. 2x + 8 = 20  or  x² - 5x + 6 = 0',
+    linear: 'e.g. 3x + 5 = 11',
+    quadratic: 'e.g. x² - 5x + 6 = 0',
+    rational: 'e.g. 1/(x-1) + 1/(x+1) = 1',
+    radical: 'e.g. sqrt(x + 2) = 4',
+    trigonometric: 'e.g. sin(x) = 1/2',
+    exponential: 'e.g. 2^(x+1) = 16',
+    logarithmic: 'e.g. ln(x+2) = 3',
+    absolute_value: 'e.g. |2x - 3| = 5',
     derivative:  'e.g. 3x² + 5x - 4  or  sin(x)',
     integral:    'e.g. 2x + 3  or  x² - 4',
     inequality:  'e.g. 2x - 3 > 0  or  x² ≤ 9',

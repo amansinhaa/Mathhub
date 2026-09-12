@@ -284,7 +284,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
       }
 
       return {
-        type: 'polynomial',
+        type: 'rational',
         steps,
         finalAnswer: finalFactored,
         inputInterpretation: `\\text{Simplify: } \\frac{${factorToLatex(num1)}}{${factorToLatex(den1)}} \\div \\frac{${factorToLatex(num2)}}{${factorToLatex(den2)}}`,
@@ -360,7 +360,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
         }
 
         return {
-          type: 'polynomial',
+          type: 'rational',
           steps,
           finalAnswer: finalFactored,
           inputInterpretation: `\\text{Simplify: } \\left(\\frac{${num1}}{${den1}}\\right) \\cdot \\left(\\frac{${num2}}{${den2}}\\right)`,
@@ -419,7 +419,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
       }
 
       return {
-        type: 'polynomial',
+        type: 'rational',
         steps,
         finalAnswer,
         inputInterpretation: `\\text{Simplify: } \\frac{${num}}{${den}}`,
@@ -440,7 +440,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
     });
 
     return {
-      type: 'polynomial',
+      type: 'rational',
       steps,
       finalAnswer: finalLatex,
       inputInterpretation: `\\text{Simplify: } ${expressionToLatex(rawEq)}`,
@@ -735,7 +735,7 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
       .filter((n) => !isNaN(n) && isFinite(n));
 
     return {
-      type: 'polynomial',
+      type: 'rational',
       steps,
       finalAnswer,
       inputInterpretation: `\\text{Solve rational equation: } ${expressionToLatex(cleanEq)}`,

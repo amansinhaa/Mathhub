@@ -328,7 +328,7 @@ export function trySolveExponentialEquation(
         });
 
         return {
-          type: 'polynomial',
+          type: 'exponential',
           steps,
           finalAnswer: `${variable} = ${exactLatex}`,
           decimalAnswer: `${variable} \\approx ${xVal.toFixed(4)}`,
@@ -485,7 +485,7 @@ export function trySolveExponentialEquation(
             math: '\\Delta < 0 \\implies \\text{No real solution}',
           });
           return {
-            type: 'polynomial',
+            type: 'exponential',
             steps,
             finalAnswer: '\\text{No real solution}',
             numericRoots: [],
@@ -526,7 +526,7 @@ export function trySolveExponentialEquation(
 
         if (solvedRoots.length === 0) {
           return {
-            type: 'polynomial',
+            type: 'exponential',
             steps,
             finalAnswer: '\\text{No real solution}',
             numericRoots: [],
@@ -549,7 +549,7 @@ export function trySolveExponentialEquation(
         });
 
         return {
-          type: 'polynomial',
+          type: 'exponential',
           steps,
           finalAnswer: rootStrs.join(', \\quad '),
           numericRoots: distinctRoots.map((r) => r.xVal),
@@ -582,7 +582,7 @@ export function trySolveExponentialEquation(
             math: '\\text{No real solution}',
           });
           return {
-            type: 'polynomial',
+            type: 'exponential',
             steps,
             finalAnswer: '\\text{No real solution}',
             numericRoots: [],
@@ -597,7 +597,7 @@ export function trySolveExponentialEquation(
 
         const ans = variable + ' = ' + res.exactLatex;
         return {
-          type: 'polynomial',
+          type: 'exponential',
           steps,
           finalAnswer: ans,
           numericRoots: [res.xVal],
@@ -676,7 +676,7 @@ function solveGeneralExponential(
     ];
 
     return {
-      type: 'polynomial',
+      type: 'exponential',
       steps,
       finalAnswer: formattedRoots.join(', \\quad '),
       numericRoots,

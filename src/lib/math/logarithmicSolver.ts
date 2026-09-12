@@ -88,6 +88,10 @@ export function trySolveLogarithmicEquation(
   // Regex to match log terms: coeff * log_b(arg) or ln(arg)
   const logTermRegex = /([+-]?\s*\d*\.?\d*)\s*\*?\s*(?:\\?log(?:_\{?([0-9a-zA-Z]+)\}?|(\d+))?|ln)\s*\(([^)]+)\)/gi;
 
+  // Determine if input used natural log (ln)
+  const sourceStr = rawEquation || cleanEq;
+  const originallyHadLn = /(?:^|[^a-zA-Z])\\?ln\s*\(/i.test(sourceStr);
+
   const extractTerms = (sideStr: string, isLHS: boolean): LogTerm[] => {
     const terms: LogTerm[] = [];
     let m: RegExpExecArray | null;
@@ -102,7 +106,7 @@ export function trySolveLogarithmicEquation(
         if (!isNaN(parsed)) coeff = parsed;
       }
 
-      const isLn = m[0].toLowerCase().includes('ln');
+      const isLn = m[0].toLowerCase().includes('ln') || originallyHadLn;
       const baseStr = m[2] || m[3] || (isLn ? 'e' : '10');
       const baseVal = baseStr === 'e' ? Math.E : parseFloat(baseStr);
       const arg = m[4].trim();
@@ -480,7 +484,7 @@ function finishLogSolution(
       math: '\\text{No real solution}',
     });
     return {
-      type: 'polynomial',
+      type: 'logarithmic',
       steps,
       finalAnswer: '\\text{No real solution}',
       numericRoots: [],
@@ -498,7 +502,7 @@ function finishLogSolution(
   });
 
   return {
-    type: 'polynomial',
+    type: 'logarithmic',
     steps,
     finalAnswer: finalStrs.join(', \\quad '),
     numericRoots: validRoots.map((v) => v.num),

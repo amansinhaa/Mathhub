@@ -27,6 +27,7 @@ import { trySimplifyRationalExpression, trySolveRationalEquation } from './ratio
 import { trySolveExponentialEquation } from './exponentialSolver';
 import { trySolveLogarithmicEquation } from './logarithmicSolver';
 import { trySolveTrigonometricEquation } from './trigonometricSolver';
+import { classifyEquation } from './classifier';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -640,7 +641,8 @@ export function trySimplifyRadicalExpression(cleanEq: string, rawEq: string): So
     }
 
     return {
-      type: 'polynomial',
+      type: 'radical',
+      equationType: 'radical',
       steps,
       finalAnswer: parsed.finalLatex,
       inputInterpretation: expressionToLatex(rawEq),
@@ -827,7 +829,8 @@ export function trySolveRadicalEquation(cleanEq: string, rawEq: string): SolverR
       });
 
       return {
-        type: 'polynomial',
+        type: 'radical',
+        equationType: 'radical',
         steps,
         finalAnswer,
         numericRoots: validRoots.map((r) => r.num),
@@ -930,7 +933,8 @@ export function trySolveAbsoluteValueEquation(cleanEq: string, rawEq: string): S
       });
 
       return {
-        type: 'polynomial',
+        type: 'absolute_value',
+        equationType: 'absolute_value',
         steps,
         finalAnswer: '\\text{No real solution } (\\emptyset)',
         inputInterpretation: `\\text{Solve: } ${expressionToLatex(cleanEq)}`,
@@ -1029,7 +1033,8 @@ export function trySolveAbsoluteValueEquation(cleanEq: string, rawEq: string): S
 
     if (validRoots.length === 0) {
       return {
-        type: 'polynomial',
+        type: 'absolute_value',
+        equationType: 'absolute_value',
         steps,
         finalAnswer: '\\text{No real solution } (\\emptyset)',
         inputInterpretation: `\\text{Solve: } ${expressionToLatex(cleanEq)}`,
@@ -1046,7 +1051,8 @@ export function trySolveAbsoluteValueEquation(cleanEq: string, rawEq: string): S
       .join(', \\quad ');
 
     return {
-      type: 'polynomial',
+      type: 'absolute_value',
+      equationType: 'absolute_value',
       steps,
       finalAnswer,
       inputInterpretation: `\\text{Solve absolute value equation: } ${expressionToLatex(cleanEq)}`,
@@ -1216,7 +1222,7 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
 
 // ─── Main Solver Functions ──────────────────────────────────────────────────
 
-export function solvePolynomial(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
+function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
   let cleanEq = equation.trim();
   cleanEq = autoBalanceParens(cleanEq);
 
@@ -1387,6 +1393,7 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       const steps = generateLinearSteps(a, b, variable);
       return {
         type: 'polynomial',
+        equationType: 'linear',
         steps,
         finalAnswer: `${variable} = ${frac && frac.d > 1 ? fmtFraction(rootVal) : fmt(rootVal)}`,
         decimalAnswer: frac && frac.d > 1 ? `${variable} = ${fmt(rootVal)}` : undefined,
@@ -1436,6 +1443,7 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
 
       return {
         type: 'polynomial',
+        equationType: 'quadratic',
         steps,
         finalAnswer,
         decimalAnswer,
@@ -1536,6 +1544,20 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     finalAnswer: '\\text{No solution found}',
     inputInterpretation: interpretationLatex,
   };
+}
+
+export function solvePolynomial(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
+  const primaryVar = detectVariable(equation);
+  const detectedClassification = classifyEquation(equation, primaryVar);
+  const res = _solvePolynomialRaw(equation, method);
+  if (!res.equationType) {
+    res.equationType = (res.type && res.type !== 'polynomial' ? res.type : detectedClassification) as any;
+  }
+  const nonPolyTypes = ['trigonometric', 'logarithmic', 'exponential', 'rational', 'radical', 'absolute_value', 'system', 'ode'];
+  if (nonPolyTypes.includes(detectedClassification)) {
+    res.type = detectedClassification as any;
+  }
+  return res;
 }
 
 export function solveSystem(equations: string[], variables: string[]): SolverResult {

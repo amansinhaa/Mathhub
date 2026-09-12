@@ -113,6 +113,84 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
   const steps: SolutionStep[] = [];
   let stepNumber = 1;
 
+  // 0. Basic trigonometric equations: a*func(x) = c, e.g. sin(x) = 1/2, cos(x) = 0
+  let lhsSide = norm;
+  let rhsSide = '0';
+  if (norm.includes('=')) {
+    const parts = norm.split('=');
+    lhsSide = parts[0].trim();
+    rhsSide = parts[1].trim();
+  }
+
+  const basicMatch = lhsSide.match(/^([+-]?\s*\d*\.?\d*)\s*\*?\s*(sin|cos|tan)\s*\(\s*([a-zA-Z])\s*\)$/i);
+  if (basicMatch) {
+    const rawCoeff = basicMatch[1].replace(/\s+/g, '');
+    let coeff = 1;
+    if (rawCoeff === '-' || rawCoeff === '-1') coeff = -1;
+    else if (rawCoeff === '+' || rawCoeff === '+1') coeff = 1;
+    else if (rawCoeff) {
+      const p = parseFloat(rawCoeff);
+      if (!isNaN(p)) coeff = p;
+    }
+    const trigFunc = basicMatch[2].toLowerCase() as 'sin' | 'cos' | 'tan';
+    const v = basicMatch[3];
+
+    let rhsVal: number;
+    try {
+      rhsVal = Number(math.evaluate(rhsSide));
+    } catch {
+      rhsVal = parseFloat(rhsSide);
+    }
+
+    if (!isNaN(rhsVal)) {
+      const targetVal = rhsVal / coeff;
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: `Isolate the trigonometric function $\\${trigFunc}(${v})$:`,
+        math: `\\${trigFunc}(${v}) = ${fmt(targetVal)}`,
+      });
+
+      const validBounds = trigFunc === 'tan' ? [-Infinity, Infinity] : [-1, 1];
+      if (targetVal < validBounds[0] || targetVal > validBounds[1]) {
+        steps.push({
+          stepNumber: stepNumber++,
+          explanation: `Since $|\\${trigFunc}(${v})| > 1$, there are no real solutions for ${v}.`,
+          math: `\\text{No real solution on } [0, 2\\pi)`,
+        });
+        return {
+          type: 'trigonometric',
+          steps,
+          finalAnswer: '\\text{No real solution}',
+        };
+      }
+
+      const roots = solveBasicTrig(trigFunc, targetVal);
+      const rootLatexList = roots.map((r) => formatPiAngle(r));
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: `Identify reference angles and find primary solutions in the standard interval $[0, 2\\pi)$:`,
+        math: `${v} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`,
+      });
+
+      const periodStr = trigFunc === 'tan' ? '\\pi n' : '2\\pi n';
+      const genLatexList = rootLatexList.map((r) => `${r} + ${periodStr}`);
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: `General periodic solutions for all integer values of $n$ ($n \\in \\mathbb{Z}$):`,
+        math: `${v} = ${genLatexList.join(' \\quad \\text{or} \\quad ')}, \\quad n \\in \\mathbb{Z}`,
+      });
+
+      return {
+        type: 'trigonometric',
+        steps,
+        finalAnswer: `${v} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`,
+        numericRoots: roots,
+      };
+    }
+  }
+
   // 1. tan(x) + cot(x) = 2 or tan(x) + cot(x) = c
   const tanCotMatch = norm.match(/tan\s*\(\s*([a-zA-Z])\s*\)\s*\+\s*cot\s*\(\s*([a-zA-Z])\s*\)\s*=\s*([0-9.-]+)/i);
   if (tanCotMatch && tanCotMatch[1] === tanCotMatch[2]) {
@@ -144,7 +222,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
         math: `\\text{No real solution}`,
       });
       return {
-        type: 'polynomial',
+        type: 'trigonometric',
         steps,
         finalAnswer: '\\text{No real solution}',
       };
@@ -168,7 +246,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
     });
 
     return {
-      type: 'polynomial',
+      type: 'trigonometric',
       steps,
       finalAnswer: `${v} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`,
       numericRoots: rootsV,
@@ -206,7 +284,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
         math: `\\Delta < 0`,
       });
       return {
-        type: 'polynomial',
+        type: 'trigonometric',
         steps,
         finalAnswer: '\\text{No real solution}',
       };
@@ -238,7 +316,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
     });
 
     return {
-      type: 'polynomial',
+      type: 'trigonometric',
       steps,
       finalAnswer: `${v} \\in \\left\\{ ${latexRoots.join(', \\; ')} \\right\\}`,
       numericRoots: uniqueRoots,
@@ -283,7 +361,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
         math: `\\text{No real solution}`,
       });
       return {
-        type: 'polynomial',
+        type: 'trigonometric',
         steps,
         finalAnswer: '\\text{No real solution}',
       };
@@ -309,7 +387,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
         math: `\\text{No real solution on } [0, 2\\pi)`,
       });
       return {
-        type: 'polynomial',
+        type: 'trigonometric',
         steps,
         finalAnswer: '\\text{No real solution}',
       };
@@ -330,7 +408,7 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
     });
 
     return {
-      type: 'polynomial',
+      type: 'trigonometric',
       steps,
       finalAnswer: `${v} \\in \\left\\{ ${latexRoots.join(', \\; ')} \\right\\}`,
       numericRoots: uniqueRoots,

@@ -133,7 +133,7 @@ export default function StepByStep() {
               Solution
             </h3>
             <span className="px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase">
-              {!equation.includes('=') && !result.finalAnswer.includes('=') ? 'Simplification' : result.type}
+              {!equation.includes('=') && !result.finalAnswer.includes('=') ? 'Simplification' : (result.equationType || result.type)}
             </span>
             {result.type === 'polynomial' && equation.includes('=') && quadraticMethod && quadraticMethod !== 'auto' && (
               <span className="hidden sm:inline px-2 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold">

@@ -1,4 +1,33 @@
-export type SolverType = 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic' | 'ode';
+export type SolverType =
+  | 'polynomial'
+  | 'linear'
+  | 'quadratic'
+  | 'rational'
+  | 'radical'
+  | 'trigonometric'
+  | 'exponential'
+  | 'logarithmic'
+  | 'absolute_value'
+  | 'derivative'
+  | 'integral'
+  | 'system'
+  | 'inequality'
+  | 'symbolic'
+  | 'ode';
+
+export type EquationType =
+  | 'linear'
+  | 'quadratic'
+  | 'polynomial'
+  | 'rational'
+  | 'radical'
+  | 'trigonometric'
+  | 'exponential'
+  | 'logarithmic'
+  | 'absolute_value'
+  | 'system'
+  | 'inequality'
+  | 'ode';
 
 export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';
 
@@ -38,6 +67,7 @@ export interface SolverResult {
   decimalAnswer?: string; // Decimal representation for roots
   numericRoots?: number[]; // Extracted numerical real roots for visualizer & graph
   type: SolverType;
+  equationType?: EquationType;
   inputInterpretation?: string; // LaTeX description of what the engine parsed
   quadraticMethod?: QuadraticMethod;
   natureOfRoots?: string[]; // Parametric/discriminant nature of roots cases

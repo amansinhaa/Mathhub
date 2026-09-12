@@ -219,6 +219,49 @@ class TestSympySolver(unittest.TestCase):
         self.assertAlmostEqual(numerics[0], 0.5)
         self.assertAlmostEqual(numerics[1], 2.0)
 
+    # ─── REGRESSION TESTS (BUGS 1, 2, 3) ────────────────────────────────────
+
+    def test_20_regression_ln_natural_log(self):
+        """BUG 1 regression: ln(x+2) = 3 must return x = E**3 - 2 ≈ 18.0855, not base-10 log 998."""
+        res = solve_equation("ln(x + 2) = 3")
+        self.assertEqual(res["type"], "logarithmic")
+        self.assertEqual(len(res["solutions"]), 1)
+        root = res["solutions"][0]
+        # Must be mathematically identical to e^3 - 2
+        self.assertEqual(sp.simplify(root - (sp.E**3 - 2)), 0)
+        self.assertAlmostEqual(float(root.evalf()), 18.0855369, places=4)
+        # Verify by exact substitution into lhs - rhs
+        sub_check = sp.simplify(sp.log(root + 2) - 3)
+        self.assertEqual(sub_check, 0)
+        self.assertTrue(res["verified"])
+
+    def test_21_regression_trig_exact_pi(self):
+        """BUG 2 regression: sin(x) = 1/2 must return exact solutions containing pi (pi/6, 5*pi/6), not raw decimals."""
+        res = solve_equation("sin(x) = 1/2")
+        self.assertEqual(res["type"], "trigonometric")
+        sols = set(res["solutions"])
+        # Must contain exact symbolic fractions with pi
+        self.assertEqual(sols, {sp.pi / 6, 5 * sp.pi / 6})
+        # Check general solutions
+        gen_sols = res.get("general_solutions", [])
+        self.assertTrue(any(g.has(sp.pi) for g in gen_sols))
+        # Ensure solutions in steps contain pi in LaTeX
+        step_maths = " ".join([s.get("math_latex", "") for s in res["steps"]])
+        self.assertIn("\\pi", step_maths)
+        self.assertTrue(res["verified"])
+
+    def test_22_regression_equation_classifications(self):
+        """BUG 3 regression: verify classify_equation returns the real specific type for each equation family."""
+        self.assertEqual(classify_equation("sqrt(x + 4) = x - 2"), "radical")
+        self.assertEqual(classify_equation("sin(x) = 1/2"), "trigonometric")
+        self.assertEqual(classify_equation("2^x = 8"), "exponential")
+        self.assertEqual(classify_equation("ln(x + 2) = 3"), "logarithmic")
+        self.assertEqual(classify_equation("(x - 1)/(1 - x) = 1"), "rational")
+        self.assertEqual(classify_equation("2*x + 4 = 10"), "linear")
+        self.assertEqual(classify_equation("x^2 - 4 = 0"), "quadratic")
+        self.assertEqual(classify_equation("x^3 - 6*x^2 + 11*x - 6 = 0"), "polynomial")
+        self.assertEqual(classify_equation("x + y = 5, x - y = 1"), "system")
+
 
 if __name__ == "__main__":
     unittest.main()

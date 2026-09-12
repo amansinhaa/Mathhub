@@ -653,7 +653,10 @@ def solve_trigonometric(
         "math_ascii": f"{diff_expr} = 0",
     })
 
-    sol_set = solveset(diff_expr, v_sym, domain=S.Reals)
+    # Force symbolic solveset with Eq(lhs, rhs) first for exact trigonometric roots
+    sol_set = solveset(Eq(lhs, rhs), v_sym, domain=S.Reals)
+    if not sol_set or getattr(sol_set, "is_ConditionSet", False):
+        sol_set = solveset(diff_expr, v_sym, domain=S.Reals)
     general_solutions: List[sp.Expr] = []
     principal_solutions: List[sp.Expr] = []
 
