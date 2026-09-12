@@ -129,5 +129,18 @@ describe('Rational Expression & Equation Solver', () => {
       expect(stepIsolate).toBeDefined();
       expect(stepIsolate?.math).toContain('x = \\frac{8}{5}');
     });
+
+    it('solves (x - 1)/(1 - x) = 1 and detects no solution / extraneous root', () => {
+      const result = solvePolynomial('(x - 1)/(1 - x) = 1');
+      expect(result).toBeDefined();
+      expect(result.finalAnswer).toContain('No real solution');
+      expect(result.finalAnswer).toContain('x = 1');
+      expect(result.numericRoots).toEqual([]);
+      expect(result.steps.length).toBeGreaterThanOrEqual(5);
+
+      const stepExtr = result.steps.find((s) => s.explanation.includes('Extraneous') || s.explanation.includes('extraneous'));
+      expect(stepExtr).toBeDefined();
+      expect(stepExtr?.math).toContain('x = 1');
+    });
   });
 });

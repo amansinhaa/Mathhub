@@ -117,9 +117,24 @@ export function isRationalExpression(expr: string): boolean {
     return false;
   }
 
+  // Exponential equations with variable in exponent are handled by exponential solver
+  if (/(?:\b\d+|e)\s*\^\s*(?:\([^)]*[a-zA-Z][^)]*\)|[a-zA-Z]\b)/i.test(clean)) {
+    return false;
+  }
+
   // Must contain a variable
   const hasVar = /[a-zA-Z]/.test(clean);
   if (!hasVar) return false;
+
+  // Algebraic division operator ÷ is always a rational operation
+  if (clean.includes('÷') || clean.includes('\\div')) return true;
+
+  // For slash (/), at least one denominator must contain a variable (e.g. /x or /(x-1))
+  const denMatches = clean.match(/\/\s*(\([^)]+\)|[a-zA-Z0-9^+-]+)/g) || [];
+  const hasVarInDen = denMatches.some((d) => /[a-zA-Z]/.test(d));
+  if (!hasVarInDen) {
+    return false;
+  }
 
   return true;
 }
@@ -470,10 +485,32 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     let numExpr = '';
     let denExpr = '';
 
-    const singleFracMatch = (rhs === '0' || rhs === '') ? lhs.match(/^(.+)\/([^/]+)$/) : null;
-    if (singleFracMatch) {
-      numExpr = stripOuterParens(singleFracMatch[1].trim());
-      denExpr = stripOuterParens(singleFracMatch[2].trim());
+    const cleanLhs = stripOuterParens(lhs);
+    const cleanRhs = stripOuterParens(rhs);
+
+    const isSumL = splitTopLevel(cleanLhs, '+') !== null || splitTopLevel(cleanLhs, '-') !== null;
+    const isSumR = splitTopLevel(cleanRhs, '+') !== null || splitTopLevel(cleanRhs, '-') !== null;
+
+    const singleFracL = !isSumL ? splitTopLevel(cleanLhs, '/') : null;
+    const singleFracR = !isSumR ? splitTopLevel(cleanRhs, '/') : null;
+
+    if (singleFracL && (rhs === '0' || rhs === '')) {
+      numExpr = stripOuterParens(singleFracL[0].trim());
+      denExpr = stripOuterParens(singleFracL[1].trim());
+    } else if (singleFracL && !singleFracR) {
+      // E.g. (x - 1)/(1 - x) = 1
+      const numL = stripOuterParens(singleFracL[0].trim());
+      const denL = stripOuterParens(singleFracL[1].trim());
+      denExpr = denL;
+      numExpr = (nerdamer as any)(`expand((${numL}) - (${cleanRhs}) * (${denL}))`).toString();
+    } else if (singleFracL && singleFracR) {
+      // E.g. A/B = C/D -> A*D - B*C = 0
+      const numL = stripOuterParens(singleFracL[0].trim());
+      const denL = stripOuterParens(singleFracL[1].trim());
+      const numR = stripOuterParens(singleFracR[0].trim());
+      const denR = stripOuterParens(singleFracR[1].trim());
+      denExpr = (nerdamer as any)(`expand((${denL}) * (${denR}))`).toString();
+      numExpr = (nerdamer as any)(`expand((${numL}) * (${denR}) - (${numR}) * (${denL}))`).toString();
     } else {
       const simp = (nerdamer as any)(`simplify(${standardDiff})`);
       const sym = simp.symbol;
@@ -504,6 +541,15 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
 
       numExpr = numTerms.length > 0 ? numTerms.join('*') : '0';
       denExpr = denTerms.length > 0 ? denTerms.join('*') : '1';
+
+      // If nerdamer simplified away the denominator completely, reconstruct LCD from denMatches
+      if (denExpr === '1' && denMatches.length > 0) {
+        const rawDens = Array.from(new Set(denMatches.map((m) => stripOuterParens(m.replace(/^\//, '').trim()))));
+        if (rawDens.length > 0) {
+          denExpr = rawDens.map((d) => `(${d})`).join(' * ');
+          numExpr = (nerdamer as any)(`expand((${standardDiff}) * (${denExpr}))`).toString();
+        }
+      }
     }
 
     // Step: Show factored denominators if any quadratic denominator exists
@@ -537,11 +583,16 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const numFactoredTeX = cleanLatex((nerdamer as any)(`factor(${numExpr})`).toTeX())
       .replace(/\s*([+-])\s*/g, ' $1 ');
 
+    const lhsTex = polyToLatex(lhs);
+    const rhsTex = polyToLatex(rhs);
+    const lcdNeedsParens = !lcdFactoredTeX.startsWith('(') && !lcdFactoredTeX.startsWith('\\left(') && (lcdFactoredTeX.includes('+') || lcdFactoredTeX.includes('-'));
+    const lcdDisplay = lcdNeedsParens ? `\\left(${lcdFactoredTeX}\\right)` : lcdFactoredTeX;
+
     // Step: Multiply by LCD to clear fractions
     steps.push({
       stepNumber: stepNumber++,
       explanation: `Find the Least Common Denominator (LCD) and multiply both sides of the equation by $\\text{LCD} = ${lcdFactoredTeX}$ to clear all fractions:`,
-      math: `${lcdFactoredTeX} \\cdot \\left[ ${expressionToLatex(lhs)} \\right] = ${lcdFactoredTeX} \\cdot \\left[ ${expressionToLatex(rhs)} \\right]`,
+      math: `${lcdDisplay} \\cdot \\left[ ${lhsTex} \\right] = ${lcdDisplay} \\cdot \\left[ ${rhsTex} \\right]`,
     });
 
     // Step: Simplify and combine like terms
@@ -614,7 +665,9 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
 
     const finalAnswer = validRoots.length > 0
       ? validRoots.map((r) => `${variable} = ${cleanLatex((nerdamer as any)(r).toTeX())}`).join(', ')
-      : '\\text{No valid real solution (all candidates are extraneous)}';
+      : (extraneousRoots.length > 0
+          ? `\\text{No real solution (extraneous root: } ${variable} = ${extraneousRoots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ')}\\text{)}`
+          : '\\text{No real solution (inconsistent equation)}');
 
     steps.push({
       stepNumber: stepNumber++,
