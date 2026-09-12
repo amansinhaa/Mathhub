@@ -1220,6 +1220,16 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
   let cleanEq = equation.trim();
   cleanEq = autoBalanceParens(cleanEq);
 
+  // If user entered function notation: y = f(x) or f(x) = ... to solve for roots / x-intercepts
+  let functionNotation = false;
+  if (/^(?:y|f\s*\(\s*x\s*\))\s*=/i.test(cleanEq)) {
+    const rhsPart = cleanEq.replace(/^(?:y|f\s*\(\s*x\s*\))\s*=/i, '').trim();
+    if (/[a-zA-Z]/.test(rhsPart)) {
+      functionNotation = true;
+      cleanEq = `${rhsPart} = 0`;
+    }
+  }
+
   // If expression without = contains radicals or rational expressions, simplify directly
   if (!cleanEq.includes('=')) {
     const radicalResult = trySimplifyRadicalExpression(cleanEq, equation);

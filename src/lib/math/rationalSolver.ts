@@ -18,6 +18,23 @@ import * as math from 'mathjs';
 import nerdamer from 'nerdamer/all.min.js';
 import { expressionToLatex } from './normalizer';
 
+function parseRationalNumber(s: string): number {
+  if (!s) return NaN;
+  try {
+    const val = math.evaluate(s);
+    if (typeof val === 'number' && Number.isFinite(val)) return val;
+  } catch {
+    // fallback
+  }
+  const parts = s.trim().split('/');
+  if (parts.length === 2) {
+    const n = parseFloat(parts[0]);
+    const d = parseFloat(parts[1]);
+    if (!isNaN(n) && !isNaN(d) && d !== 0) return n / d;
+  }
+  return parseFloat(s);
+}
+
 function cleanLatex(s: string): string {
   if (!s) return '';
   return s
@@ -446,9 +463,15 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const lhs = parts[0].trim();
     const rhs = parts[1].trim();
 
-    // Detect variable
-    const varMatch = cleanEq.match(/[a-zA-Z]/);
-    const variable = varMatch ? varMatch[0] : 'x';
+    // Detect primary variable (prefer independent variable in expressions over dependent 'y')
+    const tokens = cleanEq.match(/[a-zA-Z]+/g) || [];
+    let variable = 'x';
+    const nonYTokens = tokens.filter((t) => t.length === 1 && t.toLowerCase() !== 'y');
+    if (nonYTokens.length > 0) {
+      variable = nonYTokens[0];
+    } else if (tokens.length > 0) {
+      variable = tokens[0];
+    }
 
     // Form: LHS - RHS = 0
     const standardDiff = `(${lhs}) - (${rhs})`;
@@ -460,7 +483,8 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
       .filter((d) => /[a-zA-Z]/.test(d));
 
     for (const d of denList) {
-      const r = getDenominatorRoots(d, variable);
+      const denVar = d.match(/[a-zA-Z]/)?.[0] || variable;
+      const r = getDenominatorRoots(d, denVar);
       r.forEach((val) => restrictionsSet.add(val));
     }
 
@@ -476,25 +500,28 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     // Step 1: State domain restrictions with full derivation showing why denominators cannot be zero
     if (restrictions.length > 0) {
       const restrDerivations = denList.map((d) => {
-        const roots = getDenominatorRoots(d, variable);
+        const denVar = d.match(/[a-zA-Z]/)?.[0] || variable;
+        const roots = getDenominatorRoots(d, denVar);
         const rootsTeX = roots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ');
         const dTeX = polyToLatex(d);
-        return `${dTeX} \\neq 0 \\implies ${variable} \\neq ${rootsTeX}`;
+        return `${dTeX} \\neq 0 \\implies ${denVar} \\neq ${rootsTeX}`;
       });
 
       const subSteps = denList.map((d) => {
-        const roots = getDenominatorRoots(d, variable);
+        const denVar = d.match(/[a-zA-Z]/)?.[0] || variable;
+        const roots = getDenominatorRoots(d, denVar);
         const rootsTeX = roots.map((r) => cleanLatex((nerdamer as any)(r).toTeX())).join(', ');
         const dTeX = polyToLatex(d);
         return {
           title: `Why denominator (${d}) cannot be zero:`,
-          math: `\\text{In any fraction } \\frac{A}{B}, \\text{ division by zero is undefined } (B \\neq 0). \\\\ \\text{Setting the denominator } ${dTeX} \\neq 0 \\implies ${variable} \\neq ${rootsTeX}`,
+          math: `\\text{In any fraction } \\frac{A}{B}, \\text{ division by zero is undefined } (B \\neq 0). \\\\ \\text{Setting the denominator } ${dTeX} \\neq 0 \\implies ${denVar} \\neq ${rootsTeX}`,
         };
       });
 
+      const firstDenVar = denList[0]?.match(/[a-zA-Z]/)?.[0] || variable;
       steps.push({
         stepNumber: stepNumber++,
-        explanation: `Identify domain restrictions (excluded values). In any rational fraction, division by zero is mathematically undefined, so every denominator containing the variable $${variable}$ must not equal zero ($Q(${variable}) \\neq 0$):`,
+        explanation: `Identify domain restrictions (excluded values). In any rational fraction, division by zero is mathematically undefined, so every denominator containing the variable $${firstDenVar}$ must not equal zero ($Q(${firstDenVar}) \\neq 0$):`,
         math: restrDerivations.join(' \\quad \\text{and} \\quad '),
         subSteps,
       });
@@ -658,9 +685,9 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const extraneousRoots: string[] = [];
 
     for (const sol of cleanSols) {
-      const numSol = Number(sol);
+      const numSol = parseRationalNumber(sol);
       const isExtraneous = restrictions.some((res) => {
-        const numRes = Number(res);
+        const numRes = parseRationalNumber(res);
         if (!isNaN(numSol) && !isNaN(numRes)) {
           return Math.abs(numSol - numRes) < 1e-6;
         }
@@ -704,7 +731,7 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     });
 
     const numericRoots: number[] = validRoots
-      .map((r) => parseFloat(r))
+      .map((r) => parseRationalNumber(r))
       .filter((n) => !isNaN(n) && isFinite(n));
 
     return {

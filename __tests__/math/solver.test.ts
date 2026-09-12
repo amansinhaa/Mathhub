@@ -442,5 +442,17 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(res.finalAnswer).not.toContain('x = -3');
       expect(res.steps.some(s => s.explanation.includes('extraneous') || s.explanation.includes('Verify'))).toBe(true);
     });
+
+    it('solves user rational equation y = (2/(3-2x)^2) - x or (2/(3-2x)^2) - x = 0', () => {
+      const resA = solvePolynomial('y = (2/(3-2x)^2) - x');
+      expect(resA.finalAnswer).toContain('x = \\frac{1}{2}');
+      expect(resA.finalAnswer).toContain('x = 2');
+      expect(resA.numericRoots).toEqual([0.5, 2]);
+
+      const resB = solvePolynomial('2/(3-2x)^2 - x = 0');
+      expect(resB.finalAnswer).toContain('x = \\frac{1}{2}');
+      expect(resB.finalAnswer).toContain('x = 2');
+      expect(resB.numericRoots).toEqual([0.5, 2]);
+    });
   });
 });
