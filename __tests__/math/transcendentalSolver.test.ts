@@ -83,6 +83,14 @@ describe('Transcendental Equation Solver', () => {
       expect(res.finalAnswer).toContain('x_2 = 1');
     });
 
+    it('solves quadratic-form exponential equation with bare exponent 2^2x−5⋅2^(x+1)+16=0', () => {
+      const res = solvePolynomial('2^2x−5⋅2^(x+1)+16=0');
+      expect(res.numericRoots).toEqual([1, 3]);
+      expect(res.finalAnswer).toContain('x_1 = 1');
+      expect(res.finalAnswer).toContain('x_2 = 3');
+      expect(res.steps.length).toBeGreaterThanOrEqual(5);
+    });
+
     it('solves exponential equation with base unification 4^x - 3*2^x + 2 = 0', () => {
       const res = solvePolynomial('4^x - 3*2^x + 2 = 0');
       expect(res.numericRoots).toBeDefined();

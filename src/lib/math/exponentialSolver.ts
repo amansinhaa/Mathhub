@@ -441,9 +441,10 @@ export function trySolveExponentialEquation(
         for (const t of terms) {
           if (t.d !== 0 || t.c !== 1) {
             const baseTerm = `${targetBaseStr}^{${variable}}`;
+            const powerPart = t.c === 1 ? baseTerm : `(${baseTerm})^{${t.c}}`;
             const expandedTerm = t.d !== 0
-              ? `${targetBaseStr}^{${t.d}} \\cdot (${baseTerm})^{${t.c}} = ${formatNum(Math.pow(t.baseVal, t.d))}(${baseTerm})^{${t.c}}`
-              : `(${baseTerm})^{${t.c}}`;
+              ? `${targetBaseStr}^{${t.d}} \\cdot ${powerPart} = ${formatNum(Math.pow(t.baseVal, t.d))} \\cdot ${powerPart}`
+              : powerPart;
             const cleanFull = t.full.replace(/\*/g, '').replace(/\^\(([^)]+)\)/g, '^{$1}');
             lawNotes.push(`${cleanFull} = ${expandedTerm}`);
           }

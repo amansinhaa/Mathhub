@@ -140,6 +140,11 @@ export function normalizeExpression(input: string): string {
     return `${fn}(${arg})`;
   });
 
+  // 4c. Normalize bare compound exponents BEFORE implicit multiplication
+  //     (e.g. 2^2x → 2^(2x), e^2x → e^(2x), 2^-x → 2^(-x), 3^-2x → 3^(-2x))
+  //     Otherwise rule 5 turns 2^2x into 2^2*x which evaluates as (2^2)*x = 4x
+  expr = expr.replace(/(?<=\^)([+-]?(?:[0-9]+[a-zA-Z]+|[a-zA-Z]+[0-9]+|[+-][a-zA-Z]+))(?![a-zA-Z0-9_^(])/g, '($1)');
+
   // 5. Handle implicit multiplication
   // Known function names to preserve before opening parenthesis
   const reservedFuncs = [
