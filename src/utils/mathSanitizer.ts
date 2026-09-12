@@ -90,18 +90,33 @@ export function extractPlotFunction(equation: string, roots: number[] = []): {
     }
   }
 
+  // Ensure implicit coefficients have explicit multiplication first so word boundaries work
+  clean = clean.replace(/(\d+)([a-zA-Z])/g, '$1*$2');
+
+  // Reserved math function and constant names that must never be treated as variables
+  const RESERVED_WORDS = new Set([
+    'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
+    'asinh', 'acosh', 'atanh', 'sec', 'csc', 'cot',
+    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'ceil', 'floor', 'round', 'sign',
+    'min', 'max', 'pi', 'PI', 'e', 'i'
+  ]);
+
   // Replace alternative single-letter variables (e.g. t, a, n, z) with x for the 2D Cartesian canvas
-  // First check if there's no 'x' present but another single variable (like 't')
-  if (!/[a-wyz]?[x][a-wyz]?/i.test(clean) && !/\bx\b/i.test(clean)) {
-    const match = clean.match(/([a-wyz])/i);
-    if (match && match[1]) {
-      const v = match[1];
-      clean = clean.replace(new RegExp(v, 'g'), 'x');
+  // First check if there's no 'x' present as an isolated variable
+  if (!/\bx\b/i.test(clean)) {
+    const tokens = clean.match(/[a-zA-Z]+/g) || [];
+    let detectedVar: string | null = null;
+    for (const tok of tokens) {
+      if (tok.length === 1 && !RESERVED_WORDS.has(tok.toLowerCase()) && tok.toLowerCase() !== 'x') {
+        detectedVar = tok;
+        break;
+      }
+    }
+    if (detectedVar) {
+      // Replace ONLY whole-word occurrences of this variable with x
+      clean = clean.replace(new RegExp(`\\b${detectedVar}\\b`, 'g'), 'x');
     }
   }
-
-  // Ensure implicit coefficients have explicit multiplication if needed or normalized
-  clean = clean.replace(/(\d+)([a-zA-Z])/g, '$1*$2');
 
   return {
     fn: clean,

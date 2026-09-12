@@ -16,6 +16,19 @@ describe('Math Sanitizer & Bridge Utilities', () => {
     expect(res.fn).toContain('72*x^3');
     expect(res.roots).toEqual([1]);
   });
+
+  it('safely preserves trigonometric function names without mangling', () => {
+    const resSin = extractPlotFunction('sin(t) = 0');
+    expect(resSin.fn).toBe('sin(x)');
+    expect(resSin.fn).not.toContain('xin');
+
+    const resCos = extractPlotFunction('cos(t) - 1 = 0');
+    expect(resCos.fn).toBe('cos(x) - 1');
+    expect(resCos.fn).not.toContain('xos');
+
+    const resExp = extractPlotFunction('exp(u) - 5 = 0');
+    expect(resExp.fn).toBe('exp(x) - 5');
+  });
 });
 
 describe('Piecewise Parser', () => {

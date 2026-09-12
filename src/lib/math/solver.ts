@@ -78,6 +78,44 @@ function newtonPolish(
   return x;
 }
 
+/**
+ * Safely parse a mathematical coefficient string (which may be a fraction like "1/2",
+ * negative number "-3/4", radical, or numeric string) into a finite number.
+ */
+export function parseCoeffValue(s: string): number {
+  const trimmed = s.trim();
+  if (!trimmed) return 0;
+  try {
+    const evaluated = (nerdamer as any)(trimmed).evaluate().text();
+    const val = math.evaluate(evaluated);
+    if (typeof val === 'number' && Number.isFinite(val)) return val;
+    if (val && typeof val.valueOf === 'function') {
+      const num = Number(val.valueOf());
+      if (Number.isFinite(num)) return num;
+    }
+  } catch {
+    // fallback
+  }
+  try {
+    const val = math.evaluate(trimmed);
+    if (typeof val === 'number' && Number.isFinite(val)) return val;
+    if (val && typeof val.valueOf === 'function') {
+      const num = Number(val.valueOf());
+      if (Number.isFinite(num)) return num;
+    }
+  } catch {
+    // fallback
+  }
+  const parts = trimmed.split('/');
+  if (parts.length === 2) {
+    const n = parseFloat(parts[0]);
+    const d = parseFloat(parts[1]);
+    if (Number.isFinite(n) && Number.isFinite(d) && d !== 0) return n / d;
+  }
+  const n = parseFloat(trimmed);
+  return isNaN(n) ? 0 : n;
+}
+
 // ─── Coefficient Extraction ─────────────────────────────────────────────────
 
 /**
@@ -96,10 +134,7 @@ export function extractCoefficients(
       const arr = str
         .slice(1, -1)
         .split(',')
-        .map((s: string) => {
-          const val = Number((nerdamer as any)(s.trim()).evaluate().text());
-          return isNaN(val) ? 0 : val;
-        });
+        .map((s: string) => parseCoeffValue(s));
       // nerdamer gives [a_0, a_1, ..., a_n] -> reverse to [a_n, ..., a_0]
       const coeffs = arr.reverse();
       // Remove leading zeros
@@ -667,10 +702,10 @@ export function trySolveRadicalEquation(cleanEq: string, rawEq: string): SolverR
         const cObj = (nerdamer as any).coeffs(`(${radicand}) - (${rhs})^2`, variable);
         const cStr = cObj.toString();
         if (cStr.startsWith('[') && cStr.endsWith(']')) {
-          const arr = cStr.slice(1, -1).split(',').map((s: string) => {
-            const val = Number((nerdamer as any)(s.trim()).evaluate().text());
-            return isNaN(val) ? 0 : val;
-          });
+          const arr = cStr
+            .slice(1, -1)
+            .split(',')
+            .map((s: string) => parseCoeffValue(s));
           if (arr.length === 3 && Math.abs(arr[2]) > 1e-9) {
             const c = arr[0];
             const b = arr[1];
@@ -804,6 +839,222 @@ export function trySolveRadicalEquation(cleanEq: string, rawEq: string): SolverR
   }
 
   return null;
+}
+
+/**
+ * Solves absolute value equations of the form |A| = B or k|A| = B.
+ * Splits into positive and negative branches, checks for negative constant RHS,
+ * and verifies candidate solutions to discard extraneous roots.
+ */
+export function trySolveAbsoluteValueEquation(cleanEq: string, rawEq: string): SolverResult | null {
+  if (!cleanEq.includes('=')) return null;
+
+  // Check if expression contains absolute value signs or abs()
+  const hasAbs = /\|[^|]+\||abs\([^)]+\)/.test(cleanEq);
+  if (!hasAbs) return null;
+
+  try {
+    const parts = cleanEq.split('=');
+    let lhs = parts[0].trim();
+    let rhs = parts[1].trim();
+
+    // Standardize abs(...) to |...|
+    lhs = lhs.replace(/abs\(([^)]+)\)/g, '|$1|');
+    rhs = rhs.replace(/abs\(([^)]+)\)/g, '|$1|');
+
+    // If LHS has no abs but RHS has abs, swap them
+    if (!lhs.includes('|') && rhs.includes('|')) {
+      const tmp = lhs;
+      lhs = rhs;
+      rhs = tmp;
+    }
+
+    let insideA = '';
+    let isolatedRhs = rhs;
+
+    const pureAbsMatch = lhs.match(/^\|([^|]+)\|$/);
+    const coeffAbsMatch = lhs.match(/^([+-]?\d*(?:\.\d+)?)\*?\|([^|]+)\|$/);
+
+    if (pureAbsMatch) {
+      insideA = pureAbsMatch[1].trim();
+    } else if (coeffAbsMatch && coeffAbsMatch[1] && coeffAbsMatch[1] !== '+' && coeffAbsMatch[1] !== '-') {
+      const coeff = parseFloat(coeffAbsMatch[1]);
+      if (!isNaN(coeff) && Math.abs(coeff) > 1e-9) {
+        insideA = coeffAbsMatch[2].trim();
+        isolatedRhs = `(${rhs}) / (${coeff})`;
+      } else {
+        return null;
+      }
+    } else {
+      const addMatch = lhs.match(/^\|([^|]+)\|\s*([+-]\s*[^|]+)$/);
+      if (addMatch) {
+        insideA = addMatch[1].trim();
+        const extra = addMatch[2].trim();
+        isolatedRhs = `(${rhs}) - (${extra})`;
+      } else {
+        return null;
+      }
+    }
+
+    if (!insideA) return null;
+
+    const variable = detectVariable(cleanEq);
+    const steps: SolutionStep[] = [];
+    let stepNumber = 1;
+
+    // Step 1: Write isolated form
+    const isolatedLatex = `\\left|${expressionToLatex(insideA)}\\right| = ${expressionToLatex(isolatedRhs)}`;
+    steps.push({
+      stepNumber: stepNumber++,
+      explanation: 'Isolate the absolute value expression on one side of the equation:',
+      math: isolatedLatex,
+    });
+
+    // Check if RHS evaluates to a constant
+    let constRhs: number | null = null;
+    try {
+      const evalR = math.evaluate(isolatedRhs);
+      if (typeof evalR === 'number' && Number.isFinite(evalR)) {
+        constRhs = evalR;
+      }
+    } catch {
+      // RHS depends on variable
+    }
+
+    // If RHS is a strictly negative constant, absolute value equation has NO real solution
+    if (constRhs !== null && constRhs < -1e-9) {
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: `By definition, the absolute value of any real expression is always non-negative ($|u| \\ge 0$). Since the right-hand side is negative (${constRhs} < 0), this equation has no real solutions.`,
+        math: `\\left|${expressionToLatex(insideA)}\\right| \\geq 0 \\neq ${constRhs}`,
+      });
+
+      return {
+        type: 'polynomial',
+        steps,
+        finalAnswer: '\\text{No real solution } (\\emptyset)',
+        inputInterpretation: `\\text{Solve: } ${expressionToLatex(cleanEq)}`,
+        numericRoots: [],
+      };
+    }
+
+    // Step 2: Split into two branches
+    steps.push({
+      stepNumber: stepNumber++,
+      explanation: 'Apply the absolute value definition: $|u| = c \\iff u = c \\quad \\text{or} \\quad u = -c$. Split into two algebraic cases:',
+      math: `${expressionToLatex(insideA)} = ${expressionToLatex(isolatedRhs)} \\quad \\text{or} \\quad ${expressionToLatex(insideA)} = -\\left(${expressionToLatex(isolatedRhs)}\\right)`,
+    });
+
+    // Branch 1: A = B
+    const eqBranch1 = `(${insideA}) - (${isolatedRhs}) = 0`;
+    const res1 = solvePolynomial(eqBranch1);
+
+    // Branch 2: A = -B
+    const eqBranch2 = `(${insideA}) + (${isolatedRhs}) = 0`;
+    const res2 = solvePolynomial(eqBranch2);
+
+    const candRoots: number[] = [];
+    if (res1 && res1.numericRoots) {
+      candRoots.push(...res1.numericRoots);
+    }
+    if (res2 && res2.numericRoots) {
+      candRoots.push(...res2.numericRoots);
+    }
+
+    // Deduplicate candidate roots
+    const uniqueCands: number[] = [];
+    for (const r of candRoots) {
+      if (!uniqueCands.some(u => Math.abs(u - r) < 1e-6)) {
+        uniqueCands.push(r);
+      }
+    }
+
+    // Detail Branch 1 & Branch 2 solutions
+    steps.push({
+      stepNumber: stepNumber++,
+      explanation: `Solve Case 1 (Positive Branch): $${expressionToLatex(insideA)} = ${expressionToLatex(isolatedRhs)}$.`,
+      math: res1?.finalAnswer || `\\text{Solve Branch 1}`,
+      subSteps: res1?.steps?.map(s => ({ title: `Case 1: ${s.explanation}`, math: s.math || '' })),
+    });
+
+    steps.push({
+      stepNumber: stepNumber++,
+      explanation: `Solve Case 2 (Negative Branch): $${expressionToLatex(insideA)} = -(${expressionToLatex(isolatedRhs)})$.`,
+      math: res2?.finalAnswer || `\\text{Solve Branch 2}`,
+      subSteps: res2?.steps?.map(s => ({ title: `Case 2: ${s.explanation}`, math: s.math || '' })),
+    });
+
+    // Verification against original |insideA| = isolatedRhs
+    const validRoots: number[] = [];
+    const extraneousRoots: number[] = [];
+    const checkSubSteps: { title: string; math: string }[] = [];
+
+    for (const r of uniqueCands) {
+      let valLhs = NaN;
+      let valRhs = NaN;
+      try {
+        valLhs = Math.abs(Number(math.evaluate(insideA, { [variable]: r })));
+        valRhs = Number(math.evaluate(isolatedRhs, { [variable]: r }));
+      } catch {}
+
+      const isValid = !isNaN(valLhs) && !isNaN(valRhs) && Math.abs(valLhs - valRhs) < 1e-4;
+      const frac = toFraction(r);
+      const exactR = frac && frac.d > 1 ? fmtFraction(r) : fmt(r);
+
+      if (isValid) {
+        validRoots.push(r);
+        checkSubSteps.push({
+          title: `Verify ${variable} = ${exactR}:`,
+          math: `|${Number(valLhs.toFixed(4))}| = ${Number(valRhs.toFixed(4))} \\quad \\checkmark \\text{ (Valid)}`,
+        });
+      } else {
+        extraneousRoots.push(r);
+        checkSubSteps.push({
+          title: `Verify ${variable} = ${exactR}:`,
+          math: `|${Number(valLhs.toFixed(4))}| \\neq ${Number(valRhs.toFixed(4))} \\quad \\times \\text{ (Extraneous)}`,
+        });
+      }
+    }
+
+    if (uniqueCands.length > 0) {
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: extraneousRoots.length > 0
+          ? 'Substitute each candidate value back into the original equation to check for extraneous solutions:'
+          : 'Verify each candidate solution by substituting it back into the equation:',
+        math: `\\text{Valid Solutions: } ${validRoots.length > 0 ? validRoots.map(r => `${variable} = ${fmt(r)}`).join(', ') : '\\emptyset'}`,
+        subSteps: checkSubSteps,
+      });
+    }
+
+    if (validRoots.length === 0) {
+      return {
+        type: 'polynomial',
+        steps,
+        finalAnswer: '\\text{No real solution } (\\emptyset)',
+        inputInterpretation: `\\text{Solve: } ${expressionToLatex(cleanEq)}`,
+        numericRoots: [],
+      };
+    }
+
+    validRoots.sort((a, b) => a - b);
+    const finalAnswer = validRoots
+      .map(r => {
+        const frac = toFraction(r);
+        return `${variable} = ${frac && frac.d > 1 ? fmtFraction(r) : fmt(r)}`;
+      })
+      .join(', \\quad ');
+
+    return {
+      type: 'polynomial',
+      steps,
+      finalAnswer,
+      inputInterpretation: `\\text{Solve absolute value equation: } ${expressionToLatex(cleanEq)}`,
+      numericRoots: validRoots,
+    };
+  } catch {
+    return null;
+  }
 }
 
 function cleanLatexMath(tex: string): string {
@@ -998,6 +1249,11 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
     if (radicalEqResult) {
       return radicalEqResult;
     }
+
+    const absEqResult = trySolveAbsoluteValueEquation(cleanEq, equation);
+    if (absEqResult) {
+      return absEqResult;
+    }
   }
 
   // Check if this is an Ordinary Differential Equation (ODE)
@@ -1028,6 +1284,17 @@ export function solvePolynomial(equation: string, method: QuadraticMethod = 'aut
       ],
       finalAnswer: '\\text{Empty equation}',
     };
+  }
+
+  // Check if auto-interpreted expression is an Absolute Value Equation
+  if (cleanEq.includes('=')) {
+    const absEqResult = trySolveAbsoluteValueEquation(cleanEq, equation);
+    if (absEqResult) {
+      if (interpretation.interpreted) {
+        absEqResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}`;
+      }
+      return absEqResult;
+    }
   }
 
   // Check if this is an Exponential Equation (e.g. 3^(2x+1) - 10*3^x + 3 = 0, 4^x - 3*2^x + 2 = 0)

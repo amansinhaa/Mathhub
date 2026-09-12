@@ -387,4 +387,60 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(res.steps.some(s => s.explanation.includes('distribute'))).toBe(true);
     });
   });
+
+  // ─── Fractional Coefficients Accuracy ─────────────────────────────────────
+  describe('Fractional Coefficients Accuracy', () => {
+    it('accurately solves quadratic with fractional coefficient (1/2)x^2 - 2 = 0', () => {
+      const res = solvePolynomial('(1/2)x^2 - 2 = 0');
+      expect(res.finalAnswer).not.toContain('No solution');
+      expect(res.numericRoots).toBeDefined();
+      expect(res.numericRoots?.some(r => Math.abs(r - 2) < 1e-4)).toBe(true);
+      expect(res.numericRoots?.some(r => Math.abs(r + 2) < 1e-4)).toBe(true);
+    });
+
+    it('accurately solves linear equation with fractions x/2 + x/3 = 5', () => {
+      const res = solvePolynomial('x/2 + x/3 = 5');
+      expect(res.finalAnswer).toContain('6');
+      expect(res.numericRoots).toContain(6);
+    });
+
+    it('accurately solves (2/3)x + 4 = 10 -> x = 9', () => {
+      const res = solvePolynomial('(2/3)x + 4 = 10');
+      expect(res.finalAnswer).toContain('9');
+      expect(res.numericRoots).toContain(9);
+    });
+  });
+
+  // ─── Absolute Value Equations ─────────────────────────────────────────────
+  describe('Absolute Value Equations', () => {
+    it('solves |2x - 3| = 7 splitting into positive and negative branches', () => {
+      const res = solvePolynomial('|2x - 3| = 7');
+      expect(res.numericRoots).toEqual([-2, 5]);
+      expect(res.finalAnswer).toContain('-2');
+      expect(res.finalAnswer).toContain('5');
+      expect(res.steps.some(s => s.explanation.includes('Case 1') || s.explanation.includes('Positive Branch'))).toBe(true);
+      expect(res.steps.some(s => s.explanation.includes('Case 2') || s.explanation.includes('Negative Branch'))).toBe(true);
+    });
+
+    it('recognizes |x + 5| = -3 has no real solution because absolute value cannot be negative', () => {
+      const res = solvePolynomial('|x + 5| = -3');
+      expect(res.finalAnswer).toContain('No real solution');
+      expect(res.steps.some(s => s.explanation.includes('non-negative') || s.explanation.includes('negative'))).toBe(true);
+    });
+
+    it('handles abs(x - 1) = 4 format and finds roots -3 and 5', () => {
+      const res = solvePolynomial('abs(x - 1) = 4');
+      expect(res.numericRoots).toEqual([-3, 5]);
+      expect(res.finalAnswer).toContain('5');
+      expect(res.finalAnswer).toContain('-3');
+    });
+
+    it('identifies and discards extraneous root for |x - 3| = 2x', () => {
+      const res = solvePolynomial('|x - 3| = 2x');
+      expect(res.numericRoots).toEqual([1]);
+      expect(res.finalAnswer).toContain('x = 1');
+      expect(res.finalAnswer).not.toContain('x = -3');
+      expect(res.steps.some(s => s.explanation.includes('extraneous') || s.explanation.includes('Verify'))).toBe(true);
+    });
+  });
 });
