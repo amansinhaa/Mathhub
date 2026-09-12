@@ -19,10 +19,17 @@ async function getPyodide() {
       await pyodide.loadPackage("micropip");
       const micropip = pyodide.pyimport("micropip");
       await micropip.install("sympy");
-      await pyodide.runPythonAsync(`
-import sympy
-from sympy import symbols, Eq, solve, simplify, factor, expand, latex, diff, integrate
-`);
+
+      try {
+        const resp = await fetch("/workers/sympy_solver.py");
+        if (resp.ok) {
+          const solverCode = await resp.text();
+          await pyodide.runPythonAsync(solverCode);
+        }
+      } catch (e) {
+        console.warn("Could not preload /workers/sympy_solver.py:", e);
+      }
+
       pyodideInstance = pyodide;
       return pyodide;
     } catch (err) {
@@ -53,39 +60,59 @@ self.onmessage = async (e) => {
 
       const code = `
 try:
-    var_sym = sympy.Symbol(var_str)
-    eq_in = eq_str.strip()
-    if '=' in eq_in:
-        lhs, rhs = eq_in.split('=', 1)
-        target_eq = sympy.Eq(sympy.sympify(lhs), sympy.sympify(rhs))
+    import json
+    if 'solve_for_web' in globals():
+        out_json = solve_for_web(eq_str, var_str)
     else:
-        target_eq = sympy.Eq(sympy.sympify(eq_in), 0)
-    sols = sympy.solve(target_eq, var_sym)
-    res_latex = [sympy.latex(s) for s in sols]
-    res_numeric = []
-    for s in sols:
-        try:
-            val = float(s.evalf())
-            if not sympy.isnan(val) and s != sympy.zoo:
-                res_numeric.append(val)
-        except Exception:
-            pass
-    out_res = {
-        'latex': ', '.join([f"{var_str} = {l}" for l in res_latex]),
-        'solutions': res_latex,
-        'numeric': res_numeric,
-        'count': len(sols)
-    }
+        import sympy
+        var_sym = sympy.Symbol(var_str)
+        eq_in = eq_str.strip()
+        if '=' in eq_in:
+            lhs, rhs = eq_in.split('=', 1)
+            target_eq = sympy.Eq(sympy.sympify(lhs), sympy.sympify(rhs))
+        else:
+            target_eq = sympy.Eq(sympy.sympify(eq_in), 0)
+        sols = sympy.solve(target_eq, var_sym)
+        out_json = json.dumps({
+            'success': True,
+            'solutions': [{'latex': sympy.latex(s), 'ascii': str(s)} for s in sols],
+            'steps': [],
+            'type': 'algebraic',
+            'domain_notes': '',
+            'verified': True
+        })
 except Exception as err:
-    out_res = {'error': str(err)}
+    import json
+    out_json = json.dumps({'success': False, 'error': str(err)})
 `;
       await py.runPythonAsync(code);
-      const res = py.globals.get('out_res').toJs({ dict_converter: Object.fromEntries });
-      if (res.error) {
-        self.postMessage({ id, success: false, error: res.error });
-      } else {
-        self.postMessage({ id, success: true, data: res });
+      const rawJson = py.globals.get('out_json');
+      const parsed = JSON.parse(rawJson);
+
+      if (!parsed.success && parsed.error) {
+        self.postMessage({ id, success: false, error: parsed.error });
+        return;
       }
+
+      const rawSols = parsed.solutions || [];
+      const res_latex = rawSols.map(s => (typeof s === 'object' && s !== null) ? s.latex : String(s));
+      const res_numeric = rawSols
+        .map(s => (typeof s === 'object' && s !== null) ? s.numeric : null)
+        .filter(n => n !== null && n !== undefined);
+
+      const out_res = {
+        latex: res_latex.length ? res_latex.map(l => `${variable} = ${l}`).join(', ') : '\\emptyset',
+        solutions: res_latex,
+        numeric: res_numeric,
+        count: res_latex.length,
+        type: parsed.type,
+        steps: parsed.steps || [],
+        domain_notes: parsed.domain_notes || '',
+        excluded: parsed.excluded || [],
+        verified: parsed.verified ?? true,
+      };
+
+      self.postMessage({ id, success: true, data: out_res });
       return;
     }
 

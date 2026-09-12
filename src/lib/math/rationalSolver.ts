@@ -467,9 +467,9 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const tokens = cleanEq.match(/[a-zA-Z]+/g) || [];
     let variable = 'x';
     const nonYTokens = tokens.filter((t) => t.length === 1 && t.toLowerCase() !== 'y');
-    if (nonYTokens.length > 0) {
+    if (nonYTokens.length > 0 && nonYTokens[0]) {
       variable = nonYTokens[0];
-    } else if (tokens.length > 0) {
+    } else if (tokens.length > 0 && tokens[0]) {
       variable = tokens[0];
     }
 
