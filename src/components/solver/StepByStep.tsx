@@ -9,7 +9,6 @@ import { Check, Copy, ChevronDown, Share2, LineChart, Info } from 'lucide-react'
 import dynamic from '@/components/shared/DynamicShim';
 import { extractPlotFunction } from '@/utils/mathSanitizer';
 import { NumberLine, parseNumberLineData } from './NumberLine';
-import { sympyService } from '@/lib/math/sympyService';
 
 const FunctionPlotter = dynamic(() => import('@/components/graph/FunctionPlotter'), {
   ssr: false,
@@ -29,32 +28,12 @@ export default function StepByStep() {
   const [copiedSteps, setCopiedSteps] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showDecimal, setShowDecimal] = useState(false);
-  const [casVerified, setCasVerified] = useState(false);
 
   // Keep steps collapsed by default when result or method changes
   useEffect(() => {
     setShowSteps(false);
     setShowDecimal(false);
     setExpandedSteps({});
-    setCasVerified(false);
-
-    if (!equation || !result) return;
-
-    let isMounted = true;
-    if (result.numericRoots && result.numericRoots.length > 0) {
-      sympyService
-        .verify(equation, result.numericRoots)
-        .then((res) => {
-          if (isMounted && res && res.allValid) {
-            setCasVerified(true);
-          }
-        })
-        .catch(() => {});
-    }
-
-    return () => {
-      isMounted = false;
-    };
   }, [result, solverType, equation, quadraticMethod]);
 
   if (!result) return null;
@@ -159,12 +138,6 @@ export default function StepByStep() {
             {result.type === 'polynomial' && equation.includes('=') && quadraticMethod && quadraticMethod !== 'auto' && (
               <span className="hidden sm:inline px-2 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold">
                 {quadraticMethod === 'factoring' ? 'Factoring' : quadraticMethod === 'completing_square' ? 'Completing Square' : 'Formula'}
-              </span>
-            )}
-            {casVerified && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-700/60 rounded-full text-[10px] sm:text-[11px] font-mono font-bold shadow-2xs">
-                <Check size={11} className="stroke-[3]" />
-                <span>CAS Verified (SymPy)</span>
               </span>
             )}
           </div>
