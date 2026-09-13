@@ -1379,6 +1379,18 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     standardExpr = lhs.trim();
   }
 
+  const lhsTrim = lhs ? lhs.trim() : '';
+  const rhsTrim = rhs !== undefined ? rhs.trim() : '';
+  const lhsPoly = lhsTrim ? extractCoefficients(lhsTrim, variable) : null;
+  const rhsPoly = rhsTrim && rhsTrim !== '0' ? extractCoefficients(rhsTrim, variable) : null;
+  const equationSides = {
+    lhs: lhsTrim,
+    rhs: rhsTrim,
+    lhsCoeffs: lhsPoly?.coeffs,
+    rhsCoeffs: rhsPoly?.coeffs,
+    rawEquation: equation,
+  };
+
   // Extract exact polynomial coefficients and degree
   const poly = extractCoefficients(standardExpr, variable);
 
@@ -1390,7 +1402,7 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
       const [a, b] = coeffs;
       const rootVal = -b / a;
       const frac = toFraction(rootVal);
-      const steps = generateLinearSteps(a, b, variable);
+      const steps = generateLinearSteps(a, b, variable, equationSides);
       return {
         type: 'polynomial',
         equationType: 'linear',
@@ -1405,7 +1417,7 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     // ─── DEGREE 2 (QUADRATIC): ax^2 + bx + c = 0 ────────────────────────────
     if (degree === 2) {
       const [a, b, c] = coeffs;
-      const steps = generateQuadraticSteps(a, b, c, variable, method);
+      const steps = generateQuadraticSteps(a, b, c, variable, method, equationSides);
       const delta = b * b - 4 * a * c;
       let finalAnswer = '';
       let decimalAnswer: string | undefined = undefined;
@@ -1457,10 +1469,11 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     if (degree === 3) {
       const [a, b, c, d] = coeffs;
       const roots = solvePolynomialNumerical(coeffs);
-      const steps = generateCubicSteps(a, b, c, d, roots, variable);
+      const steps = generateCubicSteps(a, b, c, d, roots, variable, equationSides);
       const { exact, decimal, numericRoots } = formatFinalRoots(roots, variable, hasSubscripts);
       return {
         type: 'polynomial',
+        equationType: 'polynomial',
         steps,
         finalAnswer: exact,
         decimalAnswer: decimal,
@@ -1472,10 +1485,11 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     // ─── DEGREE 4 (QUARTIC): ax^4 + bx^3 + cx^2 + dx + e = 0 ────────────────
     if (degree === 4) {
       const roots = solvePolynomialNumerical(coeffs);
-      const steps = generateQuarticSteps(coeffs, roots, variable);
+      const steps = generateQuarticSteps(coeffs, roots, variable, equationSides);
       const { exact, decimal, numericRoots } = formatFinalRoots(roots, variable, hasSubscripts);
       return {
         type: 'polynomial',
+        equationType: 'polynomial',
         steps,
         finalAnswer: exact,
         decimalAnswer: decimal,
@@ -1487,7 +1501,7 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     // ─── DEGREE 5+ (HIGHER ORDER): ax^n + ... = 0 (Abel–Ruffini) ────────────
     if (degree >= 5) {
       const roots = solvePolynomialNumerical(coeffs);
-      const steps = generateDegree5PlusSteps(coeffs, roots, variable);
+      const steps = generateDegree5PlusSteps(coeffs, roots, variable, equationSides);
       const { exact, decimal, numericRoots } = formatFinalRoots(roots, variable, hasSubscripts);
       return {
         type: 'polynomial',

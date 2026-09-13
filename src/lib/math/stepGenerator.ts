@@ -1,4 +1,5 @@
-import { SolutionStep, DivisionDetails, QuadraticMethod } from '@/types/solver';
+import { SolutionStep, DivisionDetails, QuadraticMethod, SubStep } from '@/types/solver';
+import { expressionToLatex } from './normalizer';
 
 /** Format a signed coefficient term for display, handling +/- gracefully. */
 function signedTerm(coeff: number, varPart: string, isFirst: boolean): string {
@@ -276,14 +277,257 @@ export function generateSyntheticDivisionLatex(
 
 // ─── DEGREE 1: LINEAR STEPS ──────────────────────────────────────────────────
 
-export function generateLinearSteps(a: number, b: number, variable: string = 'x'): SolutionStep[] {
+/** Clean display expression for human readability by stripping implicit asterisks. */
+function cleanDisplay(expr: string): string {
+  if (!expr) return '';
+  return expr
+    .replace(/(\d+)\s*\*\s*([a-zA-Z])/g, '$1$2')
+    .replace(/([a-zA-Z])\s*\*\s*([a-zA-Z])/g, '$1$2')
+    .replace(/\)\s*\*\s*\(/g, ')(')
+    .replace(/(\d+)\s*\*\s*\(/g, '$1(');
+}
+
+export interface EquationSidesContext {
+  lhs: string;
+  rhs: string;
+  lhsCoeffs?: number[];
+  rhsCoeffs?: number[];
+  rawEquation?: string;
+}
+
+/**
+ * Format Step 1 for polynomial equations, showing the algebraic rearrangement
+ * from the user's original equation to standard form (P(x) = 0).
+ */
+export function formatStandardFormStep(
+  degree: number,
+  coeffs: number[],
+  variable: string,
+  equationContext?: string | EquationSidesContext
+): { explanation: string; math: string; subSteps?: SubStep[] } {
+  const degreeName =
+    degree === 1
+      ? 'linear'
+      : degree === 2
+      ? 'quadratic'
+      : degree === 3
+      ? 'cubic'
+      : degree === 4
+      ? 'quartic'
+      : 'polynomial';
+
+  const formStr =
+    degree === 1
+      ? `a${variable} + b = 0`
+      : degree === 2
+      ? `a${variable}^2 + b${variable} + c = 0`
+      : degree === 3
+      ? `a${variable}^3 + b${variable}^2 + c${variable} + d = 0`
+      : degree === 4
+      ? `a${variable}^4 + b${variable}^3 + c${variable}^2 + d${variable} + e = 0`
+      : `P(${variable}) = 0`;
+
+  const standardPoly = `${formatPolynomial(coeffs, variable)} = 0`;
+
+  let context: EquationSidesContext | null = null;
+  if (typeof equationContext === 'string') {
+    if (equationContext.includes('=')) {
+      const [l, r] = equationContext.split('=');
+      context = { lhs: l.trim(), rhs: r.trim() };
+    }
+  } else if (equationContext && typeof equationContext === 'object') {
+    context = equationContext;
+  }
+
+  // If no RHS or RHS is already 0, equation is already in standard form
+  if (!context || !context.rhs || context.rhs === '0' || context.rhs === '') {
+    return {
+      explanation: `Write the equation in standard ${degreeName} form $${formStr}$.`,
+      math: standardPoly,
+    };
+  }
+
+  const rawLhs = cleanDisplay(context.lhs);
+  const rawRhs = cleanDisplay(context.rhs);
+  const lhsLatex = expressionToLatex(rawLhs);
+  const rhsLatex = expressionToLatex(rawRhs);
+
+  // If LHS is already standard poly and RHS is 0, no rearrangement needed
+  if (lhsLatex === formatPolynomial(coeffs, variable) && rhsLatex === '0') {
+    return {
+      explanation: `Write the equation in standard ${degreeName} form $${formStr}$.`,
+      math: standardPoly,
+    };
+  }
+
+  const lines: string[] = [
+    `\\text{Given equation:} \\quad & ${lhsLatex} = ${rhsLatex}`,
+    `\\text{Move all terms to LHS:} \\quad & (${lhsLatex}) - (${rhsLatex}) = 0`,
+  ];
+
+  const subSteps: SubStep[] = [
+    {
+      title: 'Step 1a: Subtract RHS from both sides',
+      math: `(${lhsLatex}) - (${rhsLatex}) = 0`,
+    },
+  ];
+
+  // Grouping like terms for linear (degree 1)
+  if (degree === 1 && context.lhsCoeffs && context.rhsCoeffs) {
+    const pad = (arr: number[]) => (arr.length === 1 ? [0, arr[0]] : arr.length === 2 ? arr : [arr[0], arr[1]]);
+    const [a1, b1] = pad(context.lhsCoeffs);
+    const [a2, b2] = pad(context.rhsCoeffs);
+
+    let varPart = '';
+    if (a1 !== 0 && a2 !== 0) {
+      varPart = `(${fmt(a1)}${variable} - ${fmt(a2)}${variable})`;
+    } else if (a1 !== 0) {
+      varPart = `${fmt(a1)}${variable}`;
+    } else if (a2 !== 0) {
+      varPart = `(-${fmt(a2)}${variable})`;
+    }
+
+    let constPart = '';
+    if (b1 !== 0 && b2 !== 0) {
+      constPart = `(${fmt(b1)} - ${fmt(b2)})`;
+    } else if (b1 !== 0) {
+      constPart = `${fmt(b1)}`;
+    } else if (b2 !== 0) {
+      constPart = `(-${fmt(b2)})`;
+    }
+
+    let grouped = '';
+    if (varPart && constPart) {
+      grouped = `${varPart} + ${constPart} = 0`;
+    } else if (varPart) {
+      grouped = `${varPart} = 0`;
+    } else if (constPart) {
+      grouped = `${constPart} = 0`;
+    }
+
+    if (grouped) {
+      lines.push(`\\text{Group like terms:} \\quad & ${grouped}`);
+      subSteps.push({
+        title: 'Step 1b: Group like terms',
+        math: grouped,
+      });
+    }
+  } else if (degree === 2 && context.lhsCoeffs && context.rhsCoeffs) {
+    const pad3 = (arr: number[]) => {
+      if (arr.length === 1) return [0, 0, arr[0]];
+      if (arr.length === 2) return [0, arr[0], arr[1]];
+      return [arr[0], arr[1], arr[2]];
+    };
+    const [a1, b1, c1] = pad3(context.lhsCoeffs);
+    const [a2, b2, c2] = pad3(context.rhsCoeffs);
+
+    const parts: string[] = [];
+    if (a1 !== 0 || a2 !== 0) {
+      if (a1 !== 0 && a2 !== 0) parts.push(`(${fmt(a1)} - ${fmt(a2)})${variable}^2`);
+      else if (a1 !== 0) parts.push(`${fmt(a1)}${variable}^2`);
+      else parts.push(`(-${fmt(a2)})${variable}^2`);
+    }
+    if (b1 !== 0 || b2 !== 0) {
+      if (b1 !== 0 && b2 !== 0) parts.push(`(${fmt(b1)} - ${fmt(b2)})${variable}`);
+      else if (b1 !== 0) parts.push(`${fmt(b1)}${variable}`);
+      else parts.push(`(-${fmt(b2)})${variable}`);
+    }
+    if (c1 !== 0 || c2 !== 0) {
+      if (c1 !== 0 && c2 !== 0) parts.push(`(${fmt(c1)} - ${fmt(c2)})`);
+      else if (c1 !== 0) parts.push(`${fmt(c1)}`);
+      else parts.push(`(-${fmt(c2)})`);
+    }
+    if (parts.length > 0) {
+      const grouped = `${parts.join(' + ')} = 0`;
+      lines.push(`\\text{Group like terms:} \\quad & ${grouped}`);
+      subSteps.push({
+        title: 'Step 1b: Group like terms',
+        math: grouped,
+      });
+    }
+  }
+
+  lines.push(`\\text{Standard form } (${formStr}): \\quad & ${standardPoly}`);
+  subSteps.push({
+    title: 'Step 1c: Combine to standard form',
+    math: standardPoly,
+  });
+
+  return {
+    explanation: `Write the equation in standard ${degreeName} form $${formStr}$ by moving all terms to the left-hand side and combining like terms.`,
+    math: `\\begin{aligned} ${lines.join(' \\\\[4pt] ')} \\end{aligned}`,
+    subSteps,
+  };
+}
+
+/** Format verification substitution for linear equation: f(root) = 0 or LHS = RHS */
+function formatLinearVerification(
+  a: number,
+  b: number,
+  root: number,
+  variable: string,
+  context?: EquationSidesContext
+): { explanation: string; math: string } {
+  const rootStr = fmtFraction(root);
+
+  if (context && context.rhs && context.rhs !== '0' && context.lhsCoeffs && context.rhsCoeffs) {
+    const pad = (arr: number[]) => (arr.length === 1 ? [0, arr[0]] : arr.length === 2 ? arr : [arr[0], arr[1]]);
+    const [a1, b1] = pad(context.lhsCoeffs);
+    const [a2, b2] = pad(context.rhsCoeffs);
+
+    const fmtSide = (ca: number, cb: number) => {
+      const termA = ca * root;
+      const total = termA + cb;
+      const aSign = ca === 1 ? '' : ca === -1 ? '-' : `${fmt(ca)}`;
+      const bSign = cb >= 0 ? '+' : '-';
+      const bAbs = fmt(Math.abs(cb));
+      const totalDisp = Number.isInteger(total) ? fmt(total) : fmtFraction(total);
+      if (ca !== 0 && cb !== 0) {
+        return `${aSign}(${rootStr}) ${bSign} ${bAbs} = ${fmt(termA)} ${bSign} ${bAbs} = ${totalDisp}`;
+      } else if (ca !== 0) {
+        return `${aSign}(${rootStr}) = ${totalDisp}`;
+      } else {
+        return `${fmt(cb)}`;
+      }
+    };
+
+    const lhsEval = fmtSide(a1, b1);
+    const rhsEval = fmtSide(a2, b2);
+    const expectedVal = Number.isInteger(a1 * root + b1) ? fmt(a1 * root + b1) : fmtFraction(a1 * root + b1);
+
+    return {
+      explanation: `Verify the solution by substituting $${variable} = ${rootStr}$ into the original equation.`,
+      math: `\\begin{aligned} \\text{Left-hand side (LHS):} \\quad & ${lhsEval} \\\\[4pt] \\text{Right-hand side (RHS):} \\quad & ${rhsEval} \\\\[4pt] \\implies & \\text{LHS} = \\text{RHS} = ${expectedVal} \\quad \\checkmark \\end{aligned}`,
+    };
+  }
+
+  // Fallback if equation was already f(x) = 0
+  const aStr = a === 1 ? '' : a === -1 ? '-' : `${fmt(a)}`;
+  const bSign = b >= 0 ? '+' : '-';
+  const bAbs = fmt(Math.abs(b));
+  const subMath = `${aStr}(${rootStr}) ${b !== 0 ? `${bSign} ${bAbs}` : ''} = ${fmt(a * root)} ${b !== 0 ? `${bSign} ${bAbs}` : ''} = 0 \\;\\checkmark`;
+
+  return {
+    explanation: `Verify the solution by substituting $${variable} = ${rootStr}$ back into the equation.`,
+    math: `\\text{Check } ${variable} = ${rootStr}: \\; ${subMath}`,
+  };
+}
+
+export function generateLinearSteps(
+  a: number,
+  b: number,
+  variable: string = 'x',
+  equationContext?: string | EquationSidesContext
+): SolutionStep[] {
   const steps: SolutionStep[] = [];
   let stepCount = 1;
 
+  const stdStep = formatStandardFormStep(1, [a, b], variable, equationContext);
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the equation in standard linear form $a${variable} + b = 0$.`,
-    math: `${formatPolynomial([a, b], variable)} = 0`,
+    explanation: stdStep.explanation,
+    math: stdStep.math,
+    subSteps: stdStep.subSteps,
   });
 
   steps.push({
@@ -293,10 +537,29 @@ export function generateLinearSteps(a: number, b: number, variable: string = 'x'
   });
 
   const root = -b / a;
+  const rootFrac = toFraction(root);
+  const rootDisplay = rootFrac && rootFrac.d > 1 ? fmtFraction(root) : fmt(root);
   steps.push({
     stepNumber: stepCount++,
     explanation: `Divide both sides by the leading coefficient $a = ${fmt(a)}$ to isolate $${variable}$.`,
-    math: `${variable} = \\frac{${fmt(-b)}}{${fmt(a)}} = ${fmt(root)}`,
+    math: `${variable} = \\frac{${fmt(-b)}}{${fmt(a)}} = ${rootDisplay}`,
+  });
+
+  // Step 4: Verification
+  let parsedContext: EquationSidesContext | undefined = undefined;
+  if (typeof equationContext === 'string') {
+    if (equationContext.includes('=')) {
+      const [l, r] = equationContext.split('=');
+      parsedContext = { lhs: l.trim(), rhs: r.trim() };
+    }
+  } else if (equationContext && typeof equationContext === 'object') {
+    parsedContext = equationContext;
+  }
+  const verif = formatLinearVerification(a, b, root, variable, parsedContext);
+  steps.push({
+    stepNumber: stepCount++,
+    explanation: verif.explanation,
+    math: verif.math,
   });
 
   return steps;
@@ -439,15 +702,18 @@ export function generateCompletingTheSquareSteps(
   a: number,
   b: number,
   c: number,
-  variable: string = 'x'
+  variable: string = 'x',
+  equationContext?: string | EquationSidesContext
 ): SolutionStep[] {
   const steps: SolutionStep[] = [];
   let stepCount = 1;
 
+  const stdStep = formatStandardFormStep(2, [a, b, c], variable, equationContext);
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the quadratic equation in standard form $ax^2 + bx + c = 0$.`,
-    math: `${formatPolynomial([a, b, c], variable)} = 0`,
+    explanation: stdStep.explanation,
+    math: stdStep.math,
+    subSteps: stdStep.subSteps,
   });
 
   // Step 2: Divide by leading coefficient a if a != 1
@@ -548,21 +814,24 @@ export function generateQuadraticSteps(
   b: number,
   c: number,
   variable: string = 'x',
-  method: QuadraticMethod = 'auto'
+  method: QuadraticMethod = 'auto',
+  equationContext?: string | EquationSidesContext
 ): SolutionStep[] {
   // If specific method requested: Completing the Square
   if (method === 'completing_square') {
-    return generateCompletingTheSquareSteps(a, b, c, variable);
+    return generateCompletingTheSquareSteps(a, b, c, variable, equationContext);
   }
 
   const steps: SolutionStep[] = [];
   let stepCount = 1;
 
   // 1. Write the equation in standard form
+  const stdStep = formatStandardFormStep(2, [a, b, c], variable, equationContext);
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the equation in standard quadratic form $ax^2 + bx + c = 0$.`,
-    math: `${formatPolynomial([a, b, c], variable)} = 0`,
+    explanation: stdStep.explanation,
+    math: stdStep.math,
+    subSteps: stdStep.subSteps,
   });
 
   const delta = b * b - 4 * a * c;
@@ -795,16 +1064,19 @@ export function generateCubicSteps(
   c: number,
   d: number,
   roots: { real: number[]; complex: { re: number; im: number }[] },
-  variable: string = 'x'
+  variable: string = 'x',
+  equationContext?: string | EquationSidesContext
 ): SolutionStep[] {
   const steps: SolutionStep[] = [];
   let stepCount = 1;
 
   // Step 1: Standard form
+  const stdStep = formatStandardFormStep(3, [a, b, c, d], variable, equationContext);
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the cubic equation in standard form $a${variable}^3 + b${variable}^2 + c${variable} + d = 0$.`,
-    math: `${formatPolynomial([a, b, c, d], variable)} = 0`,
+    explanation: stdStep.explanation,
+    math: stdStep.math,
+    subSteps: stdStep.subSteps,
   });
 
   // Candidate rational roots: ±(factors of |d|) / (factors of |a|)
@@ -1128,17 +1400,20 @@ export function generateCubicSteps(
 export function generateQuarticSteps(
   coeffs: number[],
   roots: { real: number[]; complex: { re: number; im: number }[] },
-  variable: string = 'x'
+  variable: string = 'x',
+  equationContext?: string | EquationSidesContext
 ): SolutionStep[] {
   const steps: SolutionStep[] = [];
   let stepCount = 1;
   const [a, b, c, d, e] = coeffs;
 
   // Step 1: Standard form
+  const stdStep = formatStandardFormStep(4, coeffs, variable, equationContext);
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the quartic equation in standard form $a${variable}^4 + b${variable}^3 + c${variable}^2 + d${variable} + e = 0$.`,
-    math: `${formatPolynomial(coeffs, variable)} = 0`,
+    explanation: stdStep.explanation,
+    math: stdStep.math,
+    subSteps: stdStep.subSteps,
   });
 
   if (Math.abs(b) < 1e-6 && Math.abs(d) < 1e-6) {
@@ -1568,16 +1843,19 @@ export function generateQuarticSteps(
 export function generateDegree5PlusSteps(
   coeffs: number[],
   roots: { real: number[]; complex: { re: number; im: number }[] },
-  variable: string = 'x'
+  variable: string = 'x',
+  equationContext?: string | EquationSidesContext
 ): SolutionStep[] {
   const steps: SolutionStep[] = [];
   let stepCount = 1;
   const degree = coeffs.length - 1;
 
+  const stdStep = formatStandardFormStep(degree, coeffs, variable, equationContext);
   steps.push({
     stepNumber: stepCount++,
-    explanation: `Write the degree-${degree} polynomial equation in standard form $f(${variable}) = 0$.`,
-    math: `${formatPolynomial(coeffs, variable)} = 0`,
+    explanation: stdStep.explanation,
+    math: stdStep.math,
+    subSteps: stdStep.subSteps,
   });
 
   steps.push({

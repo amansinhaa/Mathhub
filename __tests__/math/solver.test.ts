@@ -23,6 +23,39 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(res.finalAnswer).toContain('-3');
     });
 
+    it('solves 5x + 12 = 2x + 36 showing complete rearrangement from main question to Step 1', () => {
+      const res = solvePolynomial('5x + 12 = 2x + 36');
+      expect(res.finalAnswer).toContain('8');
+      expect(res.numericRoots).toEqual([8]);
+
+      // Step 1: Must show the full arrangement from original question
+      const step1 = res.steps[0];
+      expect(step1.math).toContain('5x + 12 = 2x + 36');
+      expect(step1.math).toContain('(5x + 12) - (2x + 36) = 0');
+      expect(step1.math).toContain('(5x - 2x) + (12 - 36) = 0');
+      expect(step1.math).toContain('3x - 24 = 0');
+
+      // Sub-steps should break down the arrangement clearly
+      expect(step1.subSteps).toBeDefined();
+      expect(step1.subSteps?.length).toBe(3);
+      expect(step1.subSteps?.[0].title).toContain('Subtract RHS');
+      expect(step1.subSteps?.[1].title).toContain('Group like terms');
+      expect(step1.subSteps?.[2].title).toContain('Combine to standard form');
+
+      // Step 2: Move constant
+      expect(res.steps[1].math).toContain('3x = 24');
+
+      // Step 3: Divide by coefficient
+      expect(res.steps[2].math).toContain('x = \\frac{24}{3} = 8');
+
+      // Step 4: Verification
+      const step4 = res.steps[3];
+      expect(step4.explanation).toContain('Verify');
+      expect(step4.math).toContain('LHS');
+      expect(step4.math).toContain('RHS');
+      expect(step4.math).toContain('52');
+    });
+
     it('solves user quartic: 2 x^4 - 9 x^3 + 14 x^2 - 9 x + 2 = 0', () => {
       const res = solvePolynomial('2  x^4  -  9  x^3  +  14  x^2  -  9  x  +  2  =0');
       console.log('USER QUARTIC WITH DOUBLE SPACES RESULT:', JSON.stringify(res, null, 2));
