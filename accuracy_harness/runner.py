@@ -1,4 +1,4 @@
-﻿"""
+"""
 Accuracy Test Suite Runner
 Orchestrates test execution across the SymPy Oracle, adapters, and reporting engine.
 """
@@ -110,7 +110,7 @@ def main():
                         help="Path to custom test_cases.json file")
     parser.add_argument("--report", type=str, default="accuracy_report.json",
                         help="Path to output accuracy_report.json file")
-    parser.add_argument("--url", type=str, default="http://localhost:4321",
+    parser.add_argument("--url", "--base-url", dest="url", type=str, default="http://localhost:4321",
                         help="Base URL of live website for browser mode")
     parser.add_argument("--strict", action="store_true",
                         help="Exit with non-zero code if any test fails (for CI)")
