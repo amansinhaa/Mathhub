@@ -1,0 +1,738 @@
+{
+  "polynomial": [
+    {
+      "id": "poly_01",
+      "input": "3x + 7 = 0",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_02",
+      "input": "5x + 12 = 2x + 36",
+      "variable": "x",
+      "subtype": "linear_rearrange"
+    },
+    {
+      "id": "poly_03",
+      "input": "x^2 - 6x + 9 = 0",
+      "variable": "x",
+      "subtype": "quadratic_repeated"
+    },
+    {
+      "id": "poly_04",
+      "input": "2x^2 + 5x - 3 = 0",
+      "variable": "x",
+      "subtype": "quadratic_rational"
+    },
+    {
+      "id": "poly_05",
+      "input": "x^2 + 4 = 0",
+      "variable": "x",
+      "subtype": "quadratic_pure_imag"
+    },
+    {
+      "id": "poly_06",
+      "input": "x^2 + 2x + 5 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_07",
+      "input": "x^3 - 3x^2 + 3x - 1 = 0",
+      "variable": "x",
+      "subtype": "cubic_repeated"
+    },
+    {
+      "id": "poly_08",
+      "input": "x^3 - 6x^2 + 11x - 6 = 0",
+      "variable": "x",
+      "subtype": "cubic_3real"
+    },
+    {
+      "id": "poly_09",
+      "input": "x^4 - 5x^2 + 4 = 0",
+      "variable": "x",
+      "subtype": "quartic_biquadratic"
+    },
+    {
+      "id": "poly_10",
+      "input": "x^4 - 16 = 0",
+      "variable": "x",
+      "subtype": "quartic_real_and_complex"
+    }
+  ],
+  "rational": [
+    {
+      "id": "rat_01",
+      "input": "3/(x-2) = 5",
+      "variable": "x",
+      "subtype": "simple"
+    },
+    {
+      "id": "rat_02",
+      "input": "(x+1)/(x-1) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_03",
+      "input": "1/(x-1) + 1/(x+1) = 4/3",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_04",
+      "input": "(x^2 - 1)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_05",
+      "input": "1/(x-2) = 1/(x-2) + 3",
+      "variable": "x",
+      "subtype": "no_solution"
+    },
+    {
+      "id": "rat_06",
+      "input": "(2x)/(x-3) - 6/(x-3) = 2",
+      "variable": "x",
+      "subtype": "excluded_value_identity"
+    },
+    {
+      "id": "rat_07",
+      "input": "3/(x-2) + 2/(x+1) = 7/(x^2 - x - 2)",
+      "variable": "x",
+      "subtype": "extraneous_denominator"
+    },
+    {
+      "id": "rat_08",
+      "input": "(x-3)/(x+2) = (x+1)/(x-4)",
+      "variable": "x",
+      "subtype": "cross_multiply"
+    },
+    {
+      "id": "rat_09",
+      "input": "1/x + 1/(x+2) = 3/4",
+      "variable": "x",
+      "subtype": "quadratic_reduction"
+    },
+    {
+      "id": "rat_10",
+      "input": "(x^2 - 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "hole_at_root"
+    }
+  ],
+  "radical": [
+    {
+      "id": "rad_01",
+      "input": "sqrt(x + 5) = 3",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_02",
+      "input": "sqrt(2x - 1) = x - 2",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_03",
+      "input": "sqrt(x + 7) - sqrt(x - 5) = 2",
+      "variable": "x",
+      "subtype": "two_radicals"
+    },
+    {
+      "id": "rad_04",
+      "input": "sqrt(2x + 3) = x - 3",
+      "variable": "x",
+      "subtype": "irrational_root_with_extraneous"
+    },
+    {
+      "id": "rad_05",
+      "input": "sqrt(x) = -2",
+      "variable": "x",
+      "subtype": "empty_domain_no_sol"
+    },
+    {
+      "id": "rad_06",
+      "input": "sqrt(3x + 1) = sqrt(x + 9)",
+      "variable": "x",
+      "subtype": "equal_radicals"
+    },
+    {
+      "id": "rad_07",
+      "input": "sqrt(x + 2) + sqrt(x - 1) = 3",
+      "variable": "x",
+      "subtype": "sum_of_radicals"
+    },
+    {
+      "id": "rad_08",
+      "input": "cbrt(x - 1) = 2",
+      "variable": "x",
+      "subtype": "cube_root"
+    },
+    {
+      "id": "rad_09",
+      "input": "sqrt(x^2 + 9) = 5",
+      "variable": "x",
+      "subtype": "quadratic_radicand"
+    },
+    {
+      "id": "rad_10",
+      "input": "sqrt(x) + 2 = 0",
+      "variable": "x",
+      "subtype": "impossible_sum"
+    }
+  ],
+  "trigonometric": [
+    {
+      "id": "trig_01",
+      "input": "sin(x) = 1/2",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "basic_sin"
+    },
+    {
+      "id": "trig_02",
+      "input": "cos(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "basic_cos"
+    },
+    {
+      "id": "trig_03",
+      "input": "tan(x) = 1",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "basic_tan"
+    },
+    {
+      "id": "trig_04",
+      "input": "2*sin(x)^2 - 3*sin(x) + 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "quadratic_in_sin"
+    },
+    {
+      "id": "trig_05",
+      "input": "cos(2*x) + sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "double_angle"
+    },
+    {
+      "id": "trig_06",
+      "input": "sin(x) + cos(x) = 1",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "linear_trig_combo"
+    },
+    {
+      "id": "trig_07",
+      "input": "tan(x) + cot(x) = 2",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_cot_reciprocal"
+    },
+    {
+      "id": "trig_08",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "linear_cos"
+    },
+    {
+      "id": "trig_09",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "multiple_angle"
+    },
+    {
+      "id": "trig_10",
+      "input": "sin(x) = 2",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "outside_range_no_sol"
+    }
+  ],
+  "exponential_logarithmic": [
+    {
+      "id": "exp_01",
+      "input": "2^x = 8",
+      "variable": "x",
+      "subtype": "basic_exponential"
+    },
+    {
+      "id": "exp_02",
+      "input": "3^(2*x+1) - 10*3^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exponential_substitution"
+    },
+    {
+      "id": "exp_03",
+      "input": "4^x - 3*2^(x+2) + 32 = 0",
+      "variable": "x",
+      "subtype": "exp_base2_quad"
+    },
+    {
+      "id": "exp_04",
+      "input": "4^x - 2^(x+1) - 8 = 0",
+      "variable": "x",
+      "subtype": "exp_sub_with_negative_root"
+    },
+    {
+      "id": "log_05",
+      "input": "log(x - 1) + log(x + 1) = log(3)",
+      "variable": "x",
+      "subtype": "log_sum_domain"
+    },
+    {
+      "id": "log_06",
+      "input": "log_2(x - 1) + log_2(x + 1) = 3",
+      "variable": "x",
+      "subtype": "log_base2"
+    },
+    {
+      "id": "log_07",
+      "input": "ln(2x - 3) = 0",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "exp_08",
+      "input": "e^(2*x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_natural_base"
+    },
+    {
+      "id": "exp_09",
+      "input": "5^x = 2^(x+3)",
+      "variable": "x",
+      "subtype": "different_bases"
+    },
+    {
+      "id": "log_10",
+      "input": "log(x) = -1",
+      "variable": "x",
+      "subtype": "fractional_log"
+    }
+  ],
+  "systems": [
+    {
+      "id": "sys_01",
+      "input": [
+        "x + y = 5",
+        "x - y = 1"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2"
+    },
+    {
+      "id": "sys_02",
+      "input": [
+        "2x + 3y = 12",
+        "x - y = 1"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_general"
+    },
+    {
+      "id": "sys_03",
+      "input": [
+        "x + 2y = 8",
+        "3x - 4y = 4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_fractions"
+    },
+    {
+      "id": "sys_04",
+      "input": [
+        "x + y = 4",
+        "2x + 2y = 8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "dependent_inf_sol"
+    },
+    {
+      "id": "sys_05",
+      "input": [
+        "x + y = 3",
+        "x + y = 5"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "parallel_inconsistent"
+    },
+    {
+      "id": "sys_06",
+      "input": [
+        "x^2 + y^2 = 25",
+        "y = x + 1"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "circle_and_line"
+    },
+    {
+      "id": "sys_07",
+      "input": [
+        "y = x^2",
+        "y = 2x + 3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "parabola_and_line"
+    },
+    {
+      "id": "sys_08",
+      "input": [
+        "x*y = 6",
+        "x + y = 5"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "product_sum"
+    },
+    {
+      "id": "sys_09",
+      "input": [
+        "x^2 + y^2 = 4",
+        "x^2 - y^2 = 4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "conic_linear_in_squares"
+    },
+    {
+      "id": "sys_10",
+      "input": [
+        "x^2 + y^2 = 1",
+        "y = 2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "no_real_intersection"
+    }
+  ],
+  "inequalities": [
+    {
+      "id": "ineq_01",
+      "input": "2x - 4 > 0",
+      "variable": "x",
+      "subtype": "linear_open"
+    },
+    {
+      "id": "ineq_02",
+      "input": "2x - 4 >= 0",
+      "variable": "x",
+      "subtype": "linear_closed"
+    },
+    {
+      "id": "ineq_03",
+      "input": "-3x + 9 > 0",
+      "variable": "x",
+      "subtype": "linear_sign_flip"
+    },
+    {
+      "id": "ineq_04",
+      "input": "x^2 - 4 > 0",
+      "variable": "x",
+      "subtype": "quadratic_disjoint_open"
+    },
+    {
+      "id": "ineq_05",
+      "input": "x^2 - 4 <= 0",
+      "variable": "x",
+      "subtype": "quadratic_interval_closed"
+    },
+    {
+      "id": "ineq_06",
+      "input": "-x^2 + 4 > 0",
+      "variable": "x",
+      "subtype": "negative_leading_coeff"
+    },
+    {
+      "id": "ineq_07",
+      "input": "x^2 + 1 > 0",
+      "variable": "x",
+      "subtype": "all_reals"
+    },
+    {
+      "id": "ineq_08",
+      "input": "x^2 + 1 < 0",
+      "variable": "x",
+      "subtype": "empty_set"
+    },
+    {
+      "id": "ineq_09",
+      "input": "(x-1)*(x-3) >= 0",
+      "variable": "x",
+      "subtype": "factored_closed"
+    },
+    {
+      "id": "ineq_10",
+      "input": "3x + 5 < 20",
+      "variable": "x",
+      "subtype": "bounded_above"
+    }
+  ],
+  "derivatives": [
+    {
+      "id": "der_01",
+      "input": "x^5",
+      "variable": "x",
+      "subtype": "power_rule"
+    },
+    {
+      "id": "der_02",
+      "input": "sin(x)*cos(x)",
+      "variable": "x",
+      "subtype": "product_rule"
+    },
+    {
+      "id": "der_03",
+      "input": "e^(2*x)",
+      "variable": "x",
+      "subtype": "chain_rule_exp"
+    },
+    {
+      "id": "der_04",
+      "input": "ln(x)",
+      "variable": "x",
+      "subtype": "log_rule"
+    },
+    {
+      "id": "der_05",
+      "input": "sqrt(x)",
+      "variable": "x",
+      "subtype": "fractional_power"
+    },
+    {
+      "id": "der_06",
+      "input": "tan(x)",
+      "variable": "x",
+      "subtype": "trig_tan"
+    },
+    {
+      "id": "der_07",
+      "input": "(x+1)/(x-1)",
+      "variable": "x",
+      "subtype": "quotient_rule"
+    },
+    {
+      "id": "der_08",
+      "input": "sin(x^2)",
+      "variable": "x",
+      "subtype": "chain_rule_trig"
+    },
+    {
+      "id": "der_09",
+      "input": "x*ln(x)",
+      "variable": "x",
+      "subtype": "product_log"
+    },
+    {
+      "id": "der_10",
+      "input": "7",
+      "variable": "x",
+      "subtype": "constant_rule"
+    }
+  ],
+  "integrals": [
+    {
+      "id": "int_01",
+      "input": "x^3",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "power_rule"
+    },
+    {
+      "id": "int_02",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "trig_sin"
+    },
+    {
+      "id": "int_03",
+      "input": "e^(2*x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "exp_linear_arg"
+    },
+    {
+      "id": "int_04",
+      "input": "1/x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "reciprocal_log"
+    },
+    {
+      "id": "int_05",
+      "input": "x*cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "by_parts"
+    },
+    {
+      "id": "int_06",
+      "input": "2*x*e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "u_substitution"
+    },
+    {
+      "id": "int_07",
+      "input": "1/(1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "arctan_form"
+    },
+    {
+      "id": "int_08",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_polynomial"
+    },
+    {
+      "id": "int_09",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_trig"
+    },
+    {
+      "id": "int_10",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_exp"
+    }
+  ],
+  "edge_cases": [
+    {
+      "id": "edge_01",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_02",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_03",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_04",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_05",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_06",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_07",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_08",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_09",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_10",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    }
+  ]
+}
