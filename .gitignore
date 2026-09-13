@@ -40,9 +40,15 @@ scratch/
 /.astro/
 /dist/
 
-# ml
-ml/.venv/
-ml/data/
+# accuracy testing & local sandbox
+.venv/
+accuracy_report.json
+e2e_diagnostic.json
+src/pages/test-sandbox.astro
+src/components/sandbox/
+src/data/accuracy_benchmark.json
+accuracy_harness/export_benchmark.py
 __pycache__/
 *.pyc
+ml/data/
 
