@@ -23,15 +23,19 @@ export default function StepByStep() {
   const { result, solverType, equation, quadraticMethod } = useSolverStore();
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({});
   const [showSteps, setShowSteps] = useState(false);
+  const [showGraph, setShowGraph] = useState(false);
+  const [showNumberLine, setShowNumberLine] = useState(false);
   const [copiedQuestion, setCopiedQuestion] = useState(false);
   const [copiedSolution, setCopiedSolution] = useState(false);
   const [copiedSteps, setCopiedSteps] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showDecimal, setShowDecimal] = useState(false);
 
-  // Keep steps collapsed by default when result or method changes
+  // Keep widgets (steps, graph, number line) collapsed by default when result or problem changes
   useEffect(() => {
     setShowSteps(false);
+    setShowGraph(false);
+    setShowNumberLine(false);
     setShowDecimal(false);
     setExpandedSteps({});
   }, [result, solverType, equation, quadraticMethod]);
@@ -211,6 +215,31 @@ export default function StepByStep() {
 
           <div className="text-base sm:text-xl font-bold text-[#131313] dark:text-white">
             {(() => {
+              if (result.type === 'domain_range') {
+                const domainStr = result.natureOfRoots?.[0]?.replace(/^\\text\{Domain:\s*\}\s*/, '') || '';
+                const rangeStr = result.natureOfRoots?.[1]?.replace(/^\\text\{Range:\s*\}\s*/, '') || '';
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-1">
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#1A1A1A] border border-[#E0E0E0] dark:border-[#2C2724] shadow-xs">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] block mb-1">
+                        Domain (Permissible Inputs)
+                      </span>
+                      <div className="text-sm sm:text-base font-bold text-[#131313] dark:text-white overflow-x-auto scrollbar-none">
+                        <MathDisplay math={domainStr || result.finalAnswer} />
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#1A1A1A] border border-[#E0E0E0] dark:border-[#2C2724] shadow-xs">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] block mb-1">
+                        Range (Resulting Outputs)
+                      </span>
+                      <div className="text-sm sm:text-base font-bold text-[#131313] dark:text-white overflow-x-auto scrollbar-none">
+                        <MathDisplay math={rangeStr || result.finalAnswer} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               const activeAns = (showDecimal && result.decimalAnswer) ? result.decimalAnswer : (result.finalAnswer || '');
               // If activeAns contains multiple separate variable assignments (e.g. "x = 2, \quad y = 3" or "x_1 = 1, \quad x_2 = 2")
               if (activeAns.includes('\\quad')) {
@@ -239,7 +268,7 @@ export default function StepByStep() {
           </div>
 
           {/* If parametric Nature of Roots analysis is present, show it directly in Solution Bar */}
-          {result.natureOfRoots && result.natureOfRoots.length > 0 && (
+          {result.natureOfRoots && result.natureOfRoots.length > 0 && result.type !== 'domain_range' && (
             <div className="mt-3 pt-3 border-t border-[#E0E0E0] dark:border-[#282422]">
               <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] mb-1.5 flex items-center gap-1.5">
                 <span>Nature of the Roots:</span>
@@ -269,133 +298,131 @@ export default function StepByStep() {
         </div>
       </div>
 
-      {/* Number Line Visualizer (for equations and inequalities) */}
+      {/* 2. Action Toggles for Hidden Modules (Graph, Number Line, Steps) */}
       {(() => {
-        if (result.type !== 'polynomial' && result.type !== 'inequality') return null;
-        const nlData = parseNumberLineData(result.type, result.finalAnswer);
-        const roots = (result.numericRoots && result.numericRoots.length > 0)
+        const nlData = (result.type === 'polynomial' || result.type === 'inequality')
+          ? parseNumberLineData(result.type, result.finalAnswer)
+          : { roots: [], intervals: [] };
+        const roots: number[] = (result.numericRoots && result.numericRoots.length > 0)
           ? result.numericRoots
           : nlData.roots;
-        if (roots.length === 0 && nlData.intervals.length === 0) return null;
         const eqVar = equation?.match(/[a-zA-Z]/)?.[0] || 'x';
+        const hasNumberLine = (result.type === 'polynomial' || result.type === 'inequality') &&
+          (roots.length > 0 || nlData.intervals.length > 0);
+
+        const { fn: plotFn, roots: cleanRoots } = extractPlotFunction(equation, roots);
+        const hasGraph = Boolean(equation && plotFn && (
+          result.type === 'polynomial' ||
+          result.type === 'inequality' ||
+          result.type === 'domain_range' ||
+          result.type === 'linear' ||
+          result.type === 'quadratic' ||
+          result.type === 'rational' ||
+          result.type === 'radical' ||
+          result.type === 'trigonometric' ||
+          result.type === 'exponential' ||
+          result.type === 'logarithmic'
+        ));
+
+        const hasSteps = Boolean(result.steps && result.steps.length > 0);
+
         return (
-          <NumberLine
-            variable={eqVar}
-            roots={roots}
-            intervals={nlData.intervals}
-          />
-        );
-      })()}
+          <div className="space-y-3">
+            {/* Dedicated Action Button Bar */}
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              {hasSteps && (
+                <button
+                  type="button"
+                  onClick={() => setShowSteps(!showSteps)}
+                  className={`flex-1 min-w-[130px] py-2.5 px-3.5 sm:px-4 rounded-xl border text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-xs min-h-[44px] ${
+                    showSteps
+                      ? 'bg-[#5D4037] text-white border-[#795548] dark:bg-[#D7CCC8] dark:text-[#1B1B1B]'
+                      : 'bg-white dark:bg-[#1B1B1B] text-[#5D4037] dark:text-[#D7CCC8] border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E]'
+                  }`}
+                >
+                  <span>📝 {showSteps ? 'Hide Steps' : 'Step-by-Step'}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                    showSteps
+                      ? 'bg-white/20 text-white dark:bg-black/20 dark:text-[#1B1B1B]'
+                      : 'bg-[#EFEBE9] text-[#5D4037] dark:bg-[#3E2723] dark:text-[#D7CCC8]'
+                  }`}>
+                    {result.steps!.length}
+                  </span>
+                  <ChevronDown size={14} className={`transition-transform duration-200 ${showSteps ? 'rotate-180' : ''}`} />
+                </button>
+              )}
 
-      {/* Visual Graph & Step-by-Step Controller Section */}
-      {(() => {
-        // Extract graph if applicable
-        let graphCard: React.ReactNode = null;
-        if (equation && (result.type === 'polynomial' || result.type === 'inequality')) {
-          const hasEqOrRoots = equation.includes('=') || (result.numericRoots && result.numericRoots.length > 0) || result.finalAnswer.includes('=');
-          if (hasEqOrRoots) {
-            const nlData = parseNumberLineData(result.type, result.finalAnswer);
-            const roots = (result.numericRoots && result.numericRoots.length > 0)
-              ? result.numericRoots
-              : nlData.roots;
-            const { fn, roots: cleanRoots } = extractPlotFunction(equation, roots);
-            if (fn) {
-              graphCard = (
-                <div className="w-full md:w-[380px] lg:w-[440px] shrink-0 bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-2.5 sm:p-3 shadow-xs overflow-hidden">
-                  <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[#E0E0E0] dark:border-[#2C2724]">
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
-                      <LineChart size={13} />
-                      <span>Visual Curve &amp; Roots</span>
-                    </div>
-                    <Link
-                      href={getGraphLink()}
-                      className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
-                    >
-                      Full Graph Studio &rarr;
-                    </Link>
-                  </div>
-                  <div className="w-full h-[220px] sm:h-[250px]">
-                    <FunctionPlotter
-                      compact
-                      initialExpression={fn}
-                      initialRoots={cleanRoots}
-                      height={250}
-                      mobileHeight={220}
-                    />
-                  </div>
-                </div>
-              );
-            }
-          }
-        }
+              {hasGraph && (
+                <button
+                  type="button"
+                  onClick={() => setShowGraph(!showGraph)}
+                  className={`flex-1 min-w-[120px] py-2.5 px-3.5 sm:px-4 rounded-xl border text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-xs min-h-[44px] ${
+                    showGraph
+                      ? 'bg-[#5D4037] text-white border-[#795548] dark:bg-[#D7CCC8] dark:text-[#1B1B1B]'
+                      : 'bg-white dark:bg-[#1B1B1B] text-[#5D4037] dark:text-[#D7CCC8] border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E]'
+                  }`}
+                >
+                  <LineChart size={14} />
+                  <span>{showGraph ? 'Hide Graph' : 'View Graph'}</span>
+                  <ChevronDown size={14} className={`transition-transform duration-200 ${showGraph ? 'rotate-180' : ''}`} />
+                </button>
+              )}
 
-        const hasSteps = result.steps && result.steps.length > 0;
+              {hasNumberLine && (
+                <button
+                  type="button"
+                  onClick={() => setShowNumberLine(!showNumberLine)}
+                  className={`flex-1 min-w-[130px] py-2.5 px-3.5 sm:px-4 rounded-xl border text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-xs min-h-[44px] ${
+                    showNumberLine
+                      ? 'bg-[#5D4037] text-white border-[#795548] dark:bg-[#D7CCC8] dark:text-[#1B1B1B]'
+                      : 'bg-white dark:bg-[#1B1B1B] text-[#5D4037] dark:text-[#D7CCC8] border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E]'
+                  }`}
+                >
+                  <span>📏 {showNumberLine ? 'Hide Line' : 'Number Line'}</span>
+                  <ChevronDown size={14} className={`transition-transform duration-200 ${showNumberLine ? 'rotate-180' : ''}`} />
+                </button>
+              )}
+            </div>
 
-        if (graphCard && hasSteps) {
-          return (
-            <div className="flex flex-col md:flex-row items-stretch gap-3 my-2">
-              {/* Left: Step Box */}
-              <div className="flex-1 flex flex-col justify-between bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-4 sm:p-5 shadow-xs">
-                <div>
-                  <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#E0E0E0] dark:border-[#2C2724]">
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
-                      <span>Step-by-Step Solution</span>
-                    </div>
-                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#EFEBE9] text-[#5D4037] dark:bg-[#3E2723] dark:text-[#D7CCC8]">
-                      {result.steps!.length} {result.steps!.length === 1 ? 'step' : 'steps'}
-                    </span>
+            {/* Expandable Graph Module */}
+            {showGraph && hasGraph && (
+              <div className="w-full bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] p-3 sm:p-4 shadow-xs overflow-hidden animate-fade-in">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E0E0E0] dark:border-[#2C2724]">
+                  <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase text-[#5D4037] dark:text-[#D7CCC8]">
+                    <LineChart size={14} />
+                    <span>Function Curve &amp; Graph</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-[#616161] dark:text-[#9E9E9E] leading-relaxed">
-                    Step-by-step mathematical working showing factoring, Rational Root Theorem testing, polynomial division, and formulas.
-                  </p>
-                </div>
-                <div className="pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowSteps(!showSteps)}
-                    className="w-full py-3 px-4 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#1B1B1B] dark:hover:bg-[#EFEBE9] font-mono font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2"
+                  <Link
+                    href={getGraphLink()}
+                    className="text-xs font-mono text-[#795548] dark:text-[#BCAAA4] hover:underline flex items-center gap-1"
                   >
-                    <ChevronDown
-                      size={16}
-                      className={`transform transition-transform duration-200 ${showSteps ? 'rotate-180' : ''}`}
-                    />
-                    <span>{showSteps ? 'Hide Working Steps' : 'Show Step-by-Step Solution'}</span>
-                  </button>
+                    Open Full Graph Studio &rarr;
+                  </Link>
+                </div>
+                <div className="w-full h-[240px] sm:h-[280px]">
+                  <FunctionPlotter
+                    compact
+                    initialExpression={plotFn}
+                    initialRoots={cleanRoots}
+                    height={280}
+                    mobileHeight={240}
+                  />
                 </div>
               </div>
+            )}
 
-              {/* Right: Graph Box */}
-              {graphCard}
-            </div>
-          );
-        }
-
-        if (graphCard) {
-          return <div className="flex justify-end my-2">{graphCard}</div>;
-        }
-
-        if (hasSteps) {
-          return (
-            <div className="pt-1">
-              <button
-                type="button"
-                onClick={() => setShowSteps(!showSteps)}
-                className="w-full py-3 px-4 rounded-xl bg-white dark:bg-[#1B1B1B] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] border border-[#E0E0E0] dark:border-[#2E2825] text-[#5D4037] dark:text-[#D7CCC8] font-mono font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2"
-              >
-                <ChevronDown
-                  size={16}
-                  className={`transform transition-transform duration-200 ${showSteps ? 'rotate-180' : ''}`}
+            {/* Expandable Number Line Module */}
+            {showNumberLine && hasNumberLine && (
+              <div className="w-full animate-fade-in">
+                <NumberLine
+                  variable={eqVar}
+                  roots={roots}
+                  intervals={nlData.intervals}
                 />
-                <span>{showSteps ? 'Hide Step-by-Step Solution' : 'Show Step-by-Step Solution'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EFEBE9] text-[#5D4037] dark:bg-[#3E2723] dark:text-[#D7CCC8]">
-                  {result.steps!.length} {result.steps!.length === 1 ? 'step' : 'steps'}
-                </span>
-              </button>
-            </div>
-          );
-        }
-
-        return null;
+              </div>
+            )}
+          </div>
+        );
       })()}
 
       {/* 4. Unified Step-by-Step Solution Document Box */}

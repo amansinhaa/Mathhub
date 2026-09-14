@@ -13,7 +13,8 @@ export type SolverType =
   | 'system'
   | 'inequality'
   | 'symbolic'
-  | 'ode';
+  | 'ode'
+  | 'domain_range';
 
 export type EquationType =
   | 'linear'
@@ -27,7 +28,8 @@ export type EquationType =
   | 'absolute_value'
   | 'system'
   | 'inequality'
-  | 'ode';
+  | 'ode'
+  | 'domain_range';
 
 export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';
 

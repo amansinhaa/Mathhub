@@ -12,6 +12,7 @@ import { SolverType } from '@/types/solver';
 // ─── Action mode pill config ──────────────────────────────────────────────────
 const ACTIONS: { value: SolverType; emoji: string; label: string; hint: string }[] = [
   { value: 'polynomial', emoji: '=',  label: 'Solve',      hint: 'Find x, roots & answers' },
+  { value: 'domain_range', emoji: '[a,b]', label: 'Domain & Range', hint: 'Find domain & range intervals' },
   { value: 'derivative', emoji: 'd⁄dx', label: 'Differentiate', hint: 'Step-by-step derivative' },
   { value: 'integral',   emoji: '∫',  label: 'Integrate',  hint: 'Indefinite integral + C' },
   { value: 'system',     emoji: '{ }', label: 'System',     hint: '2+ equations together' },
@@ -51,7 +52,7 @@ export default function EquationInput() {
 
     const store = useSolverStore.getState();
     const tab = searchParams.get('tab');
-    if (tab && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic'].includes(tab)) {
+    if (tab && ['polynomial', 'domain_range', 'derivative', 'integral', 'system', 'inequality', 'symbolic'].includes(tab)) {
       if (store.solverType !== tab) {
         store.setSolverType(tab as SolverType);
       }
@@ -95,6 +96,7 @@ export default function EquationInput() {
 
   const placeholders: Record<SolverType, string> = {
     polynomial: 'e.g. 2x + 8 = 20  or  x² - 5x + 6 = 0',
+    domain_range: 'e.g. sqrt(4 - x^2)  or  1/(x-3)  or  x^2 - 4',
     linear: 'e.g. 3x + 5 = 11',
     quadratic: 'e.g. x² - 5x + 6 = 0',
     rational: 'e.g. 1/(x-1) + 1/(x+1) = 1',
@@ -113,6 +115,7 @@ export default function EquationInput() {
 
   const exampleChips: Partial<Record<SolverType, string[]>> = {
     polynomial: ['2x + 8 = 20', 'x² - 5x + 6 = 0', '72t³ + 4t - 76 = 0'],
+    domain_range: ['sqrt(4 - x^2)', '1/(x - 3)', 'x^2 - 4x + 3', 'ln(x - 2)'],
     derivative:  ['3x² + 5x - 4', 'sin(x)', 'x³ - 7x'],
     integral:    ['2x + 3', 'x² - 4x + 5', 'cos(x)'],
     inequality:  ['2x - 3 > 5', 'x² - 4 <= 0'],
@@ -209,31 +212,47 @@ export default function EquationInput() {
             </div>
           )}
 
-          {/* Main input */}
-          <input
-            id="equation"
-            type="text"
-            value={equation}
-            onChange={(e) => setEquation(e.target.value)}
-            onPaste={(e) => {
-              const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
-              if (pasted) {
-                e.preventDefault();
-                const cleaned = cleanPastedMath(pasted);
-                const inputEl = e.currentTarget;
-                const start = inputEl.selectionStart ?? equation.length;
-                const end = inputEl.selectionEnd ?? equation.length;
-                const nextVal = equation.slice(0, start) + cleaned + equation.slice(end);
-                setEquation(nextVal);
-                setTimeout(() => {
-                  const newPos = start + cleaned.length;
-                  inputEl.setSelectionRange(newPos, newPos);
-                }, 0);
-              }
-            }}
-            className="w-full px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-xs"
-            placeholder={placeholders[solverType]}
-          />
+          {/* Large wide touch-optimized input field */}
+          <div className="relative w-full">
+            <input
+              id="equation"
+              type="text"
+              enterKeyHint="go"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              value={equation}
+              onChange={(e) => setEquation(e.target.value)}
+              onPaste={(e) => {
+                const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
+                if (pasted) {
+                  e.preventDefault();
+                  const cleaned = cleanPastedMath(pasted);
+                  const inputEl = e.currentTarget;
+                  const start = inputEl.selectionStart ?? equation.length;
+                  const end = inputEl.selectionEnd ?? equation.length;
+                  const nextVal = equation.slice(0, start) + cleaned + equation.slice(end);
+                  setEquation(nextVal);
+                  setTimeout(() => {
+                    const newPos = start + cleaned.length;
+                    inputEl.setSelectionRange(newPos, newPos);
+                  }, 0);
+                }
+              }}
+              className="w-full pl-4 pr-11 py-3.5 sm:py-4 rounded-2xl border-2 border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-base sm:text-lg shadow-sm min-h-[52px]"
+              placeholder={placeholders[solverType]}
+            />
+            {equation && (
+              <button
+                type="button"
+                onClick={() => setEquation('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[#9E9E9E] hover:text-[#5D4037] dark:hover:text-white hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors"
+                title="Clear input"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
 
           {/* Virtual keyboard (displays after the entry field) */}
           {showKeyboard && (
@@ -291,11 +310,13 @@ export default function EquationInput() {
             </div>
           )}
 
-          {/* Question preview */}
+          {/* Real-time Math Preview Card */}
           {equation && (
-            <div className="p-3 rounded-xl bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#2E2825] text-center">
-              <span className="text-[10px] font-mono font-semibold text-[#757575] dark:text-[#8D827A] block mb-1">Question Preview</span>
-              <div className="text-sm sm:text-base overflow-x-auto py-1 text-[#131313] dark:text-white">
+            <div className="p-3 sm:p-4 rounded-2xl bg-[#FBF9F8] dark:bg-[#151515] border border-[#E0E0E0] dark:border-[#2E2825] text-center shadow-xs transition-all animate-fade-in">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8D827A] dark:text-[#A19891] block mb-1">
+                Math Preview
+              </span>
+              <div className="text-base sm:text-lg overflow-x-auto py-1 text-[#131313] dark:text-white">
                 <MathDisplay math={expressionToLatex(equation)} />
               </div>
             </div>
@@ -394,23 +415,23 @@ export default function EquationInput() {
       {/* ── Mode Action Pills ─────────────────────────────────────────────── */}
       <div className="space-y-1.5">
         <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#757575] dark:text-[#8D827A]">
-          What do you want to do?
+          Choose Operation
         </span>
-        <div className="grid grid-cols-3 gap-1 sm:gap-1.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-1.5">
           {ACTIONS.map(({ value, emoji, label, hint }) => (
             <button
               key={value}
               type="button"
               onClick={() => setSolverType(value)}
               title={hint}
-              className={`flex flex-col items-center justify-center gap-0.5 px-1.5 py-1.5 sm:py-2 rounded-xl border text-xs font-semibold transition-all ${
+              className={`flex flex-col items-center justify-center gap-0.5 px-1.5 py-2 sm:py-2.5 rounded-xl border text-xs font-semibold transition-all min-h-[44px] ${
                 solverType === value
                   ? 'bg-[#5D4037] text-white border-[#795548] shadow-sm scale-[1.02]'
                   : 'bg-[#F5F5F5] dark:bg-[#181818] text-[#616161] dark:text-[#A19891] border-[#E0E0E0] dark:border-[#282422] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] hover:text-[#5D4037] dark:hover:text-white'
               }`}
             >
               <span className="text-sm sm:text-base leading-none font-mono">{emoji}</span>
-              <span className="text-[10px] leading-tight">{label}</span>
+              <span className="text-[10px] leading-tight text-center">{label}</span>
             </button>
           ))}
         </div>

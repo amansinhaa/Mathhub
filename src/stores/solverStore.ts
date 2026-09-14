@@ -114,6 +114,12 @@ export const useSolverStore = create<SolverState>()(
               result = solveSymbolic(equation, solveForVariable);
               break;
             }
+            case 'domain_range': {
+              if (!equation.trim()) throw new Error('Please enter a function to find domain and range.');
+              const { solveDomainAndRange } = await import('@/lib/math/domainRangeSolver');
+              result = solveDomainAndRange(equation);
+              break;
+            }
           }
           set({ result, isLoading: false, error: null });
 

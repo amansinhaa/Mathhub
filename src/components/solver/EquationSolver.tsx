@@ -13,10 +13,11 @@ const EMPTY_STATE_MESSAGES: Record<string, string> = {
   system:      'Enter 2 or more equations below to find where they intersect.',
   inequality:  'Enter an inequality like  2x - 3 > 0  to compute the solution range.',
   symbolic:    'Enter any formula like  v = u + a*t  to rearrange and solve for any variable.',
+  domain_range: 'Enter any function like  f(x) = sqrt(4 - x²)  or  1/(x-3)  to find its domain and range.',
 };
 
 interface EquationSolverProps {
-  initialMode?: 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic';
+  initialMode?: 'polynomial' | 'derivative' | 'integral' | 'system' | 'inequality' | 'symbolic' | 'domain_range';
   initialEquation?: string;
   hideHeader?: boolean;
   wideLayout?: boolean;
@@ -109,6 +110,12 @@ export default function EquationSolver({
               className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
             >
               x² Quadratic
+            </a>
+            <a
+              href="/domain-and-range-calculator"
+              className="px-2.5 py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#616161] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#332D2A] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2421] text-[11px] shrink-0 transition-colors"
+            >
+              [a,b] Domain &amp; Range
             </a>
             <a
               href="/matrix-solver"

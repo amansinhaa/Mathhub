@@ -65,6 +65,16 @@ export const SEARCH_ITEMS: SearchItem[] = [
     tags: ['quadratic', 'roots', 'factoring', 'completing the square', 'quadratic formula', 'parabola', 'discriminant'],
   },
   {
+    id: 'domain_range',
+    title: 'Domain and Range Calculator',
+    href: '/domain-and-range-calculator',
+    category: 'Tools & Solvers',
+    description: 'Find the domain and range of any function step-by-step in exact interval notation.',
+    badge: '[a,b]',
+    icon: FunctionSquare,
+    tags: ['domain', 'range', 'interval notation', 'functions', 'restrictions', 'asymptotes', 'calculus'],
+  },
+  {
     id: 'polynomial',
     title: 'Polynomial & Algebra Solver',
     href: '/equation-solver-with-steps',
