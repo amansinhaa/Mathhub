@@ -1,4 +1,4 @@
-﻿"""
+"""
 Accuracy Test Reporter
 Outputs a clean visual CLI report and exports machine-readable accuracy_report.json.
 """
@@ -97,6 +97,6 @@ class Reporter:
         }
 
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(report_data, f, indent=2)
+            json.dump(report_data, f, indent=2, default=str)
 
         return os.path.abspath(output_path)

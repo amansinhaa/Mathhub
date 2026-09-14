@@ -837,6 +837,159 @@ export function trySolveRadicalEquation(cleanEq: string, rawEq: string): SolverR
         inputInterpretation: `\\text{Solve radical equation: } ${expressionToLatex(cleanEq)}`,
       };
     }
+
+    // Form 2: sqrt(A) = sqrt(B)
+    const sqrtMatchL = lhs.match(/^sqrt\(([^)]+)\)$/);
+    const sqrtMatchR = rhs.match(/^sqrt\(([^)]+)\)$/);
+    if (sqrtMatchL && sqrtMatchR) {
+      const radA = sqrtMatchL[1];
+      const radB = sqrtMatchR[1];
+      const steps: SolutionStep[] = [];
+      let stepNumber = 1;
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'State the domain constraints: both radicands must be non-negative ($A \\ge 0$ and $B \\ge 0$):',
+        math: `${expressionToLatex(radA)} \\ge 0 \\quad \\text{and} \\quad ${expressionToLatex(radB)} \\ge 0`,
+      });
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Square both sides of the equation to eliminate the radicals:',
+        math: `\\left(\\sqrt{${expressionToLatex(radA)}}\\right)^2 = \\left(\\sqrt{${expressionToLatex(radB)}}\\right)^2 \\implies ${expressionToLatex(radA)} = ${expressionToLatex(radB)}`,
+      });
+
+      const polyEq = `(${radA}) - (${radB}) = 0`;
+      const polyRes = solvePolynomial(polyEq);
+      const candidates = (polyRes.numericRoots || []).filter((r, idx, arr) => arr.indexOf(r) === idx);
+
+      const validRoots: { exact: string; num: number }[] = [];
+      const extraneousRoots: { exact: string; num: number }[] = [];
+
+      for (const numR of candidates) {
+        let leftVal = NaN;
+        let rightVal = NaN;
+        try {
+          leftVal = math.evaluate(radA, { [variable]: numR });
+          rightVal = math.evaluate(radB, { [variable]: numR });
+        } catch {}
+
+        const frac = toFraction(numR);
+        const exactStr = frac && frac.d > 1 ? fmtFraction(numR) : fmt(numR);
+
+        if (!isNaN(leftVal) && !isNaN(rightVal) && leftVal >= -1e-6 && rightVal >= -1e-6 && Math.abs(leftVal - rightVal) < 1e-4) {
+          validRoots.push({ exact: exactStr, num: numR });
+        } else {
+          extraneousRoots.push({ exact: exactStr, num: numR });
+        }
+      }
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Solve the resulting equation and verify candidate root(s) against domain constraints:',
+        math: validRoots.length > 0
+          ? validRoots.map((r) => `${variable} = ${r.exact}`).join(', \\; ')
+          : '\\text{No real solution}',
+      });
+
+      const finalAnswer = validRoots.length > 0
+        ? validRoots.map((r) => `${variable} = ${r.exact}`).join(', \\; ')
+        : '\\text{No real solution}';
+
+      return {
+        type: 'radical',
+        equationType: 'radical',
+        steps,
+        finalAnswer,
+        numericRoots: validRoots.map((r) => r.num),
+        inputInterpretation: `\\text{Solve radical equation: } ${expressionToLatex(cleanEq)}`,
+      };
+    }
+
+    // Form 3: sqrt(A) ± sqrt(B) = C
+    const twoRadMatch = lhs.match(/^sqrt\(([^)]+)\)\s*([+-])\s*sqrt\(([^)]+)\)$/);
+    if (twoRadMatch && !rhs.includes('sqrt')) {
+      const radA = twoRadMatch[1];
+      const signOp = twoRadMatch[2];
+      const radB = twoRadMatch[3];
+      const steps: SolutionStep[] = [];
+      let stepNumber = 1;
+
+      const oppSign = signOp === '+' ? '-' : '+';
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Isolate one radical on one side of the equation:',
+        math: `\\sqrt{${expressionToLatex(radA)}} = ${expressionToLatex(rhs)} ${oppSign} \\sqrt{${expressionToLatex(radB)}}`,
+      });
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Square both sides to eliminate the first radical:',
+        math: `${expressionToLatex(radA)} = \\left(${expressionToLatex(rhs)} ${oppSign} \\sqrt{${expressionToLatex(radB)}}\\right)^2`,
+      });
+
+      // (sqrt(A) + s*sqrt(B))^2 = C^2  => algebraic reduction
+      // D = A - B - C^2 => D^2 - 4*C^2*B = 0
+      const polyExpr = `((${radA}) - (${radB}) - (${rhs})^2)^2 - 4*(${rhs})^2*(${radB})`;
+      const polyRes = solvePolynomial(`${polyExpr} = 0`);
+      const candidates = (polyRes.numericRoots || []).filter((r, idx, arr) => arr.indexOf(r) === idx);
+
+      const validRoots: { exact: string; num: number }[] = [];
+      const extraneousRoots: { exact: string; num: number }[] = [];
+
+      for (const numR of candidates) {
+        let leftVal = NaN;
+        let rightVal = NaN;
+        let valA = NaN;
+        let valB = NaN;
+        try {
+          valA = math.evaluate(radA, { [variable]: numR });
+          valB = math.evaluate(radB, { [variable]: numR });
+          if (valA >= -1e-6 && valB >= -1e-6) {
+            const sqA = Math.sqrt(Math.max(0, valA));
+            const sqB = Math.sqrt(Math.max(0, valB));
+            leftVal = signOp === '+' ? sqA + sqB : sqA - sqB;
+            rightVal = math.evaluate(rhs, { [variable]: numR });
+          }
+        } catch {}
+
+        const frac = toFraction(numR);
+        const exactStr = frac && frac.d > 1 ? fmtFraction(numR) : fmt(numR);
+
+        if (!isNaN(leftVal) && !isNaN(rightVal) && Math.abs(leftVal - rightVal) < 1e-4) {
+          validRoots.push({ exact: exactStr, num: numR });
+        } else {
+          extraneousRoots.push({ exact: exactStr, num: numR });
+        }
+      }
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Isolate the remaining radical, square again, and solve the resulting polynomial equation.',
+        math: `\\text{Resulting polynomial: } ${expressionToLatex(polyExpr)} = 0`,
+      });
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Verify candidate solutions in the original equation to filter out extraneous roots:',
+        math: validRoots.length > 0
+          ? validRoots.map((r) => `\\text{Test } ${variable} = ${r.exact} \\implies \\checkmark \\text{ (Valid)}`).join(' \\\\[4pt] ')
+          : '\\text{All candidate roots are extraneous.}',
+      });
+
+      const finalAnswer = validRoots.length > 0
+        ? validRoots.map((r) => `${variable} = ${r.exact}`).join(', \\; ')
+        : '\\text{No real solution}';
+
+      return {
+        type: 'radical',
+        equationType: 'radical',
+        steps,
+        finalAnswer,
+        numericRoots: validRoots.map((r) => r.num),
+        inputInterpretation: `\\text{Solve radical equation: } ${expressionToLatex(cleanEq)}`,
+      };
+    }
   } catch {
     // fallback
   }

@@ -72,12 +72,12 @@ class SympyOracle:
         var_name = case.get("variable", "x")
         var = sp.Symbol(var_name)
 
-        if category in ("polynomial", "rational", "radical", "exponential_logarithmic", "edge_cases"):
+        if category in ("polynomial", "linear", "quadratic", "cubic_quartic", "rational", "radical", "exponential_logarithmic", "edge_cases"):
             return SympyOracle._solve_equation(case_id, category, case["input"], var)
         elif category == "trigonometric":
             domain = case.get("domain", [0, "2*pi"])
             return SympyOracle._solve_trig(case_id, category, case["input"], var, domain)
-        elif category == "systems":
+        elif category in ("systems", "systems_linear", "systems_nonlinear"):
             return SympyOracle._solve_system(case_id, category, case["input"], case.get("variables", ["x", "y"]))
         elif category == "inequalities":
             return SympyOracle._solve_inequality(case_id, category, case["input"], var)
@@ -87,6 +87,10 @@ class SympyOracle:
             return SympyOracle._solve_integral(case_id, category, case, var)
         elif category == "ode":
             return SympyOracle._solve_ode(case_id, category, case["input"])
+        elif category == "matrix":
+            return SympyOracle._solve_matrix(case_id, category, case)
+        elif category in ("arithmetic_scientific", "arithmetic_gcd_lcm", "scientific_calculator", "unit_converter"):
+            return SympyOracle._solve_arithmetic(case_id, category, case)
         else:
             raise ValueError(f"Unknown category: {category}")
 
@@ -336,3 +340,64 @@ class SympyOracle:
                 "eq_str": eq_str
             }
         )
+
+    @staticmethod
+    def _solve_matrix(case_id: str, category: str, case: Dict[str, Any]) -> OracleResult:
+        op = case.get("operation")
+        matA = sp.Matrix(case["matrixA"])
+        matB = sp.Matrix(case["matrixB"]) if "matrixB" in case and case["matrixB"] is not None else None
+
+        if op == "determinant":
+            val = float(matA.det())
+            return OracleResult(case_id, category, "matrix_scalar", val, str(val), {"value": val})
+        elif op == "trace":
+            val = float(matA.trace())
+            return OracleResult(case_id, category, "matrix_scalar", val, str(val), {"value": val})
+        elif op == "rank":
+            val = int(matA.rank())
+            return OracleResult(case_id, category, "matrix_scalar", val, str(val), {"value": val})
+        elif op == "transpose":
+            res = matA.T
+            return OracleResult(case_id, category, "matrix", [[float(x) for x in row] for row in res.tolist()], sp.latex(res), {"matrix": res.tolist()})
+        elif op == "inverse":
+            if matA.det() == 0:
+                return OracleResult(case_id, category, "no_solution", EmptySet, "\\text{Singular matrix}", {"singular": True})
+            res = matA.inv()
+            return OracleResult(case_id, category, "matrix", [[float(x) for x in row] for row in res.tolist()], sp.latex(res), {"matrix": res.tolist()})
+        elif op == "multiply":
+            res = matA * matB
+            return OracleResult(case_id, category, "matrix", [[float(x) for x in row] for row in res.tolist()], sp.latex(res), {"matrix": res.tolist()})
+        elif op == "add":
+            res = matA + matB
+            return OracleResult(case_id, category, "matrix", [[float(x) for x in row] for row in res.tolist()], sp.latex(res), {"matrix": res.tolist()})
+        elif op == "subtract":
+            res = matA - matB
+            return OracleResult(case_id, category, "matrix", [[float(x) for x in row] for row in res.tolist()], sp.latex(res), {"matrix": res.tolist()})
+        elif op == "rref":
+            res = matA.rref()[0]
+            return OracleResult(case_id, category, "matrix", [[float(x) for x in row] for row in res.tolist()], sp.latex(res), {"matrix": res.tolist()})
+        else:
+            raise ValueError(f"Unsupported matrix operation: {op}")
+
+    @staticmethod
+    def _solve_arithmetic(case_id: str, category: str, case: Dict[str, Any]) -> OracleResult:
+        subtype = case.get("subtype", "")
+        if subtype in ("gcd", "lcm") or case.get("operation") in ("gcd", "lcm"):
+            import math
+            a = int(round(case["a"]))
+            b = int(round(case["b"]))
+            op = case.get("operation", subtype)
+            if op == "gcd":
+                val = math.gcd(a, b)
+            else:
+                val = abs(a * b) // math.gcd(a, b) if math.gcd(a, b) != 0 else 0
+            return OracleResult(case_id, category, "number", val, str(val), {"value": val})
+        elif subtype == "unit" or "fromUnit" in case:
+            exp = float(case.get("expected", 0))
+            return OracleResult(case_id, category, "number", exp, str(exp), {"value": exp})
+        else:
+            expr_str = case.get("input", "")
+            expr = parse_sympy_expr(expr_str)
+            val = float(sp.N(expr))
+            return OracleResult(case_id, category, "number", val, str(val), {"value": val})
+

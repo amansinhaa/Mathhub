@@ -1899,10 +1899,28 @@ export function generateHigherOrderSteps(
     math: `${equation} = 0`,
   });
 
+  // Deduplicate roots mathematically and clean float representations
+  const uniqueRoots: string[] = [];
+  roots.forEach((r) => {
+    const num = parseFloat(r);
+    const existing = uniqueRoots.find((u) => {
+      const uNum = parseFloat(u);
+      if (!isNaN(num) && !isNaN(uNum)) {
+        return Math.abs(num - uNum) < 1e-5;
+      }
+      return u === r;
+    });
+    if (!existing) {
+      uniqueRoots.push(r);
+    }
+  });
+
   steps.push({
     stepNumber: stepCount++,
     explanation: 'Solved roots for the equation:',
-    math: roots.map((r, i) => `${variable}_${i + 1} = ${r}`).join(', \\quad '),
+    math: uniqueRoots.length === 1
+      ? `${variable} = ${uniqueRoots[0]}`
+      : uniqueRoots.map((r, i) => `${variable}_${i + 1} = ${r}`).join(', \\quad '),
   });
 
   return steps;

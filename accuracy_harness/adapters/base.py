@@ -1,4 +1,4 @@
-﻿"""
+"""
 Base Adapter Interface
 Abstract interface representing a math solver implementation.
 """
@@ -16,6 +16,7 @@ class SolverOutput:
         parsed_roots: Optional[List[Any]] = None,
         parsed_solutions: Optional[List[Dict[str, Any]]] = None,
         steps: Optional[List[Dict[str, Any]]] = None,
+        matrix_output: Optional[Any] = None,
         execution_time_ms: float = 0.0,
         status: str = "success",
         error_message: str = ""
@@ -27,6 +28,7 @@ class SolverOutput:
         self.parsed_roots = parsed_roots or []
         self.parsed_solutions = parsed_solutions or []
         self.steps = steps or []
+        self.matrix_output = matrix_output
         self.execution_time_ms = execution_time_ms
         self.status = status
         self.error_message = error_message
@@ -39,6 +41,7 @@ class SolverOutput:
             "equation_type": self.equation_type,
             "parsed_roots": [str(r) for r in self.parsed_roots],
             "parsed_solutions": self.parsed_solutions,
+            "matrix_output": self.matrix_output,
             "execution_time_ms": self.execution_time_ms,
             "status": self.status,
             "error_message": self.error_message

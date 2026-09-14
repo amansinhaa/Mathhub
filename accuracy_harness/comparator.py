@@ -164,7 +164,15 @@ class SymbolicComparator:
         if res_type == "ode":
             return SymbolicComparator._compare_ode(oracle_res, actual_res, tolerance)
 
-        # 7. Sets of Roots (Polynomial, Rational, Radical, Trig, Exp/Log)
+        # 7. Matrix
+        if res_type == "matrix":
+            return SymbolicComparator._compare_matrix(gt, actual_res, tolerance)
+
+        # 8. Scalar / Number (Matrix determinant/trace, arithmetic, units, calculator)
+        if res_type in ("matrix_scalar", "number"):
+            return SymbolicComparator._compare_number(gt, actual_res, tolerance)
+
+        # 9. Sets of Roots (Polynomial, Rational, Radical, Trig, Exp/Log)
         return SymbolicComparator._compare_root_sets(gt, actual_res, tolerance)
 
     @staticmethod
@@ -406,6 +414,13 @@ class SymbolicComparator:
             if pairs:
                 sol_dict = {p[0]: float(p[1]) if "/" not in p[1] else float(sp.Rational(p[1])) for p in pairs}
                 actual_sols = [sol_dict]
+            else:
+                # Look for coordinate pairs (x, y) like (3, 4), (-1.5, 2.0)
+                coord_pairs = re.findall(r"\(\s*([-+]?\d*\.?\d+(?:/\d+)?)\s*,\s*([-+]?\d*\.?\d+(?:/\d+)?)\s*\)", raw_ans)
+                if coord_pairs:
+                    actual_sols = [{'x': float(p[0]) if "/" not in p[0] else float(sp.Rational(p[0])),
+                                    'y': float(p[1]) if "/" not in p[1] else float(sp.Rational(p[1]))}
+                                   for p in coord_pairs]
 
         if not actual_sols or len(actual_sols) == 0:
             return ComparisonResult(False, f"No solutions extracted from system output: '{raw_ans}'", str(expected_sols), raw_ans)
@@ -499,3 +514,64 @@ class SymbolicComparator:
             return ComparisonResult(False, f"ODE solution does not satisfy differential equation (residual = {residual})", str(oracle_res.ground_truth), raw_ans)
         except Exception as ex:
             return ComparisonResult(False, f"Error validating ODE solution: {ex}", str(oracle_res.ground_truth), raw_ans)
+
+    @staticmethod
+    def _compare_matrix(expected_mat: Any, actual_res: Any, tolerance: float = 1e-4) -> ComparisonResult:
+        mat_out = getattr(actual_res, "matrix_output", getattr(actual_res, "matrixOutput", None))
+        raw_ans = getattr(actual_res, "raw_answer", str(actual_res))
+        if mat_out is None:
+            try:
+                import json
+                mat_out = json.loads(raw_ans)
+            except Exception:
+                pass
+
+        if mat_out is None:
+            return ComparisonResult(False, f"Could not parse matrix output: '{raw_ans}'", str(expected_mat), raw_ans)
+
+        try:
+            if not isinstance(expected_mat, list) or not isinstance(mat_out, list):
+                return ComparisonResult(False, f"Matrix format mismatch: expected list, got {type(mat_out)}", str(expected_mat), str(mat_out))
+
+            if len(expected_mat) != len(mat_out) or (len(expected_mat) > 0 and len(expected_mat[0]) != len(mat_out[0])):
+                return ComparisonResult(False, f"Matrix dimension mismatch: expected {len(expected_mat)}x{len(expected_mat[0]) if expected_mat else 0}, got {len(mat_out)}x{len(mat_out[0]) if mat_out else 0}", str(expected_mat), str(mat_out))
+
+            for r in range(len(expected_mat)):
+                for c in range(len(expected_mat[0])):
+                    exp_val = float(expected_mat[r][c])
+                    act_val = float(mat_out[r][c])
+                    if abs(exp_val - act_val) > tolerance:
+                        return ComparisonResult(False, f"Matrix element mismatch at row {r}, col {c}: expected {exp_val}, got {act_val}", str(expected_mat), str(mat_out))
+
+            return ComparisonResult(True, "Matrix elements matched within tolerance", str(expected_mat), str(mat_out))
+        except Exception as e:
+            return ComparisonResult(False, f"Matrix comparison error: {e}", str(expected_mat), str(mat_out))
+
+    @staticmethod
+    def _compare_number(expected_num: Any, actual_res: Any, tolerance: float = 1e-3) -> ComparisonResult:
+        raw_ans = str(getattr(actual_res, "raw_answer", actual_res)).strip()
+        roots = getattr(actual_res, "parsed_roots", [])
+        act_num = None
+        if roots and len(roots) > 0:
+            try:
+                act_num = float(roots[0])
+            except Exception:
+                pass
+
+        if act_num is None:
+            try:
+                # try parsing float from raw_ans
+                nums = re.findall(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", raw_ans)
+                if nums:
+                    act_num = float(nums[0])
+            except Exception:
+                pass
+
+        if act_num is None:
+            return ComparisonResult(False, f"Could not extract numeric result from '{raw_ans}'", str(expected_num), raw_ans)
+
+        exp_f = float(expected_num)
+        if abs(exp_f - act_num) < tolerance or (exp_f != 0 and abs((exp_f - act_num) / exp_f) < 1e-2):
+            return ComparisonResult(True, "Numeric value matched within tolerance", str(exp_f), str(act_num))
+        return ComparisonResult(False, f"Numeric mismatch: expected {exp_f}, got {act_num}", str(exp_f), str(act_num))
+

@@ -1,0 +1,7535 @@
+{
+  "lin_001": {
+    "answer": "x = -2",
+    "type": "linear",
+    "roots": [
+      -2
+    ]
+  },
+  "lin_002": {
+    "answer": "x = 1",
+    "type": "linear",
+    "roots": [
+      1
+    ]
+  },
+  "lin_003": {
+    "answer": "x = -31",
+    "type": "linear",
+    "roots": [
+      -31
+    ]
+  },
+  "lin_004": {
+    "answer": "x = \\frac{8}{3}",
+    "type": "linear",
+    "roots": [
+      2.6666666666666665
+    ]
+  },
+  "lin_005": {
+    "answer": "x = -\\frac{7}{2}",
+    "type": "linear",
+    "roots": [
+      -3.5
+    ]
+  },
+  "lin_006": {
+    "answer": "x = 10",
+    "type": "linear",
+    "roots": [
+      10
+    ]
+  },
+  "lin_007": {
+    "answer": "x = -\\frac{11}{7}",
+    "type": "linear",
+    "roots": [
+      -1.5714285714285714
+    ]
+  },
+  "lin_008": {
+    "answer": "x = 2",
+    "type": "linear",
+    "roots": [
+      2
+    ]
+  },
+  "lin_009": {
+    "answer": "x = \\frac{29}{2}",
+    "type": "linear",
+    "roots": [
+      14.5
+    ]
+  },
+  "lin_010": {
+    "answer": "x = -37",
+    "type": "linear",
+    "roots": [
+      -37
+    ]
+  },
+  "lin_011": {
+    "answer": "x = \\frac{9}{2}",
+    "type": "linear",
+    "roots": [
+      4.5
+    ]
+  },
+  "lin_012": {
+    "answer": "x = -\\frac{103}{7}",
+    "type": "linear",
+    "roots": [
+      -14.714285714285714
+    ]
+  },
+  "lin_013": {
+    "answer": "x = \\frac{1}{7}",
+    "type": "linear",
+    "roots": [
+      0.14285714285714285
+    ]
+  },
+  "lin_014": {
+    "answer": "x = \\frac{11}{6}",
+    "type": "linear",
+    "roots": [
+      1.8333333333333333
+    ]
+  },
+  "lin_015": {
+    "answer": "x = 53",
+    "type": "linear",
+    "roots": [
+      53
+    ]
+  },
+  "lin_016": {
+    "answer": "x = 2",
+    "type": "linear",
+    "roots": [
+      2
+    ]
+  },
+  "lin_017": {
+    "answer": "x = -\\frac{20}{3}",
+    "type": "linear",
+    "roots": [
+      -6.666666666666667
+    ]
+  },
+  "lin_018": {
+    "answer": "x = \\frac{8}{3}",
+    "type": "linear",
+    "roots": [
+      2.6666666666666665
+    ]
+  },
+  "lin_019": {
+    "answer": "x = \\frac{33}{7}",
+    "type": "linear",
+    "roots": [
+      4.714285714285714
+    ]
+  },
+  "lin_020": {
+    "answer": "x = \\frac{38}{3}",
+    "type": "linear",
+    "roots": [
+      12.666666666666666
+    ]
+  },
+  "lin_021": {
+    "answer": "x = -\\frac{11}{7}",
+    "type": "linear",
+    "roots": [
+      -1.5714285714285714
+    ]
+  },
+  "lin_022": {
+    "answer": "x = \\frac{22}{9}",
+    "type": "linear",
+    "roots": [
+      2.4444444444444446
+    ]
+  },
+  "lin_023": {
+    "answer": "x = \\frac{7}{2}",
+    "type": "linear",
+    "roots": [
+      3.5
+    ]
+  },
+  "lin_024": {
+    "answer": "x = -\\frac{33}{2}",
+    "type": "linear",
+    "roots": [
+      -16.5
+    ]
+  },
+  "lin_025": {
+    "answer": "x = -\\frac{21}{5}",
+    "type": "linear",
+    "roots": [
+      -4.2
+    ]
+  },
+  "lin_026": {
+    "answer": "x = -\\frac{42}{13}",
+    "type": "linear",
+    "roots": [
+      -3.230769230769231
+    ]
+  },
+  "lin_027": {
+    "answer": "x = -13",
+    "type": "linear",
+    "roots": [
+      -13
+    ]
+  },
+  "lin_028": {
+    "answer": "x = \\frac{19}{9}",
+    "type": "linear",
+    "roots": [
+      2.111111111111111
+    ]
+  },
+  "lin_029": {
+    "answer": "x = \\frac{23}{5}",
+    "type": "linear",
+    "roots": [
+      4.6
+    ]
+  },
+  "lin_030": {
+    "answer": "x = -\\frac{121}{7}",
+    "type": "linear",
+    "roots": [
+      -17.285714285714285
+    ]
+  },
+  "lin_031": {
+    "answer": "x = -\\frac{15}{4}",
+    "type": "linear",
+    "roots": [
+      -3.75
+    ]
+  },
+  "lin_032": {
+    "answer": "x = -\\frac{18}{5}",
+    "type": "linear",
+    "roots": [
+      -3.6
+    ]
+  },
+  "lin_033": {
+    "answer": "x = \\frac{157}{8}",
+    "type": "linear",
+    "roots": [
+      19.625
+    ]
+  },
+  "lin_034": {
+    "answer": "x = -3",
+    "type": "linear",
+    "roots": [
+      -3
+    ]
+  },
+  "lin_035": {
+    "answer": "x = \\frac{7}{2}",
+    "type": "linear",
+    "roots": [
+      3.5
+    ]
+  },
+  "lin_036": {
+    "answer": "x = -15",
+    "type": "linear",
+    "roots": [
+      -15
+    ]
+  },
+  "lin_037": {
+    "answer": "x = \\frac{17}{6}",
+    "type": "linear",
+    "roots": [
+      2.8333333333333335
+    ]
+  },
+  "lin_038": {
+    "answer": "x = -\\frac{8}{5}",
+    "type": "linear",
+    "roots": [
+      -1.6
+    ]
+  },
+  "lin_039": {
+    "answer": "x = 9",
+    "type": "linear",
+    "roots": [
+      9
+    ]
+  },
+  "lin_040": {
+    "answer": "x = -\\frac{8}{3}",
+    "type": "linear",
+    "roots": [
+      -2.6666666666666665
+    ]
+  },
+  "lin_041": {
+    "answer": "x = 1",
+    "type": "linear",
+    "roots": [
+      1
+    ]
+  },
+  "lin_042": {
+    "answer": "x = -\\frac{99}{5}",
+    "type": "linear",
+    "roots": [
+      -19.8
+    ]
+  },
+  "lin_043": {
+    "answer": "x = -8",
+    "type": "linear",
+    "roots": [
+      -8
+    ]
+  },
+  "lin_044": {
+    "answer": "x = \\frac{26}{5}",
+    "type": "linear",
+    "roots": [
+      5.2
+    ]
+  },
+  "lin_045": {
+    "answer": "x = \\frac{91}{6}",
+    "type": "linear",
+    "roots": [
+      15.166666666666666
+    ]
+  },
+  "lin_046": {
+    "answer": "x = \\frac{19}{5}",
+    "type": "linear",
+    "roots": [
+      3.8
+    ]
+  },
+  "lin_047": {
+    "answer": "x = \\frac{5}{16}",
+    "type": "linear",
+    "roots": [
+      0.3125
+    ]
+  },
+  "lin_048": {
+    "answer": "x = -\\frac{238}{9}",
+    "type": "linear",
+    "roots": [
+      -26.444444444444443
+    ]
+  },
+  "lin_049": {
+    "answer": "x = -\\frac{11}{7}",
+    "type": "linear",
+    "roots": [
+      -1.5714285714285714
+    ]
+  },
+  "lin_050": {
+    "answer": "x = -\\frac{8}{5}",
+    "type": "linear",
+    "roots": [
+      -1.6
+    ]
+  },
+  "lin_051": {
+    "answer": "x = \\frac{43}{3}",
+    "type": "linear",
+    "roots": [
+      14.333333333333334
+    ]
+  },
+  "lin_052": {
+    "answer": "x = -3",
+    "type": "linear",
+    "roots": [
+      -3
+    ]
+  },
+  "lin_053": {
+    "answer": "x = \\frac{5}{6}",
+    "type": "linear",
+    "roots": [
+      0.8333333333333334
+    ]
+  },
+  "lin_054": {
+    "answer": "x = -\\frac{4}{5}",
+    "type": "linear",
+    "roots": [
+      -0.8
+    ]
+  },
+  "lin_055": {
+    "answer": "x = -\\frac{29}{7}",
+    "type": "linear",
+    "roots": [
+      -4.142857142857143
+    ]
+  },
+  "lin_056": {
+    "answer": "x = -\\frac{13}{3}",
+    "type": "linear",
+    "roots": [
+      -4.333333333333333
+    ]
+  },
+  "lin_057": {
+    "answer": "x = -\\frac{47}{2}",
+    "type": "linear",
+    "roots": [
+      -23.5
+    ]
+  },
+  "lin_058": {
+    "answer": "x = -6",
+    "type": "linear",
+    "roots": [
+      -6
+    ]
+  },
+  "lin_059": {
+    "answer": "x = \\frac{42}{5}",
+    "type": "linear",
+    "roots": [
+      8.4
+    ]
+  },
+  "lin_060": {
+    "answer": "x = 16",
+    "type": "linear",
+    "roots": [
+      16
+    ]
+  },
+  "lin_061": {
+    "answer": "x = -\\frac{16}{3}",
+    "type": "linear",
+    "roots": [
+      -5.333333333333333
+    ]
+  },
+  "lin_062": {
+    "answer": "x = -\\frac{50}{11}",
+    "type": "linear",
+    "roots": [
+      -4.545454545454546
+    ]
+  },
+  "lin_063": {
+    "answer": "x = -\\frac{68}{3}",
+    "type": "linear",
+    "roots": [
+      -22.666666666666668
+    ]
+  },
+  "lin_064": {
+    "answer": "x = -\\frac{31}{9}",
+    "type": "linear",
+    "roots": [
+      -3.4444444444444446
+    ]
+  },
+  "lin_065": {
+    "answer": "x = \\frac{23}{6}",
+    "type": "linear",
+    "roots": [
+      3.8333333333333335
+    ]
+  },
+  "lin_066": {
+    "answer": "x = \\frac{44}{3}",
+    "type": "linear",
+    "roots": [
+      14.666666666666666
+    ]
+  },
+  "lin_067": {
+    "answer": "x = -\\frac{29}{6}",
+    "type": "linear",
+    "roots": [
+      -4.833333333333333
+    ]
+  },
+  "lin_068": {
+    "answer": "x = \\frac{3}{10}",
+    "type": "linear",
+    "roots": [
+      0.3
+    ]
+  },
+  "lin_069": {
+    "answer": "x = -\\frac{38}{5}",
+    "type": "linear",
+    "roots": [
+      -7.6
+    ]
+  },
+  "lin_070": {
+    "answer": "x = -4",
+    "type": "linear",
+    "roots": [
+      -4
+    ]
+  },
+  "lin_071": {
+    "answer": "x = \\frac{9}{4}",
+    "type": "linear",
+    "roots": [
+      2.25
+    ]
+  },
+  "lin_072": {
+    "answer": "x = -\\frac{30}{7}",
+    "type": "linear",
+    "roots": [
+      -4.285714285714286
+    ]
+  },
+  "lin_073": {
+    "answer": "x = -\\frac{29}{8}",
+    "type": "linear",
+    "roots": [
+      -3.625
+    ]
+  },
+  "lin_074": {
+    "answer": "x = \\frac{39}{4}",
+    "type": "linear",
+    "roots": [
+      9.75
+    ]
+  },
+  "lin_075": {
+    "answer": "x = -22",
+    "type": "linear",
+    "roots": [
+      -22
+    ]
+  },
+  "quad_int_001": {
+    "answer": "x_1 = -6, \\quad x_2 = 8",
+    "type": "quadratic",
+    "roots": [
+      -6,
+      8
+    ]
+  },
+  "quad_int_002": {
+    "answer": "x_1 = 9, \\quad x_2 = 10",
+    "type": "quadratic",
+    "roots": [
+      9,
+      10
+    ]
+  },
+  "quad_int_003": {
+    "answer": "x_1 = -8, \\quad x_2 = 8",
+    "type": "quadratic",
+    "roots": [
+      -8,
+      8
+    ]
+  },
+  "quad_int_004": {
+    "answer": "x_1 = -6, \\quad x_2 = 4",
+    "type": "quadratic",
+    "roots": [
+      -6,
+      4
+    ]
+  },
+  "quad_int_005": {
+    "answer": "x_1 = -7, \\quad x_2 = 9",
+    "type": "quadratic",
+    "roots": [
+      -7,
+      9
+    ]
+  },
+  "quad_int_006": {
+    "answer": "x_1 = -4, \\quad x_2 = 0",
+    "type": "quadratic",
+    "roots": [
+      -4,
+      0
+    ]
+  },
+  "quad_int_007": {
+    "answer": "x_1 = 1, \\quad x_2 = 5",
+    "type": "quadratic",
+    "roots": [
+      1,
+      5
+    ]
+  },
+  "quad_int_008": {
+    "answer": "x_1 = -3, \\quad x_2 = 0",
+    "type": "quadratic",
+    "roots": [
+      -3,
+      0
+    ]
+  },
+  "quad_int_009": {
+    "answer": "x_1 = -7, \\quad x_2 = -1",
+    "type": "quadratic",
+    "roots": [
+      -7,
+      -1
+    ]
+  },
+  "quad_int_010": {
+    "answer": "x_1 = 2, \\quad x_2 = 3",
+    "type": "quadratic",
+    "roots": [
+      2,
+      3
+    ]
+  },
+  "quad_int_011": {
+    "answer": "x_1 = -3, \\quad x_2 = 2",
+    "type": "quadratic",
+    "roots": [
+      -3,
+      2
+    ]
+  },
+  "quad_int_012": {
+    "answer": "x_1 = -2, \\quad x_2 = 4",
+    "type": "quadratic",
+    "roots": [
+      -2,
+      4
+    ]
+  },
+  "quad_int_013": {
+    "answer": "x_1 = -9, \\quad x_2 = 2",
+    "type": "quadratic",
+    "roots": [
+      -9,
+      2
+    ]
+  },
+  "quad_int_014": {
+    "answer": "x_1 = -4, \\quad x_2 = 4",
+    "type": "quadratic",
+    "roots": [
+      -4,
+      4
+    ]
+  },
+  "quad_int_015": {
+    "answer": "x_1 = -6, \\quad x_2 = -5",
+    "type": "quadratic",
+    "roots": [
+      -6,
+      -5
+    ]
+  },
+  "quad_int_016": {
+    "answer": "x_1 = -10, \\quad x_2 = 2",
+    "type": "quadratic",
+    "roots": [
+      -10,
+      2
+    ]
+  },
+  "quad_int_017": {
+    "answer": "x_1 = 1, \\quad x_2 = 5",
+    "type": "quadratic",
+    "roots": [
+      1,
+      5
+    ]
+  },
+  "quad_int_018": {
+    "answer": "x_1 = -12, \\quad x_2 = -1",
+    "type": "quadratic",
+    "roots": [
+      -12,
+      -1
+    ]
+  },
+  "quad_int_019": {
+    "answer": "x_1 = -1, \\quad x_2 = 5",
+    "type": "quadratic",
+    "roots": [
+      -1,
+      5
+    ]
+  },
+  "quad_int_020": {
+    "answer": "x_1 = -6, \\quad x_2 = 5",
+    "type": "quadratic",
+    "roots": [
+      -6,
+      5
+    ]
+  },
+  "quad_int_021": {
+    "answer": "x_1 = 7, \\quad x_2 = 10",
+    "type": "quadratic",
+    "roots": [
+      7,
+      10
+    ]
+  },
+  "quad_int_022": {
+    "answer": "x_1 = 5, \\quad x_2 = 12",
+    "type": "quadratic",
+    "roots": [
+      5,
+      12
+    ]
+  },
+  "quad_int_023": {
+    "answer": "x_1 = -6, \\quad x_2 = 11",
+    "type": "quadratic",
+    "roots": [
+      -6,
+      11
+    ]
+  },
+  "quad_int_024": {
+    "answer": "x_1 = -3, \\quad x_2 = 6",
+    "type": "quadratic",
+    "roots": [
+      -3,
+      6
+    ]
+  },
+  "quad_int_025": {
+    "answer": "x_1 = 5, \\quad x_2 = 9",
+    "type": "quadratic",
+    "roots": [
+      5,
+      9
+    ]
+  },
+  "quad_irr_001": {
+    "answer": "x_1 = -3.192582, \\quad x_2 = 2.192582",
+    "type": "quadratic",
+    "roots": [
+      -3.192582403567252,
+      2.192582403567252
+    ]
+  },
+  "quad_irr_002": {
+    "answer": "x_1 = -1.265564, \\quad x_2 = 2.765564",
+    "type": "quadratic",
+    "roots": [
+      -1.2655644370746373,
+      2.7655644370746373
+    ]
+  },
+  "quad_irr_003": {
+    "answer": "x_1 = -0.135042, \\quad x_2 = 2.468375",
+    "type": "quadratic",
+    "roots": [
+      -0.135041612651109,
+      2.468374945984442
+    ]
+  },
+  "quad_irr_004": {
+    "answer": "x_1 = -1.107275, \\quad x_2 = 2.107275",
+    "type": "quadratic",
+    "roots": [
+      -1.1072751268321592,
+      2.107275126832159
+    ]
+  },
+  "quad_irr_005": {
+    "answer": "x_1 = -1.457427, \\quad x_2 = 0.457427",
+    "type": "quadratic",
+    "roots": [
+      -1.457427107756338,
+      0.4574271077563381
+    ]
+  },
+  "quad_irr_006": {
+    "answer": "x_1 = -0.703257, \\quad x_2 = 2.369924",
+    "type": "quadratic",
+    "roots": [
+      -0.7032574095488145,
+      2.369924076215481
+    ]
+  },
+  "quad_irr_007": {
+    "answer": "x_1 = -1, \\quad x_2 = \\frac{5}{2}",
+    "type": "quadratic",
+    "roots": [
+      -1,
+      2.5
+    ]
+  },
+  "quad_irr_008": {
+    "answer": "x_1 = -1.407536, \\quad x_2 = 3.907536",
+    "type": "quadratic",
+    "roots": [
+      -1.4075364531836625,
+      3.9075364531836625
+    ]
+  },
+  "quad_irr_009": {
+    "answer": "x_1 = -1.686141, \\quad x_2 = 1.186141",
+    "type": "quadratic",
+    "roots": [
+      -1.6861406616345072,
+      1.1861406616345072
+    ]
+  },
+  "quad_irr_010": {
+    "answer": "x_1 = -0.887482, \\quad x_2 = 7.887482",
+    "type": "quadratic",
+    "roots": [
+      -0.8874821936960613,
+      7.887482193696061
+    ]
+  },
+  "quad_irr_011": {
+    "answer": "x_1 = -0.274917, \\quad x_2 = 7.274917",
+    "type": "quadratic",
+    "roots": [
+      -0.2749172176353749,
+      7.274917217635375
+    ]
+  },
+  "quad_irr_012": {
+    "answer": "x_1 = -0.192582, \\quad x_2 = 5.192582",
+    "type": "quadratic",
+    "roots": [
+      -0.19258240356725187,
+      5.192582403567252
+    ]
+  },
+  "quad_irr_013": {
+    "answer": "x_1 = -4.676175, \\quad x_2 = 1.176175",
+    "type": "quadratic",
+    "roots": [
+      -4.676174977679906,
+      1.1761749776799064
+    ]
+  },
+  "quad_irr_014": {
+    "answer": "x_1 = -2.186141, \\quad x_2 = 0.686141",
+    "type": "quadratic",
+    "roots": [
+      -2.186140661634507,
+      0.6861406616345072
+    ]
+  },
+  "quad_irr_015": {
+    "answer": "x_1 = -2.18046, \\quad x_2 = -0.152873",
+    "type": "quadratic",
+    "roots": [
+      -2.18046042171637,
+      -0.15287291161696345
+    ]
+  },
+  "quad_irr_016": {
+    "answer": "x_1 = -0.18046, \\quad x_2 = 1.847127",
+    "type": "quadratic",
+    "roots": [
+      -0.1804604217163699,
+      1.8471270883830364
+    ]
+  },
+  "quad_irr_017": {
+    "answer": "x_1 = -\\frac{4}{3}, \\quad x_2 = 1",
+    "type": "quadratic",
+    "roots": [
+      -1.3333333333333333,
+      1
+    ]
+  },
+  "quad_irr_018": {
+    "answer": "x_1 = -3.212214, \\quad x_2 = 1.712214",
+    "type": "quadratic",
+    "roots": [
+      -3.212214450449026,
+      1.712214450449026
+    ]
+  },
+  "quad_irr_019": {
+    "answer": "x_1 = -2.921661, \\quad x_2 = 1.254994",
+    "type": "quadratic",
+    "roots": [
+      -2.9216606810236114,
+      1.2549940143569447
+    ]
+  },
+  "quad_irr_020": {
+    "answer": "x_1 = -\\frac{5}{2}, \\quad x_2 = 1",
+    "type": "quadratic",
+    "roots": [
+      -2.5,
+      1
+    ]
+  },
+  "quad_irr_021": {
+    "answer": "x_1 = -0.703257, \\quad x_2 = 2.369924",
+    "type": "quadratic",
+    "roots": [
+      -0.7032574095488145,
+      2.369924076215481
+    ]
+  },
+  "quad_irr_022": {
+    "answer": "x_1 = -3.212214, \\quad x_2 = 1.712214",
+    "type": "quadratic",
+    "roots": [
+      -3.212214450449026,
+      1.712214450449026
+    ]
+  },
+  "quad_irr_023": {
+    "answer": "x_1 = -1.618034, \\quad x_2 = 0.618034",
+    "type": "quadratic",
+    "roots": [
+      -1.618033988749895,
+      0.6180339887498949
+    ]
+  },
+  "quad_irr_024": {
+    "answer": "x_1 = -0.755427, \\quad x_2 = 3.08876",
+    "type": "quadratic",
+    "roots": [
+      -0.7554270991117994,
+      3.0887604324451328
+    ]
+  },
+  "quad_irr_025": {
+    "answer": "x_1 = -1.140055, \\quad x_2 = 6.140055",
+    "type": "quadratic",
+    "roots": [
+      -1.140054944640259,
+      6.140054944640259
+    ]
+  },
+  "quad_cplx_001": {
+    "answer": "x = 1 \\pm 4.898979\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_002": {
+    "answer": "x = -1 \\pm 3.674235\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_003": {
+    "answer": "x = \\pm 1.825742\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_004": {
+    "answer": "x = -1 \\pm 2.345208\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_005": {
+    "answer": "x = -0.5 \\pm 3.122499\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_006": {
+    "answer": "x = 0.5 \\pm 3.122499\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_007": {
+    "answer": "x = 0.333333 \\pm 2.054805\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_008": {
+    "answer": "x = -2 \\pm 2.44949\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_009": {
+    "answer": "x = -0.666667 \\pm 3.036811\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_010": {
+    "answer": "x = -0.333333 \\pm 2.357023\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_011": {
+    "answer": "x = 1 \\pm 3\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_012": {
+    "answer": "x = \\pm 5\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_013": {
+    "answer": "x = -0.5 \\pm 2.872281\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_014": {
+    "answer": "x = 0.5 \\pm 3.774917\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_cplx_015": {
+    "answer": "x = 0.666667 \\pm 1.972027\\,i",
+    "type": "quadratic",
+    "roots": []
+  },
+  "quad_rep_001": {
+    "answer": "x = -7",
+    "type": "quadratic",
+    "roots": [
+      -7
+    ]
+  },
+  "quad_rep_002": {
+    "answer": "x = 8",
+    "type": "quadratic",
+    "roots": [
+      8
+    ]
+  },
+  "quad_rep_003": {
+    "answer": "x = 0",
+    "type": "quadratic",
+    "roots": [
+      0
+    ]
+  },
+  "quad_rep_004": {
+    "answer": "x = 2",
+    "type": "quadratic",
+    "roots": [
+      2
+    ]
+  },
+  "quad_rep_005": {
+    "answer": "x = 8",
+    "type": "quadratic",
+    "roots": [
+      8
+    ]
+  },
+  "quad_rep_006": {
+    "answer": "x = 2",
+    "type": "quadratic",
+    "roots": [
+      2
+    ]
+  },
+  "quad_rep_007": {
+    "answer": "x = -7",
+    "type": "quadratic",
+    "roots": [
+      -7
+    ]
+  },
+  "quad_rep_008": {
+    "answer": "x = -8",
+    "type": "quadratic",
+    "roots": [
+      -8
+    ]
+  },
+  "quad_rep_009": {
+    "answer": "x = -1",
+    "type": "quadratic",
+    "roots": [
+      -1
+    ]
+  },
+  "quad_rep_010": {
+    "answer": "x = 7",
+    "type": "quadratic",
+    "roots": [
+      7
+    ]
+  },
+  "cubic_001": {
+    "answer": "x = -4, \\; -1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -1,
+      4
+    ]
+  },
+  "cubic_002": {
+    "answer": "x = -2, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      1,
+      2
+    ]
+  },
+  "cubic_003": {
+    "answer": "x = -1, \\; 0, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      0,
+      4
+    ]
+  },
+  "cubic_004": {
+    "answer": "x = -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      1
+    ]
+  },
+  "cubic_005": {
+    "answer": "x = 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      1,
+      3
+    ]
+  },
+  "cubic_006": {
+    "answer": "x = 0, \\; 3, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      0,
+      3,
+      4
+    ]
+  },
+  "cubic_007": {
+    "answer": "x = -2, \\; -1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      2
+    ]
+  },
+  "cubic_008": {
+    "answer": "x = -4, \\; -2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -2,
+      3
+    ]
+  },
+  "cubic_009": {
+    "answer": "x = 1, \\; 2, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      1,
+      2,
+      4
+    ]
+  },
+  "cubic_010": {
+    "answer": "x = -4, \\; -3, \\; -2",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -3,
+      -2
+    ]
+  },
+  "cubic_011": {
+    "answer": "x = 0, \\; 1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      0,
+      1,
+      4
+    ]
+  },
+  "cubic_012": {
+    "answer": "x = -3, \\; -2, \\; 0",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      0
+    ]
+  },
+  "cubic_013": {
+    "answer": "x = -4, \\; -1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -1,
+      4
+    ]
+  },
+  "cubic_014": {
+    "answer": "x = -4, \\; 0, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      0,
+      2
+    ]
+  },
+  "cubic_015": {
+    "answer": "x = 2, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      2,
+      4
+    ]
+  },
+  "cubic_016": {
+    "answer": "x = -3, \\; -2, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      4
+    ]
+  },
+  "cubic_017": {
+    "answer": "x = -3, \\; -2, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      2
+    ]
+  },
+  "cubic_018": {
+    "answer": "x = 0, \\; 1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      0,
+      1,
+      4
+    ]
+  },
+  "cubic_019": {
+    "answer": "x = -4, \\; -1, \\; 0",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -1,
+      0
+    ]
+  },
+  "cubic_020": {
+    "answer": "x = -2, \\; 0",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      0
+    ]
+  },
+  "cubic_021": {
+    "answer": "x = 0, \\; 1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      0,
+      1,
+      4
+    ]
+  },
+  "cubic_022": {
+    "answer": "x = -2, \\; -1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      2
+    ]
+  },
+  "cubic_023": {
+    "answer": "x = -4, \\; 2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      2,
+      3
+    ]
+  },
+  "cubic_024": {
+    "answer": "x = -2, \\; 1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      1,
+      4
+    ]
+  },
+  "cubic_025": {
+    "answer": "x = -4, \\; -2, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -2,
+      4
+    ]
+  },
+  "cubic_026": {
+    "answer": "x = -2, \\; 1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      1,
+      4
+    ]
+  },
+  "cubic_027": {
+    "answer": "x = -4, \\; -3, \\; -2",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -3,
+      -2
+    ]
+  },
+  "cubic_028": {
+    "answer": "x = -4, \\; 1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      1,
+      4
+    ]
+  },
+  "cubic_029": {
+    "answer": "x = -3, \\; 0, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      0,
+      1
+    ]
+  },
+  "cubic_030": {
+    "answer": "x = -2, \\; -1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      4
+    ]
+  },
+  "cubic_031": {
+    "answer": "x = -3, \\; -2, \\; -1",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      -1
+    ]
+  },
+  "cubic_032": {
+    "answer": "x = -3, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      1,
+      3
+    ]
+  },
+  "cubic_033": {
+    "answer": "x = -3, \\; 0, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      0,
+      2
+    ]
+  },
+  "cubic_034": {
+    "answer": "x = -3, \\; 0, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      0,
+      1
+    ]
+  },
+  "cubic_035": {
+    "answer": "x = -3, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      3
+    ]
+  },
+  "cubic_036": {
+    "answer": "x = -1, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      4
+    ]
+  },
+  "cubic_037": {
+    "answer": "x = 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      1,
+      3
+    ]
+  },
+  "cubic_038": {
+    "answer": "x = -3.000018, \\; -3, \\; -2.999987",
+    "type": "polynomial",
+    "roots": [
+      -3.00001768,
+      -3,
+      -2.99998672
+    ]
+  },
+  "cubic_039": {
+    "answer": "x = 0, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      0,
+      3
+    ]
+  },
+  "cubic_040": {
+    "answer": "x = -2, \\; -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1
+    ]
+  },
+  "quartic_001": {
+    "answer": "x = -4, \\; -3, \\; 3, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -3,
+      3,
+      4
+    ]
+  },
+  "quartic_002": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_003": {
+    "answer": "x = -5, \\; -4, \\; 4, \\; 5",
+    "type": "polynomial",
+    "roots": [
+      -5,
+      -4,
+      4,
+      5
+    ]
+  },
+  "quartic_004": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_005": {
+    "answer": "x = -5, \\; -2, \\; 2, \\; 5",
+    "type": "polynomial",
+    "roots": [
+      -5,
+      -2,
+      2,
+      5
+    ]
+  },
+  "quartic_006": {
+    "answer": "x = -3, \\; -2, \\; 2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      2,
+      3
+    ]
+  },
+  "quartic_007": {
+    "answer": "x = -3, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      3
+    ]
+  },
+  "quartic_008": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_009": {
+    "answer": "x = -4, \\; -2, \\; 2, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -2,
+      2,
+      4
+    ]
+  },
+  "quartic_010": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_011": {
+    "answer": "x = -5, \\; -2, \\; 2, \\; 5",
+    "type": "polynomial",
+    "roots": [
+      -5,
+      -2,
+      2,
+      5
+    ]
+  },
+  "quartic_012": {
+    "answer": "x = -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      1
+    ]
+  },
+  "quartic_013": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_014": {
+    "answer": "x = -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      1
+    ]
+  },
+  "quartic_015": {
+    "answer": "x = -3, \\; -2, \\; 2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      2,
+      3
+    ]
+  },
+  "quartic_016": {
+    "answer": "x = -3, \\; -2, \\; 2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      2,
+      3
+    ]
+  },
+  "quartic_017": {
+    "answer": "x = -3, \\; -2, \\; 2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      2,
+      3
+    ]
+  },
+  "quartic_018": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_019": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_020": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_021": {
+    "answer": "x = -5, \\; -4, \\; 4, \\; 5",
+    "type": "polynomial",
+    "roots": [
+      -5,
+      -4,
+      4,
+      5
+    ]
+  },
+  "quartic_022": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_023": {
+    "answer": "x = -5, \\; -3, \\; 3, \\; 5",
+    "type": "polynomial",
+    "roots": [
+      -5,
+      -3,
+      3,
+      5
+    ]
+  },
+  "quartic_024": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_025": {
+    "answer": "x = -4, \\; -2, \\; 2, \\; 4",
+    "type": "polynomial",
+    "roots": [
+      -4,
+      -2,
+      2,
+      4
+    ]
+  },
+  "quartic_026": {
+    "answer": "x = -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      1
+    ]
+  },
+  "quartic_027": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_028": {
+    "answer": "x = -3, \\; -1, \\; 1, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -1,
+      1,
+      3
+    ]
+  },
+  "quartic_029": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_030": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_031": {
+    "answer": "x = -3, \\; -2, \\; 2, \\; 3",
+    "type": "polynomial",
+    "roots": [
+      -3,
+      -2,
+      2,
+      3
+    ]
+  },
+  "quartic_032": {
+    "answer": "x = -2, \\; -1, \\; 1, \\; 2",
+    "type": "polynomial",
+    "roots": [
+      -2,
+      -1,
+      1,
+      2
+    ]
+  },
+  "quartic_033": {
+    "answer": "x = -5, \\; -4, \\; 4, \\; 5",
+    "type": "polynomial",
+    "roots": [
+      -5,
+      -4,
+      4,
+      5
+    ]
+  },
+  "quartic_034": {
+    "answer": "x = -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      1
+    ]
+  },
+  "quartic_035": {
+    "answer": "x = -1, \\; 1",
+    "type": "polynomial",
+    "roots": [
+      -1,
+      1
+    ]
+  },
+  "rat_lin_001": {
+    "answer": "x = 6",
+    "type": "rational",
+    "roots": [
+      6
+    ]
+  },
+  "rat_sum_002": {
+    "answer": "x = \\frac{\\sqrt{33}}{6}+\\frac{1}{2}, x = -\\frac{\\sqrt{33}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      1.457427107756338,
+      -0.4574271077563381
+    ]
+  },
+  "rat_hole_003": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 3\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_004": {
+    "answer": "x = 10",
+    "type": "rational",
+    "roots": [
+      10
+    ]
+  },
+  "rat_sum_005": {
+    "answer": "x = 0, x = 3",
+    "type": "rational",
+    "roots": [
+      0,
+      3
+    ]
+  },
+  "rat_hole_006": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 4\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_007": {
+    "answer": "x = 3",
+    "type": "rational",
+    "roots": [
+      3
+    ]
+  },
+  "rat_sum_008": {
+    "answer": "x = -\\frac{\\sqrt{89}}{2}+\\frac{3}{2}, x = \\frac{\\sqrt{89}}{2}+\\frac{3}{2}",
+    "type": "rational",
+    "roots": [
+      -3.2169905660283016,
+      6.216990566028302
+    ]
+  },
+  "rat_hole_009": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 1\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_010": {
+    "answer": "x = -4",
+    "type": "rational",
+    "roots": [
+      -4
+    ]
+  },
+  "rat_sum_011": {
+    "answer": "x = -\\frac{\\sqrt{233}}{4}+\\frac{3}{4}, x = \\frac{\\sqrt{233}}{4}+\\frac{3}{4}",
+    "type": "rational",
+    "roots": [
+      -3.066084380618437,
+      4.566084380618436
+    ]
+  },
+  "rat_hole_012": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 3\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_013": {
+    "answer": "x = 19",
+    "type": "rational",
+    "roots": [
+      19
+    ]
+  },
+  "rat_sum_014": {
+    "answer": "x = 0, x = 3",
+    "type": "rational",
+    "roots": [
+      0,
+      3
+    ]
+  },
+  "rat_hole_015": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 4\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_016": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_sum_017": {
+    "answer": "x = -\\frac{\\sqrt{89}}{2}+\\frac{3}{2}, x = \\frac{\\sqrt{89}}{2}+\\frac{3}{2}",
+    "type": "rational",
+    "roots": [
+      -3.2169905660283016,
+      6.216990566028302
+    ]
+  },
+  "rat_hole_018": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_019": {
+    "answer": "x = \\frac{28}{3}",
+    "type": "rational",
+    "roots": [
+      9.333333333333334
+    ]
+  },
+  "rat_sum_020": {
+    "answer": "x = -\\frac{\\sqrt{537}}{6}+\\frac{1}{2}, x = \\frac{\\sqrt{537}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -3.3622100754188224,
+      4.362210075418822
+    ]
+  },
+  "rat_hole_021": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_022": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_sum_023": {
+    "answer": "x = -\\frac{\\sqrt{17}}{2}+\\frac{3}{2}, x = \\frac{\\sqrt{17}}{2}+\\frac{3}{2}",
+    "type": "rational",
+    "roots": [
+      -0.5615528128088303,
+      3.5615528128088303
+    ]
+  },
+  "rat_hole_024": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 3\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_025": {
+    "answer": "x = -14",
+    "type": "rational",
+    "roots": [
+      -14
+    ]
+  },
+  "rat_sum_026": {
+    "answer": "x = 0, x = 3",
+    "type": "rational",
+    "roots": [
+      0,
+      3
+    ]
+  },
+  "rat_hole_027": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 4\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_028": {
+    "answer": "x = 8",
+    "type": "rational",
+    "roots": [
+      8
+    ]
+  },
+  "rat_sum_029": {
+    "answer": "x = -\\frac{\\sqrt{537}}{6}+\\frac{1}{2}, x = \\frac{\\sqrt{537}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -3.3622100754188224,
+      4.362210075418822
+    ]
+  },
+  "rat_hole_030": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 3\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_031": {
+    "answer": "x = -\\frac{23}{2}",
+    "type": "rational",
+    "roots": [
+      -11.5
+    ]
+  },
+  "rat_sum_032": {
+    "answer": "x = -\\frac{\\sqrt{129}}{6}+\\frac{1}{2}, x = \\frac{\\sqrt{129}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -1.3929694486000912,
+      2.392969448600091
+    ]
+  },
+  "rat_hole_033": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 2\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_034": {
+    "answer": "x = -3",
+    "type": "rational",
+    "roots": [
+      -3
+    ]
+  },
+  "rat_sum_035": {
+    "answer": "x = -\\frac{\\sqrt{129}}{4}+\\frac{3}{4}, x = \\frac{\\sqrt{129}}{4}+\\frac{3}{4}",
+    "type": "rational",
+    "roots": [
+      -2.089454172900137,
+      3.589454172900137
+    ]
+  },
+  "rat_hole_036": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_037": {
+    "answer": "x = -\\frac{3}{2}",
+    "type": "rational",
+    "roots": [
+      -1.5
+    ]
+  },
+  "rat_sum_038": {
+    "answer": "x = -\\frac{\\sqrt{129}}{6}+\\frac{1}{2}, x = \\frac{\\sqrt{129}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -1.3929694486000912,
+      2.392969448600091
+    ]
+  },
+  "rat_hole_039": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_040": {
+    "answer": "x = \\frac{11}{3}",
+    "type": "rational",
+    "roots": [
+      3.6666666666666665
+    ]
+  },
+  "rat_sum_041": {
+    "answer": "x = -\\frac{\\sqrt{849}}{6}+\\frac{1}{2}, x = \\frac{\\sqrt{849}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -4.356267428111154,
+      5.356267428111154
+    ]
+  },
+  "rat_hole_042": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 4\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_043": {
+    "answer": "x = \\frac{14}{3}",
+    "type": "rational",
+    "roots": [
+      4.666666666666667
+    ]
+  },
+  "rat_sum_044": {
+    "answer": "x = \\frac{\\sqrt{17}}{4}+\\frac{3}{4}, x = -\\frac{\\sqrt{17}}{4}+\\frac{3}{4}",
+    "type": "rational",
+    "roots": [
+      1.7807764064044151,
+      -0.28077640640441515
+    ]
+  },
+  "rat_hole_045": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_046": {
+    "answer": "x = \\frac{15}{2}",
+    "type": "rational",
+    "roots": [
+      7.5
+    ]
+  },
+  "rat_sum_047": {
+    "answer": "x = 0, x = 3",
+    "type": "rational",
+    "roots": [
+      0,
+      3
+    ]
+  },
+  "rat_hole_048": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 2\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_049": {
+    "answer": "x = -10",
+    "type": "rational",
+    "roots": [
+      -10
+    ]
+  },
+  "rat_sum_050": {
+    "answer": "x = -\\frac{3 \\cdot \\sqrt{41}}{4}+\\frac{3}{4}, x = \\frac{3 \\cdot \\sqrt{41}}{4}+\\frac{3}{4}",
+    "type": "rational",
+    "roots": [
+      -4.052343178074636,
+      5.552343178074636
+    ]
+  },
+  "rat_hole_051": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 3\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_052": {
+    "answer": "x = 34",
+    "type": "rational",
+    "roots": [
+      34
+    ]
+  },
+  "rat_sum_053": {
+    "answer": "x = 0, x = 3",
+    "type": "rational",
+    "roots": [
+      0,
+      3
+    ]
+  },
+  "rat_hole_054": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 1\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_055": {
+    "answer": "x = 5",
+    "type": "rational",
+    "roots": [
+      5
+    ]
+  },
+  "rat_sum_056": {
+    "answer": "x = -\\frac{\\sqrt{57}}{2}+\\frac{3}{2}, x = \\frac{\\sqrt{57}}{2}+\\frac{3}{2}",
+    "type": "rational",
+    "roots": [
+      -2.274917217635375,
+      5.274917217635375
+    ]
+  },
+  "rat_hole_057": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_058": {
+    "answer": "x = -11",
+    "type": "rational",
+    "roots": [
+      -11
+    ]
+  },
+  "rat_sum_059": {
+    "answer": "x = -\\frac{\\sqrt{233}}{4}+\\frac{3}{4}, x = \\frac{\\sqrt{233}}{4}+\\frac{3}{4}",
+    "type": "rational",
+    "roots": [
+      -3.066084380618437,
+      4.566084380618436
+    ]
+  },
+  "rat_hole_060": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 3\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_061": {
+    "answer": "x = \\frac{15}{2}",
+    "type": "rational",
+    "roots": [
+      7.5
+    ]
+  },
+  "rat_sum_062": {
+    "answer": "x = -\\frac{\\sqrt{33}}{2}+\\frac{1}{2}, x = \\frac{\\sqrt{33}}{2}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -2.3722813232690143,
+      3.3722813232690143
+    ]
+  },
+  "rat_hole_063": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_064": {
+    "answer": "x = \\frac{9}{2}",
+    "type": "rational",
+    "roots": [
+      4.5
+    ]
+  },
+  "rat_sum_065": {
+    "answer": "x = -\\frac{\\sqrt{537}}{6}+\\frac{1}{2}, x = \\frac{\\sqrt{537}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      -3.3622100754188224,
+      4.362210075418822
+    ]
+  },
+  "rat_hole_066": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 5\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_067": {
+    "answer": "x = 1",
+    "type": "rational",
+    "roots": [
+      1
+    ]
+  },
+  "rat_sum_068": {
+    "answer": "x = \\frac{\\sqrt{33}}{6}+\\frac{1}{2}, x = -\\frac{\\sqrt{33}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      1.457427107756338,
+      -0.4574271077563381
+    ]
+  },
+  "rat_hole_069": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 1\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_070": {
+    "answer": "x = -\\frac{15}{2}",
+    "type": "rational",
+    "roots": [
+      -7.5
+    ]
+  },
+  "rat_sum_071": {
+    "answer": "x = -\\frac{\\sqrt{17}}{2}+\\frac{3}{2}, x = \\frac{\\sqrt{17}}{2}+\\frac{3}{2}",
+    "type": "rational",
+    "roots": [
+      -0.5615528128088303,
+      3.5615528128088303
+    ]
+  },
+  "rat_hole_072": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 1\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_lin_073": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rat_sum_074": {
+    "answer": "x = \\frac{\\sqrt{33}}{6}+\\frac{1}{2}, x = -\\frac{\\sqrt{33}}{6}+\\frac{1}{2}",
+    "type": "rational",
+    "roots": [
+      1.457427107756338,
+      -0.4574271077563381
+    ]
+  },
+  "rat_hole_075": {
+    "answer": "\\text{No real solution} \\quad (\\text{extraneous root: } x = 1\\text{)}",
+    "type": "rational",
+    "roots": []
+  },
+  "rad_single_001": {
+    "answer": "x = \\frac{1}{3}",
+    "type": "radical",
+    "roots": [
+      0.3333333333333333
+    ]
+  },
+  "rad_double_002": {
+    "answer": "x_1 = 15, \\quad x_2 = 1688849860263944/112589990684263",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_003": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_004": {
+    "answer": "x = -1",
+    "type": "radical",
+    "roots": [
+      -1
+    ]
+  },
+  "rad_double_005": {
+    "answer": "x_1 = 14",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_006": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_007": {
+    "answer": "x = \\frac{15}{4}",
+    "type": "radical",
+    "roots": [
+      3.75
+    ]
+  },
+  "rad_double_008": {
+    "answer": "x_1 = 14",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_009": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_010": {
+    "answer": "x = -1",
+    "type": "radical",
+    "roots": [
+      -1
+    ]
+  },
+  "rad_double_011": {
+    "answer": "x_1 = 1196268651020304/70368744177665, \\quad x_2 = 17",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_012": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_013": {
+    "answer": "x = 30",
+    "type": "radical",
+    "roots": [
+      30
+    ]
+  },
+  "rad_double_014": {
+    "answer": "x_1 = 16, \\quad x_2 = 2251799813685249/140737488355328",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_015": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_016": {
+    "answer": "x = 0",
+    "type": "radical",
+    "roots": [
+      0
+    ]
+  },
+  "rad_double_017": {
+    "answer": "x_1 = 21, \\quad x_2 = 5910974510923777/281474976710656",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_018": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "rad_single_019": {
+    "answer": "x = 5",
+    "type": "radical",
+    "roots": [
+      5
+    ]
+  },
+  "rad_double_020": {
+    "answer": "x_1 = 19, \\quad x_2 = 5348024557502482/281474976710657",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_021": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_022": {
+    "answer": "x = \\frac{1}{3}",
+    "type": "radical",
+    "roots": [
+      0.3333333333333333
+    ]
+  },
+  "rad_double_023": {
+    "answer": "x = 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_024": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_025": {
+    "answer": "x = 43",
+    "type": "radical",
+    "roots": [
+      43
+    ]
+  },
+  "rad_double_026": {
+    "answer": "x_1 = 12, \\quad x_2 = 1688849860263937/140737488355328",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_027": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_028": {
+    "answer": "x = \\frac{15}{4}",
+    "type": "radical",
+    "roots": [
+      3.75
+    ]
+  },
+  "rad_double_029": {
+    "answer": "x_1 = 14",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_030": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "rad_single_031": {
+    "answer": "x = 8",
+    "type": "radical",
+    "roots": [
+      8
+    ]
+  },
+  "rad_double_032": {
+    "answer": "x = 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_033": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_034": {
+    "answer": "x = -2",
+    "type": "radical",
+    "roots": [
+      -2
+    ]
+  },
+  "rad_double_035": {
+    "answer": "x_1 = 18, \\quad x_2 = 2533274790395905/140737488355328",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_036": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_037": {
+    "answer": "x = 18",
+    "type": "radical",
+    "roots": [
+      18
+    ]
+  },
+  "rad_double_038": {
+    "answer": "x = 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_039": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_040": {
+    "answer": "x = \\frac{7}{2}",
+    "type": "radical",
+    "roots": [
+      3.5
+    ]
+  },
+  "rad_double_041": {
+    "answer": "x_1 = 1182194902184752/56294995342131, \\quad x_2 = 21",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_042": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_043": {
+    "answer": "x = \\frac{47}{3}",
+    "type": "radical",
+    "roots": [
+      15.666666666666666
+    ]
+  },
+  "rad_double_044": {
+    "answer": "x_1 = 18, \\quad x_2 = 5066549580791825/281474976710657",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_045": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_046": {
+    "answer": "x = \\frac{5}{2}",
+    "type": "radical",
+    "roots": [
+      2.5
+    ]
+  },
+  "rad_double_047": {
+    "answer": "x_1 = 2533274790395912/281474976710657, \\quad x_2 = 9",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_048": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_049": {
+    "answer": "x = \\frac{7}{2}",
+    "type": "radical",
+    "roots": [
+      3.5
+    ]
+  },
+  "rad_double_050": {
+    "answer": "x_1 = 1801439850948199/225179981368525, \\quad x_2 = 8",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_051": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_052": {
+    "answer": "x = 2",
+    "type": "radical",
+    "roots": [
+      2
+    ]
+  },
+  "rad_double_053": {
+    "answer": "x_1 = 15",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_054": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_055": {
+    "answer": "x = 15",
+    "type": "radical",
+    "roots": [
+      15
+    ]
+  },
+  "rad_double_056": {
+    "answer": "x = 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_057": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "rad_single_058": {
+    "answer": "x = 13",
+    "type": "radical",
+    "roots": [
+      13
+    ]
+  },
+  "rad_double_059": {
+    "answer": "x_1 = 16, \\quad x_2 = 4503599627370497/281474976710656",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_060": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "rad_single_061": {
+    "answer": "x = \\frac{9}{2}",
+    "type": "radical",
+    "roots": [
+      4.5
+    ]
+  },
+  "rad_double_062": {
+    "answer": "x = 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i, \\; 0 \\pm 0\\,i",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_063": {
+    "answer": "x = \\frac{7 + \\sqrt{57}}{2}",
+    "type": "radical",
+    "roots": [
+      7.274917217635375
+    ]
+  },
+  "rad_single_064": {
+    "answer": "x = 28",
+    "type": "radical",
+    "roots": [
+      28
+    ]
+  },
+  "rad_double_065": {
+    "answer": "x_1 = 27",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_066": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "rad_single_067": {
+    "answer": "x = \\frac{17}{3}",
+    "type": "radical",
+    "roots": [
+      5.666666666666667
+    ]
+  },
+  "rad_double_068": {
+    "answer": "x_1 = 2064149829211471/93824992236885, \\quad x_2 = 22",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_069": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "rad_single_070": {
+    "answer": "x = 17",
+    "type": "radical",
+    "roots": [
+      17
+    ]
+  },
+  "rad_double_071": {
+    "answer": "x_1 = 23, \\quad x_2 = 3236962232172566/140737488355329",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_072": {
+    "answer": "x = \\frac{3 + \\sqrt{17}}{2}",
+    "type": "radical",
+    "roots": [
+      3.5615528128088303
+    ]
+  },
+  "rad_single_073": {
+    "answer": "x = \\frac{1}{3}",
+    "type": "radical",
+    "roots": [
+      0.3333333333333333
+    ]
+  },
+  "rad_double_074": {
+    "answer": "x_1 = 18, \\quad x_2 = 2533274790395921/140737488355329",
+    "type": "radical",
+    "roots": []
+  },
+  "rad_ext_075": {
+    "answer": "x = \\frac{5 + \\sqrt{33}}{2}",
+    "type": "radical",
+    "roots": [
+      5.372281323269014
+    ]
+  },
+  "exp_base_001": {
+    "answer": "x = \\frac{-1\\ln(2) - 3\\ln(2)}{\\ln(2) - 2\\ln(2)}",
+    "type": "exponential",
+    "roots": [
+      4
+    ]
+  },
+  "exp_nat_002": {
+    "answer": "x = [\\frac{62628351}{108796589}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_003": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_004": {
+    "answer": "x = \\frac{-1\\ln(3) - 2\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      3
+    ]
+  },
+  "exp_nat_005": {
+    "answer": "x = [\\frac{20931769}{90594478}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_006": {
+    "answer": "x = \\frac{831198016}{154238145}",
+    "type": "logarithmic",
+    "roots": [
+      5.38905609893065
+    ]
+  },
+  "exp_base_007": {
+    "answer": "x = \\frac{-1\\ln(3) - 2\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      3
+    ]
+  },
+  "exp_nat_008": {
+    "answer": "x = \\ln(2.2361)",
+    "type": "exponential",
+    "roots": [
+      0.8047189562170503
+    ]
+  },
+  "log_nat_009": {
+    "answer": "x = \\frac{1482256968}{29294687}",
+    "type": "logarithmic",
+    "roots": [
+      50.598150033144236
+    ]
+  },
+  "exp_base_010": {
+    "answer": "x = \\frac{-1\\ln(5) - 1\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_011": {
+    "answer": "x = [\\frac{83504468}{108796589}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_012": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_013": {
+    "answer": "x = \\frac{-1\\ln(5) - 3\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      4
+    ]
+  },
+  "exp_nat_014": {
+    "answer": "x = \\ln(3.1623)",
+    "type": "exponential",
+    "roots": [
+      1.151292546497023
+    ]
+  },
+  "log_nat_015": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_016": {
+    "answer": "x = \\frac{-1\\ln(5) - 3\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      4
+    ]
+  },
+  "exp_nat_017": {
+    "answer": "x = [\\frac{93257830}{191700177}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_018": {
+    "answer": "x = \\frac{205671881}{119696244}",
+    "type": "logarithmic",
+    "roots": [
+      1.718281828459045
+    ]
+  },
+  "exp_base_019": {
+    "answer": "x = \\frac{-1\\ln(3) - 4\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_020": {
+    "answer": "x \\approx 0.366204",
+    "type": "exponential",
+    "roots": [
+      0.366204
+    ]
+  },
+  "log_nat_021": {
+    "answer": "x = \\frac{1482256968}{29294687}",
+    "type": "logarithmic",
+    "roots": [
+      50.598150033144236
+    ]
+  },
+  "exp_base_022": {
+    "answer": "x = \\frac{-1\\ln(3) - 1\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_023": {
+    "answer": "x = \\ln(1.7321)",
+    "type": "exponential",
+    "roots": [
+      0.5493061443340548
+    ]
+  },
+  "log_nat_024": {
+    "answer": "x = \\frac{1482256968}{29294687}",
+    "type": "logarithmic",
+    "roots": [
+      50.598150033144236
+    ]
+  },
+  "exp_base_025": {
+    "answer": "x = \\frac{-1\\ln(5) - 4\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_026": {
+    "answer": "x = \\ln(2.2361)",
+    "type": "exponential",
+    "roots": [
+      0.8047189562170503
+    ]
+  },
+  "log_nat_027": {
+    "answer": "x = \\frac{831198016}{154238145}",
+    "type": "logarithmic",
+    "roots": [
+      5.38905609893065
+    ]
+  },
+  "exp_base_028": {
+    "answer": "x = \\frac{-1\\ln(3) - 1\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_029": {
+    "answer": "x = \\ln(2)",
+    "type": "exponential",
+    "roots": [
+      0.6931471805599453
+    ]
+  },
+  "log_nat_030": {
+    "answer": "x = \\frac{831198016}{154238145}",
+    "type": "logarithmic",
+    "roots": [
+      5.38905609893065
+    ]
+  },
+  "exp_base_031": {
+    "answer": "x = \\frac{-1\\ln(3) - 1\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_032": {
+    "answer": "x = [\\frac{83504468}{108796589}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_033": {
+    "answer": "x = \\frac{205671881}{119696244}",
+    "type": "logarithmic",
+    "roots": [
+      1.718281828459045
+    ]
+  },
+  "exp_base_034": {
+    "answer": "x = \\frac{-1\\ln(3) - 2\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      3
+    ]
+  },
+  "exp_nat_035": {
+    "answer": "x = [\\frac{20931769}{90594478}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_036": {
+    "answer": "x = \\frac{205671881}{119696244}",
+    "type": "logarithmic",
+    "roots": [
+      1.718281828459045
+    ]
+  },
+  "exp_base_037": {
+    "answer": "x = \\frac{-1\\ln(3) - 2\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      3
+    ]
+  },
+  "exp_nat_038": {
+    "answer": "x = [\\frac{12295127}{70952475}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_039": {
+    "answer": "x = \\frac{205671881}{119696244}",
+    "type": "logarithmic",
+    "roots": [
+      1.718281828459045
+    ]
+  },
+  "exp_base_040": {
+    "answer": "x = \\frac{-1\\ln(2) - 4\\ln(2)}{\\ln(2) - 2\\ln(2)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_041": {
+    "answer": "x = \\ln(1.4142)",
+    "type": "exponential",
+    "roots": [
+      0.3465735902799727
+    ]
+  },
+  "log_nat_042": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_043": {
+    "answer": "x = \\frac{-1\\ln(2) - 2\\ln(2)}{\\ln(2) - 2\\ln(2)}",
+    "type": "exponential",
+    "roots": [
+      3
+    ]
+  },
+  "exp_nat_044": {
+    "answer": "x = [\\frac{12295127}{70952475}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_045": {
+    "answer": "x = \\frac{1482256968}{29294687}",
+    "type": "logarithmic",
+    "roots": [
+      50.598150033144236
+    ]
+  },
+  "exp_base_046": {
+    "answer": "x = \\frac{-1\\ln(2) - 1\\ln(2)}{\\ln(2) - 2\\ln(2)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_047": {
+    "answer": "x = [\\frac{8062987}{20039262}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_048": {
+    "answer": "x = \\frac{1482256968}{29294687}",
+    "type": "logarithmic",
+    "roots": [
+      50.598150033144236
+    ]
+  },
+  "exp_base_049": {
+    "answer": "x = \\frac{-1\\ln(3) - 1\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_050": {
+    "answer": "x = [\\frac{24590254}{70952475}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_051": {
+    "answer": "x = \\frac{205671881}{119696244}",
+    "type": "logarithmic",
+    "roots": [
+      1.718281828459045
+    ]
+  },
+  "exp_base_052": {
+    "answer": "x = \\frac{-1\\ln(2) - 4\\ln(2)}{\\ln(2) - 2\\ln(2)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_053": {
+    "answer": "x = [\\frac{62628351}{108796589}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_054": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_055": {
+    "answer": "x = \\frac{-1\\ln(5) - 2\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      3
+    ]
+  },
+  "exp_nat_056": {
+    "answer": "x = \\ln(4)",
+    "type": "exponential",
+    "roots": [
+      1.3862943611198906
+    ]
+  },
+  "log_nat_057": {
+    "answer": "x = \\frac{205671881}{119696244}",
+    "type": "logarithmic",
+    "roots": [
+      1.718281828459045
+    ]
+  },
+  "exp_base_058": {
+    "answer": "x = \\frac{-1\\ln(2) - 3\\ln(2)}{\\ln(2) - 2\\ln(2)}",
+    "type": "exponential",
+    "roots": [
+      4
+    ]
+  },
+  "exp_nat_059": {
+    "answer": "x = [\\frac{12295127}{70952475}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_060": {
+    "answer": "x = \\frac{831198016}{154238145}",
+    "type": "logarithmic",
+    "roots": [
+      5.38905609893065
+    ]
+  },
+  "exp_base_061": {
+    "answer": "x = \\frac{-1\\ln(3) - 1\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      2
+    ]
+  },
+  "exp_nat_062": {
+    "answer": "x = \\ln(7)",
+    "type": "exponential",
+    "roots": [
+      1.9459101490553132
+    ]
+  },
+  "log_nat_063": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_064": {
+    "answer": "x = \\frac{-1\\ln(3) - 4\\ln(3)}{\\ln(3) - 2\\ln(3)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_065": {
+    "answer": "x \\approx 0.366204",
+    "type": "exponential",
+    "roots": [
+      0.366204
+    ]
+  },
+  "log_nat_066": {
+    "answer": "x = \\frac{831198016}{154238145}",
+    "type": "logarithmic",
+    "roots": [
+      5.38905609893065
+    ]
+  },
+  "exp_base_067": {
+    "answer": "x = \\frac{-1\\ln(5) - 4\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_068": {
+    "answer": "x = \\ln(7)",
+    "type": "exponential",
+    "roots": [
+      1.9459101490553132
+    ]
+  },
+  "log_nat_069": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "exp_base_070": {
+    "answer": "x = \\frac{-1\\ln(5) - 4\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_071": {
+    "answer": "x = [\\frac{62628351}{108796589}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_072": {
+    "answer": "x = \\frac{831198016}{154238145}",
+    "type": "logarithmic",
+    "roots": [
+      5.38905609893065
+    ]
+  },
+  "exp_base_073": {
+    "answer": "x = \\frac{-1\\ln(5) - 4\\ln(5)}{\\ln(5) - 2\\ln(5)}",
+    "type": "exponential",
+    "roots": [
+      5
+    ]
+  },
+  "exp_nat_074": {
+    "answer": "x = [\\frac{105717967}{162984864}]",
+    "type": "exponential",
+    "roots": []
+  },
+  "log_nat_075": {
+    "answer": "x = \\frac{243049007}{14225424}",
+    "type": "logarithmic",
+    "roots": [
+      17.085536923187668
+    ]
+  },
+  "trig_001": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_002": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966
+    ]
+  },
+  "trig_003": {
+    "answer": "x \\in \\left\\{ \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      4.71238898038469
+    ]
+  },
+  "trig_004": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_005": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2}, \\; \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966,
+      4.71238898038469
+    ]
+  },
+  "trig_006": {
+    "answer": "x \\in \\left\\{ 0, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      6.283185307179586
+    ]
+  },
+  "trig_007": {
+    "answer": "x \\in \\left\\{ \\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      3.141592653589793
+    ]
+  },
+  "trig_008": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_009": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_010": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981633974483,
+      3.9269908169872414
+    ]
+  },
+  "trig_011": {
+    "answer": "x \\in \\left\\{ 0, \\; \\frac{\\pi}{2}, \\; \\pi, \\; \\frac{3\\pi}{2}, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      1.5707963268558514,
+      3.141592653650748,
+      4.712388980445645,
+      6.283185307179586
+    ]
+  },
+  "trig_012": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853955002363582,
+      3.9269881538261515
+    ]
+  },
+  "trig_013": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{3\\pi}{4}, \\; \\frac{5\\pi}{4}, \\; \\frac{7\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981634584032,
+      2.3561944902532996,
+      3.926990817048196,
+      5.497787143843093
+    ]
+  },
+  "trig_014": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.1415899904287032,
+      6.283185307179586
+    ]
+  },
+  "trig_015": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_016": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_017": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_018": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966
+    ]
+  },
+  "trig_019": {
+    "answer": "x \\in \\left\\{ \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      4.71238898038469
+    ]
+  },
+  "trig_020": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_021": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2}, \\; \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966,
+      4.71238898038469
+    ]
+  },
+  "trig_022": {
+    "answer": "x \\in \\left\\{ 0, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      6.283185307179586
+    ]
+  },
+  "trig_023": {
+    "answer": "x \\in \\left\\{ \\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      3.141592653589793
+    ]
+  },
+  "trig_024": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_025": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_026": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981633974483,
+      3.9269908169872414
+    ]
+  },
+  "trig_027": {
+    "answer": "x \\in \\left\\{ 0, \\; \\frac{\\pi}{2}, \\; \\pi, \\; \\frac{3\\pi}{2}, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      1.5707963268558514,
+      3.141592653650748,
+      4.712388980445645,
+      6.283185307179586
+    ]
+  },
+  "trig_028": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853955002363582,
+      3.9269881538261515
+    ]
+  },
+  "trig_029": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{3\\pi}{4}, \\; \\frac{5\\pi}{4}, \\; \\frac{7\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981634584032,
+      2.3561944902532996,
+      3.926990817048196,
+      5.497787143843093
+    ]
+  },
+  "trig_030": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.1415899904287032,
+      6.283185307179586
+    ]
+  },
+  "trig_031": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_032": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_033": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_034": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966
+    ]
+  },
+  "trig_035": {
+    "answer": "x \\in \\left\\{ \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      4.71238898038469
+    ]
+  },
+  "trig_036": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_037": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2}, \\; \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966,
+      4.71238898038469
+    ]
+  },
+  "trig_038": {
+    "answer": "x \\in \\left\\{ 0, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      6.283185307179586
+    ]
+  },
+  "trig_039": {
+    "answer": "x \\in \\left\\{ \\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      3.141592653589793
+    ]
+  },
+  "trig_040": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_041": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_042": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981633974483,
+      3.9269908169872414
+    ]
+  },
+  "trig_043": {
+    "answer": "x \\in \\left\\{ 0, \\; \\frac{\\pi}{2}, \\; \\pi, \\; \\frac{3\\pi}{2}, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      1.5707963268558514,
+      3.141592653650748,
+      4.712388980445645,
+      6.283185307179586
+    ]
+  },
+  "trig_044": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853955002363582,
+      3.9269881538261515
+    ]
+  },
+  "trig_045": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{3\\pi}{4}, \\; \\frac{5\\pi}{4}, \\; \\frac{7\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981634584032,
+      2.3561944902532996,
+      3.926990817048196,
+      5.497787143843093
+    ]
+  },
+  "trig_046": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.1415899904287032,
+      6.283185307179586
+    ]
+  },
+  "trig_047": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_048": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_049": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_050": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966
+    ]
+  },
+  "trig_051": {
+    "answer": "x \\in \\left\\{ \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      4.71238898038469
+    ]
+  },
+  "trig_052": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_053": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2}, \\; \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966,
+      4.71238898038469
+    ]
+  },
+  "trig_054": {
+    "answer": "x \\in \\left\\{ 0, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      6.283185307179586
+    ]
+  },
+  "trig_055": {
+    "answer": "x \\in \\left\\{ \\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      3.141592653589793
+    ]
+  },
+  "trig_056": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_057": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_058": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981633974483,
+      3.9269908169872414
+    ]
+  },
+  "trig_059": {
+    "answer": "x \\in \\left\\{ 0, \\; \\frac{\\pi}{2}, \\; \\pi, \\; \\frac{3\\pi}{2}, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      1.5707963268558514,
+      3.141592653650748,
+      4.712388980445645,
+      6.283185307179586
+    ]
+  },
+  "trig_060": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853955002363582,
+      3.9269881538261515
+    ]
+  },
+  "trig_061": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{3\\pi}{4}, \\; \\frac{5\\pi}{4}, \\; \\frac{7\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981634584032,
+      2.3561944902532996,
+      3.926990817048196,
+      5.497787143843093
+    ]
+  },
+  "trig_062": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.1415899904287032,
+      6.283185307179586
+    ]
+  },
+  "trig_063": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_064": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_065": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_066": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966
+    ]
+  },
+  "trig_067": {
+    "answer": "x \\in \\left\\{ \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      4.71238898038469
+    ]
+  },
+  "trig_068": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{6}, \\; \\frac{5\\pi}{6} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.5235987755982989,
+      2.617993877991495
+    ]
+  },
+  "trig_069": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{2}, \\; \\frac{3\\pi}{2} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.5707963267948966,
+      4.71238898038469
+    ]
+  },
+  "trig_070": {
+    "answer": "x \\in \\left\\{ 0, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      6.283185307179586
+    ]
+  },
+  "trig_071": {
+    "answer": "x \\in \\left\\{ \\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      3.141592653589793
+    ]
+  },
+  "trig_072": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{3}, \\; \\frac{5\\pi}{3} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      1.0471975511965979,
+      5.235987755982988
+    ]
+  },
+  "trig_073": {
+    "answer": "x \\in \\left\\{ 0, \\; \\pi, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      3.141592653589793,
+      6.283185307179586
+    ]
+  },
+  "trig_074": {
+    "answer": "x \\in \\left\\{ \\frac{\\pi}{4}, \\; \\frac{5\\pi}{4} \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0.7853981633974483,
+      3.9269908169872414
+    ]
+  },
+  "trig_075": {
+    "answer": "x \\in \\left\\{ 0, \\; \\frac{\\pi}{2}, \\; \\pi, \\; \\frac{3\\pi}{2}, \\; 2\\pi \\right\\}",
+    "type": "trigonometric",
+    "roots": [
+      0,
+      1.5707963268558514,
+      3.141592653650748,
+      4.712388980445645,
+      6.283185307179586
+    ]
+  },
+  "sys_lin_2x2_001": {
+    "answer": "x = -1, \\quad y = -7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_002": {
+    "answer": "x = 0, \\quad y = 10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_003": {
+    "answer": "x = 9, \\quad y = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_004": {
+    "answer": "x = 4, \\quad y = 8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_005": {
+    "answer": "x = 1, \\quad y = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_006": {
+    "answer": "x = 1, \\quad y = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_007": {
+    "answer": "x = 7, \\quad y = 7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_008": {
+    "answer": "x = -2, \\quad y = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_009": {
+    "answer": "x = -4, \\quad y = -9",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_010": {
+    "answer": "x = 1, \\quad y = 9",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_011": {
+    "answer": "x = -6, \\quad y = -7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_012": {
+    "answer": "x = -7, \\quad y = -8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_013": {
+    "answer": "x = 7, \\quad y = -10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_014": {
+    "answer": "x = -4, \\quad y = -9",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_015": {
+    "answer": "x = 10, \\quad y = 7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_016": {
+    "answer": "x = 4, \\quad y = 8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_017": {
+    "answer": "x = -10, \\quad y = -1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_018": {
+    "answer": "x = -2, \\quad y = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_019": {
+    "answer": "x = -1, \\quad y = -10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_020": {
+    "answer": "x = -8, \\quad y = 1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_021": {
+    "answer": "x = 8, \\quad y = -8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_022": {
+    "answer": "x = -2, \\quad y = -8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_023": {
+    "answer": "x = 4, \\quad y = 7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_024": {
+    "answer": "x = -4, \\quad y = 7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_025": {
+    "answer": "x = 8, \\quad y = 10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_026": {
+    "answer": "x = -5, \\quad y = 1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_027": {
+    "answer": "x = 7, \\quad y = -9",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_028": {
+    "answer": "x = 10, \\quad y = -9",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_029": {
+    "answer": "x = 2, \\quad y = -7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_030": {
+    "answer": "x = 3, \\quad y = -8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_031": {
+    "answer": "x = -6, \\quad y = -9",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_032": {
+    "answer": "x = -4, \\quad y = 10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_033": {
+    "answer": "x = -4, \\quad y = -10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_034": {
+    "answer": "x = 6, \\quad y = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_035": {
+    "answer": "x = 5, \\quad y = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_036": {
+    "answer": "x = 7, \\quad y = 10",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_037": {
+    "answer": "x = 3, \\quad y = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_038": {
+    "answer": "x = 5, \\quad y = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_039": {
+    "answer": "x = -7, \\quad y = -3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_040": {
+    "answer": "x = -4, \\quad y = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_041": {
+    "answer": "x = 1, \\quad y = -5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_042": {
+    "answer": "x = -5, \\quad y = -1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_043": {
+    "answer": "x = 7, \\quad y = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_044": {
+    "answer": "x = 1, \\quad y = -4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_045": {
+    "answer": "x = 0, \\quad y = 7",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_046": {
+    "answer": "x = -8, \\quad y = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_047": {
+    "answer": "x = 9, \\quad y = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_048": {
+    "answer": "x = -1, \\quad y = -8",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_049": {
+    "answer": "x = -8, \\quad y = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_2x2_050": {
+    "answer": "x = -7, \\quad y = -2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_001": {
+    "answer": "x = 0, \\quad y = 4, \\quad z = 0",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_002": {
+    "answer": "x = -2, \\quad y = -1, \\quad z = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_003": {
+    "answer": "x = 5, \\quad y = -1, \\quad z = -5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_004": {
+    "answer": "x = 5, \\quad y = -1, \\quad z = -3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_005": {
+    "answer": "x = 4, \\quad y = -1, \\quad z = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_006": {
+    "answer": "x = -1, \\quad y = 2, \\quad z = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_007": {
+    "answer": "x = -4, \\quad y = 3, \\quad z = -3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_008": {
+    "answer": "x = -1, \\quad y = -1, \\quad z = 1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_009": {
+    "answer": "x = -5, \\quad y = -3, \\quad z = 1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_010": {
+    "answer": "x = -4, \\quad y = 4, \\quad z = 0",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_011": {
+    "answer": "x = 1, \\quad y = 3, \\quad z = -5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_012": {
+    "answer": "x = 3, \\quad y = -5, \\quad z = -4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_013": {
+    "answer": "x = -5, \\quad y = -5, \\quad z = -5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_014": {
+    "answer": "x = 5, \\quad y = 0, \\quad z = 5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_015": {
+    "answer": "x = -3, \\quad y = -5, \\quad z = -5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_016": {
+    "answer": "x = 2, \\quad y = -5, \\quad z = -5",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_017": {
+    "answer": "x = 4, \\quad y = -4, \\quad z = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_018": {
+    "answer": "x = -5, \\quad y = -2, \\quad z = 4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_019": {
+    "answer": "x = -3, \\quad y = 2, \\quad z = -2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_020": {
+    "answer": "x = -2, \\quad y = -5, \\quad z = 0",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_021": {
+    "answer": "x = 2, \\quad y = -5, \\quad z = -2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_022": {
+    "answer": "x = -5, \\quad y = -1, \\quad z = 3",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_023": {
+    "answer": "x = 3, \\quad y = 2, \\quad z = 2",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_024": {
+    "answer": "x = 3, \\quad y = -4, \\quad z = 1",
+    "type": "system",
+    "roots": []
+  },
+  "sys_lin_3x3_025": {
+    "answer": "x = 1, \\quad y = -4, \\quad z = -4",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_001": {
+    "answer": "(x, y) \\in \\{ (-9.6788, -8.6788),\\quad (8.6788, 9.6788) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_002": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_003": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_004": {
+    "answer": "(x, y) \\in \\{ (-9.6788, -8.6788),\\quad (8.6788, 9.6788) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_005": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_006": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_007": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_008": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_009": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_010": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_011": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_012": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_013": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_014": {
+    "answer": "(x, y) \\in \\{ (-9.6788, -8.6788),\\quad (8.6788, 9.6788) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_015": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_016": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_017": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_018": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_019": {
+    "answer": "(x, y) \\in \\{ (-9.6788, -8.6788),\\quad (8.6788, 9.6788) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_020": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_021": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_022": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_023": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_024": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_025": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_026": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_027": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_028": {
+    "answer": "(x, y) \\in \\{ (-9.6788, -8.6788),\\quad (8.6788, 9.6788) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_029": {
+    "answer": "(x, y) \\in \\{ (-9.6788, -8.6788),\\quad (8.6788, 9.6788) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_030": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_031": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_032": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_033": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_034": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_035": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_036": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_037": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_038": {
+    "answer": "(x, y) \\in \\{ (-4, -3),\\quad (3, 4) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_039": {
+    "answer": "(x, y) \\in \\{ (-7.5534, -6.5534),\\quad (6.5534, 7.5534) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_circ_040": {
+    "answer": "(x, y) \\in \\{ (-3.6225, -2.6225),\\quad (2.6225, 3.6225) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_001": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_002": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_003": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_004": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_005": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_006": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_007": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_008": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_009": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_010": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_011": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_012": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_013": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_014": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_015": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_016": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_017": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_018": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_019": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_020": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_021": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_022": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_023": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_024": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_025": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_026": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_027": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_028": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_029": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_030": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_031": {
+    "answer": "(x, y) \\in \\{ (-0.7321, -0.4641),\\quad (2.7321, 6.4641) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_032": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_033": {
+    "answer": "(x, y) \\in \\{ (-2.3166, -3.6332),\\quad (4.3166, 9.6332) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_034": {
+    "answer": "(x, y) \\in \\{ (-1, -1),\\quad (3, 7) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "sys_nonlin_parab_035": {
+    "answer": "(x, y) \\in \\{ (-1.4495, -1.899),\\quad (3.4495, 7.899) \\}",
+    "type": "system",
+    "roots": []
+  },
+  "ineq_lin_001": {
+    "answer": "x >= -1.2000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_002": {
+    "answer": "x <= 3.6667",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_003": {
+    "answer": "x < -6.3333",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_004": {
+    "answer": "x >= 2.5000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_005": {
+    "answer": "x >= 2.8000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_006": {
+    "answer": "x > 0.3333",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_007": {
+    "answer": "x > 8.6667",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_008": {
+    "answer": "x > -5.6000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_009": {
+    "answer": "x < 3.6667",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_010": {
+    "answer": "x >= -1.6000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_011": {
+    "answer": "x > 3.7500",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_012": {
+    "answer": "x >= 18.5000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_013": {
+    "answer": "x < 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_014": {
+    "answer": "x <= 1.3333",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_015": {
+    "answer": "x <= 1.7143",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_016": {
+    "answer": "x < -1",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_017": {
+    "answer": "x > 0",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_018": {
+    "answer": "x <= -13",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_019": {
+    "answer": "x <= -2.1429",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_020": {
+    "answer": "x <= 7",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_021": {
+    "answer": "x < 4.2857",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_022": {
+    "answer": "x < 2.4000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_023": {
+    "answer": "x <= -1.5000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_024": {
+    "answer": "x > 26",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_025": {
+    "answer": "x > 0.2857",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_026": {
+    "answer": "x <= 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_027": {
+    "answer": "x >= -2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_028": {
+    "answer": "x <= -7.6667",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_029": {
+    "answer": "x > 0",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_030": {
+    "answer": "x < -2.2000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_031": {
+    "answer": "x > -3.4286",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_032": {
+    "answer": "x <= -3.8571",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_033": {
+    "answer": "x <= -0.6000",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_034": {
+    "answer": "x <= -8.3333",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_lin_035": {
+    "answer": "x <= 1",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_001": {
+    "answer": "-6 \\leq x \\leq 5",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_002": {
+    "answer": "x < -2 \\quad \\text{or} \\quad x > 1",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_003": {
+    "answer": "-4 < x < 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_004": {
+    "answer": "x < -6 \\quad \\text{or} \\quad x > 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_005": {
+    "answer": "x < -6 \\quad \\text{or} \\quad x > 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_006": {
+    "answer": "x \\leq -5 \\quad \\text{or} \\quad x \\geq 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_007": {
+    "answer": "x < -6 \\quad \\text{or} \\quad x > 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_008": {
+    "answer": "-4 < x < 7",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_009": {
+    "answer": "x < -6 \\quad \\text{or} \\quad x > 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_010": {
+    "answer": "-6 < x < 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_011": {
+    "answer": "x \\leq -2 \\quad \\text{or} \\quad x \\geq 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_012": {
+    "answer": "0 < x < 1",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_013": {
+    "answer": "x < -4 \\quad \\text{or} \\quad x > 1",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_014": {
+    "answer": "0 < x < 5",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_015": {
+    "answer": "0 \\leq x \\leq 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_016": {
+    "answer": "x < -1 \\quad \\text{or} \\quad x > 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_017": {
+    "answer": "x \\leq 0 \\quad \\text{or} \\quad x \\geq 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_018": {
+    "answer": "x < 0 \\quad \\text{or} \\quad x > 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_019": {
+    "answer": "-1 < x < 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_020": {
+    "answer": "-5 \\leq x \\leq 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_021": {
+    "answer": "-5 \\leq x \\leq 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_022": {
+    "answer": "x < -3 \\quad \\text{or} \\quad x > 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_023": {
+    "answer": "x < -4 \\quad \\text{or} \\quad x > 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_024": {
+    "answer": "-4 < x < 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_025": {
+    "answer": "-4 \\leq x \\leq 7",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_026": {
+    "answer": "x \\leq -2 \\quad \\text{or} \\quad x \\geq 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_027": {
+    "answer": "-4 < x < 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_028": {
+    "answer": "-4 \\leq x \\leq 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_029": {
+    "answer": "x < -3 \\quad \\text{or} \\quad x > 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_030": {
+    "answer": "-1 < x < 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_031": {
+    "answer": "-2 \\leq x \\leq 7",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_032": {
+    "answer": "-4 \\leq x \\leq 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_033": {
+    "answer": "x < -3 \\quad \\text{or} \\quad x > 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_034": {
+    "answer": "-4 \\leq x \\leq 7",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_035": {
+    "answer": "-6 < x < 2",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_036": {
+    "answer": "x < -3 \\quad \\text{or} \\quad x > 6",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_037": {
+    "answer": "x \\leq -1 \\quad \\text{or} \\quad x \\geq 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_038": {
+    "answer": "-6 \\leq x \\leq 3",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_039": {
+    "answer": "x < -4 \\quad \\text{or} \\quad x > 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ineq_quad_040": {
+    "answer": "x < -2 \\quad \\text{or} \\quad x > 4",
+    "type": "inequality",
+    "roots": []
+  },
+  "ode_1st_homo_001": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_002": {
+    "answer": "y(x) = 2 \\cdot x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_003": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_004": {
+    "answer": "y(x) = -x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_005": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_006": {
+    "answer": "y(x) = x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_007": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_008": {
+    "answer": "y(x) = -\\frac{x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_009": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_010": {
+    "answer": "y(x) = -x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_011": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_012": {
+    "answer": "y(x) = x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_013": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_014": {
+    "answer": "y(x) = -\\frac{x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_015": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_016": {
+    "answer": "y(x) = 2 \\cdot x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_017": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_018": {
+    "answer": "y(x) = \\frac{x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_019": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_020": {
+    "answer": "y(x) = -\\frac{x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_021": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_022": {
+    "answer": "y(x) = \\frac{3 \\cdot x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_023": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_024": {
+    "answer": "y(x) = \\frac{3 \\cdot x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_025": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_026": {
+    "answer": "y(x) = -\\frac{x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_027": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_028": {
+    "answer": "y(x) = \\frac{x^{2}}{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_homo_029": {
+    "answer": "y(x) = 0 + C \\cdot \\frac{119696244^{x}}{325368125^{x}}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_1st_sep_030": {
+    "answer": "y(x) = 2 \\cdot x^{2} + C",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_001": {
+    "answer": "y(x) = C_1 e^{-2x} + C_2 e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_002": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_003": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_004": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_005": {
+    "answer": "y(x) = C_1 e^{3x} + C_2 e^{x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_006": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_007": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_008": {
+    "answer": "y(x) = (C_1 + C_2 x)e^{2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_009": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_010": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_011": {
+    "answer": "y(x) = C_1 e^{3x} + C_2 e^{-x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_012": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_013": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_014": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_015": {
+    "answer": "y(x) = C_1 e^{3x} + C_2 e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_016": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_017": {
+    "answer": "y(x) = C_1 e^{x} + C_2 e^{-2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_018": {
+    "answer": "y(x) = C_1 e^{-2x} + C_2 e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_019": {
+    "answer": "y(x) = C_1 e^{3x} + C_2 e^{2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_020": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_021": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_022": {
+    "answer": "y(x) = C_1 e^{-x} + C_2 e^{-2x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_023": {
+    "answer": "y(x) = (C_1 + C_2 x)e^{3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_024": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_homo_025": {
+    "answer": "y(x) = (C_1 + C_2 x)e^{-3x}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_001": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{1}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_002": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{1}{2}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_003": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{3}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_004": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -1",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_005": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{5}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_006": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{3}{2}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_007": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{7}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_008": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -2",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_009": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{9}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_010": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{5}{2}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_011": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{11}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_012": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -3",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_013": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{13}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_014": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{7}{2}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_015": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{15}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_016": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -4",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_017": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{17}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_018": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{9}{2}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_019": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -\\frac{19}{4}",
+    "type": "ode",
+    "roots": []
+  },
+  "ode_2nd_nonhomo_020": {
+    "answer": "y(x) = C_1 e^{2x} + C_2 e^{-2x} -5",
+    "type": "ode",
+    "roots": []
+  },
+  "deriv_poly_001": {
+    "answer": "f'(x) = 4 \\cdot x-2",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_002": {
+    "answer": "f'(x) = 25 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_003": {
+    "answer": "f'(x) = 4 \\cdot x-2",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_004": {
+    "answer": "f'(x) = 9 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_005": {
+    "answer": "f'(x) = 6 \\cdot x-2",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_006": {
+    "answer": "f'(x) = 10 \\cdot x-2",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_007": {
+    "answer": "f'(x) = 10 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_008": {
+    "answer": "f'(x) = 12 \\cdot x^{3}-4",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_009": {
+    "answer": "f'(x) = 12 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_010": {
+    "answer": "f'(x) = 15 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_011": {
+    "answer": "f'(x) = 10 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_012": {
+    "answer": "f'(x) = 12 \\cdot x^{3}-4",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_013": {
+    "answer": "f'(x) = 12 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_014": {
+    "answer": "f'(x) = 10 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_015": {
+    "answer": "f'(x) = 20 \\cdot x^{3}-4",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_016": {
+    "answer": "f'(x) = 25 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_017": {
+    "answer": "f'(x) = 12 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_018": {
+    "answer": "f'(x) = 9 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_019": {
+    "answer": "f'(x) = 10 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_020": {
+    "answer": "f'(x) = 25 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_021": {
+    "answer": "f'(x) = 15 \\cdot x^{2}-3",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_022": {
+    "answer": "f'(x) = 8 \\cdot x^{3}-4",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_023": {
+    "answer": "f'(x) = 8 \\cdot x^{3}-4",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_024": {
+    "answer": "f'(x) = 12 \\cdot x^{3}-4",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_poly_025": {
+    "answer": "f'(x) = 20 \\cdot x^{4}-5",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_001": {
+    "answer": "f'(x) = \\mathrm{cos}\\left(x\\right) \\cdot x+\\mathrm{sin}\\left(x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_002": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+2\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_003": {
+    "answer": "f'(x) = 3 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x^{2}+\\mathrm{cos}\\left(x\\right) \\cdot x^{3}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_004": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+4\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_005": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x+\\mathrm{cos}\\left(x\\right) \\cdot x^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_006": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+6\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_007": {
+    "answer": "f'(x) = \\mathrm{cos}\\left(x\\right) \\cdot x+\\mathrm{sin}\\left(x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_008": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+8\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_009": {
+    "answer": "f'(x) = 3 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x^{2}+\\mathrm{cos}\\left(x\\right) \\cdot x^{3}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_010": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+10\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_011": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x+\\mathrm{cos}\\left(x\\right) \\cdot x^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_012": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+12\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_013": {
+    "answer": "f'(x) = \\mathrm{cos}\\left(x\\right) \\cdot x+\\mathrm{sin}\\left(x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_014": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+14\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_015": {
+    "answer": "f'(x) = 3 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x^{2}+\\mathrm{cos}\\left(x\\right) \\cdot x^{3}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_016": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+16\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_017": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x+\\mathrm{cos}\\left(x\\right) \\cdot x^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_018": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+18\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_019": {
+    "answer": "f'(x) = \\mathrm{cos}\\left(x\\right) \\cdot x+\\mathrm{sin}\\left(x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_020": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+20\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_021": {
+    "answer": "f'(x) = 3 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x^{2}+\\mathrm{cos}\\left(x\\right) \\cdot x^{3}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_022": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+22\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_023": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sin}\\left(x\\right) \\cdot x+\\mathrm{cos}\\left(x\\right) \\cdot x^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_quot_024": {
+    "answer": "f'(x) = \\frac{1}{\\left(x^{2}+1\\right)}-\\frac{2 \\cdot x \\cdot \\left(x+24\\right)}{\\left(x^{2}+1\\right)^{2}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_prod_025": {
+    "answer": "f'(x) = \\mathrm{cos}\\left(x\\right) \\cdot x+\\mathrm{sin}\\left(x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_001": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sec}\\left(2 \\cdot x\\right)^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_002": {
+    "answer": "f'(x) = \\frac{2 \\cdot x}{x^{2}+1}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_003": {
+    "answer": "f'(x) = \\frac{2 \\cdot x}{x^{2}+1}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_004": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_005": {
+    "answer": "f'(x) = \\frac{2 \\cdot 325368125^{2 \\cdot x}}{119696244^{2 \\cdot x}}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_006": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_007": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{cos}\\left(2 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_008": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sec}\\left(2 \\cdot x\\right)^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_009": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sec}\\left(2 \\cdot x\\right)^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_010": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sec}\\left(2 \\cdot x\\right)^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_011": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{cos}\\left(2 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_012": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_013": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_014": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_015": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{cos}\\left(2 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_016": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_017": {
+    "answer": "f'(x) = \\frac{2 \\cdot x}{x^{2}+1}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_018": {
+    "answer": "f'(x) = \\frac{2 \\cdot x}{x^{2}+1}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_019": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sec}\\left(2 \\cdot x\\right)^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_020": {
+    "answer": "f'(x) = \\frac{2 \\cdot x}{x^{2}+1}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_021": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{sec}\\left(2 \\cdot x\\right)^{2}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_022": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_023": {
+    "answer": "f'(x) = -3 \\cdot \\mathrm{sin}\\left(3 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_024": {
+    "answer": "f'(x) = \\frac{2 \\cdot x}{x^{2}+1}",
+    "type": "derivative",
+    "roots": []
+  },
+  "deriv_chain_025": {
+    "answer": "f'(x) = 2 \\cdot \\mathrm{cos}\\left(2 \\cdot x\\right)",
+    "type": "derivative",
+    "roots": []
+  },
+  "integ_indef_001": {
+    "answer": "F(x) = \\frac{2 \\cdot x^{3}}{3} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_002": {
+    "answer": "F(x) = \\frac{325368125^{2 \\cdot x}}{119696244^{2 \\cdot x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{14327190827707536}\\right)+\\mathrm{log}\\left(105864416766015630\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_003": {
+    "answer": "F(x) = \\frac{x^{4}}{4} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_004": {
+    "answer": "F(x) = -\\frac{\\mathrm{cos}\\left(2 \\cdot x\\right)}{2} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_005": {
+    "answer": "F(x) = \\frac{5 \\cdot x^{3}}{3} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_006": {
+    "answer": "F(x) = -\\frac{\\mathrm{cos}\\left(4 \\cdot x\\right)}{4} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_007": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(3 \\cdot x\\right)}{3} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_008": {
+    "answer": "F(x) = \\frac{325368125^{4 \\cdot x}}{119696244^{4 \\cdot x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{2.0526839701354696e+32}\\right)+\\mathrm{log}\\left(1.120727473720865e+34\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_009": {
+    "answer": "F(x) = \\frac{325368125^{x}}{119696244^{x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{119696244}\\right)+\\mathrm{log}\\left(325368125\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_010": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(2 \\cdot x\\right)}{2} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_011": {
+    "answer": "F(x) = \\frac{2 \\cdot x^{5}}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_012": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(4 \\cdot x\\right)}{4} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_013": {
+    "answer": "F(x) = \\frac{x^{2}}{2} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_014": {
+    "answer": "F(x) = 3 \\cdot \\mathrm{log}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_015": {
+    "answer": "F(x) = \\frac{3 \\cdot x^{5}}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_016": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(5 \\cdot x\\right)}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_017": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(5 \\cdot x\\right)}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_018": {
+    "answer": "F(x) = \\frac{325368125^{x}}{119696244^{x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{119696244}\\right)+\\mathrm{log}\\left(325368125\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_019": {
+    "answer": "F(x) = \\frac{3 \\cdot x^{4}}{4} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_020": {
+    "answer": "F(x) = \\frac{3 \\cdot x^{2}}{2} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_021": {
+    "answer": "F(x) = -\\mathrm{cos}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_022": {
+    "answer": "F(x) = \\frac{325368125^{x}}{119696244^{x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{119696244}\\right)+\\mathrm{log}\\left(325368125\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_023": {
+    "answer": "F(x) = \\frac{x^{4}}{4} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_024": {
+    "answer": "F(x) = \\frac{325368125^{5 \\cdot x}}{119696244^{5 \\cdot x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{2.456985613442239e+40}\\right)+\\mathrm{log}\\left(3.646489967605446e+42\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_025": {
+    "answer": "F(x) = 5 \\cdot \\mathrm{log}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_026": {
+    "answer": "F(x) = \\frac{3 \\cdot x^{5}}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_027": {
+    "answer": "F(x) = \\frac{x^{2}}{2} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_028": {
+    "answer": "F(x) = \\mathrm{sin}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_029": {
+    "answer": "F(x) = \\frac{325368125^{3 \\cdot x}}{119696244^{3 \\cdot x} \\cdot \\left(\\mathrm{log}\\left(\\frac{1}{1.7149109291478432e+24}\\right)+\\mathrm{log}\\left(3.4444906787377066e+25\\right)\\right)} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_030": {
+    "answer": "F(x) = \\frac{x^{4}}{4} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_031": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(3 \\cdot x\\right)}{3} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_032": {
+    "answer": "F(x) = \\frac{2 \\cdot x^{3}}{3} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_033": {
+    "answer": "F(x) = \\mathrm{sin}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_034": {
+    "answer": "F(x) = 3 \\cdot \\mathrm{log}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_035": {
+    "answer": "F(x) = 2 \\cdot \\mathrm{log}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_036": {
+    "answer": "F(x) = \\frac{\\mathrm{sin}\\left(5 \\cdot x\\right)}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_037": {
+    "answer": "F(x) = -\\frac{\\mathrm{cos}\\left(5 \\cdot x\\right)}{5} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_038": {
+    "answer": "F(x) = -\\mathrm{cos}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_039": {
+    "answer": "F(x) = -\\frac{\\mathrm{cos}\\left(2 \\cdot x\\right)}{2} + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_indef_040": {
+    "answer": "F(x) = 2 \\cdot \\mathrm{log}\\left(x\\right) + C",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_001": {
+    "answer": "\\frac{7}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_002": {
+    "answer": "\\frac{26}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_003": {
+    "answer": "4",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_004": {
+    "answer": "21",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_005": {
+    "answer": "\\frac{81}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_006": {
+    "answer": "\\frac{255}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_007": {
+    "answer": "64",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_008": {
+    "answer": "\\frac{26}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_009": {
+    "answer": "20",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_010": {
+    "answer": "\\frac{81}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_011": {
+    "answer": "4",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_012": {
+    "answer": "\\frac{64}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_013": {
+    "answer": "9",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_014": {
+    "answer": "4",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_015": {
+    "answer": "\\frac{9}{2}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_016": {
+    "answer": "\\frac{7}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_017": {
+    "answer": "\\frac{7}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_018": {
+    "answer": "21",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_019": {
+    "answer": "64",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_020": {
+    "answer": "\\frac{8}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_021": {
+    "answer": "\\frac{15}{2}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_022": {
+    "answer": "\\frac{3}{2}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_023": {
+    "answer": "\\frac{81}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_024": {
+    "answer": "\\frac{26}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_025": {
+    "answer": "\\frac{7}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_026": {
+    "answer": "\\frac{255}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_027": {
+    "answer": "64",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_028": {
+    "answer": "\\frac{15}{2}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_029": {
+    "answer": "\\frac{15}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_030": {
+    "answer": "\\frac{15}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_031": {
+    "answer": "\\frac{3}{2}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_032": {
+    "answer": "\\frac{26}{3}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_033": {
+    "answer": "\\frac{9}{2}",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_034": {
+    "answer": "4",
+    "type": "integral",
+    "roots": []
+  },
+  "integ_def_035": {
+    "answer": "\\frac{15}{4}",
+    "type": "integral",
+    "roots": []
+  },
+  "mat_det_2x2_001": {
+    "answer": "10",
+    "type": "matrix",
+    "roots": [
+      10
+    ]
+  },
+  "mat_det_3x3_002": {
+    "answer": "3",
+    "type": "matrix",
+    "roots": [
+      3
+    ]
+  },
+  "mat_det_2x2_003": {
+    "answer": "-3",
+    "type": "matrix",
+    "roots": [
+      -3
+    ]
+  },
+  "mat_det_3x3_004": {
+    "answer": "2",
+    "type": "matrix",
+    "roots": [
+      2
+    ]
+  },
+  "mat_det_2x2_005": {
+    "answer": "15",
+    "type": "matrix",
+    "roots": [
+      15
+    ]
+  },
+  "mat_det_3x3_006": {
+    "answer": "-26",
+    "type": "matrix",
+    "roots": [
+      -26
+    ]
+  },
+  "mat_det_2x2_007": {
+    "answer": "2",
+    "type": "matrix",
+    "roots": [
+      2
+    ]
+  },
+  "mat_det_3x3_008": {
+    "answer": "6",
+    "type": "matrix",
+    "roots": [
+      6
+    ]
+  },
+  "mat_det_2x2_009": {
+    "answer": "-12",
+    "type": "matrix",
+    "roots": [
+      -12
+    ]
+  },
+  "mat_det_3x3_010": {
+    "answer": "9",
+    "type": "matrix",
+    "roots": [
+      9
+    ]
+  },
+  "mat_det_2x2_011": {
+    "answer": "0",
+    "type": "matrix",
+    "roots": [
+      0
+    ]
+  },
+  "mat_det_3x3_012": {
+    "answer": "-3",
+    "type": "matrix",
+    "roots": [
+      -3
+    ]
+  },
+  "mat_det_2x2_013": {
+    "answer": "25",
+    "type": "matrix",
+    "roots": [
+      25
+    ]
+  },
+  "mat_det_3x3_014": {
+    "answer": "0",
+    "type": "matrix",
+    "roots": [
+      0
+    ]
+  },
+  "mat_det_2x2_015": {
+    "answer": "-4",
+    "type": "matrix",
+    "roots": [
+      -4
+    ]
+  },
+  "mat_det_3x3_016": {
+    "answer": "33",
+    "type": "matrix",
+    "roots": [
+      33
+    ]
+  },
+  "mat_det_2x2_017": {
+    "answer": "8",
+    "type": "matrix",
+    "roots": [
+      8
+    ]
+  },
+  "mat_det_3x3_018": {
+    "answer": "-38",
+    "type": "matrix",
+    "roots": [
+      -38
+    ]
+  },
+  "mat_det_2x2_019": {
+    "answer": "8",
+    "type": "matrix",
+    "roots": [
+      8
+    ]
+  },
+  "mat_det_3x3_020": {
+    "answer": "-30",
+    "type": "matrix",
+    "roots": [
+      -30
+    ]
+  },
+  "mat_det_2x2_021": {
+    "answer": "0",
+    "type": "matrix",
+    "roots": [
+      0
+    ]
+  },
+  "mat_det_3x3_022": {
+    "answer": "-3",
+    "type": "matrix",
+    "roots": [
+      -3
+    ]
+  },
+  "mat_det_2x2_023": {
+    "answer": "-4",
+    "type": "matrix",
+    "roots": [
+      -4
+    ]
+  },
+  "mat_det_3x3_024": {
+    "answer": "18",
+    "type": "matrix",
+    "roots": [
+      18
+    ]
+  },
+  "mat_det_2x2_025": {
+    "answer": "12",
+    "type": "matrix",
+    "roots": [
+      12
+    ]
+  },
+  "mat_mult_001": {
+    "answer": "[[-9,9],[9,-9]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_002": {
+    "answer": "[[9,-5],[-3,7]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_003": {
+    "answer": "[[5,0],[-4,0]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_004": {
+    "answer": "[[0,0],[6,6]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_005": {
+    "answer": "[[9,8],[6,4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_006": {
+    "answer": "[[9,3],[-3,-1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_007": {
+    "answer": "[[2,-3],[-2,8]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_008": {
+    "answer": "[[-15,12],[9,-10]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_009": {
+    "answer": "[[3,-6],[1,-4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_010": {
+    "answer": "[[-12,1],[-7,7]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_011": {
+    "answer": "[[0,7],[10,-9]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_012": {
+    "answer": "[[-2,7],[-2,5]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_013": {
+    "answer": "[[6,12],[0,-6]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_014": {
+    "answer": "[[0,0],[-13,-6]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_mult_015": {
+    "answer": "[[1,-4],[-12,-1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_001": {
+    "answer": "[[1,-7],[6,5]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_002": {
+    "answer": "[[1,-6],[3,4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_003": {
+    "answer": "[[0,-10],[-3,-1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_004": {
+    "answer": "[[4,0],[5,4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_005": {
+    "answer": "[[-2,-9],[0,8]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_006": {
+    "answer": "[[-6,2],[-4,-1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_007": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_008": {
+    "answer": "[[-3,-5],[-2,-7]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_009": {
+    "answer": "[[-8,1],[2,6]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_010": {
+    "answer": "[[-5,3],[-6,4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_011": {
+    "answer": "[[4,-3],[-5,2]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_012": {
+    "answer": "[[0,1],[-1,0]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_013": {
+    "answer": "[[9,0],[-4,8]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_subtract_014": {
+    "answer": "[[1,-5],[8,-5]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_add_015": {
+    "answer": "[[0,-4],[4,-2]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_trace_001": {
+    "answer": "2",
+    "type": "matrix",
+    "roots": [
+      2
+    ]
+  },
+  "mat_transpose_002": {
+    "answer": "[[1,2],[-2,4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_trace_003": {
+    "answer": "0",
+    "type": "matrix",
+    "roots": [
+      0
+    ]
+  },
+  "mat_transpose_004": {
+    "answer": "[[2,1],[-4,-3]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_trace_005": {
+    "answer": "6",
+    "type": "matrix",
+    "roots": [
+      6
+    ]
+  },
+  "mat_transpose_006": {
+    "answer": "[[-3,1],[-2,-1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_trace_007": {
+    "answer": "7",
+    "type": "matrix",
+    "roots": [
+      7
+    ]
+  },
+  "mat_transpose_008": {
+    "answer": "[[1,3],[-1,-4]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_trace_009": {
+    "answer": "7",
+    "type": "matrix",
+    "roots": [
+      7
+    ]
+  },
+  "mat_transpose_010": {
+    "answer": "[[-4,4],[-4,2]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_001": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_002": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_003": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_004": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_005": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_006": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_007": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_008": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_009": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "mat_rref_010": {
+    "answer": "[[1,0],[0,1]]",
+    "type": "matrix",
+    "roots": []
+  },
+  "arith_gcd_001": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_002": {
+    "answer": "3255",
+    "type": "arithmetic",
+    "roots": [
+      3255
+    ]
+  },
+  "arith_gcd_003": {
+    "answer": "2",
+    "type": "arithmetic",
+    "roots": [
+      2
+    ]
+  },
+  "arith_lcm_004": {
+    "answer": "7100",
+    "type": "arithmetic",
+    "roots": [
+      7100
+    ]
+  },
+  "arith_gcd_005": {
+    "answer": "3",
+    "type": "arithmetic",
+    "roots": [
+      3
+    ]
+  },
+  "arith_lcm_006": {
+    "answer": "8784",
+    "type": "arithmetic",
+    "roots": [
+      8784
+    ]
+  },
+  "arith_gcd_007": {
+    "answer": "4",
+    "type": "arithmetic",
+    "roots": [
+      4
+    ]
+  },
+  "arith_lcm_008": {
+    "answer": "13284",
+    "type": "arithmetic",
+    "roots": [
+      13284
+    ]
+  },
+  "arith_gcd_009": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_010": {
+    "answer": "399",
+    "type": "arithmetic",
+    "roots": [
+      399
+    ]
+  },
+  "arith_gcd_011": {
+    "answer": "2",
+    "type": "arithmetic",
+    "roots": [
+      2
+    ]
+  },
+  "arith_lcm_012": {
+    "answer": "2346",
+    "type": "arithmetic",
+    "roots": [
+      2346
+    ]
+  },
+  "arith_gcd_013": {
+    "answer": "9",
+    "type": "arithmetic",
+    "roots": [
+      9
+    ]
+  },
+  "arith_lcm_014": {
+    "answer": "2641",
+    "type": "arithmetic",
+    "roots": [
+      2641
+    ]
+  },
+  "arith_gcd_015": {
+    "answer": "3",
+    "type": "arithmetic",
+    "roots": [
+      3
+    ]
+  },
+  "arith_lcm_016": {
+    "answer": "4746",
+    "type": "arithmetic",
+    "roots": [
+      4746
+    ]
+  },
+  "arith_gcd_017": {
+    "answer": "4",
+    "type": "arithmetic",
+    "roots": [
+      4
+    ]
+  },
+  "arith_lcm_018": {
+    "answer": "2970",
+    "type": "arithmetic",
+    "roots": [
+      2970
+    ]
+  },
+  "arith_gcd_019": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_020": {
+    "answer": "10332",
+    "type": "arithmetic",
+    "roots": [
+      10332
+    ]
+  },
+  "arith_gcd_021": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_022": {
+    "answer": "10147",
+    "type": "arithmetic",
+    "roots": [
+      10147
+    ]
+  },
+  "arith_gcd_023": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_024": {
+    "answer": "3360",
+    "type": "arithmetic",
+    "roots": [
+      3360
+    ]
+  },
+  "arith_gcd_025": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_026": {
+    "answer": "3294",
+    "type": "arithmetic",
+    "roots": [
+      3294
+    ]
+  },
+  "arith_gcd_027": {
+    "answer": "2",
+    "type": "arithmetic",
+    "roots": [
+      2
+    ]
+  },
+  "arith_lcm_028": {
+    "answer": "660",
+    "type": "arithmetic",
+    "roots": [
+      660
+    ]
+  },
+  "arith_gcd_029": {
+    "answer": "1",
+    "type": "arithmetic",
+    "roots": [
+      1
+    ]
+  },
+  "arith_lcm_030": {
+    "answer": "18921",
+    "type": "arithmetic",
+    "roots": [
+      18921
+    ]
+  },
+  "unit_conv_001": {
+    "answer": "0.1",
+    "type": "unit_converter",
+    "roots": [
+      0.1
+    ]
+  },
+  "unit_conv_002": {
+    "answer": "5000",
+    "type": "unit_converter",
+    "roots": [
+      5000
+    ]
+  },
+  "unit_conv_003": {
+    "answer": "10000",
+    "type": "unit_converter",
+    "roots": [
+      10000
+    ]
+  },
+  "unit_conv_004": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_005": {
+    "answer": "3600",
+    "type": "unit_converter",
+    "roots": [
+      3600
+    ]
+  },
+  "unit_conv_006": {
+    "answer": "120",
+    "type": "unit_converter",
+    "roots": [
+      120
+    ]
+  },
+  "unit_conv_007": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_008": {
+    "answer": "300",
+    "type": "unit_converter",
+    "roots": [
+      300
+    ]
+  },
+  "unit_conv_009": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_010": {
+    "answer": "168",
+    "type": "unit_converter",
+    "roots": [
+      168
+    ]
+  },
+  "unit_conv_011": {
+    "answer": "0.1",
+    "type": "unit_converter",
+    "roots": [
+      0.1
+    ]
+  },
+  "unit_conv_012": {
+    "answer": "5000",
+    "type": "unit_converter",
+    "roots": [
+      5000
+    ]
+  },
+  "unit_conv_013": {
+    "answer": "10000",
+    "type": "unit_converter",
+    "roots": [
+      10000
+    ]
+  },
+  "unit_conv_014": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_015": {
+    "answer": "3600",
+    "type": "unit_converter",
+    "roots": [
+      3600
+    ]
+  },
+  "unit_conv_016": {
+    "answer": "120",
+    "type": "unit_converter",
+    "roots": [
+      120
+    ]
+  },
+  "unit_conv_017": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_018": {
+    "answer": "300",
+    "type": "unit_converter",
+    "roots": [
+      300
+    ]
+  },
+  "unit_conv_019": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_020": {
+    "answer": "168",
+    "type": "unit_converter",
+    "roots": [
+      168
+    ]
+  },
+  "unit_conv_021": {
+    "answer": "0.1",
+    "type": "unit_converter",
+    "roots": [
+      0.1
+    ]
+  },
+  "unit_conv_022": {
+    "answer": "5000",
+    "type": "unit_converter",
+    "roots": [
+      5000
+    ]
+  },
+  "unit_conv_023": {
+    "answer": "10000",
+    "type": "unit_converter",
+    "roots": [
+      10000
+    ]
+  },
+  "unit_conv_024": {
+    "answer": "1",
+    "type": "unit_converter",
+    "roots": [
+      1
+    ]
+  },
+  "unit_conv_025": {
+    "answer": "3600",
+    "type": "unit_converter",
+    "roots": [
+      3600
+    ]
+  },
+  "calc_eval_001": {
+    "answer": "57",
+    "type": "calculator",
+    "roots": [
+      57
+    ]
+  },
+  "calc_eval_002": {
+    "answer": "4",
+    "type": "calculator",
+    "roots": [
+      4
+    ]
+  },
+  "calc_eval_003": {
+    "answer": "41",
+    "type": "calculator",
+    "roots": [
+      41
+    ]
+  },
+  "calc_eval_004": {
+    "answer": "17",
+    "type": "calculator",
+    "roots": [
+      17
+    ]
+  },
+  "calc_eval_005": {
+    "answer": "17",
+    "type": "calculator",
+    "roots": [
+      17
+    ]
+  },
+  "calc_eval_006": {
+    "answer": "80",
+    "type": "calculator",
+    "roots": [
+      80
+    ]
+  },
+  "calc_eval_007": {
+    "answer": "130",
+    "type": "calculator",
+    "roots": [
+      130
+    ]
+  },
+  "calc_eval_008": {
+    "answer": "72",
+    "type": "calculator",
+    "roots": [
+      72
+    ]
+  },
+  "calc_eval_009": {
+    "answer": "15",
+    "type": "calculator",
+    "roots": [
+      15
+    ]
+  },
+  "calc_eval_010": {
+    "answer": "40",
+    "type": "calculator",
+    "roots": [
+      40
+    ]
+  },
+  "calc_eval_011": {
+    "answer": "18",
+    "type": "calculator",
+    "roots": [
+      18
+    ]
+  },
+  "calc_eval_012": {
+    "answer": "49",
+    "type": "calculator",
+    "roots": [
+      49
+    ]
+  },
+  "calc_eval_013": {
+    "answer": "20",
+    "type": "calculator",
+    "roots": [
+      20
+    ]
+  },
+  "calc_eval_014": {
+    "answer": "28",
+    "type": "calculator",
+    "roots": [
+      28
+    ]
+  },
+  "calc_eval_015": {
+    "answer": "30",
+    "type": "calculator",
+    "roots": [
+      30
+    ]
+  },
+  "calc_eval_016": {
+    "answer": "25",
+    "type": "calculator",
+    "roots": [
+      25
+    ]
+  },
+  "calc_eval_017": {
+    "answer": "25",
+    "type": "calculator",
+    "roots": [
+      25
+    ]
+  },
+  "calc_eval_018": {
+    "answer": "10",
+    "type": "calculator",
+    "roots": [
+      10
+    ]
+  },
+  "calc_eval_019": {
+    "answer": "40",
+    "type": "calculator",
+    "roots": [
+      40
+    ]
+  },
+  "calc_eval_020": {
+    "answer": "37",
+    "type": "calculator",
+    "roots": [
+      37
+    ]
+  },
+  "edge_ident_001": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_002": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_003": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_004": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_005": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_006": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_007": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_008": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_009": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_010": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_011": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_012": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_013": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_014": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_015": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_016": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_017": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_018": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_019": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_020": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_021": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_022": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_023": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_024": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_ident_025": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_001": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_002": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_003": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_004": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_005": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_006": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_007": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_008": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_009": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_010": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_011": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_012": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_013": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_014": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_015": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_016": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_017": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_018": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_019": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_020": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_021": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_022": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_023": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_024": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_contra_025": {
+    "answer": "x = 0",
+    "type": "linear",
+    "roots": [
+      null
+    ]
+  },
+  "edge_domain_001": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_002": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_003": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_004": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_005": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_006": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_007": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_008": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_009": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_010": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_011": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_012": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_013": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_014": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_015": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_016": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_017": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_018": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_019": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_020": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_021": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_022": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_023": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_024": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  },
+  "edge_domain_025": {
+    "answer": "\\text{No real solution (inconsistent equation)}",
+    "type": "rational",
+    "roots": []
+  }
+}

@@ -15,7 +15,7 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 from oracle import SympyOracle
-from comparator import SymbolicComparator
+from comparator import SymbolicComparator, ComparisonResult
 from reporter import Reporter
 from adapters.mock_adapter import MockAdapter
 from adapters.direct_adapter import DirectAdapter
@@ -88,13 +88,24 @@ def run_suite(
                 oracle_res = SympyOracle.solve_case(case, cat)
             except Exception as e:
                 print(f"[{completed_cases:4d}/{total_cases:4d} ({pct:5.1f}%)] {case_id:<12} | {inp_preview:<30} | [ORACLE ERROR]: {e}", flush=True)
+                cat_failed += 1
+                results.append({
+                    "case": case,
+                    "category": cat,
+                    "oracle": {"error": str(e)},
+                    "solver": {},
+                    "comparison": {"passed": False, "reason": f"Oracle error: {e}", "expected": "N/A", "actual": "N/A"}
+                })
                 continue
 
             # 2. Run solver via adapter
             solver_res = adapter.solve(case, cat)
 
             # 3. Symbolic Comparison
-            comp_res = SymbolicComparator.compare(oracle_res, solver_res, variable=var_name)
+            try:
+                comp_res = SymbolicComparator.compare(oracle_res, solver_res, variable=var_name)
+            except Exception as e:
+                comp_res = ComparisonResult(False, f"Comparator error: {e}", str(getattr(oracle_res, "ground_truth", "")), getattr(solver_res, "raw_answer", ""))
 
             status_tag = "[PASS]" if comp_res.passed else "[FAIL]"
             if comp_res.passed:

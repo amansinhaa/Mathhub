@@ -65,6 +65,7 @@ class DirectAdapter(BaseAdapter):
                 equation_type=data.get("equationType", ""),
                 parsed_roots=data.get("numericRoots", []),
                 steps=data.get("steps", []),
+                matrix_output=data.get("matrixOutput"),
                 status="success",
                 execution_time_ms=elapsed_ms
             )
