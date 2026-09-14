@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { ShortcutsModal } from './ShortcutsModal';
-import InteractiveSearchBar from './InteractiveSearchBar';
 
 interface NavCategory {
   category: string;
@@ -41,6 +40,7 @@ const TOOL_GROUPS: NavCategory[] = [
     category: 'Core Workstations',
     items: [
       { href: '/', label: 'Home Studio', icon: HomeIcon, badge: 'Hub' },
+      { href: '/domain-and-range-calculator', label: 'Domain & Range', icon: FunctionSquare, badge: '[a,b]' },
       { href: '/calculator', label: 'Scientific Calculator', icon: Calculator, badge: 'fx' },
       { href: '/graph', label: '2D Graph Plotter', icon: LineChart, badge: '2D' },
       { href: '/quadratic-equation-solver', label: 'Quadratic Solver', icon: FunctionSquare, badge: 'ax²' },
@@ -88,6 +88,13 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
     setIsOpen(false);
   }, [pathname]);
 
+  // Listen for open-tools-menu event dispatched from Home page or anywhere
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-tools-menu', handleOpen);
+    return () => window.removeEventListener('open-tools-menu', handleOpen);
+  }, []);
+
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -97,37 +104,34 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // On the Home page (/), do not show the hamburger button or persistent sidebar
   const isHomePage = pathname === '/';
-
-  if (isHomePage) {
-    return null;
-  }
 
   return (
     <>
       {/* Floating Top Floating Hamburger Bar (Visible on all tool pages) */}
-      <div className="fixed top-3 left-3 z-50 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] text-[#131313] dark:text-white shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322] hover:border-[#5D4037]/50 transition-all select-none group cursor-pointer"
-          aria-label="Open Workstations Menu"
-          title="All Tools & Solvers"
-        >
-          <Menu size={18} className="text-[#5D4037] dark:text-[#D7CCC8] group-hover:scale-110 transition-transform" />
-          <span className="text-xs font-semibold tracking-tight hidden sm:inline">Tools</span>
-        </button>
+      {!isHomePage && (
+        <div className="fixed top-3 left-3 z-50 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] text-[#131313] dark:text-white shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322] hover:border-[#5D4037]/50 transition-all select-none group cursor-pointer"
+            aria-label="Open Workstations Menu"
+            title="All Tools & Solvers"
+          >
+            <Menu size={18} className="text-[#5D4037] dark:text-[#D7CCC8] group-hover:scale-110 transition-transform" />
+            <span className="text-xs font-semibold tracking-tight hidden sm:inline">Tools</span>
+          </button>
 
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] text-[#616161] hover:text-[#5D4037] dark:text-[#A19891] dark:hover:text-white shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322] transition-colors text-xs font-medium"
-          title="Back to Home"
-        >
-          <HomeIcon size={16} />
-          <span className="hidden md:inline">Home</span>
-        </Link>
-      </div>
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-white/95 dark:bg-[#1B1B1B]/95 backdrop-blur-md border border-[#E0E0E0] dark:border-[#2E2825] text-[#616161] hover:text-[#5D4037] dark:text-[#A19891] dark:hover:text-white shadow-md hover:bg-[#F5F5F5] dark:hover:bg-[#252322] transition-colors text-xs font-medium"
+            title="Back to Home"
+          >
+            <HomeIcon size={16} />
+            <span className="hidden md:inline">Home</span>
+          </Link>
+        </div>
+      )}
 
       {/* Backdrop overlay */}
       {isOpen && (
@@ -166,7 +170,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="p-1.5 rounded-lg text-[#616161] hover:text-[#131313] hover:bg-[#F5F5F5] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#2A2827] transition-colors"
+            className="p-1.5 rounded-lg text-[#616161] hover:text-[#131313] hover:bg-[#F5F5F5] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#2A2827] transition-colors cursor-pointer"
             aria-label="Close menu"
           >
             <X size={18} />
@@ -256,4 +260,3 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
     </>
   );
 }
-

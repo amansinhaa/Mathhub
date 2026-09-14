@@ -172,6 +172,7 @@ const WORKSTATIONS = [
 ];
 
 const POPULAR_PROBLEMS = [
+  { label: 'Domain & Range: √(4 - x²)', href: '/domain-and-range-calculator' },
   { label: 'Quadratic: x² - 5x + 6 = 0', href: '/quadratic-equation-solver' },
   { label: 'Derivative: d/dx [ 3x² + 5x ]', href: '/derivative-calculator' },
   { label: 'Integral: ∫ (2x + 1) dx', href: '/integral-calculator' },
@@ -206,12 +207,32 @@ const POPULAR_PROBLEMS = [
         </div>
       </a>
 
-      <!-- Quick Nav for About & Legal Pages -->
-      <nav class="flex items-center gap-2.5 sm:gap-4 pr-12 text-xs font-medium text-[#616161] dark:text-[#A19891]">
-        <a href="/about" class="hover:text-[#5D4037] dark:hover:text-white transition-colors">About</a>
-        <a href="/contact" class="hover:text-[#5D4037] dark:hover:text-white transition-colors">Contact</a>
-        <a href="/privacy-policy" class="hover:text-[#5D4037] dark:hover:text-white transition-colors hidden sm:inline">Privacy</a>
-        <a href="/terms" class="hover:text-[#5D4037] dark:hover:text-white transition-colors hidden sm:inline">Terms</a>
+      <!-- Menu Bar on Home -->
+      <nav class="flex items-center gap-1.5 sm:gap-2.5 pr-12 text-xs font-medium text-[#616161] dark:text-[#A19891]">
+        <button
+          type="button"
+          onclick="window.dispatchEvent(new CustomEvent('open-tools-menu'))"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] text-[#5D4037] dark:text-[#D7CCC8] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+          title="Open All Solvers Menu"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span>Tools</span>
+        </button>
+        <a
+          href="/domain-and-range-calculator"
+          class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] border border-[#D7CCC8] dark:border-[#5D4037]/50 text-xs font-semibold hover:bg-[#D7CCC8]/60 transition-colors"
+          title="Domain & Range Calculator"
+        >
+          <span>Domain &amp; Range</span>
+          <span class="text-[9px] font-mono px-1 py-0.2 rounded-full bg-[#5D4037] text-white hidden sm:inline">New</span>
+        </a>
+        <a href="/graph" class="hover:text-[#5D4037] dark:hover:text-white transition-colors px-1.5 py-1 hidden md:inline">Graph</a>
+        <a href="/quadratic-equation-solver" class="hover:text-[#5D4037] dark:hover:text-white transition-colors px-1.5 py-1 hidden lg:inline">Quadratic</a>
+        <a href="/formulas" class="hover:text-[#5D4037] dark:hover:text-white transition-colors px-1.5 py-1 hidden sm:inline">Formulas</a>
+        <a href="/learn" class="hover:text-[#5D4037] dark:hover:text-white transition-colors px-1.5 py-1 hidden sm:inline">Learn</a>
+        <a href="/about" class="hover:text-[#5D4037] dark:hover:text-white transition-colors px-1.5 py-1 hidden md:inline">About</a>
       </nav>
     </header>
 
