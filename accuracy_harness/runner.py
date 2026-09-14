@@ -54,22 +54,40 @@ def run_suite(
     results: List[Dict[str, Any]] = []
 
     categories = [category_filter] if category_filter else list(bank.keys())
+    total_cases = sum(len(bank[c]) for c in categories if c in bank)
+    completed_cases = 0
+
+    print(f"\n================================================================================")
+    print(f" STARTING MATHEMATICAL ACCURACY SUITE: {total_cases} CASES TO EVALUATE")
+    print(f" Mode: {mode.upper()} | Categories: {', '.join(categories)}")
+    print(f"================================================================================\n", flush=True)
 
     for cat in categories:
         if cat not in bank:
-            print(f"Warning: Category '{cat}' not found in test bank. Skipping.")
+            print(f"Warning: Category '{cat}' not found in test bank. Skipping.", flush=True)
             continue
 
         cases = bank[cat]
+        cat_passed = 0
+        cat_failed = 0
+
+        print(f"\n>>> Processing Category [{cat.upper()}] ({len(cases)} cases)...", flush=True)
+
         for case in cases:
+            completed_cases += 1
             case_id = case.get("id", "")
             var_name = case.get("variable", "x")
+            inp_preview = str(case.get("input", ""))
+            if len(inp_preview) > 30:
+                inp_preview = inp_preview[:27] + "..."
+
+            pct = (completed_cases / total_cases) * 100
 
             # 1. SymPy Ground-Truth Oracle
             try:
                 oracle_res = SympyOracle.solve_case(case, cat)
             except Exception as e:
-                print(f"Oracle error for case {case_id}: {e}")
+                print(f"[{completed_cases:4d}/{total_cases:4d} ({pct:5.1f}%)] {case_id:<12} | {inp_preview:<30} | [ORACLE ERROR]: {e}", flush=True)
                 continue
 
             # 2. Run solver via adapter
@@ -78,6 +96,16 @@ def run_suite(
             # 3. Symbolic Comparison
             comp_res = SymbolicComparator.compare(oracle_res, solver_res, variable=var_name)
 
+            status_tag = "[PASS]" if comp_res.passed else "[FAIL]"
+            if comp_res.passed:
+                cat_passed += 1
+            else:
+                cat_failed += 1
+
+            # Real-time console line
+            time_ms = getattr(solver_res, "execution_time_ms", 0.0)
+            print(f"[{completed_cases:4d}/{total_cases:4d} ({pct:5.1f}%)] {case_id:<12} | {inp_preview:<30} | {status_tag} ({time_ms:6.1f}ms)", flush=True)
+
             results.append({
                 "case": case,
                 "category": cat,
@@ -85,6 +113,8 @@ def run_suite(
                 "solver": solver_res.to_dict(),
                 "comparison": comp_res.to_dict()
             })
+
+        print(f">>> Category [{cat.upper()}] Done! Score: {cat_passed}/{len(cases)} ({cat_passed/len(cases)*100:.1f}%)\n", flush=True)
 
     # Close browser if used
     if mode == "browser" and hasattr(adapter, "close"):

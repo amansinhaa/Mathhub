@@ -734,5 +734,67 @@
       "variable": "x",
       "subtype": "no_real_roots"
     }
+  ],
+  "ode": [
+    {
+      "id": "ode_01",
+      "input": "y'' - 4y = 0",
+      "variable": "x",
+      "subtype": "distinct_real_roots"
+    },
+    {
+      "id": "ode_02",
+      "input": "y'' - 5y' + 6y = 0",
+      "variable": "x",
+      "subtype": "distinct_integer_roots"
+    },
+    {
+      "id": "ode_03",
+      "input": "y'' - 6y' + 9y = 0",
+      "variable": "x",
+      "subtype": "repeated_real_root"
+    },
+    {
+      "id": "ode_04",
+      "input": "y'' + 4y = 0",
+      "variable": "x",
+      "subtype": "pure_imaginary_roots"
+    },
+    {
+      "id": "ode_05",
+      "input": "y'' + 2y' + 5y = 0",
+      "variable": "x",
+      "subtype": "complex_conjugate_roots"
+    },
+    {
+      "id": "ode_06",
+      "input": "y'' + y = 0",
+      "variable": "x",
+      "subtype": "simple_harmonic_oscillator"
+    },
+    {
+      "id": "ode_07",
+      "input": "y'' - 2y' - y = 0",
+      "variable": "x",
+      "subtype": "irrational_radical_roots"
+    },
+    {
+      "id": "ode_08",
+      "input": "y'' - 3y' + 2y = exp(3*x)",
+      "variable": "x",
+      "subtype": "non_homogeneous_exponential"
+    },
+    {
+      "id": "ode_09",
+      "input": "y'' + 4y = sin(x)",
+      "variable": "x",
+      "subtype": "non_homogeneous_trigonometric"
+    },
+    {
+      "id": "ode_10",
+      "input": "y'' - 2y' + y = x",
+      "variable": "x",
+      "subtype": "non_homogeneous_polynomial"
+    }
   ]
 }

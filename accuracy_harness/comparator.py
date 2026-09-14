@@ -61,14 +61,20 @@ def clean_to_sympy_string(val_str: str) -> str:
         return ""
     s = str(val_str).strip()
     
-    # 0. Infinity and Set Unions
+    # 0. Strip equation prefixes like f'(x) =, f(x) =, y =, F(x) =
+    s = re.sub(r"^(?:f\s*['’]*\s*\([^)]*\)|F\s*\([^)]*\)|y\s*)\s*=\s*", "", s).strip()
+
+    # 0a. Strip LaTeX font macros like \mathrm{...}, \mathbf{...}, \operatorname{...}
+    s = re.sub(r"\\(?:mathrm|mathbf|mathit|text|operatorname)\{([^}]+)\}", r"\1", s)
+
+    # 0b. Infinity and Set Unions
     s = re.sub(r"\\infty\b|\\inf\b|\\infty|infinity", "oo", s)
     s = s.replace(r"\cup", " or ")
 
     # 1. Clean fractions with balanced braces
     s = _clean_fractions(s)
     
-    # 2. Strip operatorname like \operatorname{atan} -> atan
+    # 2. Strip remaining operatorname
     s = re.sub(r"\\operatorname\{([^}]+)\}", r"\1", s)
     
     # 3. Strip standard function backslashes
@@ -154,7 +160,11 @@ class SymbolicComparator:
             is_indef = not oracle_res.details.get("is_definite", True) and oracle_res.category == "integrals"
             return SymbolicComparator._compare_expression(gt, actual_res, var, is_indefinite_integral=is_indef, tolerance=tolerance)
 
-        # 6. Sets of Roots (Polynomial, Rational, Radical, Trig, Exp/Log)
+        # 6. ODE
+        if res_type == "ode":
+            return SymbolicComparator._compare_ode(oracle_res, actual_res, tolerance)
+
+        # 7. Sets of Roots (Polynomial, Rational, Radical, Trig, Exp/Log)
         return SymbolicComparator._compare_root_sets(gt, actual_res, tolerance)
 
     @staticmethod
@@ -442,3 +452,50 @@ class SymbolicComparator:
             except Exception:
                 pass
         return roots
+
+    @staticmethod
+    def _compare_ode(oracle_res: Any, actual_res: Any, tolerance: float = 1e-4) -> ComparisonResult:
+        raw_ans = getattr(actual_res, "raw_answer", str(actual_res))
+        ans_s = raw_ans.split("=", 1)[-1].strip() if "=" in raw_ans else raw_ans.strip()
+
+        cleaned = clean_to_sympy_string(ans_s)
+        cleaned = re.sub(r"C_1|C1\b", "c_one", cleaned)
+        cleaned = re.sub(r"C_2|C2\b", "c_two", cleaned)
+
+        x = sp.Symbol('x')
+        c_one = sp.Symbol('c_one')
+        c_two = sp.Symbol('c_two')
+
+        try:
+            act_expr = parse_sympy_expr(cleaned)
+        except Exception as e:
+            return ComparisonResult(False, f"Failed to parse actual ODE solution '{raw_ans}': {e}", str(oracle_res.ground_truth), raw_ans)
+
+        details = getattr(oracle_res, "details", {}) or {}
+        a = parse_sympy_expr(details.get("a", "1"))
+        b = parse_sympy_expr(details.get("b", "0"))
+        c = parse_sympy_expr(details.get("c", "0"))
+        f_x = parse_sympy_expr(details.get("f_x", "0"))
+
+        try:
+            y_prime = sp.diff(act_expr, x)
+            y_double_prime = sp.diff(y_prime, x)
+            residual = sp.simplify(a * y_double_prime + b * y_prime + c * act_expr - f_x)
+
+            if residual == 0:
+                return ComparisonResult(True, "ODE solution satisfied differential equation identically (residual = 0)", str(oracle_res.ground_truth), raw_ans)
+
+            pts = [(0.5, 1.0, 2.0), (1.2, -1.0, 0.5), (2.1, 0.5, -1.5)]
+            all_zero = True
+            for px, pC1, pC2 in pts:
+                val = complex(sp.N(residual.subs({x: px, c_one: pC1, c_two: pC2})))
+                if abs(val) > tolerance:
+                    all_zero = False
+                    break
+
+            if all_zero:
+                return ComparisonResult(True, "ODE solution satisfied differential equation across test points", str(oracle_res.ground_truth), raw_ans)
+
+            return ComparisonResult(False, f"ODE solution does not satisfy differential equation (residual = {residual})", str(oracle_res.ground_truth), raw_ans)
+        except Exception as ex:
+            return ComparisonResult(False, f"Error validating ODE solution: {ex}", str(oracle_res.ground_truth), raw_ans)

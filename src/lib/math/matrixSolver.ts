@@ -12,12 +12,16 @@ export type MatrixOperation =
   | 'trace'
   | 'power'
   | 'scalar'
-  | 'eigenvalues';
+  | 'eigenvalues'
+  | 'sylvester'
+  | 'matrix_polynomial';
 
 export interface MatrixResult {
   operation: MatrixOperation;
   input: number[][];
   inputB?: number[][];
+  inputC?: number[][];
+  polyCoeffs?: number[];
   scalar?: number;
   result: number[][] | number[] | number | string;
   steps: { explanation: string; math?: string }[];
@@ -28,7 +32,9 @@ export function solveMatrix(
   op: MatrixOperation,
   matrixA: number[][],
   matrixB?: number[][],
-  scalar: number = 2
+  scalar: number = 2,
+  matrixC?: number[][],
+  polyCoeffs?: number[]
 ): MatrixResult {
   const steps: { explanation: string; math?: string }[] = [];
   const rows = matrixA.length;
@@ -316,6 +322,135 @@ export function solveMatrix(
       steps.push({ explanation: "Eigenvalues are roots of the characteristic polynomial: det(A - λI) = 0." });
       steps.push({ explanation: "Characteristic decomposition results:" });
       return { operation: op, input: matrixA, result: eigen.values as unknown as number[], steps };
+
+    } else if (op === 'sylvester') {
+      // Solve AX + XB = C
+      const realB = matrixB || matrixA;
+      const m = rows;
+      const n = realB.length;
+      const realC = matrixC || Array.from({ length: m }, () => Array(n).fill(1));
+
+      if (cols !== m) throw new Error("Matrix A must be square.");
+      if (realB[0]?.length !== n) throw new Error("Matrix B must be square.");
+      if (realC.length !== m || (realC[0]?.length || 0) !== n) {
+        throw new Error(`Matrix C must have dimensions ${m}×${n}.`);
+      }
+
+      steps.push({
+        explanation: "The Sylvester matrix equation has the form AX + XB = C.",
+        math: "AX + XB = C"
+      });
+
+      steps.push({
+        explanation: "Apply vectorization and the Kronecker product identity: vec(AXB) = (B^T ⊗ A)vec(X).",
+        math: "(I_n \\otimes A + B^T \\otimes I_m) \\operatorname{vec}(X) = \\operatorname{vec}(C)"
+      });
+
+      const dim = m * n;
+      const M: number[][] = Array.from({ length: dim }, () => Array(dim).fill(0));
+
+      // kron(I_n, A): block diagonal with A
+      for (let block = 0; block < n; block++) {
+        for (let r = 0; r < m; r++) {
+          for (let c = 0; c < m; c++) {
+            M[block * m + r][block * m + c] += matrixA[r][c];
+          }
+        }
+      }
+
+      // kron(B^T, I_m): (B^T)_{j, k} * I_m = B_{k, j} * I_m
+      for (let j = 0; j < n; j++) {
+        for (let k = 0; k < n; k++) {
+          const bVal = realB[k][j];
+          for (let i = 0; i < m; i++) {
+            M[j * m + i][k * m + i] += bVal;
+          }
+        }
+      }
+
+      // vec(C): column stacking
+      const vecC: number[] = [];
+      for (let col = 0; col < n; col++) {
+        for (let row = 0; row < m; row++) {
+          vecC.push(realC[row][col]);
+        }
+      }
+
+      steps.push({
+        explanation: `Form the ${dim}×${dim} vectorized linear system M·vec(X) = vec(C).`,
+        math: `\\dim(M) = ${dim} \\times ${dim}`
+      });
+
+      // Solve M * vecX = vecC
+      const sol = math.lusolve(M, vecC) as number[][];
+      const vecX = sol.map(row => Number(row[0].toFixed(6)));
+
+      // Un-vectorize into m x n matrix X
+      const X: number[][] = Array.from({ length: m }, () => Array(n).fill(0));
+      for (let col = 0; col < n; col++) {
+        for (let row = 0; row < m; row++) {
+          X[row][col] = Math.abs(vecX[col * m + row] - Math.round(vecX[col * m + row])) < 1e-5
+            ? Math.round(vecX[col * m + row])
+            : vecX[col * m + row];
+        }
+      }
+
+      steps.push({
+        explanation: "Solve for the vectorized solution vec(X) and reshape into matrix X:",
+        math: `X = \\begin{pmatrix} ${X.map(r => r.join(' & ')).join(' \\\\ ')} \\end{pmatrix}`
+      });
+
+      return { operation: op, input: matrixA, inputB: realB, inputC: realC, result: X, steps };
+
+    } else if (op === 'matrix_polynomial') {
+      const coeffs = polyCoeffs || [1, -5, 6];
+      if (rows !== cols) throw new Error("Matrix must be square to evaluate a matrix polynomial.");
+
+      const deg = coeffs.length - 1;
+      const polyStr = coeffs.map((c, i) => {
+        const p = deg - i;
+        if (p === 0) return `${c}I`;
+        if (p === 1) return `${c === 1 ? '' : c}X`;
+        return `${c === 1 ? '' : c}X^${p}`;
+      }).join(' + ').replace(/\+\s*-/g, '- ');
+
+      steps.push({
+        explanation: `Evaluate the matrix polynomial p(X) = ${polyStr}:`,
+        math: `p(X) = ${polyStr}`
+      });
+
+      let currentPower: number[][] = Array.from({ length: rows }, (_, i) => Array.from({ length: cols }, (_, j) => i === j ? 1 : 0));
+      const powers: number[][][] = [currentPower];
+
+      for (let p = 1; p <= deg; p++) {
+        currentPower = math.multiply(currentPower, matrixA) as number[][];
+        powers.push(currentPower);
+        steps.push({
+          explanation: `Compute matrix power X^${p}:`,
+          math: `X^{${p}} = \\begin{pmatrix} ${currentPower.map(r => r.join(' & ')).join(' \\\\ ')} \\end{pmatrix}`
+        });
+      }
+
+      let polyResult: number[][] = Array.from({ length: rows }, () => Array(cols).fill(0));
+      for (let i = 0; i < coeffs.length; i++) {
+        const c = coeffs[i];
+        const p = deg - i;
+        const pMat = powers[p];
+        for (let r = 0; r < rows; r++) {
+          for (let col = 0; col < cols; col++) {
+            polyResult[r][col] += c * pMat[r][col];
+          }
+        }
+      }
+
+      polyResult = polyResult.map(r => r.map(v => Math.abs(v - Math.round(v)) < 1e-9 ? Math.round(v) : Number(v.toFixed(4))));
+
+      steps.push({
+        explanation: "Sum all scaled matrix power components to determine the evaluated matrix:",
+        math: `p(X) = \\begin{pmatrix} ${polyResult.map(r => r.join(' & ')).join(' \\\\ ')} \\end{pmatrix}`
+      });
+
+      return { operation: op, input: matrixA, polyCoeffs: coeffs, result: polyResult, steps };
     }
     
     throw new Error("Unsupported matrix operation");

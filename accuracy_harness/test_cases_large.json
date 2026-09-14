@@ -1,0 +1,7190 @@
+{
+  "polynomial": [
+    {
+      "id": "poly_lin_001",
+      "input": "5x + -13 = -19",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_002",
+      "input": "7x + -3 = -5",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_003",
+      "input": "-4x + -12 = -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_004",
+      "input": "5x + 14 = -15",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_005",
+      "input": "4x + 7 = -18",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_006",
+      "input": "-9x + -15 = -7",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_007",
+      "input": "-4x + 12 = 18",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_008",
+      "input": "-9x + 15 = -8",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_009",
+      "input": "7x + 14 = 6",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_010",
+      "input": "-4x + 8 = 17",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_011",
+      "input": "-3x + -20 = -10",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_012",
+      "input": "7x + 7 = 1",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_013",
+      "input": "-3x + -11 = -7",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_014",
+      "input": "8x + 1 = -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_015",
+      "input": "-7x + 4 = -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_016",
+      "input": "-2x + 2 = 18",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_017",
+      "input": "-3x + -18 = 9",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_018",
+      "input": "3x + -13 = 4",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_019",
+      "input": "-7x + 15 = -2",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_020",
+      "input": "9x + 20 = 19",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_021",
+      "input": "9x + 3 = 16",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_022",
+      "input": "-4x + -16 = -18",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_023",
+      "input": "5x + -6 = -2",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_024",
+      "input": "-7x + -6 = -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_lin_025",
+      "input": "-1x + -3 = 9",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "poly_quad_int_001",
+      "input": "x^2 - 7x - 8 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_002",
+      "input": "x^2 + 2x + 1 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_003",
+      "input": "3x^2 - 15x - 108 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_004",
+      "input": "x^2 - 17x + 72 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_005",
+      "input": "x^2 - 15x + 56 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_006",
+      "input": "x^2 - 16x + 55 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_007",
+      "input": "2x^2 + 10x - 28 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_008",
+      "input": "3x^2 - 12x - 96 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_009",
+      "input": "3x^2 + 0x - 75 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_010",
+      "input": "x^2 - 10x - 24 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_011",
+      "input": "x^2 + 16x + 55 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_012",
+      "input": "x^2 + 4x + 0 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_013",
+      "input": "3x^2 + 0x - 108 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_014",
+      "input": "3x^2 + 24x + 36 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_015",
+      "input": "3x^2 - 9x + 0 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_016",
+      "input": "x^2 + 6x - 16 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_017",
+      "input": "3x^2 + 39x + 120 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_018",
+      "input": "x^2 - 10x + 25 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_019",
+      "input": "2x^2 - 34x + 132 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_020",
+      "input": "x^2 - 6x + 0 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_021",
+      "input": "-1x^2 - 13x - 40 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_022",
+      "input": "x^2 + 7x - 30 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_023",
+      "input": "3x^2 + 51x + 216 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_024",
+      "input": "2x^2 - 4x - 126 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_int_025",
+      "input": "2x^2 + 6x - 140 = 0",
+      "variable": "x",
+      "subtype": "quadratic_real"
+    },
+    {
+      "id": "poly_quad_cplx_001",
+      "input": "2x^2 - 3x + 13 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_002",
+      "input": "2x^2 - 4x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_003",
+      "input": "1x^2 + 2x + 15 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_004",
+      "input": "3x^2 + 5x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_005",
+      "input": "3x^2 - 1x + 5 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_006",
+      "input": "2x^2 - 2x + 7 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_007",
+      "input": "2x^2 + 1x + 15 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_008",
+      "input": "3x^2 + 5x + 13 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_009",
+      "input": "1x^2 - 4x + 5 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_010",
+      "input": "3x^2 + 5x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_011",
+      "input": "3x^2 - 4x + 13 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_012",
+      "input": "1x^2 + 3x + 9 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_013",
+      "input": "1x^2 - 4x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_014",
+      "input": "3x^2 + 1x + 13 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_015",
+      "input": "2x^2 - 3x + 5 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_016",
+      "input": "1x^2 - 1x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_017",
+      "input": "2x^2 + 4x + 5 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_018",
+      "input": "1x^2 + 2x + 5 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_019",
+      "input": "3x^2 - 3x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_020",
+      "input": "1x^2 - 4x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_021",
+      "input": "1x^2 + 3x + 15 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_022",
+      "input": "2x^2 - 4x + 7 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_023",
+      "input": "2x^2 - 4x + 20 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_024",
+      "input": "3x^2 - 2x + 7 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_quad_cplx_025",
+      "input": "3x^2 + 4x + 15 = 0",
+      "variable": "x",
+      "subtype": "quadratic_complex"
+    },
+    {
+      "id": "poly_cubic_001",
+      "input": "x^3 - 5x^2 - 1x + 5 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_002",
+      "input": "x^3 - 7x^2 + 10x + 0 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_003",
+      "input": "x^3 - 1x^2 - 14x + 24 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_004",
+      "input": "x^3 + 8x^2 + 20x + 16 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_005",
+      "input": "x^3 + 1x^2 - 20x + 0 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_006",
+      "input": "x^3 - 5x^2 - 2x + 24 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_007",
+      "input": "x^3 + 11x^2 + 38x + 40 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_008",
+      "input": "x^3 + 2x^2 - 25x - 50 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_009",
+      "input": "x^3 + 9x^2 + 20x + 0 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_010",
+      "input": "x^3 + 3x^2 - 10x - 24 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_011",
+      "input": "x^3 - 6x^2 + 3x + 10 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_012",
+      "input": "x^3 + 2x^2 - 9x - 18 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_013",
+      "input": "x^3 - 10x^2 + 32x - 32 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_014",
+      "input": "x^3 - 1x^2 - 4x + 4 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_015",
+      "input": "x^3 + 10x^2 + 32x + 32 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_016",
+      "input": "x^3 - 6x^2 + 5x + 0 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_017",
+      "input": "x^3 - 4x^2 + 5x - 2 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_018",
+      "input": "x^3 - 5x^2 - 25x + 125 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_019",
+      "input": "x^3 + 4x^2 - 25x - 100 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_020",
+      "input": "x^3 + 3x^2 - 4x + 0 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_021",
+      "input": "x^3 + 6x^2 + 12x + 8 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_022",
+      "input": "x^3 - 2x^2 - 9x + 18 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_023",
+      "input": "x^3 + 3x^2 - 1x - 3 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_024",
+      "input": "x^3 + 4x^2 - 4x - 16 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    },
+    {
+      "id": "poly_cubic_025",
+      "input": "x^3 - 1x^2 - 14x + 24 = 0",
+      "variable": "x",
+      "subtype": "cubic"
+    }
+  ],
+  "rational": [
+    {
+      "id": "rat_001",
+      "input": "(x^2 - 64)/(x - -8) = -16",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_002",
+      "input": "1/(x - 3) + 1/(x + 3) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_003",
+      "input": "(x + 7)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_004",
+      "input": "(x^2 - 49)/(x - -7) = -14",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_005",
+      "input": "1/(x - 8) + 1/(x + 8) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_006",
+      "input": "(x + 6)/(x - 3) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_007",
+      "input": "(x^2 - 49)/(x - 7) = 14",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_008",
+      "input": "1/(x - 1) + 1/(x + 1) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_009",
+      "input": "(x + -7)/(x - 3) = 1",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_010",
+      "input": "(x^2 - 49)/(x - -7) = -14",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_011",
+      "input": "1/(x - 8) + 1/(x + 8) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_012",
+      "input": "(x + -7)/(x - 6) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_013",
+      "input": "(x^2 - 9)/(x - -3) = -6",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_014",
+      "input": "1/(x - 6) + 1/(x + 6) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_015",
+      "input": "(x + -5)/(x - 6) = 4",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_016",
+      "input": "(x^2 - 49)/(x - -7) = -14",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_017",
+      "input": "1/(x - 5) + 1/(x + 5) = 1",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_018",
+      "input": "(x + 8)/(x - 3) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_019",
+      "input": "(x^2 - 4)/(x - -2) = -4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_020",
+      "input": "1/(x - 2) + 1/(x + 2) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_021",
+      "input": "(x + 1)/(x - 4) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_022",
+      "input": "(x^2 - 36)/(x - -6) = -12",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_023",
+      "input": "1/(x - 5) + 1/(x + 5) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_024",
+      "input": "(x + -2)/(x - 6) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_025",
+      "input": "(x^2 - 16)/(x - -4) = -8",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_026",
+      "input": "1/(x - 1) + 1/(x + 1) = 1",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_027",
+      "input": "(x + -3)/(x - 4) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_028",
+      "input": "(x^2 - 1)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_029",
+      "input": "1/(x - 8) + 1/(x + 8) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_030",
+      "input": "(x + -5)/(x - 2) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_031",
+      "input": "(x^2 - 25)/(x - -5) = -10",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_032",
+      "input": "1/(x - 4) + 1/(x + 4) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_033",
+      "input": "(x + -2)/(x - 3) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_034",
+      "input": "(x^2 - 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_035",
+      "input": "1/(x - 2) + 1/(x + 2) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_036",
+      "input": "(x + 5)/(x - 3) = 1",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_037",
+      "input": "(x^2 - 64)/(x - -8) = -16",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_038",
+      "input": "1/(x - 2) + 1/(x + 2) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_039",
+      "input": "(x + 5)/(x - 6) = 4",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_040",
+      "input": "(x^2 - 25)/(x - -5) = -10",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_041",
+      "input": "1/(x - 7) + 1/(x + 7) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_042",
+      "input": "(x + -4)/(x - 4) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_043",
+      "input": "(x^2 - 49)/(x - -7) = -14",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_044",
+      "input": "1/(x - 7) + 1/(x + 7) = 3",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_045",
+      "input": "(x + -1)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_046",
+      "input": "(x^2 - 25)/(x - 5) = 10",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_047",
+      "input": "1/(x - 1) + 1/(x + 1) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_048",
+      "input": "(x + 5)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_049",
+      "input": "(x^2 - 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_050",
+      "input": "1/(x - 2) + 1/(x + 2) = 2",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_051",
+      "input": "(x + 4)/(x - 1) = 1",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_052",
+      "input": "(x^2 - 1)/(x - -1) = -2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_053",
+      "input": "1/(x - 3) + 1/(x + 3) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_054",
+      "input": "(x + -1)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_055",
+      "input": "(x^2 - 16)/(x - 4) = 8",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_056",
+      "input": "1/(x - 6) + 1/(x + 6) = 3",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_057",
+      "input": "(x + 8)/(x - 4) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_058",
+      "input": "(x^2 - 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_059",
+      "input": "1/(x - 2) + 1/(x + 2) = 1",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_060",
+      "input": "(x + 2)/(x - 1) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_061",
+      "input": "(x^2 - 25)/(x - 5) = 10",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_062",
+      "input": "1/(x - 5) + 1/(x + 5) = 3",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_063",
+      "input": "(x + -5)/(x - 4) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_064",
+      "input": "(x^2 - 4)/(x - -2) = -4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_065",
+      "input": "1/(x - 5) + 1/(x + 5) = 1",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_066",
+      "input": "(x + -2)/(x - 3) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_067",
+      "input": "(x^2 - 36)/(x - -6) = -12",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_068",
+      "input": "1/(x - 2) + 1/(x + 2) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_069",
+      "input": "(x + 8)/(x - 3) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_070",
+      "input": "(x^2 - 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_071",
+      "input": "1/(x - 4) + 1/(x + 4) = 3",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_072",
+      "input": "(x + 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_073",
+      "input": "(x^2 - 1)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_074",
+      "input": "1/(x - 8) + 1/(x + 8) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_075",
+      "input": "(x + -2)/(x - 4) = 3",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_076",
+      "input": "(x^2 - 4)/(x - 2) = 4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_077",
+      "input": "1/(x - 6) + 1/(x + 6) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_078",
+      "input": "(x + 7)/(x - 2) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_079",
+      "input": "(x^2 - 1)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_080",
+      "input": "1/(x - 2) + 1/(x + 2) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_081",
+      "input": "(x + 1)/(x - 2) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_082",
+      "input": "(x^2 - 16)/(x - -4) = -8",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_083",
+      "input": "1/(x - 1) + 1/(x + 1) = 1",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_084",
+      "input": "(x + -6)/(x - 4) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_085",
+      "input": "(x^2 - 4)/(x - -2) = -4",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_086",
+      "input": "1/(x - 4) + 1/(x + 4) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_087",
+      "input": "(x + -8)/(x - 1) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_088",
+      "input": "(x^2 - 1)/(x - -1) = -2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_089",
+      "input": "1/(x - 6) + 1/(x + 6) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_090",
+      "input": "(x + -1)/(x - 1) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_091",
+      "input": "(x^2 - 16)/(x - -4) = -8",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_092",
+      "input": "1/(x - 2) + 1/(x + 2) = 5",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_093",
+      "input": "(x + 8)/(x - 4) = 5",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_094",
+      "input": "(x^2 - 36)/(x - 6) = 12",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_095",
+      "input": "1/(x - 6) + 1/(x + 6) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_096",
+      "input": "(x + 2)/(x - 6) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_097",
+      "input": "(x^2 - 1)/(x - -1) = -2",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    },
+    {
+      "id": "rat_098",
+      "input": "1/(x - 6) + 1/(x + 6) = 4",
+      "variable": "x",
+      "subtype": "common_denominator"
+    },
+    {
+      "id": "rat_099",
+      "input": "(x + 2)/(x - 3) = 2",
+      "variable": "x",
+      "subtype": "linear_fraction"
+    },
+    {
+      "id": "rat_100",
+      "input": "(x^2 - 36)/(x - -6) = -12",
+      "variable": "x",
+      "subtype": "excluded_hole_no_sol"
+    }
+  ],
+  "radical": [
+    {
+      "id": "rad_001",
+      "input": "sqrt(2x + 4) = 7",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_002",
+      "input": "sqrt(2x + 12) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_003",
+      "input": "sqrt(1x + 7) = 7",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_004",
+      "input": "sqrt(3x + 9) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_005",
+      "input": "sqrt(4x + 1) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_006",
+      "input": "sqrt(4x + 7) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_007",
+      "input": "sqrt(1x + 14) = 10",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_008",
+      "input": "sqrt(4x + 8) = x - 1",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_009",
+      "input": "sqrt(3x + 5) = 7",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_010",
+      "input": "sqrt(4x + 9) = x - 9",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_011",
+      "input": "sqrt(2x + 8) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_012",
+      "input": "sqrt(3x + 7) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_013",
+      "input": "sqrt(1x + 7) = 6",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_014",
+      "input": "sqrt(4x + 12) = x - 3",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_015",
+      "input": "sqrt(4x + 15) = 3",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_016",
+      "input": "sqrt(1x + 15) = x - 7",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_017",
+      "input": "sqrt(1x + 2) = 7",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_018",
+      "input": "sqrt(2x + 14) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_019",
+      "input": "sqrt(2x + 1) = 5",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_020",
+      "input": "sqrt(4x + 6) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_021",
+      "input": "sqrt(4x + 6) = 6",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_022",
+      "input": "sqrt(4x + 5) = x - 7",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_023",
+      "input": "sqrt(3x + 14) = 2",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_024",
+      "input": "sqrt(4x + 1) = x - 9",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_025",
+      "input": "sqrt(1x + 6) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_026",
+      "input": "sqrt(1x + 13) = x - 1",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_027",
+      "input": "sqrt(1x + 4) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_028",
+      "input": "sqrt(1x + 10) = x - 3",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_029",
+      "input": "sqrt(2x + 3) = 8",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_030",
+      "input": "sqrt(1x + 10) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_031",
+      "input": "sqrt(4x + 12) = 5",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_032",
+      "input": "sqrt(3x + 3) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_033",
+      "input": "sqrt(1x + 13) = 3",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_034",
+      "input": "sqrt(3x + 2) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_035",
+      "input": "sqrt(1x + 15) = 5",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_036",
+      "input": "sqrt(4x + 7) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_037",
+      "input": "sqrt(1x + 10) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_038",
+      "input": "sqrt(1x + 12) = x - 5",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_039",
+      "input": "sqrt(1x + 13) = 10",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_040",
+      "input": "sqrt(1x + 6) = x - 9",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_041",
+      "input": "sqrt(4x + 11) = 6",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_042",
+      "input": "sqrt(1x + 9) = x - 6",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_043",
+      "input": "sqrt(1x + 14) = 7",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_044",
+      "input": "sqrt(4x + 2) = x - 7",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_045",
+      "input": "sqrt(3x + 11) = 8",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_046",
+      "input": "sqrt(2x + 7) = x - 3",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_047",
+      "input": "sqrt(3x + 10) = 9",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_048",
+      "input": "sqrt(4x + 8) = x - 7",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_049",
+      "input": "sqrt(3x + 6) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_050",
+      "input": "sqrt(1x + 5) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_051",
+      "input": "sqrt(2x + 13) = 8",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_052",
+      "input": "sqrt(4x + 6) = x - 1",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_053",
+      "input": "sqrt(4x + 14) = 6",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_054",
+      "input": "sqrt(2x + 8) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_055",
+      "input": "sqrt(3x + 13) = 5",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_056",
+      "input": "sqrt(3x + 5) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_057",
+      "input": "sqrt(3x + 9) = 1",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_058",
+      "input": "sqrt(2x + 2) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_059",
+      "input": "sqrt(4x + 8) = 9",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_060",
+      "input": "sqrt(2x + 12) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_061",
+      "input": "sqrt(4x + 8) = 1",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_062",
+      "input": "sqrt(1x + 5) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_063",
+      "input": "sqrt(4x + 12) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_064",
+      "input": "sqrt(3x + 11) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_065",
+      "input": "sqrt(3x + 8) = 9",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_066",
+      "input": "sqrt(3x + 7) = x - 9",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_067",
+      "input": "sqrt(3x + 6) = 8",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_068",
+      "input": "sqrt(3x + 5) = x - 5",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_069",
+      "input": "sqrt(2x + 2) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_070",
+      "input": "sqrt(3x + 2) = x - 9",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_071",
+      "input": "sqrt(2x + 4) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_072",
+      "input": "sqrt(4x + 5) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_073",
+      "input": "sqrt(3x + 2) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_074",
+      "input": "sqrt(3x + 4) = x - 6",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_075",
+      "input": "sqrt(2x + 5) = 1",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_076",
+      "input": "sqrt(2x + 5) = x - 1",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_077",
+      "input": "sqrt(1x + 9) = 5",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_078",
+      "input": "sqrt(2x + 11) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_079",
+      "input": "sqrt(1x + 14) = 1",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_080",
+      "input": "sqrt(3x + 8) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_081",
+      "input": "sqrt(4x + 6) = 3",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_082",
+      "input": "sqrt(1x + 5) = x - 8",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_083",
+      "input": "sqrt(1x + 14) = 2",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_084",
+      "input": "sqrt(4x + 8) = x - 2",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_085",
+      "input": "sqrt(1x + 3) = 3",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_086",
+      "input": "sqrt(3x + 2) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_087",
+      "input": "sqrt(1x + 9) = 7",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_088",
+      "input": "sqrt(2x + 13) = x - 9",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_089",
+      "input": "sqrt(4x + 8) = 8",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_090",
+      "input": "sqrt(3x + 14) = x - 10",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_091",
+      "input": "sqrt(4x + 5) = 10",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_092",
+      "input": "sqrt(1x + 10) = x - 2",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_093",
+      "input": "sqrt(2x + 11) = 4",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_094",
+      "input": "sqrt(3x + 11) = x - 2",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_095",
+      "input": "sqrt(2x + 4) = 3",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_096",
+      "input": "sqrt(1x + 3) = x - 1",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_097",
+      "input": "sqrt(4x + 8) = 10",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_098",
+      "input": "sqrt(4x + 5) = x - 1",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    },
+    {
+      "id": "rad_099",
+      "input": "sqrt(2x + 5) = 5",
+      "variable": "x",
+      "subtype": "single_radical"
+    },
+    {
+      "id": "rad_100",
+      "input": "sqrt(4x + 2) = x - 4",
+      "variable": "x",
+      "subtype": "extraneous_root"
+    }
+  ],
+  "exponential_logarithmic": [
+    {
+      "id": "explog_001",
+      "input": "5^x = 3125",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_002",
+      "input": "ln(x + 2) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_003",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_004",
+      "input": "5^x = 25",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_005",
+      "input": "ln(x + 3) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_006",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_007",
+      "input": "5^x = 625",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_008",
+      "input": "ln(x + 5) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_009",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_010",
+      "input": "10^x = 10000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_011",
+      "input": "ln(x + 1) = 5",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_012",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_013",
+      "input": "5^x = 5",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_014",
+      "input": "ln(x + 1) = 2",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_015",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_016",
+      "input": "2^x = 4",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_017",
+      "input": "ln(x + 8) = 5",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_018",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_019",
+      "input": "10^x = 10000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_020",
+      "input": "ln(x + 6) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_021",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_022",
+      "input": "5^x = 5",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_023",
+      "input": "ln(x + 7) = 3",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_024",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_025",
+      "input": "10^x = 100000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_026",
+      "input": "ln(x + 2) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_027",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_028",
+      "input": "5^x = 5",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_029",
+      "input": "ln(x + 1) = 5",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_030",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_031",
+      "input": "2^x = 4",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_032",
+      "input": "ln(x + 8) = 5",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_033",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_034",
+      "input": "3^x = 27",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_035",
+      "input": "ln(x + 8) = 3",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_036",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_037",
+      "input": "2^x = 32",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_038",
+      "input": "ln(x + 5) = 2",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_039",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_040",
+      "input": "10^x = 10",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_041",
+      "input": "ln(x + 8) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_042",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_043",
+      "input": "10^x = 1000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_044",
+      "input": "ln(x + 8) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_045",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_046",
+      "input": "10^x = 100000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_047",
+      "input": "ln(x + 4) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_048",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_049",
+      "input": "5^x = 625",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_050",
+      "input": "ln(x + 5) = 5",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_051",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_052",
+      "input": "5^x = 3125",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_053",
+      "input": "ln(x + 8) = 2",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_054",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_055",
+      "input": "5^x = 3125",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_056",
+      "input": "ln(x + 6) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_057",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_058",
+      "input": "10^x = 100",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_059",
+      "input": "ln(x + 6) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_060",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_061",
+      "input": "10^x = 100",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_062",
+      "input": "ln(x + 3) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_063",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_064",
+      "input": "10^x = 10",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_065",
+      "input": "ln(x + 3) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_066",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_067",
+      "input": "2^x = 16",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_068",
+      "input": "ln(x + 7) = 3",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_069",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_070",
+      "input": "10^x = 1000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_071",
+      "input": "ln(x + 1) = 5",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_072",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_073",
+      "input": "5^x = 25",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_074",
+      "input": "ln(x + 2) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_075",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_076",
+      "input": "3^x = 27",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_077",
+      "input": "ln(x + 6) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_078",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_079",
+      "input": "5^x = 125",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_080",
+      "input": "ln(x + 4) = 2",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_081",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_082",
+      "input": "3^x = 9",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_083",
+      "input": "ln(x + 7) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_084",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_085",
+      "input": "3^x = 9",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_086",
+      "input": "ln(x + 8) = 3",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_087",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_088",
+      "input": "10^x = 1000",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_089",
+      "input": "ln(x + 8) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_090",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_091",
+      "input": "5^x = 625",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_092",
+      "input": "ln(x + 5) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_093",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_094",
+      "input": "10^x = 10",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_095",
+      "input": "ln(x + 6) = 4",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_096",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_097",
+      "input": "2^x = 16",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    },
+    {
+      "id": "explog_098",
+      "input": "ln(x + 1) = 1",
+      "variable": "x",
+      "subtype": "natural_log"
+    },
+    {
+      "id": "explog_099",
+      "input": "e^(2x) - 4*e^x + 3 = 0",
+      "variable": "x",
+      "subtype": "exp_quadratic"
+    },
+    {
+      "id": "explog_100",
+      "input": "3^x = 243",
+      "variable": "x",
+      "subtype": "pure_exponential"
+    }
+  ],
+  "trigonometric": [
+    {
+      "id": "trig_001",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_002",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_003",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_004",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_005",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_006",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_007",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_008",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_009",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_010",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_011",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_012",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_013",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_014",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_015",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_016",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_017",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_018",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_019",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_020",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_021",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_022",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_023",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_024",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_025",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_026",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_027",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_028",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_029",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_030",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_031",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_032",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_033",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_034",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_035",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_036",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_037",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_038",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_039",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_040",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_041",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_042",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_043",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_044",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_045",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_046",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_047",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_048",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_049",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_050",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_051",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_052",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_053",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_054",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_055",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_056",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_057",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_058",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_059",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_060",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_061",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_062",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_063",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_064",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_065",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_066",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_067",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_068",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_069",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_070",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_071",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_072",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_073",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_074",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_075",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_076",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_077",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_078",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_079",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_080",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_081",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_082",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_083",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_084",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_085",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_086",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_087",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_088",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_089",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_090",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_091",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_092",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_093",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_094",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_095",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_096",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    },
+    {
+      "id": "trig_097",
+      "input": "sin(x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_zero"
+    },
+    {
+      "id": "trig_098",
+      "input": "2*cos(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "cos_half"
+    },
+    {
+      "id": "trig_099",
+      "input": "tan(x) - 1 = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "tan_one"
+    },
+    {
+      "id": "trig_100",
+      "input": "sin(2*x) = 0",
+      "variable": "x",
+      "domain": [
+        0,
+        "2*pi"
+      ],
+      "subtype": "sin_double_angle"
+    }
+  ],
+  "systems": [
+    {
+      "id": "sys_001",
+      "input": [
+        "3x + -2y = 11",
+        "2x + -1y = 7"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_002",
+      "input": [
+        "3x + 3y = -27",
+        "-3x + -1y = 17"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_003",
+      "input": [
+        "2x + -1y = 19",
+        "3x + -2y = 32"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_004",
+      "input": [
+        "-1x + 3y = 9",
+        "1x + -2y = -8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_005",
+      "input": [
+        "2x + -1y = 0",
+        "2x + 2y = -12"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_006",
+      "input": [
+        "-1x + 1y = -3",
+        "-1x + 3y = -9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_007",
+      "input": [
+        "1x + -3y = 17",
+        "-2x + -2y = 6"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_008",
+      "input": [
+        "-3x + 1y = -9",
+        "-3x + -1y = -15"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_009",
+      "input": [
+        "-1x + 3y = 23",
+        "3x + 3y = 3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_010",
+      "input": [
+        "3x + -1y = -4",
+        "-3x + 3y = 12"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_011",
+      "input": [
+        "-3x + 2y = 17",
+        "2x + -1y = -9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_012",
+      "input": [
+        "3x + 1y = -9",
+        "3x + -1y = 3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_013",
+      "input": [
+        "-2x + -3y = 5",
+        "-3x + -1y = -10"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_014",
+      "input": [
+        "-3x + -2y = -11",
+        "2x + -2y = 24"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_015",
+      "input": [
+        "-1x + 3y = 14",
+        "3x + 3y = 30"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_016",
+      "input": [
+        "1x + 3y = -7",
+        "-3x + 1y = -19"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_017",
+      "input": [
+        "-3x + 3y = -15",
+        "-1x + -2y = -5"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_018",
+      "input": [
+        "-2x + -1y = -18",
+        "-3x + 3y = 0"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_019",
+      "input": [
+        "-3x + 1y = -6",
+        "-1x + -2y = -9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_020",
+      "input": [
+        "-3x + 3y = 33",
+        "-2x + 3y = 28"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_021",
+      "input": [
+        "-1x + -2y = 22",
+        "-2x + 2y = 2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_022",
+      "input": [
+        "2x + -2y = 8",
+        "2x + -1y = 2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_023",
+      "input": [
+        "-2x + 2y = 6",
+        "-3x + -1y = 1"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_024",
+      "input": [
+        "2x + -1y = -4",
+        "-2x + -3y = 20"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_025",
+      "input": [
+        "-3x + -1y = 28",
+        "-2x + 2y = 8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_026",
+      "input": [
+        "-2x + -1y = 4",
+        "-3x + -2y = 10"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_027",
+      "input": [
+        "-3x + 3y = 9",
+        "-3x + 1y = -7"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_028",
+      "input": [
+        "2x + 2y = 18",
+        "-3x + 1y = -15"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_029",
+      "input": [
+        "2x + -3y = 19",
+        "3x + 3y = 21"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_030",
+      "input": [
+        "1x + 3y = 11",
+        "-3x + -3y = -27"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_031",
+      "input": [
+        "1x + 3y = 19",
+        "-3x + 1y = -17"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_032",
+      "input": [
+        "-3x + -1y = -12",
+        "2x + -2y = 24"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_033",
+      "input": [
+        "-1x + 2y = -2",
+        "3x + 2y = -26"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_034",
+      "input": [
+        "2x + 2y = 12",
+        "-1x + 1y = 2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_035",
+      "input": [
+        "-3x + 3y = -9",
+        "-3x + 4y = -4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_036",
+      "input": [
+        "1x + -2y = -12",
+        "1x + -1y = -7"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_037",
+      "input": [
+        "1x + 3y = 18",
+        "-3x + -1y = -22"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_038",
+      "input": [
+        "3x + -1y = 13",
+        "-1x + -2y = -9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_039",
+      "input": [
+        "-3x + -3y = -3",
+        "-3x + 1y = -27"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_040",
+      "input": [
+        "-2x + 2y = 16",
+        "-3x + 2y = 21"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_041",
+      "input": [
+        "1x + -1y = 7",
+        "3x + 1y = 1"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_042",
+      "input": [
+        "2x + -1y = -15",
+        "-1x + -3y = 4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_043",
+      "input": [
+        "-2x + 3y = -22",
+        "1x + -2y = 12"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_044",
+      "input": [
+        "2x + -1y = -13",
+        "-3x + -1y = 12"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_045",
+      "input": [
+        "2x + 2y = 8",
+        "2x + 3y = 13"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_046",
+      "input": [
+        "-3x + -2y = 24",
+        "-1x + 3y = 8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_047",
+      "input": [
+        "-1x + -3y = -7",
+        "-2x + -2y = -6"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_048",
+      "input": [
+        "-2x + 3y = -26",
+        "3x + -3y = 30"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_049",
+      "input": [
+        "-2x + 1y = 20",
+        "1x + 1y = 2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_050",
+      "input": [
+        "-1x + -1y = 1",
+        "3x + -1y = 9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_051",
+      "input": [
+        "-2x + -2y = 26",
+        "2x + -3y = 9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_052",
+      "input": [
+        "1x + 3y = -6",
+        "1x + 1y = -6"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_053",
+      "input": [
+        "-1x + -2y = -16",
+        "2x + -3y = -3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_054",
+      "input": [
+        "-3x + -1y = -14",
+        "3x + 3y = 24"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_055",
+      "input": [
+        "3x + -1y = 13",
+        "-3x + -2y = -37"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_056",
+      "input": [
+        "-3x + -2y = 2",
+        "-1x + -2y = 10"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_057",
+      "input": [
+        "-1x + -1y = 4",
+        "-3x + -2y = 12"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_058",
+      "input": [
+        "-2x + -2y = -24",
+        "1x + 2y = 17"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_059",
+      "input": [
+        "2x + 3y = 22",
+        "-1x + -3y = -23"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_060",
+      "input": [
+        "1x + -3y = 25",
+        "1x + -2y = 18"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_061",
+      "input": [
+        "2x + 1y = 9",
+        "3x + 3y = 21"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_062",
+      "input": [
+        "-3x + 1y = -14",
+        "-3x + -1y = -16"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_063",
+      "input": [
+        "3x + -1y = -15",
+        "-3x + 2y = 21"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_064",
+      "input": [
+        "1x + 2y = -7",
+        "1x + 3y = -8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_065",
+      "input": [
+        "-1x + 3y = 18",
+        "-1x + -2y = -2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_066",
+      "input": [
+        "-3x + 2y = -12",
+        "3x + -3y = 15"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_067",
+      "input": [
+        "-2x + -1y = -24",
+        "-1x + 3y = 16"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_068",
+      "input": [
+        "-3x + -2y = 14",
+        "-1x + -2y = 6"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_069",
+      "input": [
+        "3x + -3y = 3",
+        "-2x + 3y = -6"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_070",
+      "input": [
+        "2x + 2y = 26",
+        "1x + 3y = 25"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_071",
+      "input": [
+        "-2x + 1y = -2",
+        "-3x + 1y = -4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_072",
+      "input": [
+        "-1x + 2y = -4",
+        "-3x + -1y = -19"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_073",
+      "input": [
+        "-1x + 1y = -14",
+        "1x + -3y = 26"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_074",
+      "input": [
+        "-1x + -3y = -2",
+        "3x + -3y = -30"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_075",
+      "input": [
+        "1x + 2y = 16",
+        "2x + 3y = 28"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_076",
+      "input": [
+        "2x + 3y = 4",
+        "-2x + -1y = 8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_077",
+      "input": [
+        "-2x + -3y = -38",
+        "1x + -3y = -17"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_078",
+      "input": [
+        "2x + 3y = -14",
+        "-2x + -2y = 8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_079",
+      "input": [
+        "1x + 2y = 11",
+        "2x + 2y = 10"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_080",
+      "input": [
+        "-1x + -1y = 0",
+        "1x + 2y = 3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_081",
+      "input": [
+        "3x + 3y = -15",
+        "-1x + -3y = 19"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_082",
+      "input": [
+        "2x + 3y = -11",
+        "1x + -1y = 7"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_083",
+      "input": [
+        "-1x + -3y = 12",
+        "2x + 3y = -12"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_084",
+      "input": [
+        "-1x + 3y = 13",
+        "3x + 3y = -3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_085",
+      "input": [
+        "2x + 3y = -4",
+        "-3x + -1y = -8"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_086",
+      "input": [
+        "-2x + 3y = -2",
+        "3x + 3y = 18"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_087",
+      "input": [
+        "3x + 3y = 6",
+        "1x + 2y = -4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_088",
+      "input": [
+        "-1x + -1y = 5",
+        "-2x + -1y = 2"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_089",
+      "input": [
+        "-2x + -2y = -18",
+        "-2x + -1y = -11"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_090",
+      "input": [
+        "-3x + 2y = 20",
+        "2x + 3y = -9"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_091",
+      "input": [
+        "3x + -1y = 31",
+        "2x + -2y = 30"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_092",
+      "input": [
+        "-2x + -2y = 0",
+        "3x + 2y = 4"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_093",
+      "input": [
+        "-3x + 1y = 15",
+        "-1x + 3y = 21"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_094",
+      "input": [
+        "2x + -1y = -8",
+        "3x + 1y = 3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_095",
+      "input": [
+        "-1x + 1y = 0",
+        "-2x + -1y = 3"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_096",
+      "input": [
+        "-1x + 1y = 0",
+        "2x + 2y = 24"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_097",
+      "input": [
+        "-2x + 2y = -16",
+        "-2x + -1y = -7"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_098",
+      "input": [
+        "-1x + 2y = 21",
+        "-3x + 3y = 42"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_099",
+      "input": [
+        "-1x + -3y = 7",
+        "-2x + -1y = -11"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    },
+    {
+      "id": "sys_100",
+      "input": [
+        "-2x + 1y = -4",
+        "-3x + -2y = -34"
+      ],
+      "variables": [
+        "x",
+        "y"
+      ],
+      "subtype": "linear_2x2_unique"
+    }
+  ],
+  "inequalities": [
+    {
+      "id": "ineq_001",
+      "input": "5x + 13 > -4",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_002",
+      "input": "x^2 + 2x - 24 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_003",
+      "input": "-5x + -3 >= 1",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_004",
+      "input": "x^2 + 2x - 8 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_005",
+      "input": "4x + -13 > -4",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_006",
+      "input": "x^2 + 4x - 5 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_007",
+      "input": "3x + 14 >= -12",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_008",
+      "input": "x^2 - 6x + 0 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_009",
+      "input": "3x + 10 > -11",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_010",
+      "input": "x^2 + 4x - 5 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_011",
+      "input": "2x + 14 >= 11",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_012",
+      "input": "x^2 - 3x - 18 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_013",
+      "input": "-3x + 9 > 7",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_014",
+      "input": "x^2 - 1x - 12 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_015",
+      "input": "-5x + 13 >= -13",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_016",
+      "input": "x^2 + 3x - 18 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_017",
+      "input": "-2x + 11 > -11",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_018",
+      "input": "x^2 - 4x - 12 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_019",
+      "input": "4x + -12 >= 9",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_020",
+      "input": "x^2 + 2x - 8 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_021",
+      "input": "2x + -12 > -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_022",
+      "input": "x^2 + 1x - 20 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_023",
+      "input": "5x + -13 >= -12",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_024",
+      "input": "x^2 - 4x + 0 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_025",
+      "input": "-5x + 5 > 1",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_026",
+      "input": "x^2 + 0x - 4 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_027",
+      "input": "-3x + -6 >= -2",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_028",
+      "input": "x^2 + 1x - 30 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_029",
+      "input": "3x + -8 > 3",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_030",
+      "input": "x^2 + 1x - 6 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_031",
+      "input": "-4x + 1 >= -4",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_032",
+      "input": "x^2 + 1x - 30 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_033",
+      "input": "-5x + -3 > 12",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_034",
+      "input": "x^2 + 2x - 3 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_035",
+      "input": "4x + -4 >= -7",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_036",
+      "input": "x^2 + 0x - 1 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_037",
+      "input": "3x + 10 > -13",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_038",
+      "input": "x^2 + 2x - 8 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_039",
+      "input": "-4x + 9 >= 3",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_040",
+      "input": "x^2 - 6x - 7 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_041",
+      "input": "3x + -11 > -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_042",
+      "input": "x^2 - 1x - 20 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_043",
+      "input": "3x + 11 >= 5",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_044",
+      "input": "x^2 - 2x - 35 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_045",
+      "input": "5x + 7 > 0",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_046",
+      "input": "x^2 - 1x - 2 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_047",
+      "input": "-3x + -13 >= 7",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_048",
+      "input": "x^2 - 4x + 0 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_049",
+      "input": "-5x + -6 > -9",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_050",
+      "input": "x^2 - 1x - 42 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_051",
+      "input": "-2x + 13 >= -14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_052",
+      "input": "x^2 + 1x - 12 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_053",
+      "input": "4x + 11 > 2",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_054",
+      "input": "x^2 + 0x - 9 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_055",
+      "input": "-5x + 9 >= 5",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_056",
+      "input": "x^2 + 2x - 15 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_057",
+      "input": "3x + 12 > 9",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_058",
+      "input": "x^2 - 1x - 42 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_059",
+      "input": "3x + -7 >= -12",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_060",
+      "input": "x^2 - 3x + 0 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_061",
+      "input": "4x + 13 > -3",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_062",
+      "input": "x^2 - 3x - 4 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_063",
+      "input": "4x + -5 >= -10",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_064",
+      "input": "x^2 - 3x - 18 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_065",
+      "input": "5x + -4 > 14",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_066",
+      "input": "x^2 - 5x + 0 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_067",
+      "input": "2x + 10 >= -13",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_068",
+      "input": "x^2 - 3x - 4 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_069",
+      "input": "-4x + -2 > 4",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_070",
+      "input": "x^2 - 2x + 0 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_071",
+      "input": "2x + -5 >= -12",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_072",
+      "input": "x^2 + 3x - 18 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_073",
+      "input": "2x + -6 > -1",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_074",
+      "input": "x^2 - 4x - 12 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_075",
+      "input": "4x + -10 >= 7",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_076",
+      "input": "x^2 + 0x - 9 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_077",
+      "input": "5x + -14 > 8",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_078",
+      "input": "x^2 - 3x + 0 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_079",
+      "input": "4x + -7 >= 5",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_080",
+      "input": "x^2 - 1x + 0 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_081",
+      "input": "-4x + 6 > 5",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_082",
+      "input": "x^2 + 0x - 9 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_083",
+      "input": "-3x + 15 >= -15",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_084",
+      "input": "x^2 - 2x - 35 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_085",
+      "input": "5x + -14 > -11",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_086",
+      "input": "x^2 + 4x - 12 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_087",
+      "input": "3x + -4 >= -3",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_088",
+      "input": "x^2 + 1x - 2 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_089",
+      "input": "-3x + 6 > -1",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_090",
+      "input": "x^2 + 1x - 12 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_091",
+      "input": "5x + 9 >= -13",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_092",
+      "input": "x^2 + 0x - 4 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_093",
+      "input": "3x + -3 > -5",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_094",
+      "input": "x^2 - 2x - 3 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_095",
+      "input": "-2x + 15 >= -12",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_096",
+      "input": "x^2 + 0x - 36 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_097",
+      "input": "-3x + 0 > 1",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_098",
+      "input": "x^2 - 2x - 15 < 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    },
+    {
+      "id": "ineq_099",
+      "input": "-4x + -7 >= 9",
+      "variable": "x",
+      "subtype": "linear"
+    },
+    {
+      "id": "ineq_100",
+      "input": "x^2 - 2x - 24 <= 0",
+      "variable": "x",
+      "subtype": "quadratic"
+    }
+  ],
+  "derivatives": [
+    {
+      "id": "deriv_001",
+      "input": "3x^4 - 5x^2 + 7x - 2",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_002",
+      "input": "sin(x) * cos(x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_003",
+      "input": "x^2 * e^x",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_004",
+      "input": "ln(x) / x",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_005",
+      "input": "(x^2 + 1) / (x - 1)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_006",
+      "input": "sqrt(x^2 + 4)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_007",
+      "input": "tan(3x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_008",
+      "input": "e^(2x) * sin(x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_009",
+      "input": "x^3 * ln(x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_010",
+      "input": "(2x + 1)^5",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_011",
+      "input": "2*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_012",
+      "input": "2*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_013",
+      "input": "2*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_014",
+      "input": "2*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_015",
+      "input": "2*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_016",
+      "input": "2*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_017",
+      "input": "2*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_018",
+      "input": "2*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_019",
+      "input": "2*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_020",
+      "input": "2*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_021",
+      "input": "3*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_022",
+      "input": "3*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_023",
+      "input": "3*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_024",
+      "input": "3*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_025",
+      "input": "3*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_026",
+      "input": "3*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_027",
+      "input": "3*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_028",
+      "input": "3*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_029",
+      "input": "3*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_030",
+      "input": "3*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_031",
+      "input": "4*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_032",
+      "input": "4*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_033",
+      "input": "4*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_034",
+      "input": "4*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_035",
+      "input": "4*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_036",
+      "input": "4*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_037",
+      "input": "4*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_038",
+      "input": "4*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_039",
+      "input": "4*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_040",
+      "input": "4*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_041",
+      "input": "5*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_042",
+      "input": "5*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_043",
+      "input": "5*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_044",
+      "input": "5*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_045",
+      "input": "5*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_046",
+      "input": "5*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_047",
+      "input": "5*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_048",
+      "input": "5*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_049",
+      "input": "5*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_050",
+      "input": "5*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_051",
+      "input": "6*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_052",
+      "input": "6*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_053",
+      "input": "6*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_054",
+      "input": "6*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_055",
+      "input": "6*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_056",
+      "input": "6*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_057",
+      "input": "6*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_058",
+      "input": "6*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_059",
+      "input": "6*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_060",
+      "input": "6*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_061",
+      "input": "7*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_062",
+      "input": "7*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_063",
+      "input": "7*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_064",
+      "input": "7*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_065",
+      "input": "7*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_066",
+      "input": "7*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_067",
+      "input": "7*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_068",
+      "input": "7*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_069",
+      "input": "7*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_070",
+      "input": "7*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_071",
+      "input": "8*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_072",
+      "input": "8*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_073",
+      "input": "8*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_074",
+      "input": "8*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_075",
+      "input": "8*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_076",
+      "input": "8*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_077",
+      "input": "8*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_078",
+      "input": "8*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_079",
+      "input": "8*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_080",
+      "input": "8*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_081",
+      "input": "9*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_082",
+      "input": "9*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_083",
+      "input": "9*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_084",
+      "input": "9*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_085",
+      "input": "9*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_086",
+      "input": "9*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_087",
+      "input": "9*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_088",
+      "input": "9*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_089",
+      "input": "9*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_090",
+      "input": "9*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_091",
+      "input": "10*(3x^4 - 5x^2 + 7x - 2)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_092",
+      "input": "10*(sin(x) * cos(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_093",
+      "input": "10*(x^2 * e^x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_094",
+      "input": "10*(ln(x) / x)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_095",
+      "input": "10*((x^2 + 1) / (x - 1))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_096",
+      "input": "10*(sqrt(x^2 + 4))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_097",
+      "input": "10*(tan(3x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_098",
+      "input": "10*(e^(2x) * sin(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_099",
+      "input": "10*(x^3 * ln(x))",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    },
+    {
+      "id": "deriv_100",
+      "input": "10*((2x + 1)^5)",
+      "variable": "x",
+      "subtype": "symbolic_derivative"
+    }
+  ],
+  "integrals": [
+    {
+      "id": "int_001",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_002",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_003",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_004",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_005",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_006",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_007",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_008",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_009",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_010",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_011",
+      "input": "x^3 + 2x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_012",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_013",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi/2",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_014",
+      "input": "e^(3x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_015",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_016",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_017",
+      "input": "1 / (1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_018",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_019",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_020",
+      "input": "sec(x)^2",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_021",
+      "input": "x^3 + 2x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_022",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_023",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_024",
+      "input": "e^(3x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_025",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_026",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_027",
+      "input": "1 / (1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_028",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi/2",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_029",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_030",
+      "input": "sec(x)^2",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_031",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_032",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_033",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_034",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_035",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_036",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_037",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_038",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_039",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_040",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_041",
+      "input": "x^3 + 2x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_042",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_043",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi/2",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_044",
+      "input": "e^(3x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_045",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_046",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_047",
+      "input": "1 / (1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_048",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_049",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_050",
+      "input": "sec(x)^2",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_051",
+      "input": "x^3 + 2x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_052",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_053",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_054",
+      "input": "e^(3x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_055",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_056",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_057",
+      "input": "1 / (1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_058",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi/2",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_059",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_060",
+      "input": "sec(x)^2",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_061",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_062",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_063",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_064",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_065",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_066",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_067",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_068",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_069",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_070",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_071",
+      "input": "x^3 + 2x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_072",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_073",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi/2",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_074",
+      "input": "e^(3x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_075",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_076",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_077",
+      "input": "1 / (1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_078",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_079",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_080",
+      "input": "sec(x)^2",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_081",
+      "input": "x^3 + 2x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_082",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_083",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_084",
+      "input": "e^(3x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_085",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_086",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_087",
+      "input": "1 / (1 + x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_088",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi/2",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_089",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_090",
+      "input": "sec(x)^2",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_091",
+      "input": "x^2",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 3,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_092",
+      "input": "cos(x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_093",
+      "input": "sin(2x)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_094",
+      "input": "sin(x)",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": "pi",
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_095",
+      "input": "1 / x",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_096",
+      "input": "x * e^(x^2)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_097",
+      "input": "e^x",
+      "variable": "x",
+      "type": "definite",
+      "lower": 0,
+      "upper": 1,
+      "subtype": "definite_standard"
+    },
+    {
+      "id": "int_098",
+      "input": "2x / (x^2 + 1)",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_099",
+      "input": "3x^2 + 4x - 5",
+      "variable": "x",
+      "type": "indefinite",
+      "subtype": "indefinite_standard"
+    },
+    {
+      "id": "int_100",
+      "input": "2x + 1",
+      "variable": "x",
+      "type": "definite",
+      "lower": 1,
+      "upper": 4,
+      "subtype": "definite_standard"
+    }
+  ],
+  "edge_cases": [
+    {
+      "id": "edge_001",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_002",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_003",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_004",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_005",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_006",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_007",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_008",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_009",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_010",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_011",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_012",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_013",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_014",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_015",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_016",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_017",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_018",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_019",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_020",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_021",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_022",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_023",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_024",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_025",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_026",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_027",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_028",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_029",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_030",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_031",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_032",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_033",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_034",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_035",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_036",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_037",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_038",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_039",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_040",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_041",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_042",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_043",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_044",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_045",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_046",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_047",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_048",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_049",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_050",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_051",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_052",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_053",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_054",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_055",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_056",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_057",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_058",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_059",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_060",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_061",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_062",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_063",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_064",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_065",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_066",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_067",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_068",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_069",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_070",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_071",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_072",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_073",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_074",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_075",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_076",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_077",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_078",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_079",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_080",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_081",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_082",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_083",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_084",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_085",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_086",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    },
+    {
+      "id": "edge_087",
+      "input": "0*x = 7",
+      "variable": "x",
+      "subtype": "zero_coeff_no_sol"
+    },
+    {
+      "id": "edge_088",
+      "input": "0*x = 0",
+      "variable": "x",
+      "subtype": "zero_identity"
+    },
+    {
+      "id": "edge_089",
+      "input": "sqrt(x) = -5",
+      "variable": "x",
+      "subtype": "negative_radicand_result"
+    },
+    {
+      "id": "edge_090",
+      "input": "abs(x + 2) = -3",
+      "variable": "x",
+      "subtype": "negative_abs"
+    },
+    {
+      "id": "edge_091",
+      "input": "sin(x) = 3",
+      "variable": "x",
+      "subtype": "trig_overflow"
+    },
+    {
+      "id": "edge_092",
+      "input": "e^x = 0",
+      "variable": "x",
+      "subtype": "exp_zero"
+    },
+    {
+      "id": "edge_093",
+      "input": "2x/(x-2) = 4/(x-2)",
+      "variable": "x",
+      "subtype": "pure_extraneous_root"
+    },
+    {
+      "id": "edge_094",
+      "input": "x^2 + 9 = 0",
+      "variable": "x",
+      "subtype": "no_real_roots"
+    },
+    {
+      "id": "edge_095",
+      "input": "1/x = 0",
+      "variable": "x",
+      "subtype": "rational_no_solution"
+    },
+    {
+      "id": "edge_096",
+      "input": "abs(x) = 0",
+      "variable": "x",
+      "subtype": "abs_single_root"
+    },
+    {
+      "id": "edge_097",
+      "input": "ln(x) = -100",
+      "variable": "x",
+      "subtype": "very_small_log_arg"
+    },
+    {
+      "id": "edge_098",
+      "input": "x^0 = 1",
+      "variable": "x",
+      "subtype": "degree_zero_identity"
+    },
+    {
+      "id": "edge_099",
+      "input": "x + 5 = x + 5",
+      "variable": "x",
+      "subtype": "identity_all_reals"
+    },
+    {
+      "id": "edge_100",
+      "input": "x + 1 = x + 2",
+      "variable": "x",
+      "subtype": "contradiction_no_solution"
+    }
+  ]
+}

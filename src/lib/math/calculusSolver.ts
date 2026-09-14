@@ -284,9 +284,15 @@ export function solveDerivative(expression: string): SolverResult {
 }
 
 /**
- * Solve step-by-step indefinite integration of any function f(x).
+ * Solve step-by-step integration of any function f(x), supporting both
+ * indefinite integrals and definite integrals via Fundamental Theorem of Calculus.
  */
-export function solveIntegral(expression: string): SolverResult {
+export function solveIntegral(
+  expression: string,
+  targetVar?: string,
+  lowerLimit?: number | string,
+  upperLimit?: number | string
+): SolverResult {
   let clean = expression.trim();
   clean = autoBalanceParens(clean);
   clean = clean.replace(/^(?:f\([a-zA-Z]\)|y)\s*=\s*/, '');
@@ -306,7 +312,7 @@ export function solveIntegral(expression: string): SolverResult {
     };
   }
 
-  const variable = detectVariable(clean) || 'x';
+  const variable = targetVar || detectVariable(clean) || 'x';
   const steps: SolutionStep[] = [];
   let stepNum = 1;
 
@@ -316,17 +322,27 @@ export function solveIntegral(expression: string): SolverResult {
     const resultInt = (nerdamer as any).integrate(clean, variable);
     const finalLatex = resultInt.toTeX();
 
+    const isDefinite = lowerLimit !== undefined && upperLimit !== undefined;
+
     // Step 1: Problem setup
-    steps.push({
-      stepNumber: stepNum++,
-      explanation: `Set up the indefinite integral with respect to variable $${variable}$.`,
-      math: `\\int \\left( ${latexExpr} \\right) \\, d${variable}`,
-      formulaUsed: {
-        name: 'Indefinite Integral',
-        latex: '\\int f(' + variable + ') \\, d' + variable + ' = F(' + variable + ') + C',
-        description: 'Finding the antiderivative function F(x) such that F\'(x) = f(x).',
-      },
-    });
+    if (isDefinite) {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `Set up the definite integral from $${lowerLimit}$ to $${upperLimit}$ with respect to $${variable}$.`,
+        math: `\\int_{${lowerLimit}}^{${upperLimit}} \\left( ${latexExpr} \\right) \\, d${variable}`,
+      });
+    } else {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `Set up the indefinite integral with respect to variable $${variable}$.`,
+        math: `\\int \\left( ${latexExpr} \\right) \\, d${variable}`,
+        formulaUsed: {
+          name: 'Indefinite Integral',
+          latex: '\\int f(' + variable + ') \\, d' + variable + ' = F(' + variable + ') + C',
+          description: 'Finding the antiderivative function F(x) such that F\'(x) = f(x).',
+        },
+      });
+    }
 
     // Check if expression is a sum of terms
     const terms = splitTopLevelTerms(clean);
@@ -381,11 +397,11 @@ export function solveIntegral(expression: string): SolverResult {
         });
       }
 
-      // Step 4: Combine all integrated terms and add constant of integration + C
+      // Step 4: Combine all integrated terms
       steps.push({
         stepNumber: stepNum++,
-        explanation: 'Combine all term antiderivatives and add the arbitrary constant of integration $C$.',
-        math: `\\int \\left( ${latexExpr} \\right) \\, d${variable} = ${finalLatex} + C`,
+        explanation: 'Combine all term antiderivatives.',
+        math: `F(${variable}) = ${finalLatex}`,
       });
     } else {
       // Single term integration
@@ -398,10 +414,38 @@ export function solveIntegral(expression: string): SolverResult {
 
       steps.push({
         stepNumber: stepNum++,
-        explanation: `Apply the ${matchedRule.name} to integrate the function.`,
-        math: `\\int ${latexExpr} \\, d${variable} = ${finalLatex} + C`,
+        explanation: `Apply the ${matchedRule.name} to find the antiderivative.`,
+        math: `F(${variable}) = ${finalLatex}`,
         formulaUsed: matchedRule,
       });
+    }
+
+    if (isDefinite) {
+      // Fundamental Theorem of Calculus: F(b) - F(a)
+      let defValLatex = '';
+      try {
+        const antiderivStr = resultInt.text();
+        const fb = (nerdamer as any)(antiderivStr, { [variable]: String(upperLimit) });
+        const fa = (nerdamer as any)(antiderivStr, { [variable]: String(lowerLimit) });
+        const diffExpr = (nerdamer as any)(`(${fb.text()}) - (${fa.text()})`).evaluate();
+        defValLatex = diffExpr.toTeX();
+      } catch {
+        const subUpper = (nerdamer as any)(`defint(${clean}, ${lowerLimit}, ${upperLimit}, ${variable})`);
+        defValLatex = subUpper.toTeX();
+      }
+
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `Apply the Fundamental Theorem of Calculus: $\\int_{a}^{b} f(${variable})\\,d${variable} = F(b) - F(a)$.`,
+        math: `\\left[ ${finalLatex} \\right]_{${lowerLimit}}^{${upperLimit}} = ${defValLatex}`,
+      });
+
+      return {
+        type: 'integral',
+        steps,
+        finalAnswer: `${defValLatex}`,
+        inputInterpretation: `\\text{Definite Integral: } \\int_{${lowerLimit}}^{${upperLimit}} \\left( ${latexExpr} \\right) \\, d${variable}`,
+      };
     }
 
     return {

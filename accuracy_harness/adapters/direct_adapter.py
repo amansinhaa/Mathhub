@@ -1,4 +1,4 @@
-﻿"""
+"""
 Direct TypeScript Solver Adapter
 Executes the website's native TypeScript solver via the solve_bridge.ts Node script.
 """
@@ -30,10 +30,11 @@ class DirectAdapter(BaseAdapter):
     def solve(self, case: Dict[str, Any], category: str) -> SolverOutput:
         start_t = time.perf_counter()
         case_id = case.get("id", "")
-        payload_str = json.dumps(case)
+        import base64
+        payload_b64 = base64.b64encode(json.dumps(case).encode('utf-8')).decode('ascii')
 
         try:
-            cmd = [self.tsx_cmd, self.bridge_path, category, payload_str]
+            cmd = [self.tsx_cmd, self.bridge_path, category, payload_b64]
             proc = subprocess.run(
                 cmd,
                 capture_output=True,
