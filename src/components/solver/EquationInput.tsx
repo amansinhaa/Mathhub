@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from '@/components/shared/RouterShim';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
-import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2, Info, Sparkles } from 'lucide-react';
+import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2, Info, Sparkles, CheckCircle2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
 import { SYNTAX_HELP, quickDegreeDetect, expressionToLatex, cleanPastedMath } from '@/lib/math/normalizer';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 import { SolverType } from '@/types/solver';
@@ -383,10 +383,11 @@ export default function EquationInput() {
           <button
             type="button"
             onClick={() => setShowGuide(!showGuide)}
-            className="text-[10px] font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] hover:underline flex items-center gap-1 cursor-pointer"
+            className="text-[10px] sm:text-[11px] font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] hover:underline flex items-center gap-1 cursor-pointer py-1 px-1.5 rounded-md hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors"
           >
             <Info size={12} />
-            <span>{showGuide ? 'Hide Format Guide' : 'Show Format Guide'}</span>
+            <span>{showGuide ? 'Hide Guide' : 'Show Guide ℹ️'}</span>
+            {showGuide ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           </button>
         </div>
 
@@ -417,10 +418,10 @@ export default function EquationInput() {
         </div>
       </div>
 
-      {/* ── Contextual Operation Format & Quick-Start Guide ───────────────────── */}
-      {showGuide && (
+      {/* ── Contextual Operation Format & Quick-Start Guide (Full or Compact) ─── */}
+      {showGuide ? (
         <div className="rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FBF9F8] dark:bg-[#161616] p-3 sm:p-4 space-y-2.5 shadow-2xs transition-all animate-fade-in">
-          {/* Header row with Mode, Rule & Tag */}
+          {/* Header row with Mode, Rule, Tag and direct Collapse button */}
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EAE5E2] dark:border-[#282321] pb-2">
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] flex items-center gap-1.5">
@@ -431,9 +432,20 @@ export default function EquationInput() {
                 {currentGuide.badge}
               </span>
             </div>
-            <span className="text-[10px] font-mono text-[#795548] dark:text-[#BCAAA4] font-medium bg-white dark:bg-[#1E1E1E] px-2 py-0.5 rounded-md border border-[#E0E0E0] dark:border-[#332D2A]">
-              ✓ {currentGuide.formatRule}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-[#795548] dark:text-[#BCAAA4] font-medium bg-white dark:bg-[#1E1E1E] px-2 py-0.5 rounded-md border border-[#E0E0E0] dark:border-[#332D2A]">
+                ✓ {currentGuide.formatRule}
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowGuide(false)}
+                className="p-1 rounded-md text-[#8D827A] hover:text-[#5D4037] dark:hover:text-[#D7CCC8] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors cursor-pointer"
+                title="Collapse Guide"
+                aria-label="Collapse Guide"
+              >
+                <ChevronUp size={14} />
+              </button>
+            </div>
           </div>
 
           {/* Plain English explanation: what it does */}
@@ -473,6 +485,38 @@ export default function EquationInput() {
               ))}
             </div>
           </div>
+        </div>
+      ) : (
+        /* Compact Guide Strip for Space Optimization */
+        <div className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FBF9F8] dark:bg-[#161616] text-xs font-mono animate-fade-in shadow-2xs">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+            <span className="text-[10px] font-bold uppercase text-[#8D827A] dark:text-[#A19891] shrink-0">
+              Format:
+            </span>
+            <code className="text-[#5D4037] dark:text-[#D7CCC8] font-bold text-[11px] truncate">
+              {currentGuide.formatShape}
+            </code>
+            <span className="text-[#BCAAA4] dark:text-[#5D4037] hidden sm:inline">•</span>
+            <div className="hidden sm:flex items-center gap-1">
+              <span className="text-[10px] text-[#8D827A]">Try:</span>
+              <button
+                type="button"
+                onClick={() => handleSelectExample(currentGuide.examples[0])}
+                className="text-[11px] text-[#5D4037] dark:text-[#D7CCC8] hover:underline cursor-pointer"
+                title={`Try ${currentGuide.examples[0]?.text}`}
+              >
+                {currentGuide.examples[0]?.text}
+              </button>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowGuide(true)}
+            className="text-[10px] font-bold text-[#5D4037] dark:text-[#D7CCC8] hover:underline shrink-0 flex items-center gap-1 cursor-pointer py-0.5 px-1.5 rounded hover:bg-[#EFEBE9] dark:hover:bg-[#25201E]"
+          >
+            <span>Expand Guide</span>
+            <ChevronDown size={12} />
+          </button>
         </div>
       )}
 
@@ -702,13 +746,22 @@ export default function EquationInput() {
           )}
 
           {/* Real-time Math Preview Card */}
-          {equation && (
-            <div className="p-3 sm:p-4 rounded-2xl bg-[#FBF9F8] dark:bg-[#151515] border border-[#E0E0E0] dark:border-[#2E2825] text-center shadow-xs transition-all animate-fade-in">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8D827A] dark:text-[#A19891] block mb-1">
-                Preview
-              </span>
-              <div className="text-base sm:text-lg overflow-x-auto py-1 text-[#131313] dark:text-white">
-                <MathDisplay math={expressionToLatex(equation)} />
+          {equation.trim() && (
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-[#FBF9F8] dark:bg-[#161616] border border-[#E0E0E0] dark:border-[#2E2825] shadow-2xs transition-all animate-fade-in">
+              <div className="flex items-center justify-between border-b border-[#EAE5E2] dark:border-[#282321] pb-1.5 mb-2">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] flex items-center gap-1.5">
+                  <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  Interpreted as:
+                </span>
+                <span className="text-[10px] font-mono text-[#8D827A] dark:text-[#A19891] flex items-center gap-1">
+                  <Eye size={11} />
+                  Live Preview
+                </span>
+              </div>
+              <div className="w-full overflow-x-auto scrollbar-thin py-1 text-[#131313] dark:text-white flex justify-center items-center">
+                <div className="text-sm sm:text-base md:text-lg font-medium tracking-wide max-w-full px-1">
+                  <MathDisplay math={expressionToLatex(equation)} />
+                </div>
               </div>
             </div>
           )}
