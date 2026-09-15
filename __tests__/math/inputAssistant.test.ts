@@ -46,10 +46,27 @@ describe('Input Assistant & Smart Suggestions', () => {
       expect(res.fix?.targetMode).toBe('polynomial');
     });
 
-    test('suggests setting expression to 0 in solve mode: "x^2 - 5x + 6"', () => {
-      const res = analyzeInput('x^2 - 5x + 6', 'polynomial');
+    test('detects function typos accurately: "sqt"', () => {
+      const res = analyzeInput('sqt', 'polynomial');
       expect(res.hasFix).toBe(true);
-      expect(res.fix?.fixedEquation).toBe('x^2 - 5x + 6 = 0');
+      expect(res.fix?.fixedEquation).toBe('sqrt(x)');
+      expect(res.fix?.label).toContain('sqrt(x)');
+    });
+
+    test('detects function typo in expression: "sqt(x + 2)"', () => {
+      const res = analyzeInput('sqt(x + 2)', 'polynomial');
+      expect(res.hasFix).toBe(true);
+      expect(res.fix?.fixedEquation).toBe('sqrt(x + 2)');
+    });
+
+    test('does NOT trigger auto-fix alarms when user is mid-typing an operator: "2x +"', () => {
+      const res = analyzeInput('2x +', 'polynomial');
+      expect(res.hasFix).toBe(false);
+    });
+
+    test('does NOT suggest = 0 on incomplete identifiers like "sqt" or "foo"', () => {
+      const res = analyzeInput('sqt', 'polynomial');
+      expect(res.fix?.fixedEquation).not.toBe('sqt = 0');
     });
   });
 

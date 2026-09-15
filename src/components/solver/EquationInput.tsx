@@ -276,6 +276,12 @@ export default function EquationInput() {
   const [showHelp, setShowHelp] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [showGuide, setShowGuide] = useState(true);
+  const [dismissedFixId, setDismissedFixId] = useState<string | null>(null);
+
+  // Reset dismissed fix when equation changes significantly
+  useEffect(() => {
+    setDismissedFixId(null);
+  }, [equation]);
 
   const degreeInfo = quickDegreeDetect(equation);
   const isDegreeTwo = degreeInfo?.degree === 2;
@@ -581,7 +587,7 @@ export default function EquationInput() {
           </div>
 
           {/* ── Auto-Fix "Did You Mean?" Banner ─────────────────────────────── */}
-          {assistant.hasFix && assistant.fix && (
+          {assistant.hasFix && assistant.fix && !dismissedFixId && (
             <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-amber-50/95 dark:bg-[#261E17] border border-amber-200/90 dark:border-amber-800/60 shadow-2xs animate-fade-in text-xs">
               <div className="flex items-center gap-2 pr-2 overflow-hidden">
                 <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
@@ -594,13 +600,23 @@ export default function EquationInput() {
                   </span>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => handleApplyFix(assistant.fix!)}
-                className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-mono text-xs font-bold shadow-xs transition-all shrink-0 cursor-pointer"
-              >
-                Apply Fix ✨
-              </button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleApplyFix(assistant.fix!)}
+                  className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-mono text-xs font-bold shadow-xs transition-all cursor-pointer"
+                >
+                  Apply Fix ✨
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDismissedFixId(assistant.fix!.id)}
+                  className="p-1 rounded-lg text-amber-600/70 hover:text-amber-900 dark:text-amber-400/70 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-900/40 transition-colors cursor-pointer"
+                  title="Dismiss suggestion"
+                >
+                  <X size={14} />
+                </button>
+              </div>
             </div>
           )}
 

@@ -50,8 +50,81 @@ export function analyzeInput(rawInput: string, currentMode: SolverType): Assista
 
 // ─── 1. Error Detection & Auto-Fixes ──────────────────────────────────────────
 
+// ─── 1. Error Detection & Auto-Fixes ──────────────────────────────────────────
+
+/**
+ * Common typo dictionary for functions.
+ * Maps common mistypings or alternate spellings to their canonical function names.
+ */
+const FUNCTION_TYPO_MAP: Record<string, string> = {
+  sqt: 'sqrt',
+  sqr: 'sqrt',
+  squrt: 'sqrt',
+  squareroot: 'sqrt',
+  sn: 'sin',
+  sinn: 'sin',
+  sni: 'sin',
+  sine: 'sin',
+  cs: 'cos',
+  coz: 'cos',
+  coss: 'cos',
+  cosine: 'cos',
+  tn: 'tan',
+  tna: 'tan',
+  tann: 'tan',
+  tg: 'tan',
+  tga: 'tan',
+  tangent: 'tan',
+  itn: 'int',
+  integ: 'int',
+  integral: 'int',
+  logg: 'log',
+  logarithm: 'log',
+  lnn: 'ln',
+  abss: 'abs',
+  cbrtt: 'cbrt',
+  cuberoot: 'cbrt',
+  arcsin: 'asin',
+  arccos: 'acos',
+  arctan: 'atan',
+};
+
 function detectFix(text: string, currentMode: SolverType): AutoFix | undefined {
-  // 1. Comma-separated simultaneous equations typed into a single field
+  // RULE 0: If user is actively typing an operator or delimiter at the very end,
+  // they are clearly mid-keystroke. Do NOT trigger alarm banners.
+  if (/[+\-*/^,(]$/.test(text)) {
+    return undefined;
+  }
+
+  // 1. Function typo detection:
+  // e.g. "sqt", "sqt(x)", "sqt 4", "sn(x)", "coz(x)", "logg(x)"
+  // Case A: Standalone typo token alone (e.g. "sqt", "squrt", "sinn")
+  const lowerTrimmed = text.toLowerCase().trim();
+  if (FUNCTION_TYPO_MAP[lowerTrimmed]) {
+    const canonical = FUNCTION_TYPO_MAP[lowerTrimmed];
+    return {
+      id: 'function-typo-standalone',
+      label: `Did you mean: ${canonical}(x)?`,
+      explanation: `Correct '${lowerTrimmed}' to function '${canonical}'`,
+      fixedEquation: `${canonical}(x)`,
+    };
+  }
+
+  // Case B: Function typo prefix within expression (e.g. "sqt(x + 2)" or "2*sn(x)")
+  for (const [typo, canonical] of Object.entries(FUNCTION_TYPO_MAP)) {
+    const regex = new RegExp(`\\b${typo}\\b(?=\\s*[\\(\\d[a-zA-Z])`, 'i');
+    if (regex.test(text)) {
+      const fixed = text.replace(regex, canonical);
+      return {
+        id: `function-typo-${typo}`,
+        label: `Did you mean: ${fixed}?`,
+        explanation: `Correct '${typo}' to '${canonical}'`,
+        fixedEquation: fixed,
+      };
+    }
+  }
+
+  // 2. Comma-separated simultaneous equations typed into a single field
   // e.g. "2x + y = 7, x - y = 2" or "x + y = 10 ; 2x - y = 5"
   if (text.includes(',') || text.includes(';')) {
     const parts = text.split(/[,;]/).map(p => p.trim()).filter(Boolean);
@@ -67,7 +140,7 @@ function detectFix(text: string, currentMode: SolverType): AutoFix | undefined {
     }
   }
 
-  // 2. Trailing equals sign: e.g. "x^2 - 5x + 6 =" or "2x + 8 ="
+  // 3. Trailing equals sign: e.g. "x^2 - 5x + 6 =" or "2x + 8 ="
   if (/=\s*$/.test(text)) {
     const fixed = `${text} 0`;
     return {
@@ -79,7 +152,7 @@ function detectFix(text: string, currentMode: SolverType): AutoFix | undefined {
     };
   }
 
-  // 3. Leading equals sign: e.g. "= 2x + 8"
+  // 4. Leading equals sign: e.g. "= 2x + 8"
   if (/^=\s*(.+)$/.test(text)) {
     const match = text.match(/^=\s*(.+)$/);
     if (match) {
@@ -93,10 +166,10 @@ function detectFix(text: string, currentMode: SolverType): AutoFix | undefined {
     }
   }
 
-  // 3. Unbalanced parentheses (check first before structural parsing)
+  // 5. Unbalanced parentheses (only if the string has at least some substance)
   const openCount = (text.match(/\(/g) || []).length;
   const closeCount = (text.match(/\)/g) || []).length;
-  if (openCount > closeCount) {
+  if (openCount > closeCount && text.length >= 4) {
     const diff = openCount - closeCount;
     const fixed = text + ')'.repeat(diff);
     return {
@@ -116,24 +189,8 @@ function detectFix(text: string, currentMode: SolverType): AutoFix | undefined {
     };
   }
 
-  // 4. Missing equals sign between expression and trailing number
-  // e.g. "2x + 8 20" or "3x - 5 10" (space between two non-operator tokens)
-  const missingEqMatch = text.match(/^(.+?[a-zA-Z0-9)])\s+([0-9]+)$/);
-  if (missingEqMatch && !text.includes('=') && !/[<>≤≥]/.test(text)) {
-    const lhs = missingEqMatch[1].trim();
-    const rhs = missingEqMatch[2].trim();
-    if (!/[+\-*/^=]$/.test(lhs) && /[a-zA-Z]/.test(lhs) && /[+\-*/^]/.test(lhs)) {
-      return {
-        id: 'missing-equals',
-        label: `Did you mean: ${lhs} = ${rhs}?`,
-        explanation: `Missing equals sign before ${rhs}`,
-        fixedEquation: `${lhs} = ${rhs}`,
-        targetMode: 'polynomial',
-      };
-    }
-  }
-
   // 6. Function missing parentheses: e.g. "sin x", "cos 2x", "ln x", "sqrt x"
+  // Note: Only match when followed by an argument like "x" or a number
   const missingFuncParen = /\b(sin|cos|tan|cot|sec|csc|log|ln|sqrt)\s+([a-zA-Z0-9]+)\b(?!\()/i;
   if (missingFuncParen.test(text)) {
     const fixed = text.replace(missingFuncParen, '$1($2)');
@@ -167,16 +224,18 @@ function detectFix(text: string, currentMode: SolverType): AutoFix | undefined {
     };
   }
 
-  // 9. Solve mode without an equals sign
-  // e.g. user typed "x^2 - 5x + 6" while in 'polynomial' (Solve) mode
-  if (currentMode === 'polynomial' && !text.includes('=') && !/[<>≤≥]/.test(text)) {
-    // If it's a polynomial with variables
-    if (/[a-zA-Z]/.test(text)) {
+  // 9. Missing equals sign between expression and trailing number
+  // e.g. "2x + 8 20" or "3x - 5 10" (space between two non-operator tokens)
+  const missingEqMatch = text.match(/^(.+?[a-zA-Z0-9)])\s+([0-9]+)$/);
+  if (missingEqMatch && !text.includes('=') && !/[<>≤≥]/.test(text)) {
+    const lhs = missingEqMatch[1].trim();
+    const rhs = missingEqMatch[2].trim();
+    if (!/[+\-*/^=]$/.test(lhs) && /[a-zA-Z]/.test(lhs) && /[+\-*/^]/.test(lhs)) {
       return {
-        id: 'solve-missing-equals',
-        label: `Did you mean: ${text} = 0?`,
-        explanation: 'Equations need an equals sign to find roots',
-        fixedEquation: `${text} = 0`,
+        id: 'missing-equals',
+        label: `Did you mean: ${lhs} = ${rhs}?`,
+        explanation: `Missing equals sign before ${rhs}`,
+        fixedEquation: `${lhs} = ${rhs}`,
         targetMode: 'polynomial',
       };
     }
@@ -318,8 +377,13 @@ function generateSuggestions(
     }
   }
 
-  // 5. Quadratic / Polynomial expression without equals sign (e.g. "x^2 - 5x + 6")
-  if (!hasEquals && !hasInequality && hasVar) {
+  // 5. Quadratic / Polynomial expression without equals sign (e.g. "x^2 - 5x + 6", "2x + 8")
+  // Only suggest when it is a substantial mathematical expression (degree >= 1 with operators or powers,
+  // NOT a single word or partial identifier like "sqt", "foo", "x").
+  const isSubstantialPoly = hasVar && !hasEquals && !hasInequality && 
+    (text.includes('^') || /[+\-*/]/.test(text) || (text.length >= 3 && /\d[a-zA-Z]|[a-zA-Z]\d/.test(text)));
+
+  if (isSubstantialPoly) {
     if (currentMode !== 'polynomial') {
       suggestions.push({
         id: 'suggest-solve-eq',
