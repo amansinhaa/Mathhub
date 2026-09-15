@@ -689,7 +689,7 @@ export default function EquationInput() {
           {equation && (
             <div className="p-3 sm:p-4 rounded-2xl bg-[#FBF9F8] dark:bg-[#151515] border border-[#E0E0E0] dark:border-[#2E2825] text-center shadow-xs transition-all animate-fade-in">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8D827A] dark:text-[#A19891] block mb-1">
-                Math Preview
+                Preview
               </span>
               <div className="text-base sm:text-lg overflow-x-auto py-1 text-[#131313] dark:text-white">
                 <MathDisplay math={expressionToLatex(equation)} />
