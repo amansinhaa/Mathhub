@@ -1,24 +1,224 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from '@/components/shared/RouterShim';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
-import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2 } from 'lucide-react';
+import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2, Info, Sparkles } from 'lucide-react';
 import { SYNTAX_HELP, quickDegreeDetect, expressionToLatex, cleanPastedMath } from '@/lib/math/normalizer';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 import { SolverType } from '@/types/solver';
 
-// ─── Action mode pill config ──────────────────────────────────────────────────
+// ─── Operation Configuration & Educational Guidance ─────────────────────────
+
+interface OperationExample {
+  text: string;
+  tag: string;
+  variable?: string;
+  systemEqs?: string[];
+}
+
+interface OperationGuide {
+  title: string;
+  badge: string;
+  hint: string;
+  whatItDoes: string;
+  formatShape: string;
+  formatRule: string;
+  examples: OperationExample[];
+}
+
 const ACTIONS: { value: SolverType; emoji: string; label: string; hint: string }[] = [
-  { value: 'polynomial', emoji: '=',  label: 'Solve',      hint: 'Find x, roots & answers' },
-  { value: 'domain_range', emoji: '[a,b]', label: 'Domain & Range', hint: 'Find domain & range intervals' },
-  { value: 'derivative', emoji: 'd⁄dx', label: 'Differentiate', hint: 'Step-by-step derivative' },
-  { value: 'integral',   emoji: '∫',  label: 'Integrate',  hint: 'Indefinite integral + C' },
-  { value: 'system',     emoji: '{ }', label: 'System',     hint: '2+ equations together' },
-  { value: 'inequality', emoji: '>',  label: 'Inequality', hint: 'Range on number line' },
-  { value: 'symbolic',   emoji: 'a=', label: 'Rearrange',  hint: 'Solve for any variable' },
+  { value: 'polynomial',   emoji: '=',    label: 'Solve',          hint: 'Find x (= ?)' },
+  { value: 'domain_range', emoji: '[a,b]', label: 'Domain & Range', hint: 'Inputs & Outputs' },
+  { value: 'derivative',   emoji: 'd⁄dx', label: 'Derivative',     hint: 'Rate of Change' },
+  { value: 'integral',     emoji: '∫',    label: 'Integral',       hint: 'Area under Curve' },
+  { value: 'system',       emoji: '{ }',  label: 'System',         hint: '2+ Equations' },
+  { value: 'inequality',   emoji: '>',    label: 'Inequality',     hint: 'Range (> < ≤ ≥)' },
+  { value: 'symbolic',     emoji: 'a=',   label: 'Rearrange',      hint: 'Solve for Variable' },
 ];
+
+const OPERATION_GUIDES: Record<SolverType, OperationGuide> = {
+  polynomial: {
+    title: 'Solve Equation',
+    badge: 'Equations',
+    hint: 'Find x (= ?)',
+    whatItDoes: 'Finds the exact values of the variable (x) that make both sides of the equation equal.',
+    formatShape: 'ax + b = c   or   ax² + bx + c = 0',
+    formatRule: 'Requires an equals sign (=)',
+    examples: [
+      { text: '2x + 8 = 20', tag: 'Linear' },
+      { text: 'x² - 5x + 6 = 0', tag: 'Quadratic' },
+      { text: '72t³ + 4t - 76 = 0', tag: 'Cubic' },
+      { text: '2/(x - 1) = 4', tag: 'Fraction' },
+    ],
+  },
+  domain_range: {
+    title: 'Domain & Range Finder',
+    badge: 'Functions',
+    hint: 'Inputs & Outputs',
+    whatItDoes: 'Finds all allowed x-inputs (Domain) and resulting y-outputs (Range) in standard interval notation [a, b].',
+    formatShape: 'f(x) = expression   or   just the formula',
+    formatRule: 'No equals sign needed — enter formula',
+    examples: [
+      { text: 'sqrt(4 - x^2)', tag: 'Semi-Circle' },
+      { text: '1/(x - 3)', tag: 'Rational' },
+      { text: 'x^2 - 4x + 3', tag: 'Parabola' },
+      { text: 'ln(x - 2)', tag: 'Logarithm' },
+      { text: 'sin(x)', tag: 'Trigonometric' },
+    ],
+  },
+  derivative: {
+    title: 'Derivative Calculator',
+    badge: 'Calculus d/dx',
+    hint: 'Rate of Change',
+    whatItDoes: 'Calculates the instantaneous rate of change and slope of the curve using differentiation rules.',
+    formatShape: 'f(x)   or   formula',
+    formatRule: 'Do not type d/dx — just enter the formula',
+    examples: [
+      { text: '3x^2 + 5x - 4', tag: 'Polynomial' },
+      { text: 'sin(x) * cos(x)', tag: 'Product Rule' },
+      { text: 'e^(2x)', tag: 'Chain Rule' },
+      { text: 'ln(x) / x', tag: 'Quotient Rule' },
+    ],
+  },
+  integral: {
+    title: 'Integral Calculator',
+    badge: 'Calculus ∫',
+    hint: 'Area under Curve',
+    whatItDoes: 'Finds the antiderivative formula with constant (+ C) and calculates the area under the curve.',
+    formatShape: 'f(x)   or   formula',
+    formatRule: 'Do not type ∫ or dx — just enter the formula',
+    examples: [
+      { text: '2x + 3', tag: 'Linear' },
+      { text: 'x^2 - 4x + 5', tag: 'Polynomial' },
+      { text: 'cos(x)', tag: 'Trig' },
+      { text: '1/x', tag: 'Natural Log' },
+    ],
+  },
+  system: {
+    title: 'System of Equations',
+    badge: 'Simultaneous Equations',
+    hint: '2+ Equations',
+    whatItDoes: 'Solves two or more equations simultaneously to find the exact point (x, y) where lines or curves cross.',
+    formatShape: 'Equation 1: ax + by = c,   Equation 2: dx + ey = f',
+    formatRule: 'Enter each equation in its own box',
+    examples: [
+      { text: '2x + y = 7, x - y = 2', tag: '2x2 Linear', systemEqs: ['2x + y = 7', 'x - y = 2'] },
+      { text: '3x + 2y = 12, x - y = 1', tag: 'Standard', systemEqs: ['3x + 2y = 12', 'x - y = 1'] },
+      { text: 'x + y = 10, 2x - y = 5', tag: 'Simple', systemEqs: ['x + y = 10', '2x - y = 5'] },
+    ],
+  },
+  inequality: {
+    title: 'Inequality Range Solver',
+    badge: 'Intervals & Number Line',
+    hint: 'Range (> < ≤ ≥)',
+    whatItDoes: 'Solves inequalities for a continuous range of numbers and displays the shaded interval on a number line.',
+    formatShape: 'expression  >  c   or   expression  ≤  0',
+    formatRule: 'Must include an inequality symbol: >, <, >=, or <=',
+    examples: [
+      { text: '2x - 3 > 5', tag: 'Linear' },
+      { text: 'x^2 - 4 <= 0', tag: 'Quadratic Interval' },
+      { text: '-x^2 + 9 > 0', tag: 'Bounded' },
+      { text: '3x + 4 >= 10', tag: 'Step Proof' },
+    ],
+  },
+  symbolic: {
+    title: 'Rearrange Formula',
+    badge: 'Formula Subject Isolator',
+    hint: 'Solve for Variable',
+    whatItDoes: 'Rearranges any scientific or mathematical formula to make a specific variable the subject (e.g. solve for t).',
+    formatShape: 'Formula with multiple letters (e.g. v = u + at)',
+    formatRule: 'Type full formula, then choose target letter',
+    examples: [
+      { text: 'v = u + a*t', tag: 'Velocity (t)', variable: 't' },
+      { text: 'E = m * c^2', tag: 'Energy (m)', variable: 'm' },
+      { text: 'A = p * (1 + r * t)', tag: 'Interest (r)', variable: 'r' },
+      { text: 'F = m * a', tag: 'Force (a)', variable: 'a' },
+    ],
+  },
+  linear: {
+    title: 'Linear Equation',
+    badge: 'Degree 1',
+    hint: 'ax + b = c',
+    whatItDoes: 'Finds the single root of a linear equation.',
+    formatShape: 'ax + b = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: '3x + 5 = 11', tag: 'Linear' }],
+  },
+  quadratic: {
+    title: 'Quadratic Equation',
+    badge: 'Degree 2',
+    hint: 'ax² + bx + c = 0',
+    whatItDoes: 'Finds roots using factoring, completing square, or quadratic formula.',
+    formatShape: 'ax² + bx + c = 0',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: 'x² - 5x + 6 = 0', tag: 'Quadratic' }],
+  },
+  rational: {
+    title: 'Rational Equation',
+    badge: 'Fractions',
+    hint: 'Fractions with x',
+    whatItDoes: 'Clears fractions by LCD and solves for roots.',
+    formatShape: 'P(x)/Q(x) = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: '1/(x-1) + 1/(x+1) = 1', tag: 'Rational' }],
+  },
+  radical: {
+    title: 'Radical Equation',
+    badge: 'Square Roots',
+    hint: 'sqrt(x) = c',
+    whatItDoes: 'Isolates the root and checks for extraneous solutions.',
+    formatShape: 'sqrt(expression) = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: 'sqrt(x + 2) = 4', tag: 'Radical' }],
+  },
+  trigonometric: {
+    title: 'Trig Equation',
+    badge: 'Sin, Cos, Tan',
+    hint: 'sin(x) = c',
+    whatItDoes: 'Finds exact and principal radian/degree solutions.',
+    formatShape: 'sin(x) = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: 'sin(x) = 1/2', tag: 'Trigonometric' }],
+  },
+  exponential: {
+    title: 'Exponential Equation',
+    badge: 'Powers of x',
+    hint: 'a^x = c',
+    whatItDoes: 'Solves by equating bases or taking logarithms.',
+    formatShape: 'a^x = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: '2^(x+1) = 16', tag: 'Exponential' }],
+  },
+  logarithmic: {
+    title: 'Logarithmic Equation',
+    badge: 'Log / Ln',
+    hint: 'ln(x) = c',
+    whatItDoes: 'Applies logarithm properties and converts to exponential form.',
+    formatShape: 'ln(expression) = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: 'ln(x+2) = 3', tag: 'Logarithmic' }],
+  },
+  absolute_value: {
+    title: 'Absolute Value',
+    badge: '|x| Equations',
+    hint: '|ax + b| = c',
+    whatItDoes: 'Splits into positive and negative cases to find all solutions.',
+    formatShape: '|ax + b| = c',
+    formatRule: 'Must include an equals sign (=)',
+    examples: [{ text: '|2x - 3| = 5', tag: 'Absolute Value' }],
+  },
+  ode: {
+    title: 'Differential Equation',
+    badge: 'ODE',
+    hint: "y' + P(x)y = Q(x)",
+    whatItDoes: 'Solves ordinary differential equations step-by-step.',
+    formatShape: "y'' + 4y = 0",
+    formatRule: "Use prime notation y' or dy/dx",
+    examples: [{ text: "y'' + 4y = 0", tag: 'ODE' }],
+  },
+};
 
 export default function EquationInput() {
   const {
@@ -74,6 +274,7 @@ export default function EquationInput() {
 
   const [showHelp, setShowHelp] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
+  const [showGuide, setShowGuide] = useState(true);
 
   const degreeInfo = quickDegreeDetect(equation);
   const isDegreeTwo = degreeInfo?.degree === 2;
@@ -105,36 +306,150 @@ export default function EquationInput() {
     exponential: 'e.g. 2^(x+1) = 16',
     logarithmic: 'e.g. ln(x+2) = 3',
     absolute_value: 'e.g. |2x - 3| = 5',
-    derivative:  'e.g. 3x² + 5x - 4  or  sin(x)',
-    integral:    'e.g. 2x + 3  or  x² - 4',
-    inequality:  'e.g. 2x - 3 > 0  or  x² ≤ 9',
-    symbolic:    'e.g. v = u + a*t',
-    system:      '',
-    ode:         'e.g. y\'\' + 4y = 0',
-  };
-
-  const exampleChips: Partial<Record<SolverType, string[]>> = {
-    polynomial: ['2x + 8 = 20', 'x² - 5x + 6 = 0', '72t³ + 4t - 76 = 0'],
-    domain_range: ['sqrt(4 - x^2)', '1/(x - 3)', 'x^2 - 4x + 3', 'ln(x - 2)'],
-    derivative:  ['3x² + 5x - 4', 'sin(x)', 'x³ - 7x'],
-    integral:    ['2x + 3', 'x² - 4x + 5', 'cos(x)'],
-    inequality:  ['2x - 3 > 5', 'x² - 4 <= 0'],
-    symbolic:    ['v = u + a*t', 'E = m*c^2'],
+    derivative:  'e.g. 3x² + 5x - 4  or  sin(x)  (no d/dx needed)',
+    integral:    'e.g. 2x + 3  or  x² - 4  (no ∫ or dx needed)',
+    inequality:  'e.g. 2x - 3 > 5  or  x² - 4 <= 0',
+    symbolic:    'e.g. v = u + a*t  (solve for variable below)',
+    system:      'e.g. 2x + y = 7',
+    ode:         "e.g. y'' + 4y = 0",
   };
 
   const currentAction = ACTIONS.find(a => a.value === solverType);
+  const currentGuide = OPERATION_GUIDES[solverType] || OPERATION_GUIDES.polynomial;
+
+  const handleSelectExample = (ex: OperationExample) => {
+    if (solverType === 'system' && ex.systemEqs) {
+      ex.systemEqs.forEach((eq, idx) => {
+        updateSystemEquation(idx, eq);
+      });
+      setTimeout(() => useSolverStore.getState().solve(), 80);
+      return;
+    }
+
+    if (solverType === 'symbolic' && ex.variable) {
+      setSolveForVariable(ex.variable);
+    }
+
+    setEquation(ex.text);
+    setTimeout(() => {
+      useSolverStore.getState().solve();
+    }, 60);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-3.5">
+    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
 
-      {/* ── Single equation input (hidden for System) ───────────────────── */}
+      {/* ── 1. Operation Selection Bar (Top Position for Intuitive Flow) ────────── */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A] flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#5D4037] dark:bg-[#D7CCC8]" />
+            1. Choose What To Do
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowGuide(!showGuide)}
+            className="text-[10px] font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] hover:underline flex items-center gap-1 cursor-pointer"
+          >
+            <Info size={12} />
+            <span>{showGuide ? 'Hide Format Guide' : 'Show Format Guide'}</span>
+          </button>
+        </div>
+
+        {/* Action Pills Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-1.5">
+          {ACTIONS.map(({ value, emoji, label, hint }) => {
+            const isSelected = solverType === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setSolverType(value)}
+                title={`${label}: ${hint}`}
+                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all min-h-[50px] sm:min-h-[52px] select-none cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#5D4037] text-white border-[#795548] shadow-sm scale-[1.02] ring-2 ring-[#5D4037]/20'
+                    : 'bg-[#F5F5F5] dark:bg-[#181818] text-[#555] dark:text-[#A19891] border-[#E0E0E0] dark:border-[#282422] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] hover:text-[#5D4037] dark:hover:text-white'
+                }`}
+              >
+                <span className="text-base sm:text-lg leading-none font-mono mb-0.5">{emoji}</span>
+                <span className="text-[11px] font-bold leading-tight text-center">{label}</span>
+                <span className={`text-[9px] font-normal leading-none mt-0.5 ${isSelected ? 'text-[#D7CCC8]' : 'text-[#8D827A] dark:text-[#757575]'}`}>
+                  {hint}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Contextual Operation Format & Quick-Start Guide ───────────────────── */}
+      {showGuide && (
+        <div className="rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FBF9F8] dark:bg-[#161616] p-3 sm:p-4 space-y-2.5 shadow-2xs transition-all animate-fade-in">
+          {/* Header row with Mode, Rule & Tag */}
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EAE5E2] dark:border-[#282321] pb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] flex items-center gap-1.5">
+                <Sparkles size={13} className="text-[#5D4037] dark:text-[#D7CCC8]" />
+                {currentGuide.title}
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#25201E] text-[#5D4037] dark:text-[#D7CCC8] font-semibold border border-[#D7CCC8] dark:border-[#3E2723]">
+                {currentGuide.badge}
+              </span>
+            </div>
+            <span className="text-[10px] font-mono text-[#795548] dark:text-[#BCAAA4] font-medium bg-white dark:bg-[#1E1E1E] px-2 py-0.5 rounded-md border border-[#E0E0E0] dark:border-[#332D2A]">
+              ✓ {currentGuide.formatRule}
+            </span>
+          </div>
+
+          {/* Plain English explanation: what it does */}
+          <p className="text-xs sm:text-[13px] text-[#424242] dark:text-[#CCCCCC] leading-relaxed">
+            {currentGuide.whatItDoes}
+          </p>
+
+          {/* Expected Format & Examples */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pt-0.5">
+            <div className="flex items-center gap-1.5 text-xs font-mono">
+              <span className="text-[10px] font-bold uppercase text-[#8D827A] dark:text-[#A19891] shrink-0">
+                Format:
+              </span>
+              <code className="px-2 py-0.5 rounded-md bg-white dark:bg-[#1E1E1E] border border-[#E0E0E0] dark:border-[#332D2A] text-[#5D4037] dark:text-[#D7CCC8] font-bold text-[11px] sm:text-xs">
+                {currentGuide.formatShape}
+              </code>
+            </div>
+
+            {/* Clickable Example Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+              <span className="text-[10px] font-mono font-bold uppercase text-[#8D827A] dark:text-[#A19891] shrink-0">
+                Try:
+              </span>
+              {currentGuide.examples.map((ex, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleSelectExample(ex)}
+                  className="group/pill inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono bg-white dark:bg-[#1E1E1E] text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] dark:hover:border-[#795548] transition-all whitespace-nowrap shadow-2xs cursor-pointer active:scale-95 shrink-0"
+                  title={`Click to try ${ex.tag}: ${ex.text}`}
+                >
+                  <span className="font-semibold text-[#5D4037] dark:text-[#D7CCC8]">{ex.text}</span>
+                  <span className="text-[9px] text-[#8D827A] dark:text-[#7A706A] group-hover/pill:text-[#5D4037] dark:group-hover/pill:text-[#D7CCC8]">
+                    ({ex.tag})
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2. Enter Equation / Expression Area ─────────────────────────────── */}
       {!isSystem && (
         <div className="space-y-2">
           {/* Label row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <label htmlFor="equation" className="text-xs font-mono font-bold uppercase tracking-wider text-[#131313] dark:text-white">
-                Enter Equation / Expression
+                2. {solverType === 'domain_range' ? 'Enter Function' : solverType === 'derivative' || solverType === 'integral' ? 'Enter Expression' : 'Enter Equation'}
               </label>
               {degreeInfo && (
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] animate-fade-in">
@@ -147,7 +462,7 @@ export default function EquationInput() {
                 type="button"
                 onClick={() => setShowKeyboard(!showKeyboard)}
                 title="Math Keyboard"
-                className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg border transition-colors ${
+                className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg border transition-colors cursor-pointer ${
                   showKeyboard
                     ? 'bg-[#5D4037] text-white border-[#795548]'
                     : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
@@ -160,7 +475,7 @@ export default function EquationInput() {
                 type="button"
                 onClick={() => setShowHelp(!showHelp)}
                 title="Syntax Guide"
-                className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-lg border transition-colors ${
+                className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg border transition-colors cursor-pointer ${
                   showHelp
                     ? 'bg-[#5D4037] text-white border-[#795548]'
                     : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
@@ -172,29 +487,12 @@ export default function EquationInput() {
             </div>
           </div>
 
-          {/* Example chips */}
-          {(exampleChips[solverType]?.length ?? 0) > 0 && (
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
-              <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A] shrink-0">Try:</span>
-              {exampleChips[solverType]!.map((chip, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => { setEquation(chip); setTimeout(() => useSolverStore.getState().solve(), 50); }}
-                  className="px-2 py-0.5 rounded-md text-[11px] font-mono bg-[#F5F5F5] dark:bg-[#181818] text-[#5D4037] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#2E2825] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] transition-all whitespace-nowrap"
-                >
-                  {chip}
-                </button>
-              ))}
-            </div>
-          )}
-
           {/* Syntax help panel */}
           {showHelp && (
             <div className="bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#3E2723] rounded-xl p-3 text-xs space-y-1.5 animate-fade-in shadow-xs">
               <div className="flex justify-between items-center mb-1">
                 <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">Input Syntax Guide</span>
-                <button type="button" onClick={() => setShowHelp(false)} className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#A19891] dark:hover:text-white rounded">
+                <button type="button" onClick={() => setShowHelp(false)} className="p-1 text-[#616161] hover:text-[#131313] dark:text-[#A19891] dark:hover:text-white rounded cursor-pointer">
                   <X size={14} />
                 </button>
               </div>
@@ -246,7 +544,7 @@ export default function EquationInput() {
               <button
                 type="button"
                 onClick={() => setEquation('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[#9E9E9E] hover:text-[#5D4037] dark:hover:text-white hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-[#9E9E9E] hover:text-[#5D4037] dark:hover:text-white hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors cursor-pointer"
                 title="Clear input"
               >
                 <X size={16} />
@@ -284,7 +582,7 @@ export default function EquationInput() {
                 ] as const).map((m) => (
                   <button
                     key={m.id} type="button" onClick={() => setQuadraticMethod(m.id)}
-                    className={`px-2 py-1 rounded-lg text-[11px] font-mono font-semibold transition-all border ${
+                    className={`px-2 py-1 rounded-lg text-[11px] font-mono font-semibold transition-all border cursor-pointer ${
                       quadraticMethod === m.id
                         ? 'bg-[#5D4037] text-white border-[#795548]'
                         : 'bg-[#F5F5F5] dark:bg-[#181818] text-[#616161] dark:text-[#A19891] border-[#E0E0E0] dark:border-[#282422] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E]'
@@ -297,15 +595,18 @@ export default function EquationInput() {
 
           {/* Rearrange: solve-for variable input */}
           {solverType === 'symbolic' && (
-            <div>
-              <label htmlFor="solveFor" className="block text-xs font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] mb-1">
-                Solve for Variable
-              </label>
+            <div className="p-3 rounded-2xl bg-[#FBF9F8] dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <label htmlFor="solveFor" className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                  Target Variable to Solve For:
+                </label>
+                <span className="text-[10px] font-mono text-[#8D827A]">e.g. t, r, m, a</span>
+              </div>
               <input
                 id="solveFor" type="text" value={solveForVariable}
                 onChange={(e) => setSolveForVariable(e.target.value)}
-                className="w-full sm:w-1/2 px-3 py-1.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-xs"
-                placeholder="e.g. a"
+                className="w-full sm:w-1/2 px-3.5 py-2 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-2xs"
+                placeholder="e.g. t"
               />
             </div>
           )}
@@ -329,7 +630,7 @@ export default function EquationInput() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <label className="text-xs font-mono font-bold uppercase tracking-wider text-[#131313] dark:text-white">
-              System of Equations
+              2. Enter System Equations
             </label>
             <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
               {systemEquations.length} of 4 equations
@@ -359,14 +660,14 @@ export default function EquationInput() {
                   }
                 }}
                 className="flex-1 px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-xs"
-                placeholder={`Equation ${idx + 1}  e.g. 2x + y = 5`}
+                placeholder={`Equation ${idx + 1}  e.g. 2x + y = 7`}
                 required
               />
               {systemEquations.length > 2 && (
                 <button
                   type="button"
                   onClick={() => removeSystemEquation(idx)}
-                  className="p-2 rounded-xl border border-red-200 dark:border-[#5D4037]/50 text-red-500 dark:text-[#FFAB91] bg-red-50 dark:bg-[#3E2723]/40 hover:bg-red-100 dark:hover:bg-[#3E2723]/80 transition-colors shrink-0"
+                  className="p-2 rounded-xl border border-red-200 dark:border-[#5D4037]/50 text-red-500 dark:text-[#FFAB91] bg-red-50 dark:bg-[#3E2723]/40 hover:bg-red-100 dark:hover:bg-[#3E2723]/80 transition-colors shrink-0 cursor-pointer"
                   aria-label="Remove equation"
                 >
                   <Trash2 size={15} />
@@ -380,7 +681,7 @@ export default function EquationInput() {
             <button
               type="button"
               onClick={addSystemEquation}
-              className="w-full py-2.5 border-2 border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-2 text-xs font-mono font-semibold"
+              className="w-full py-2.5 border-2 border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-2 text-xs font-mono font-semibold cursor-pointer"
             >
               <Plus size={15} />
               Add Equation
@@ -412,42 +713,32 @@ export default function EquationInput() {
         </div>
       )}
 
-      {/* ── Mode Action Pills ─────────────────────────────────────────────── */}
-      <div className="space-y-1.5">
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#757575] dark:text-[#8D827A]">
-          Choose Operation
-        </span>
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-1.5">
-          {ACTIONS.map(({ value, emoji, label, hint }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setSolverType(value)}
-              title={hint}
-              className={`flex flex-col items-center justify-center gap-0.5 px-1.5 py-2 sm:py-2.5 rounded-xl border text-xs font-semibold transition-all min-h-[44px] ${
-                solverType === value
-                  ? 'bg-[#5D4037] text-white border-[#795548] shadow-sm scale-[1.02]'
-                  : 'bg-[#F5F5F5] dark:bg-[#181818] text-[#616161] dark:text-[#A19891] border-[#E0E0E0] dark:border-[#282422] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] hover:text-[#5D4037] dark:hover:text-white'
-              }`}
-            >
-              <span className="text-sm sm:text-base leading-none font-mono">{emoji}</span>
-              <span className="text-[10px] leading-tight text-center">{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Primary CTA ───────────────────────────────────────────────────── */}
+      {/* ── 3. Primary CTA Button ──────────────────────────────────────────── */}
       <button
         type="submit"
         disabled={isLoading || (isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim())}
-        className="w-full py-2.5 sm:py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] sm:min-h-[44px] flex items-center justify-center gap-2 border border-[#795548]/50"
+        className="w-full py-3 sm:py-3.5 px-5 rounded-2xl bg-[#5D4037] hover:bg-[#4E342E] active:scale-[0.99] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px] sm:min-h-[50px] flex items-center justify-center gap-2 border border-[#795548]/50 cursor-pointer"
       >
         {isLoading ? (
           'Calculating Solution…'
         ) : (
           <>
-            <span>{currentAction ? `${currentAction.emoji} ${currentAction.label}` : 'Solve Equation'}</span>
+            <span className="text-base leading-none">{currentAction?.emoji}</span>
+            <span>
+              {solverType === 'domain_range'
+                ? 'Find Domain & Range'
+                : solverType === 'derivative'
+                ? 'Compute Derivative'
+                : solverType === 'integral'
+                ? 'Compute Integral'
+                : solverType === 'system'
+                ? 'Solve System of Equations'
+                : solverType === 'inequality'
+                ? 'Solve Inequality'
+                : solverType === 'symbolic'
+                ? `Rearrange for ${solveForVariable || 'Variable'}`
+                : 'Solve Equation'}
+            </span>
             <span className="text-xs font-normal opacity-85 hidden sm:inline">— See Answer & Steps ↓</span>
           </>
         )}
