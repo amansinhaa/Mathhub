@@ -244,7 +244,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
         steps.push({
           stepNumber: stepNumber++,
           explanation: `Identify and cancel the greatest common factor $\\gcd = ${gcdTex}$ from the numerator and denominator:`,
-          math: `\\frac{(${gcdTex}) \\cdot (${sNumTex})}{(${gcdTex}) \\cdot (${sDenTex})} = \\frac{${sNumTex}}{${sDenTex}}`,
+          math: `\\frac{\\cancel{(${gcdTex})} \\cdot (${sNumTex})}{\\cancel{(${gcdTex})} \\cdot (${sDenTex})} = \\frac{${sNumTex}}{${sDenTex}}`,
         });
       }
 
@@ -341,7 +341,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
           steps.push({
             stepNumber: stepNumber++,
             explanation: `Identify and cancel the greatest common factor $\\gcd = ${gcdTex}$ from the fraction:`,
-            math: `\\frac{(${gcdTex}) \\cdot (${factorToLatex(simpNum)})}{(${gcdTex}) \\cdot (${factorToLatex(simpDen)})} = \\frac{${factorToLatex(simpNum)}}{${factorToLatex(simpDen)}}`,
+            math: `\\frac{\\cancel{(${gcdTex})} \\cdot (${factorToLatex(simpNum)})}{\\cancel{(${gcdTex})} \\cdot (${factorToLatex(simpDen)})} = \\frac{${factorToLatex(simpNum)}}{${factorToLatex(simpDen)}}`,
           });
         }
 
@@ -401,7 +401,7 @@ export function trySimplifyRationalExpression(cleanEq: string, rawEq: string): S
         steps.push({
           stepNumber: stepNumber++,
           explanation: `Identify and cancel the common factor $\\gcd = ${gTex}$ from numerator and denominator:`,
-          math: `\\frac{(${gTex}) \\cdot (${sNumTex})}{(${gTex}) \\cdot (${sDenTex})} = ${sDenTex === '1' ? sNumTex : `\\frac{${sNumTex}}{${sDenTex}}`}`,
+          math: `\\frac{\\cancel{(${gTex})} \\cdot (${sNumTex})}{\\cancel{(${gTex})} \\cdot (${sDenTex})} = ${sDenTex === '1' ? sNumTex : `\\frac{${sNumTex}}{${sDenTex}}`}`,
         });
       }
 

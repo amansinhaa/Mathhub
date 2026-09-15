@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from '@/components/shared/RouterShim';
 import Display from './Display';
 import Keypad from './Keypad';
@@ -10,21 +10,8 @@ import MemoryIndicator from './MemoryIndicator';
 import { useCalculatorStore } from '@/stores/calculatorStore';
 import { FlaskConical, History, X } from 'lucide-react';
 
-function CalculatorQuerySync() {
-  const searchParams = useSearchParams();
-  const { setExpression } = useCalculatorStore();
-
-  useEffect(() => {
-    const formula = searchParams.get('formula') || searchParams.get('expr');
-    if (formula) {
-      setExpression(formula);
-    }
-  }, [searchParams, setExpression]);
-
-  return null;
-}
-
 export default function Calculator() {
+  const searchParams = useSearchParams();
   const [showHistory, setShowHistory] = useState(false);
   const {
     isScientificMode,
@@ -33,7 +20,15 @@ export default function Calculator() {
     evaluate,
     clear,
     clearEntry,
+    setExpression,
   } = useCalculatorStore();
+
+  useEffect(() => {
+    const formula = searchParams.get('formula') || searchParams.get('expr');
+    if (formula) {
+      setExpression(formula);
+    }
+  }, [searchParams, setExpression]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,9 +62,6 @@ export default function Calculator() {
 
   return (
     <div className="flex flex-col h-[calc(100dvh-6.5rem)] lg:h-[calc(100dvh-3.2rem)] max-h-[100dvh] overflow-hidden justify-between animate-fade-in text-[#131313] dark:text-[#F5F5F5]">
-      <Suspense fallback={null}>
-        <CalculatorQuerySync />
-      </Suspense>
       {/* Top App Bar — Material 3 / Instrument-Grade Header */}
       <header className="flex items-center justify-between gap-3 pb-2 shrink-0 border-b border-[#E0E0E0] dark:border-[#2E2825]">
         <div className="flex items-center gap-3 pl-28 sm:pl-36 md:pl-44">

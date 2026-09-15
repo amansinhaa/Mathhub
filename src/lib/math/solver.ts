@@ -1438,8 +1438,8 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
             return `${sign}${cStr}${it.varPart}`;
           })
           .join(' ');
-        const label = k === '_const' ? '\\text{constants}' : `\\mathbf{${k}}`;
-        return `\\text{${label}: } (${joined})`;
+        const label = k === '_const' ? '\\text{Constants: }' : `\\text{Group } ${k}\\text{ terms: }`;
+        return `${label}(${joined})`;
       }).join(' \\quad ');
 
       steps.push({
@@ -1461,10 +1461,21 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
             })
             .join(' ');
 
+          let constMath = `${coeffStr} = ${sum}`;
+          if (sum === 0 && items.length > 1) {
+            const canceledConst = items
+              .map((it, idx) => {
+                const sign = it.coeff >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+                return `${sign}\\cancel{${Math.abs(it.coeff)}}`;
+              })
+              .join(' ');
+            constMath = `${canceledConst} = ${coeffStr} = 0 \\quad \\text{(constants cancel out completely)}`;
+          }
+
           steps.push({
             stepNumber: stepNumber++,
             explanation: `Combine coefficients for like terms in $${label}$:`,
-            math: `${coeffStr} = ${sum}`,
+            math: constMath,
           });
         } else {
           const sumCoeff = items.reduce((acc, it) => acc + it.coeff, 0);
@@ -1478,7 +1489,16 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
 
           let explanationMath = `(${coeffArithmetic})${k} = ${sumCoeff}${k}`;
           if (sumCoeff === 0) {
-            explanationMath += ` = 0 \\quad \\text{(${k} terms cancel completely)}`;
+            const canceledTerms = items
+              .map((it, idx) => {
+                const sign = it.coeff >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+                const absC = Math.abs(it.coeff);
+                const cStr = it.varPart ? (absC === 1 ? '' : absC.toString()) : absC.toString();
+                return `${sign}\\cancel{${cStr}${it.varPart}}`;
+              })
+              .join(' ');
+
+            explanationMath = `${canceledTerms} = (${coeffArithmetic})${k} = \\cancel{0${k}} = 0 \\quad \\text{(${k} terms cancel out completely)}`;
           }
 
           steps.push({
