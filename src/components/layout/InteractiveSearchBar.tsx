@@ -25,7 +25,7 @@ export interface SearchItem {
   id: string;
   title: string;
   href: string;
-  category: 'Tools & Solvers' | 'Study Guides' | 'Formula Sheets';
+  category: 'Solvers' | 'Guides' | 'Formulas';
   description: string;
   badge?: string;
   icon: LucideIcon;
@@ -33,12 +33,12 @@ export interface SearchItem {
 }
 
 export const SEARCH_ITEMS: SearchItem[] = [
-  // 1. Tools & Solvers
+  // 1. Solvers
   {
     id: 'calculator',
-    title: 'Scientific Calculator',
+    title: 'Calculator',
     href: '/calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Calculate arithmetic, fractions, powers, trigonometry (sin, cos, tan), square roots, and percentages.',
     badge: 'fx',
     icon: Calculator,
@@ -46,9 +46,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'graph',
-    title: '2D Graph Plotter',
+    title: 'Graph',
     href: '/graph',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Plot functions and curves with turning points, roots, intercepts, and asymptotes.',
     badge: '2D',
     icon: LineChart,
@@ -56,9 +56,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'quadratic',
-    title: 'Quadratic Equation Solver',
+    title: 'Quadratic',
     href: '/quadratic-equation-solver',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Solve ax² + bx + c = 0 with factoring, completing the square, and the quadratic formula.',
     badge: 'ax²',
     icon: FunctionSquare,
@@ -66,9 +66,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'domain_range',
-    title: 'Domain and Range Calculator',
+    title: 'Domain',
     href: '/domain-and-range-calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Find the domain and range of any function step-by-step in exact interval notation.',
     badge: '[a,b]',
     icon: FunctionSquare,
@@ -76,9 +76,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'polynomial',
-    title: 'Polynomial & Algebra Solver',
+    title: 'Algebra',
     href: '/equation-solver-with-steps',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Step-by-step linear, quadratic, cubic, and higher-order polynomial equation solver with synthetic division.',
     badge: 'Steps',
     icon: Superscript,
@@ -86,9 +86,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'derivative',
-    title: 'Derivative Calculator',
+    title: 'Derivative',
     href: '/derivative-calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Differentiate functions step-by-step with power, product, quotient, and chain rules.',
     badge: 'd/dx',
     icon: Split,
@@ -96,9 +96,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'integral',
-    title: 'Integral Calculator',
+    title: 'Integral',
     href: '/integral-calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Calculate definite and indefinite integrals with substitution, parts, and area under curve.',
     badge: '∫',
     icon: Binary,
@@ -106,9 +106,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'percentage',
-    title: 'Percentage Calculator',
+    title: 'Percent',
     href: '/percentage-calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Calculate percentage of numbers, percentage change, increase, decrease, discounts, and markups.',
     badge: '%',
     icon: Percent,
@@ -116,9 +116,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'fraction',
-    title: 'Fraction Calculator',
+    title: 'Fractions',
     href: '/fraction-calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Add, subtract, multiply, and divide fractions with LCD, lowest terms reduction, and mixed numbers.',
     badge: '½',
     icon: Divide,
@@ -126,9 +126,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'gcd-lcm',
-    title: 'GCD & LCM Calculator',
+    title: 'Factors',
     href: '/gcd-lcm-calculator',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Find the Greatest Common Divisor (HCF) and Least Common Multiple using Euclidean steps and prime factors.',
     badge: 'GCD',
     icon: Binary,
@@ -136,9 +136,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'system',
-    title: 'System of Equations Solver',
+    title: 'Systems',
     href: '/system-of-equations',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Solve simultaneous linear equations in 2 or 3 variables using elimination and substitution.',
     badge: 'Sys',
     icon: FunctionSquare,
@@ -146,9 +146,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'matrix',
-    title: 'Matrix Calculator',
+    title: 'Matrix',
     href: '/matrix-solver',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Calculate determinants, inverse matrices, matrix multiplication, transposes, and RREF.',
     badge: 'Mat',
     icon: Grid3X3,
@@ -156,9 +156,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'inequality',
-    title: 'Inequality Solver',
+    title: 'Inequalities',
     href: '/inequality-solver',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Solve linear and quadratic inequalities with interval notation and step-by-step sign analysis.',
     badge: '≤ ≥',
     icon: FunctionSquare,
@@ -166,21 +166,21 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'units',
-    title: 'Unit & Currency Converter',
+    title: 'Converter',
     href: '/unit-converter',
-    category: 'Tools & Solvers',
+    category: 'Solvers',
     description: 'Convert lengths (km to miles), weights (kg to lbs), temperatures (°C to °F), speed, and currencies.',
     badge: 'Units',
     icon: ArrowRightLeft,
     tags: ['unit converter', 'currency', 'convert', 'km to miles', 'celsius to fahrenheit', 'kg to lbs', 'exchange rate'],
   },
 
-  // 2. Study Guides
+  // 2. Guides
   {
     id: 'guide-derivative',
     title: 'What is a Derivative?',
     href: '/learn/what-is-a-derivative',
-    category: 'Study Guides',
+    category: 'Guides',
     description: 'Intuitive guide explaining rates of change, speedometer examples, tangent lines, and power rule.',
     badge: 'Guide',
     icon: GraduationCap,
@@ -190,7 +190,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     id: 'guide-simultaneous',
     title: 'How to Solve Simultaneous Equations',
     href: '/learn/how-to-solve-simultaneous-equations',
-    category: 'Study Guides',
+    category: 'Guides',
     description: 'Master the 3 methods: elimination, substitution, and graphical intersection point.',
     badge: 'Guide',
     icon: GraduationCap,
@@ -200,7 +200,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     id: 'guide-limits',
     title: 'How to Find Limits in Calculus',
     href: '/learn/how-to-find-limits',
-    category: 'Study Guides',
+    category: 'Guides',
     description: 'Complete techniques for direct substitution, 0/0 indeterminate factoring, conjugates, and L’Hôpital’s Rule.',
     badge: 'Guide',
     icon: GraduationCap,
@@ -210,7 +210,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     id: 'guide-function',
     title: 'What is a Function?',
     href: '/learn/what-is-a-function',
-    category: 'Study Guides',
+    category: 'Guides',
     description: 'Understand functions, input/output machines, f(x) notation, and the vertical line test.',
     badge: 'Guide',
     icon: GraduationCap,
@@ -220,7 +220,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     id: 'guide-domain-range',
     title: 'How to Find Domain and Range',
     href: '/learn/how-to-find-domain-and-range',
-    category: 'Study Guides',
+    category: 'Guides',
     description: 'Step-by-step method to identify domain restrictions, denominators, square roots, and range intervals.',
     badge: 'Guide',
     icon: GraduationCap,
@@ -230,19 +230,19 @@ export const SEARCH_ITEMS: SearchItem[] = [
     id: 'guide-graph-quadratic',
     title: 'How to Graph a Quadratic Function',
     href: '/learn/how-to-graph-a-quadratic-function',
-    category: 'Study Guides',
+    category: 'Guides',
     description: 'Find vertex x = -b/2a, axis of symmetry, x and y intercepts, and sketch parabolas easily.',
     badge: 'Guide',
     icon: GraduationCap,
     tags: ['graph quadratic', 'how to graph parabola', 'vertex', 'axis of symmetry', 'intercepts'],
   },
 
-  // 3. Formula Sheets
+  // 3. Formulas
   {
     id: 'formulas-hub',
-    title: 'Formula Library (150+)',
+    title: 'Formulas',
     href: '/formulas',
-    category: 'Formula Sheets',
+    category: 'Formulas',
     description: 'Comprehensive formula catalog covering algebra, trigonometry, calculus, geometry, and probability.',
     badge: 'Σ',
     icon: BookOpen,
@@ -250,9 +250,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'sheet-gcse',
-    title: 'GCSE Maths Formula Sheet',
+    title: 'GCSE',
     href: '/formula-sheet/gcse',
-    category: 'Formula Sheets',
+    category: 'Formulas',
     description: 'All essential GCSE mathematics formulas for algebra, geometry, mensuration, and probability.',
     badge: 'GCSE',
     icon: BookOpen,
@@ -260,9 +260,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'sheet-a-level',
-    title: 'A-Level Maths Formula Sheet',
+    title: 'A-Level',
     href: '/formula-sheet/a-level',
-    category: 'Formula Sheets',
+    category: 'Formulas',
     description: 'A-Level mathematics formula reference covering calculus, vectors, trigonometry, and logarithms.',
     badge: 'A-Level',
     icon: BookOpen,
@@ -270,9 +270,9 @@ export const SEARCH_ITEMS: SearchItem[] = [
   },
   {
     id: 'sheet-edexcel',
-    title: 'Edexcel Maths Formula Sheet',
+    title: 'Edexcel',
     href: '/formula-sheet/edexcel',
-    category: 'Formula Sheets',
+    category: 'Formulas',
     description: 'Edexcel exam board mathematics formula breakdown for secondary and sixth-form students.',
     badge: 'Edexcel',
     icon: BookOpen,
@@ -288,7 +288,7 @@ interface InteractiveSearchBarProps {
 
 export default function InteractiveSearchBar({
   mode = 'hero',
-  placeholder = 'Search calculators, solvers, formulas, guides...',
+  placeholder = 'Search solvers, formulas, lessons...',
   onSelect,
 }: InteractiveSearchBarProps) {
   const [query, setQuery] = useState('');

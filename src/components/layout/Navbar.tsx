@@ -37,43 +37,43 @@ interface NavCategory {
 
 const TOOL_GROUPS: NavCategory[] = [
   {
-    category: 'Core Workstations',
+    category: 'Solvers',
     items: [
-      { href: '/', label: 'Home Studio', icon: HomeIcon, badge: 'Hub' },
-      { href: '/domain-and-range-calculator', label: 'Domain & Range', icon: FunctionSquare, badge: '[a,b]' },
-      { href: '/calculator', label: 'Scientific Calculator', icon: Calculator, badge: 'fx' },
-      { href: '/graph', label: '2D Graph Plotter', icon: LineChart, badge: '2D' },
-      { href: '/quadratic-equation-solver', label: 'Quadratic Solver', icon: FunctionSquare, badge: 'ax²' },
-      { href: '/equation-solver-with-steps', label: 'Polynomial & Algebra', icon: Superscript, badge: 'Steps' },
+      { href: '/', label: 'Home', icon: HomeIcon, badge: 'Hub' },
+      { href: '/domain-and-range-calculator', label: 'Domain', icon: FunctionSquare, badge: '[a,b]' },
+      { href: '/calculator', label: 'Calculator', icon: Calculator, badge: 'fx' },
+      { href: '/graph', label: 'Graph', icon: LineChart, badge: '2D' },
+      { href: '/quadratic-equation-solver', label: 'Quadratic', icon: FunctionSquare, badge: 'ax²' },
+      { href: '/equation-solver-with-steps', label: 'Algebra', icon: Superscript, badge: 'Steps' },
     ],
   },
   {
-    category: 'Calculus & Advanced Solvers',
+    category: 'Calculus',
     items: [
-      { href: '/derivative-calculator', label: 'Derivative Calculator', icon: Split, badge: 'd/dx' },
-      { href: '/integral-calculator', label: 'Integral Calculator', icon: Binary, badge: '∫' },
-      { href: '/system-of-equations', label: 'System of Equations', icon: FunctionSquare, badge: 'Sys' },
-      { href: '/matrix-solver', label: 'Matrix Calculator', icon: Grid3X3, badge: 'Mat' },
-      { href: '/inequality-solver', label: 'Inequality Solver', icon: FunctionSquare, badge: '≤ ≥' },
+      { href: '/derivative-calculator', label: 'Derivative', icon: Split, badge: 'd/dx' },
+      { href: '/integral-calculator', label: 'Integral', icon: Binary, badge: '∫' },
+      { href: '/system-of-equations', label: 'Systems', icon: FunctionSquare, badge: 'Sys' },
+      { href: '/matrix-solver', label: 'Matrix', icon: Grid3X3, badge: 'Mat' },
+      { href: '/inequality-solver', label: 'Inequalities', icon: FunctionSquare, badge: '≤ ≥' },
     ],
   },
   {
-    category: 'Arithmetic & Everyday Math',
+    category: 'Arithmetic',
     items: [
-      { href: '/percentage-calculator', label: 'Percentage Calculator', icon: Percent, badge: '%' },
-      { href: '/fraction-calculator', label: 'Fraction Calculator', icon: Divide, badge: '½' },
-      { href: '/gcd-lcm-calculator', label: 'GCD & LCM Calculator', icon: Binary, badge: 'GCD' },
-      { href: '/unit-converter', label: 'Unit & Currency Converter', icon: ArrowRightLeft, badge: 'Units' },
+      { href: '/percentage-calculator', label: 'Percent', icon: Percent, badge: '%' },
+      { href: '/fraction-calculator', label: 'Fractions', icon: Divide, badge: '½' },
+      { href: '/gcd-lcm-calculator', label: 'Factors', icon: Binary, badge: 'GCD' },
+      { href: '/unit-converter', label: 'Converter', icon: ArrowRightLeft, badge: 'Units' },
     ],
   },
   {
-    category: 'Study Guides & Formulas',
+    category: 'Reference',
     items: [
-      { href: '/solve', label: 'Solved Problems Library', icon: BookOpen, badge: '65+' },
-      { href: '/learn', label: 'Math Learning Guides', icon: HelpCircle, badge: 'Learn' },
-      { href: '/formulas', label: 'Formula Library (150+)', icon: BookOpen, badge: 'Σ' },
-      { href: '/formula-sheet/gcse', label: 'GCSE Formula Sheet', icon: GraduationCap },
-      { href: '/formula-sheet/a-level', label: 'A-Level Formula Sheet', icon: GraduationCap },
+      { href: '/solve', label: 'Examples', icon: BookOpen, badge: '65+' },
+      { href: '/learn', label: 'Lessons', icon: HelpCircle, badge: 'Learn' },
+      { href: '/formulas', label: 'Formulas', icon: BookOpen, badge: 'Σ' },
+      { href: '/formula-sheet/gcse', label: 'GCSE', icon: GraduationCap },
+      { href: '/formula-sheet/a-level', label: 'A-Level', icon: GraduationCap },
     ],
   },
 ];
@@ -162,7 +162,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
             <div className="flex flex-col">
               <span className="font-bold text-sm text-[#131313] dark:text-white font-sans">EasyEquate</span>
               <span className="text-[10px] font-mono text-[#5D4037] dark:text-[#A19891] uppercase tracking-wider font-semibold">
-                Studio Workstations
+                Solvers
               </span>
             </div>
           </Link>

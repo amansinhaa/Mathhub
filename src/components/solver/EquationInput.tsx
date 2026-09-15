@@ -30,13 +30,13 @@ interface OperationGuide {
 }
 
 const ACTIONS: { value: SolverType; emoji: string; label: string; hint: string }[] = [
-  { value: 'polynomial',   emoji: '=',    label: 'Solve',          hint: 'Find x (= ?)' },
-  { value: 'domain_range', emoji: '[a,b]', label: 'Domain & Range', hint: 'Inputs & Outputs' },
-  { value: 'derivative',   emoji: 'd⁄dx', label: 'Derivative',     hint: 'Rate of Change' },
-  { value: 'integral',     emoji: '∫',    label: 'Integral',       hint: 'Area under Curve' },
-  { value: 'system',       emoji: '{ }',  label: 'System',         hint: '2+ Equations' },
-  { value: 'inequality',   emoji: '>',    label: 'Inequality',     hint: 'Range (> < ≤ ≥)' },
-  { value: 'symbolic',     emoji: 'a=',   label: 'Rearrange',      hint: 'Solve for Variable' },
+  { value: 'polynomial',   emoji: '=',    label: 'Solve',        hint: 'Roots' },
+  { value: 'domain_range', emoji: '[a,b]', label: 'Domain',       hint: 'Bounds' },
+  { value: 'derivative',   emoji: 'd⁄dx', label: 'Derivative',   hint: 'Slope' },
+  { value: 'integral',     emoji: '∫',    label: 'Integral',     hint: 'Area' },
+  { value: 'system',       emoji: '{ }',  label: 'Systems',      hint: 'Intersect' },
+  { value: 'inequality',   emoji: '>',    label: 'Inequalities', hint: 'Ranges' },
+  { value: 'symbolic',     emoji: 'a=',   label: 'Rearrange',    hint: 'Isolate' },
 ];
 
 const OPERATION_GUIDES: Record<SolverType, OperationGuide> = {
@@ -275,7 +275,7 @@ export default function EquationInput() {
 
   const [showHelp, setShowHelp] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
-  const [showGuide, setShowGuide] = useState(true);
+  const [showGuide, setShowGuide] = useState(false);
   const [dismissedFixId, setDismissedFixId] = useState<string | null>(null);
 
   // Reset dismissed fix when equation changes significantly
@@ -378,7 +378,7 @@ export default function EquationInput() {
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A] flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5D4037] dark:bg-[#D7CCC8]" />
-            1. Choose What To Do
+            1. Operation
           </span>
           <button
             type="button"
@@ -386,7 +386,7 @@ export default function EquationInput() {
             className="text-[10px] sm:text-[11px] font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] hover:underline flex items-center gap-1 cursor-pointer py-1 px-1.5 rounded-md hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors"
           >
             <Info size={12} />
-            <span>{showGuide ? 'Hide Guide' : 'Show Guide ℹ️'}</span>
+            <span>{showGuide ? 'Hide' : 'Guide'}</span>
             {showGuide ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           </button>
         </div>
@@ -418,8 +418,8 @@ export default function EquationInput() {
         </div>
       </div>
 
-      {/* ── Contextual Operation Format & Quick-Start Guide (Full or Compact) ─── */}
-      {showGuide ? (
+      {/* ── Contextual Operation Format & Quick-Start Guide (Hidden by default) ─── */}
+      {showGuide && (
         <div className="rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FBF9F8] dark:bg-[#161616] p-3 sm:p-4 space-y-2.5 shadow-2xs transition-all animate-fade-in">
           {/* Header row with Mode, Rule, Tag and direct Collapse button */}
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EAE5E2] dark:border-[#282321] pb-2">
@@ -440,8 +440,8 @@ export default function EquationInput() {
                 type="button"
                 onClick={() => setShowGuide(false)}
                 className="p-1 rounded-md text-[#8D827A] hover:text-[#5D4037] dark:hover:text-[#D7CCC8] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors cursor-pointer"
-                title="Collapse Guide"
-                aria-label="Collapse Guide"
+                title="Hide Guide"
+                aria-label="Hide Guide"
               >
                 <ChevronUp size={14} />
               </button>
@@ -486,38 +486,6 @@ export default function EquationInput() {
             </div>
           </div>
         </div>
-      ) : (
-        /* Compact Guide Strip for Space Optimization */
-        <div className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] bg-[#FBF9F8] dark:bg-[#161616] text-xs font-mono animate-fade-in shadow-2xs">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
-            <span className="text-[10px] font-bold uppercase text-[#8D827A] dark:text-[#A19891] shrink-0">
-              Format:
-            </span>
-            <code className="text-[#5D4037] dark:text-[#D7CCC8] font-bold text-[11px] truncate">
-              {currentGuide.formatShape}
-            </code>
-            <span className="text-[#BCAAA4] dark:text-[#5D4037] hidden sm:inline">•</span>
-            <div className="hidden sm:flex items-center gap-1">
-              <span className="text-[10px] text-[#8D827A]">Try:</span>
-              <button
-                type="button"
-                onClick={() => handleSelectExample(currentGuide.examples[0])}
-                className="text-[11px] text-[#5D4037] dark:text-[#D7CCC8] hover:underline cursor-pointer"
-                title={`Try ${currentGuide.examples[0]?.text}`}
-              >
-                {currentGuide.examples[0]?.text}
-              </button>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowGuide(true)}
-            className="text-[10px] font-bold text-[#5D4037] dark:text-[#D7CCC8] hover:underline shrink-0 flex items-center gap-1 cursor-pointer py-0.5 px-1.5 rounded hover:bg-[#EFEBE9] dark:hover:bg-[#25201E]"
-          >
-            <span>Expand Guide</span>
-            <ChevronDown size={12} />
-          </button>
-        </div>
       )}
 
       {/* ── 2. Enter Equation / Expression Area ─────────────────────────────── */}
@@ -527,7 +495,7 @@ export default function EquationInput() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <label htmlFor="equation" className="text-xs font-mono font-bold uppercase tracking-wider text-[#131313] dark:text-white">
-                2. {solverType === 'domain_range' ? 'Enter Function' : solverType === 'derivative' || solverType === 'integral' ? 'Enter Expression' : 'Enter Equation'}
+                2. Input
               </label>
               {degreeInfo && (
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] animate-fade-in">
@@ -650,13 +618,13 @@ export default function EquationInput() {
                   onClick={() => handleApplyFix(assistant.fix!)}
                   className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-mono text-xs font-bold shadow-xs transition-all cursor-pointer"
                 >
-                  Apply Fix ✨
+                  Fix ✨
                 </button>
                 <button
                   type="button"
                   onClick={() => setDismissedFixId(assistant.fix!.id)}
                   className="p-1 rounded-lg text-amber-600/70 hover:text-amber-900 dark:text-amber-400/70 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-900/40 transition-colors cursor-pointer"
-                  title="Dismiss suggestion"
+                  title="Dismiss"
                 >
                   <X size={14} />
                 </button>
@@ -664,12 +632,12 @@ export default function EquationInput() {
             </div>
           )}
 
-          {/* ── Smart Action Suggestions ("What you can do with this") ──────── */}
+          {/* ── Smart Action Suggestions ("Actions:") ─────────────────────────── */}
           {assistant.suggestions.length > 0 && equation.trim().length >= 2 && (
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 animate-fade-in">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8D827A] dark:text-[#A19891] shrink-0 flex items-center gap-1">
                 <Sparkles size={12} className="text-[#5D4037] dark:text-[#D7CCC8]" />
-                What to do with this:
+                Actions:
               </span>
               {assistant.suggestions.map(s => (
                 <button
@@ -702,9 +670,9 @@ export default function EquationInput() {
           {solverType === 'polynomial' && isDegreeTwo && (
             <div className="pt-2 border-t border-[#E0E0E0] dark:border-[#282422] animate-fade-in">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">Quadratic Method:</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">Method:</span>
                 <span className="text-[10px] font-mono text-[#5D4037] dark:text-[#D7CCC8]">
-                  {quadraticMethod === 'auto' ? 'Auto' : quadraticMethod === 'factoring' ? 'Factoring' : quadraticMethod === 'completing_square' ? 'Completing the Square' : 'Quadratic Formula'}
+                  {quadraticMethod === 'auto' ? 'Auto' : quadraticMethod === 'factoring' ? 'Factoring' : quadraticMethod === 'completing_square' ? 'Completing Square' : 'Formula'}
                 </span>
               </div>
               <div className="grid grid-cols-4 gap-1">
@@ -732,7 +700,7 @@ export default function EquationInput() {
             <div className="p-3 rounded-2xl bg-[#FBF9F8] dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5 animate-fade-in">
               <div className="flex items-center justify-between">
                 <label htmlFor="solveFor" className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
-                  Target Variable to Solve For:
+                  Variable:
                 </label>
                 <span className="text-[10px] font-mono text-[#8D827A]">e.g. t, r, m, a</span>
               </div>
@@ -751,11 +719,11 @@ export default function EquationInput() {
               <div className="flex items-center justify-between border-b border-[#EAE5E2] dark:border-[#282321] pb-1.5 mb-2">
                 <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8] flex items-center gap-1.5">
                   <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  Interpreted as:
+                  Interpreted:
                 </span>
                 <span className="text-[10px] font-mono text-[#8D827A] dark:text-[#A19891] flex items-center gap-1">
                   <Eye size={11} />
-                  Live Preview
+                  Preview
                 </span>
               </div>
               <div className="w-full overflow-x-auto scrollbar-thin py-1 text-[#131313] dark:text-white flex justify-center items-center">
@@ -773,10 +741,10 @@ export default function EquationInput() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <label className="text-xs font-mono font-bold uppercase tracking-wider text-[#131313] dark:text-white">
-              2. Enter System Equations
+              2. Systems
             </label>
             <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
-              {systemEquations.length} of 4 equations
+              {systemEquations.length} / 4
             </span>
           </div>
           {systemEquations.map((eq, idx) => (
@@ -827,14 +795,14 @@ export default function EquationInput() {
               className="w-full py-2.5 border-2 border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-2 text-xs font-mono font-semibold cursor-pointer"
             >
               <Plus size={15} />
-              Add Equation
+              Add
             </button>
           )}
 
           {/* Variables */}
           <div>
             <label htmlFor="variables" className="block text-[11px] font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] mb-1">
-              Variables (comma separated, e.g. x, y)
+              Variables:
             </label>
             <input
               id="variables"
@@ -863,26 +831,26 @@ export default function EquationInput() {
         className="w-full py-3 sm:py-3.5 px-5 rounded-2xl bg-[#5D4037] hover:bg-[#4E342E] active:scale-[0.99] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px] sm:min-h-[50px] flex items-center justify-center gap-2 border border-[#795548]/50 cursor-pointer"
       >
         {isLoading ? (
-          'Calculating Solution…'
+          'Solving…'
         ) : (
           <>
             <span className="text-base leading-none">{currentAction?.emoji}</span>
             <span>
               {solverType === 'domain_range'
-                ? 'Find Domain & Range'
+                ? 'Domain'
                 : solverType === 'derivative'
-                ? 'Compute Derivative'
+                ? 'Derivative'
                 : solverType === 'integral'
-                ? 'Compute Integral'
+                ? 'Integral'
                 : solverType === 'system'
-                ? 'Solve System of Equations'
+                ? 'Systems'
                 : solverType === 'inequality'
-                ? 'Solve Inequality'
+                ? 'Solve'
                 : solverType === 'symbolic'
-                ? `Rearrange for ${solveForVariable || 'Variable'}`
-                : 'Solve Equation'}
+                ? 'Rearrange'
+                : 'Solve'}
             </span>
-            <span className="text-xs font-normal opacity-85 hidden sm:inline">— See Answer & Steps ↓</span>
+            <span className="text-xs font-normal opacity-85 hidden sm:inline">— Steps ↓</span>
           </>
         )}
       </button>
