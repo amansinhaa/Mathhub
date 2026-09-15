@@ -33,6 +33,8 @@ export default function EquationSolver({
 
   React.useEffect(() => {
     const store = useSolverStore.getState();
+
+    // 1. Prioritize explicit component props
     if (initialMode && store.solverType !== initialMode) {
       store.setSolverType(initialMode);
     }
@@ -41,6 +43,25 @@ export default function EquationSolver({
       setTimeout(() => {
         useSolverStore.getState().solve();
       }, 50);
+      return;
+    }
+
+    // 2. Parse direct AI/citation query parameters: ?q=... or ?eq=... and ?mode=...
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryEq = urlParams.get('q') || urlParams.get('eq');
+      const queryMode = urlParams.get('mode') as EquationSolverProps['initialMode'];
+
+      if (queryMode && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic', 'domain_range'].includes(queryMode)) {
+        store.setSolverType(queryMode);
+      }
+
+      if (queryEq && queryEq.trim() && store.equation !== queryEq.trim()) {
+        store.setEquation(queryEq.trim());
+        setTimeout(() => {
+          useSolverStore.getState().solve();
+        }, 80);
+      }
     }
   }, [initialMode, initialEquation]);
 

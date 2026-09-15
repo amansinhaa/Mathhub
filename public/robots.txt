@@ -1,17 +1,47 @@
+﻿# EasyEquate robots.txt
+# Permit search engines and AI answer engines to index public mathematical solutions and tools.
+
 User-agent: *
 Allow: /
 
-# Disallow aggressive bots and scrapers that drain bandwidth
+# OpenAI / ChatGPT Search & Citation Crawlers
 User-agent: GPTBot
-Disallow: /
+Allow: /
 
-User-agent: CCBot
-Disallow: /
+User-agent: OAI-SearchBot
+Allow: /
 
+User-agent: ChatGPT-User
+Allow: /
+
+# Perplexity AI Citation Crawler
+User-agent: PerplexityBot
+Allow: /
+
+# Anthropic Claude Search Crawler
+User-agent: ClaudeBot
+Allow: /
+
+# Google Gemini & Search Crawlers
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# Microsoft Copilot & Bing
+User-agent: Bingbot
+Allow: /
+
+# Apple Intelligence
+User-agent: Applebot
+Allow: /
+
+# Disallow aggressive generic data scrapers that do not provide citations
 User-agent: Bytespider
 Disallow: /
 
-User-agent: ClaudeBot
+User-agent: CCBot
 Disallow: /
 
 User-agent: PetalBot
@@ -22,4 +52,3 @@ Disallow: /
 
 Sitemap: https://www.easyequate.com/sitemap-index.xml
 Sitemap: https://www.easyequate.com/sitemap.xml
-

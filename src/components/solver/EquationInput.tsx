@@ -508,14 +508,14 @@ export default function EquationInput() {
                 type="button"
                 onClick={() => setShowKeyboard(!showKeyboard)}
                 title="Math Keyboard"
-                className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg border transition-colors cursor-pointer ${
+                className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-lg border transition-colors cursor-pointer select-none ${
                   showKeyboard
-                    ? 'bg-[#5D4037] text-white border-[#795548]'
-                    : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white'
+                    ? 'bg-[#5D4037] text-white border-[#795548] font-bold shadow-xs'
+                    : 'bg-[#F5F5F5] text-[#5D4037] dark:text-[#D7CCC8] border-[#D7CCC8] dark:border-[#3E2723] hover:bg-[#EFEBE9] dark:bg-[#181818] dark:hover:bg-[#25201E]'
                 }`}
               >
-                <KeyboardIcon size={13} />
-                <span className="hidden sm:inline">Keyboard</span>
+                <KeyboardIcon size={14} />
+                <span>Keyboard</span>
               </button>
               <button
                 type="button"
