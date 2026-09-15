@@ -1,4 +1,4 @@
-import { SolverResult, QuadraticMethod, SolutionStep } from '@/types/solver';
+import { SolverResult, QuadraticMethod, SolutionStep, SubStep } from '@/types/solver';
 import {
   generateLinearSteps,
   generateQuadraticSteps,
@@ -1272,86 +1272,225 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
   try {
     const steps: SolutionStep[] = [];
     let stepNumber = 1;
-    let currentExpr = cleanEq;
 
-    // 1. If expression has distribution, e.g. 2*(x + 3)
-    if (hasDistribution) {
-      const expanded = (nerdamer as any).expand(currentExpr).toString();
-      if (expanded !== currentExpr) {
+    // Helper: Split an expression into top-level terms respecting parenthesis depth
+    function splitTopLevelTerms(expr: string): string[] {
+      let depth = 0;
+      let current = '';
+      const terms: string[] = [];
+      for (let i = 0; i < expr.length; i++) {
+        const ch = expr[i];
+        if (ch === '(') depth++;
+        else if (ch === ')') depth--;
+
+        if ((ch === '+' || ch === '-') && depth === 0 && i > 0 && expr[i - 1] !== '*' && expr[i - 1] !== '/' && expr[i - 1] !== '^') {
+          if (current.trim()) terms.push(current.trim());
+          current = ch;
+        } else {
+          current += ch;
+        }
+      }
+      if (current.trim()) terms.push(current.trim());
+      return terms;
+    }
+
+    const topTerms = splitTopLevelTerms(cleanEq);
+    const expandedTermParts: string[] = [];
+    const distributionSubSteps: SubStep[] = [];
+
+    // 1. Granular Distributive Property Expansion
+    for (const t of topTerms) {
+      // Matches factor multiplying a parenthesized sum/difference: e.g. 2*(x - 9), +6*(-x + 2), -(x + 4), -3*(2x - 1)
+      const distMatch = t.match(/^([+-]?\s*\d*(?:\.\d+)?)\s*\*?\s*\(([^()]+)\)$/);
+      if (distMatch) {
+        const factorRaw = distMatch[1].replace(/\s+/g, '');
+        const factorNum = factorRaw === '' || factorRaw === '+' ? 1 : factorRaw === '-' ? -1 : Number(factorRaw);
+        const inside = distMatch[2];
+        const insideTerms = splitTopLevelTerms(inside);
+
+        // Only treat as distributive multiplication if there are multiple inside terms or factor is not 1/-1
+        if (insideTerms.length > 1 || (factorNum !== 1 && factorNum !== -1)) {
+          const multPieces: string[] = [];
+          const prodPieces: string[] = [];
+
+          for (const it of insideTerms) {
+            const itClean = it.trim();
+            const prod = (nerdamer as any)(factorNum + '*(' + itClean + ')').toString();
+            multPieces.push(`${factorNum} \\times (${cleanLatexMath((nerdamer as any)(itClean).toTeX())})`);
+            prodPieces.push(cleanLatexMath((nerdamer as any)(prod).toTeX()));
+            expandedTermParts.push(prod);
+          }
+
+          const expandedStr = prodPieces.join(' + ').replace(/\+\s*-/g, '- ');
+          distributionSubSteps.push({
+            title: `Distribute ${factorNum} across (${cleanLatexMath((nerdamer as any)(inside).toTeX())}):`,
+            math: `${cleanLatexMath((nerdamer as any)(t).toTeX())} = ${multPieces.join(' + ').replace(/\+\s*-/g, '- ')} = ${expandedStr}`,
+          });
+          continue;
+        }
+      }
+      expandedTermParts.push(t);
+    }
+
+    // If any distribution was performed, output the detailed expansion step
+    if (distributionSubSteps.length > 0) {
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Apply the distributive property $a(b + c) = ab + ac$ to distribute outer factors across terms inside parentheses:',
+        math: distributionSubSteps.map(s => s.math).join(' \\\\[6pt] '),
+        subSteps: distributionSubSteps,
+      });
+
+      // Show expression with all parentheses removed
+      const combinedFlatLatex = expandedTermParts
+        .map(p => cleanLatexMath((nerdamer as any)(p).toTeX()))
+        .join(' + ')
+        .replace(/\+\s*-/g, '- ');
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Substitute the expanded products back into the expression without parentheses:',
+        math: combinedFlatLatex,
+      });
+    } else {
+      // If no distribution, check if there are simple parentheses with signs to remove (e.g. -26r+(+7r)+(-15p)+(-7p))
+      let step1Expr = cleanEq
+        .replace(/\+\s*\(\s*\+\s*([^()]+)\s*\)/g, ' + $1')
+        .replace(/\+\s*\(\s*-\s*([^()]+)\s*\)/g, ' - $1')
+        .replace(/-\s*\(\s*\+\s*([^()]+)\s*\)/g, ' - $1')
+        .replace(/-\s*\(\s*-\s*([^()]+)\s*\)/g, ' + $1')
+        .replace(/\(\s*\+\s*([^()]+)\s*\)/g, '$1')
+        .replace(/\(\s*-\s*([^()]+)\s*\)/g, '-$1')
+        .trim();
+      step1Expr = step1Expr.replace(/^\+\s*/, '');
+
+      if (step1Expr !== cleanEq.trim()) {
         steps.push({
           stepNumber: stepNumber++,
-          explanation: 'Expand and distribute factors across parentheses: $a(b + c) = ab + ac$.',
-          math: cleanLatexMath((nerdamer as any)(expanded).toTeX()),
+          explanation: 'Remove parentheses and apply sign rules: $+(-a) = -a$ and $+(+a) = +a$.',
+          math: cleanLatexMath(step1Expr.replace(/\*/g, '')),
         });
-        currentExpr = expanded;
+
+        // Use the terms from step1Expr
+        expandedTermParts.length = 0;
+        const normalized = step1Expr.replace(/\s+/g, '');
+        const matched = normalized.match(/([+-]?[^+-]+)/g) || [];
+        expandedTermParts.push(...matched);
       }
     }
 
-    // 2. Remove parentheses and apply sign rules
-    let step1Expr = currentExpr
-      .replace(/\+\s*\(\s*\+\s*([^()]+)\s*\)/g, ' + $1')
-      .replace(/\+\s*\(\s*-\s*([^()]+)\s*\)/g, ' - $1')
-      .replace(/-\s*\(\s*\+\s*([^()]+)\s*\)/g, ' - $1')
-      .replace(/-\s*\(\s*-\s*([^()]+)\s*\)/g, ' + $1')
-      .replace(/\(\s*\+\s*([^()]+)\s*\)/g, '$1')
-      .replace(/\(\s*-\s*([^()]+)\s*\)/g, '-$1')
-      .trim();
-
-    step1Expr = step1Expr.replace(/^\+\s*/, '');
-
-    if (step1Expr !== currentExpr.trim() && !hasDistribution) {
-      steps.push({
-        stepNumber: stepNumber++,
-        explanation: 'Remove parentheses and apply sign rules: $+(-a) = -a$ and $+(+a) = +a$.',
-        math: cleanLatexMath(step1Expr.replace(/\*/g, '')),
-      });
+    // 2. Parse all terms for grouping and coefficient combination
+    interface ParsedTerm {
+      coeff: number;
+      varPart: string;
+      key: string;
+      orig: string;
     }
 
-    // 3. Parse terms and group by variable/power
-    const normalizedTerms = step1Expr.replace(/\s+/g, '');
-    const termMatches = normalizedTerms.match(/([+-]?[^+-]+)/g) || [];
+    const parsed: ParsedTerm[] = [];
+    for (const t of expandedTermParts) {
+      const clean = t.replace(/\s+/g, '');
+      if (!clean) continue;
 
-    const groups: Record<string, string[]> = {};
-    for (const term of termMatches) {
-      const vMatch = term.match(/[a-zA-Z](\^[0-9]+)?/g);
-      const key = vMatch ? vMatch.sort().join('') : '_const';
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(term);
+      if (/^[+-]?\d+(?:\.\d+)?$/.test(clean)) {
+        parsed.push({ coeff: Number(clean), varPart: '', key: '_const', orig: clean });
+        continue;
+      }
+
+      const m = clean.match(/^([+-]?)(\d+(?:\.\d+)?)?\*?([a-zA-Z](?:\^[0-9]+)?)$/);
+      if (m) {
+        const sign = m[1] === '-' ? -1 : 1;
+        const num = m[2] !== undefined ? Number(m[2]) : 1;
+        parsed.push({ coeff: sign * num, varPart: m[3], key: m[3], orig: clean });
+        continue;
+      }
+
+      // Default fallback
+      parsed.push({ coeff: 1, varPart: clean, key: clean, orig: clean });
+    }
+
+    // Group terms by variable/power
+    const groups: Record<string, ParsedTerm[]> = {};
+    for (const p of parsed) {
+      if (!groups[p.key]) groups[p.key] = [];
+      groups[p.key].push(p);
     }
 
     const groupKeys = Object.keys(groups);
+    // Sort keys so variables are alphabetical (x, x^2, y) and constants are last
+    groupKeys.sort((a, b) => {
+      if (a === '_const') return 1;
+      if (b === '_const') return -1;
+      return a.localeCompare(b);
+    });
+
     const hasCombineableTerms = groupKeys.some(k => groups[k].length > 1);
 
-    if (hasCombineableTerms) {
-      const groupedLatexParts: string[] = [];
-      for (const k of groupKeys) {
-        const terms = groups[k];
+    if (hasCombineableTerms || distributionSubSteps.length > 0) {
+      // 3. Group Like Terms Step
+      const groupedLatexParts = groupKeys.map(k => {
+        const items = groups[k];
+        const joined = items
+          .map((it, idx) => {
+            const sign = it.coeff >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+            const absC = Math.abs(it.coeff);
+            const cStr = it.varPart ? (absC === 1 ? '' : absC.toString()) : absC.toString();
+            return `${sign}${cStr}${it.varPart}`;
+          })
+          .join(' ');
         const label = k === '_const' ? '\\text{constants}' : `\\mathbf{${k}}`;
-        groupedLatexParts.push(`\\text{${label}: } (${formatTermsDisplay(terms)})`);
-      }
+        return `\\text{${label}: } (${joined})`;
+      }).join(' \\quad ');
 
       steps.push({
         stepNumber: stepNumber++,
         explanation: 'Group like terms containing the same variables together.',
-        math: groupedLatexParts.join(' \\quad '),
+        math: groupedLatexParts,
       });
 
+      // 4. Coefficient Arithmetic Step per variable / constant group
       for (const k of groupKeys) {
-        const terms = groups[k];
-        if (terms.length > 1) {
-          const sumExpr = terms.join(' + ');
-          const groupResult = (nerdamer as any)(sumExpr).toString();
-          const cleanGroupResult = cleanLatexMath((nerdamer as any)(groupResult).toTeX());
+        const items = groups[k];
+        const label = k === '_const' ? '\\text{constants}' : k;
+        if (k === '_const') {
+          const sum = items.reduce((acc, it) => acc + it.coeff, 0);
+          const coeffStr = items
+            .map((it, idx) => {
+              const sign = it.coeff >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+              return `${sign}${Math.abs(it.coeff)}`;
+            })
+            .join(' ');
+
           steps.push({
             stepNumber: stepNumber++,
-            explanation: `Combine coefficients for like terms in $${k === '_const' ? '\\text{constants}' : k}$:`,
-            math: `${formatTermsDisplay(terms)} = ${cleanGroupResult}`,
+            explanation: `Combine coefficients for like terms in $${label}$:`,
+            math: `${coeffStr} = ${sum}`,
+          });
+        } else {
+          const sumCoeff = items.reduce((acc, it) => acc + it.coeff, 0);
+          const coeffNumbers = items.map(it => it.coeff);
+          const coeffArithmetic = coeffNumbers
+            .map((c, idx) => {
+              const sign = c >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+              return `${sign}${Math.abs(c)}`;
+            })
+            .join(' ');
+
+          let explanationMath = `(${coeffArithmetic})${k} = ${sumCoeff}${k}`;
+          if (sumCoeff === 0) {
+            explanationMath += ` = 0 \\quad \\text{(${k} terms cancel completely)}`;
+          }
+
+          steps.push({
+            stepNumber: stepNumber++,
+            explanation: `Combine coefficients for like terms in $${label}$:`,
+            math: explanationMath,
           });
         }
       }
     }
 
-    // 4. Final simplified expression using nerdamer
+    // 5. Final simplified expression
     const simplified = (nerdamer as any)(cleanEq).toString();
     const finalLatex = cleanLatexMath((nerdamer as any)(simplified).toTeX());
 
