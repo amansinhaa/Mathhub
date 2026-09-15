@@ -8,6 +8,7 @@ import { HelpCircle, X, AlertCircle, Keyboard as KeyboardIcon, Plus, Trash2, Inf
 import { SYNTAX_HELP, quickDegreeDetect, expressionToLatex, cleanPastedMath } from '@/lib/math/normalizer';
 import { VirtualMathKeyboard } from '@/components/shared/VirtualMathKeyboard';
 import { SolverType } from '@/types/solver';
+import { analyzeInput, type AutoFix, type SuggestedAction } from '@/lib/math/inputAssistant';
 
 // ─── Operation Configuration & Educational Guidance ─────────────────────────
 
@@ -331,9 +332,36 @@ export default function EquationInput() {
     }
 
     setEquation(ex.text);
-    setTimeout(() => {
-      useSolverStore.getState().solve();
-    }, 60);
+  };
+
+  const assistant = React.useMemo(() => {
+    return analyzeInput(equation, solverType);
+  }, [equation, solverType]);
+
+  const handleApplyFix = (fix: AutoFix) => {
+    if (fix.targetMode && fix.targetMode !== solverType) {
+      setSolverType(fix.targetMode);
+    }
+    if (fix.systemEqs && fix.targetMode === 'system') {
+      fix.systemEqs.forEach((eq, idx) => updateSystemEquation(idx, eq));
+      setTimeout(() => useSolverStore.getState().solve(), 80);
+      return;
+    }
+    setEquation(fix.fixedEquation);
+    setTimeout(() => useSolverStore.getState().solve(), 60);
+  };
+
+  const handleApplySuggestion = (s: SuggestedAction) => {
+    if (s.targetMode !== solverType) {
+      setSolverType(s.targetMode);
+    }
+    if (s.targetEquation) {
+      setEquation(s.targetEquation);
+    }
+    if (s.variable) {
+      setSolveForVariable(s.variable);
+    }
+    setTimeout(() => useSolverStore.getState().solve(), 60);
   };
 
   return (
@@ -551,6 +579,52 @@ export default function EquationInput() {
               </button>
             )}
           </div>
+
+          {/* ── Auto-Fix "Did You Mean?" Banner ─────────────────────────────── */}
+          {assistant.hasFix && assistant.fix && (
+            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-amber-50/95 dark:bg-[#261E17] border border-amber-200/90 dark:border-amber-800/60 shadow-2xs animate-fade-in text-xs">
+              <div className="flex items-center gap-2 pr-2 overflow-hidden">
+                <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
+                <div className="truncate">
+                  <span className="font-bold text-amber-950 dark:text-amber-100 font-mono text-xs sm:text-sm">
+                    {assistant.fix.label}
+                  </span>
+                  <span className="text-[11px] text-amber-700 dark:text-amber-400 ml-1.5 hidden sm:inline">
+                    ({assistant.fix.explanation})
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleApplyFix(assistant.fix!)}
+                className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-mono text-xs font-bold shadow-xs transition-all shrink-0 cursor-pointer"
+              >
+                Apply Fix ✨
+              </button>
+            </div>
+          )}
+
+          {/* ── Smart Action Suggestions ("What you can do with this") ──────── */}
+          {assistant.suggestions.length > 0 && equation.trim().length >= 2 && (
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 animate-fade-in">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8D827A] dark:text-[#A19891] shrink-0 flex items-center gap-1">
+                <Sparkles size={12} className="text-[#5D4037] dark:text-[#D7CCC8]" />
+                What to do with this:
+              </span>
+              {assistant.suggestions.map(s => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => handleApplySuggestion(s)}
+                  className="group/sug inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-white dark:bg-[#1E1E1E] text-[#131313] dark:text-white border border-[#E0E0E0] dark:border-[#2E2825] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] dark:hover:border-[#795548] transition-all whitespace-nowrap shadow-2xs cursor-pointer active:scale-95 shrink-0"
+                  title={s.description}
+                >
+                  <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8]">{s.icon}</span>
+                  <span className="font-semibold">{s.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Virtual keyboard (displays after the entry field) */}
           {showKeyboard && (

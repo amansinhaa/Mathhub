@@ -195,7 +195,7 @@ function solveSecondOrderODE(lhs: string, rhs: string): SolverResult {
   // Step 2: Characteristic equation
   steps.push({
     stepNumber: 2,
-    explanation: 'Solve the associated homogeneous equation by finding the roots of the characteristic polynomial $ar^2 + br + c = 0$.',
+    explanation: 'Solve the associated homogeneous equation by finding the roots of the characteristic equation $ar^2 + br + c = 0$.',
     math: `${a}r^2 + (${b})r + (${c}) = 0`,
   });
 
