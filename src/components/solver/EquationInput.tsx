@@ -391,8 +391,8 @@ export default function EquationInput() {
           </button>
         </div>
 
-        {/* Action Pills Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-1.5">
+        {/* Action Pills: Horizontal scroll strip on mobile (36px), responsive grid on tablet/desktop */}
+        <div className="flex sm:grid overflow-x-auto sm:overflow-visible scrollbar-none gap-1.5 py-0.5 sm:grid-cols-4 md:grid-cols-7 -mx-1 px-1 sm:mx-0 sm:px-0">
           {ACTIONS.map(({ value, emoji, label, hint }) => {
             const isSelected = solverType === value;
             return (
@@ -401,15 +401,15 @@ export default function EquationInput() {
                 type="button"
                 onClick={() => setSolverType(value)}
                 title={`${label}: ${hint}`}
-                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all min-h-[50px] sm:min-h-[52px] select-none cursor-pointer ${
+                className={`flex flex-row sm:flex-col items-center justify-center gap-1.5 sm:gap-0 px-3 py-1.5 sm:p-2 rounded-xl border text-xs font-semibold transition-all h-9 sm:min-h-[52px] shrink-0 sm:shrink select-none cursor-pointer whitespace-nowrap sm:whitespace-normal ${
                   isSelected
-                    ? 'bg-[#5D4037] text-white border-[#795548] shadow-sm scale-[1.02] ring-2 ring-[#5D4037]/20'
+                    ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs scale-[1.01] ring-2 ring-[#5D4037]/20 font-bold'
                     : 'bg-[#F5F5F5] dark:bg-[#181818] text-[#555] dark:text-[#A19891] border-[#E0E0E0] dark:border-[#282422] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] hover:text-[#5D4037] dark:hover:text-white'
                 }`}
               >
-                <span className="text-base sm:text-lg leading-none font-mono mb-0.5">{emoji}</span>
-                <span className="text-[11px] font-bold leading-tight text-center">{label}</span>
-                <span className={`text-[9px] font-normal leading-none mt-0.5 ${isSelected ? 'text-[#D7CCC8]' : 'text-[#8D827A] dark:text-[#757575]'}`}>
+                <span className="text-sm sm:text-lg leading-none font-mono">{emoji}</span>
+                <span className="text-xs sm:text-[11px] font-bold leading-tight">{label}</span>
+                <span className={`hidden sm:inline text-[9px] font-normal leading-none mt-0.5 ${isSelected ? 'text-[#D7CCC8]' : 'text-[#8D827A] dark:text-[#757575]'}`}>
                   {hint}
                 </span>
               </button>
@@ -583,7 +583,7 @@ export default function EquationInput() {
                   }, 0);
                 }
               }}
-              className="w-full pl-4 pr-11 py-3.5 sm:py-4 rounded-2xl border-2 border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-base sm:text-lg shadow-sm min-h-[52px]"
+              className="w-full pl-4 pr-11 py-3.5 sm:py-4 rounded-2xl border-2 border-[#D7CCC8] dark:border-[#3E2723] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-base sm:text-lg shadow-xs min-h-[52px]"
               placeholder={placeholders[solverType]}
             />
             {equation && (
@@ -740,78 +740,85 @@ export default function EquationInput() {
       {isSystem && (
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[#131313] dark:text-white">
-              2. Systems
+            <label className="text-xs font-mono font-bold uppercase tracking-wider text-[#131313] dark:text-white flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5D4037] dark:bg-[#D7CCC8]" />
+              2. System Equations
             </label>
-            <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
-              {systemEquations.length} / 4
+            <span className="text-[10px] font-mono text-[#757575] dark:text-[#8D827A] bg-[#EFEBE9] dark:bg-[#25201E] px-2 py-0.5 rounded-md font-semibold">
+              {systemEquations.length} of 4
             </span>
           </div>
-          {systemEquations.map((eq, idx) => (
-            <div key={idx} className="flex gap-2 items-center">
-              <span className="text-[11px] font-mono text-[#5D4037] dark:text-[#A1887F] w-4 shrink-0 text-right">{idx + 1}.</span>
+
+          <div className="space-y-2.5">
+            {systemEquations.map((eq, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#EFEBE9] dark:bg-[#25201E] border border-[#D7CCC8] dark:border-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] font-mono font-bold text-xs shrink-0 select-none">
+                  {idx + 1}
+                </span>
+                <input
+                  type="text"
+                  value={eq}
+                  onChange={(e) => updateSystemEquation(idx, e.target.value)}
+                  onPaste={(e) => {
+                    const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
+                    if (pasted) {
+                      e.preventDefault();
+                      const cleaned = cleanPastedMath(pasted);
+                      const inputEl = e.currentTarget;
+                      const start = inputEl.selectionStart ?? eq.length;
+                      const end = inputEl.selectionEnd ?? eq.length;
+                      const nextVal = eq.slice(0, start) + cleaned + eq.slice(end);
+                      updateSystemEquation(idx, nextVal);
+                      setTimeout(() => {
+                        const newPos = start + cleaned.length;
+                        inputEl.setSelectionRange(newPos, newPos);
+                      }, 0);
+                    }
+                  }}
+                  className="flex-1 px-3.5 py-2.5 sm:py-3 rounded-xl border-2 border-[#D7CCC8] dark:border-[#3E2723] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-base sm:text-lg shadow-xs"
+                  placeholder={`e.g. ${idx === 0 ? '2x + y = 7' : idx === 1 ? 'x - y = 2' : '3x + 2y - z = 4'}`}
+                  required
+                />
+                {systemEquations.length > 2 && (
+                  <button
+                    type="button"
+                    onClick={() => removeSystemEquation(idx)}
+                    className="p-2 sm:p-2.5 rounded-xl border border-red-200 dark:border-[#5D4037]/50 text-red-500 dark:text-[#FFAB91] bg-red-50 dark:bg-[#3E2723]/40 hover:bg-red-100 dark:hover:bg-[#3E2723]/80 transition-colors shrink-0 cursor-pointer"
+                    aria-label="Remove equation"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Compact bottom bar: Add Equation button + Variables input side by side */}
+          <div className="flex flex-col sm:flex-row gap-2 pt-0.5">
+            {systemEquations.length < 4 && (
+              <button
+                type="button"
+                onClick={addSystemEquation}
+                className="flex-1 py-2 px-3 border border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#D7CCC8] bg-[#FBF9F8] dark:bg-[#1B1817] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#25201E] transition-colors flex items-center justify-center gap-1.5 text-xs font-mono font-semibold cursor-pointer"
+              >
+                <Plus size={14} />
+                Add Equation
+              </button>
+            )}
+
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-[#FBF9F8] dark:bg-[#1B1817] sm:w-56 shrink-0">
+              <label htmlFor="variables" className="text-[11px] font-mono font-semibold text-[#757575] dark:text-[#8D827A] whitespace-nowrap">
+                Vars:
+              </label>
               <input
+                id="variables"
                 type="text"
-                value={eq}
-                onChange={(e) => updateSystemEquation(idx, e.target.value)}
-                onPaste={(e) => {
-                  const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
-                  if (pasted) {
-                    e.preventDefault();
-                    const cleaned = cleanPastedMath(pasted);
-                    const inputEl = e.currentTarget;
-                    const start = inputEl.selectionStart ?? eq.length;
-                    const end = inputEl.selectionEnd ?? eq.length;
-                    const nextVal = eq.slice(0, start) + cleaned + eq.slice(end);
-                    updateSystemEquation(idx, nextVal);
-                    setTimeout(() => {
-                      const newPos = start + cleaned.length;
-                      inputEl.setSelectionRange(newPos, newPos);
-                    }, 0);
-                  }
-                }}
-                className="flex-1 px-3.5 py-2.5 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-sm shadow-xs"
-                placeholder={`Equation ${idx + 1}  e.g. 2x + y = 7`}
-                required
+                value={systemVariables.join(', ')}
+                onChange={handleVarsChange}
+                className="w-full bg-transparent text-[#131313] dark:text-white outline-none font-mono text-xs font-bold"
+                placeholder="x, y, z"
               />
-              {systemEquations.length > 2 && (
-                <button
-                  type="button"
-                  onClick={() => removeSystemEquation(idx)}
-                  className="p-2 rounded-xl border border-red-200 dark:border-[#5D4037]/50 text-red-500 dark:text-[#FFAB91] bg-red-50 dark:bg-[#3E2723]/40 hover:bg-red-100 dark:hover:bg-[#3E2723]/80 transition-colors shrink-0 cursor-pointer"
-                  aria-label="Remove equation"
-                >
-                  <Trash2 size={15} />
-                </button>
-              )}
             </div>
-          ))}
-
-          {/* Add Equation button */}
-          {systemEquations.length < 4 && (
-            <button
-              type="button"
-              onClick={addSystemEquation}
-              className="w-full py-2.5 border-2 border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-2 text-xs font-mono font-semibold cursor-pointer"
-            >
-              <Plus size={15} />
-              Add
-            </button>
-          )}
-
-          {/* Variables */}
-          <div>
-            <label htmlFor="variables" className="block text-[11px] font-mono font-medium text-[#5D4037] dark:text-[#D7CCC8] mb-1">
-              Variables:
-            </label>
-            <input
-              id="variables"
-              type="text"
-              value={systemVariables.join(', ')}
-              onChange={handleVarsChange}
-              className="w-full px-3.5 py-2 rounded-xl border border-[#E0E0E0] dark:border-[#332D2A] bg-white dark:bg-[#131313] text-[#131313] dark:text-white focus:ring-2 focus:ring-[#5D4037]/30 focus:border-[#5D4037] outline-none transition-all font-mono text-xs"
-              placeholder="x, y, z"
-            />
           </div>
         </div>
       )}

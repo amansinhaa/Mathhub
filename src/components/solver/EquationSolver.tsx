@@ -137,7 +137,7 @@ export default function EquationSolver({
       {wideLayout ? (
         <div className="w-full flex flex-col gap-3 sm:gap-5">
           {/* Top: Full-Width Input Console */}
-          <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3.5 sm:p-5 md:p-6 shadow-sm transition-colors">
+          <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3 sm:p-5 md:p-6 shadow-xs transition-colors">
             <EquationInput />
           </div>
 
