@@ -1332,26 +1332,135 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
       expandedTermParts.push(t);
     }
 
-    // If any distribution was performed, output the detailed expansion step
+    // If any distribution was performed, output the clean 3-step pedagogical solution
     if (distributionSubSteps.length > 0) {
-      steps.push({
-        stepNumber: stepNumber++,
-        explanation: 'Apply the distributive property $a(b + c) = ab + ac$ to distribute outer factors across terms inside parentheses:',
-        math: distributionSubSteps.map(s => s.math).join(' \\\\[6pt] '),
-        subSteps: distributionSubSteps,
-      });
-
-      // Show expression with all parentheses removed
       const combinedFlatLatex = expandedTermParts
         .map(p => cleanLatexMath((nerdamer as any)(p).toTeX()))
         .join(' + ')
         .replace(/\+\s*-/g, '- ');
 
+      const originalLatex = expressionToLatex(cleanEq);
+
+      // Step 1: Expand using distributive property
       steps.push({
         stepNumber: stepNumber++,
-        explanation: 'Substitute the expanded products back into the expression without parentheses:',
-        math: combinedFlatLatex,
+        explanation: 'Apply the distributive property $a(b + c) = ab + ac$ to distribute and expand the expression:',
+        math: `\\begin{aligned} &${originalLatex} \\\\[4pt] &= ${combinedFlatLatex} \\end{aligned}`,
+        subSteps: distributionSubSteps,
       });
+
+      // Parse terms for grouping
+      interface ParsedTerm {
+        coeff: number;
+        varPart: string;
+        key: string;
+        orig: string;
+      }
+
+      const parsed: ParsedTerm[] = [];
+      for (const t of expandedTermParts) {
+        const clean = t.replace(/\s+/g, '');
+        if (!clean) continue;
+
+        if (/^[+-]?\d+(?:\.\d+)?$/.test(clean)) {
+          parsed.push({ coeff: Number(clean), varPart: '', key: '_const', orig: clean });
+          continue;
+        }
+
+        const m = clean.match(/^([+-]?)(\d+(?:\.\d+)?)?\*?([a-zA-Z](?:\^[0-9]+)?)$/);
+        if (m) {
+          const sign = m[1] === '-' ? -1 : 1;
+          const num = m[2] !== undefined ? Number(m[2]) : 1;
+          parsed.push({ coeff: sign * num, varPart: m[3], key: m[3], orig: clean });
+          continue;
+        }
+
+        parsed.push({ coeff: 1, varPart: clean, key: clean, orig: clean });
+      }
+
+      const groups: Record<string, ParsedTerm[]> = {};
+      for (const p of parsed) {
+        if (!groups[p.key]) groups[p.key] = [];
+        groups[p.key].push(p);
+      }
+
+      const groupKeys = Object.keys(groups);
+      groupKeys.sort((a, b) => {
+        if (a === '_const') return 1;
+        if (b === '_const') return -1;
+        return a.localeCompare(b);
+      });
+
+      // Step 2: Group and combine like terms in one coherent step
+      const groupedParts = groupKeys.map(k => {
+        const items = groups[k];
+        const joined = items
+          .map((it, idx) => {
+            const sign = it.coeff >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+            const absC = Math.abs(it.coeff);
+            const cStr = it.varPart ? (absC === 1 ? '' : absC.toString()) : absC.toString();
+            return `${sign}${cStr}${it.varPart}`;
+          })
+          .join(' ');
+        return `(${joined})`;
+      }).join(' + ').replace(/\+\s*-/g, '- ');
+
+      const arithmeticParts: string[] = [];
+      const cancellationNotes: string[] = [];
+
+      for (const k of groupKeys) {
+        const items = groups[k];
+        if (k === '_const') {
+          const sum = items.reduce((acc, it) => acc + it.coeff, 0);
+          arithmeticParts.push(sum >= 0 ? `+ ${sum}` : `- ${Math.abs(sum)}`);
+        } else {
+          const sumCoeff = items.reduce((acc, it) => acc + it.coeff, 0);
+          const coeffNumbers = items.map(it => it.coeff);
+          const coeffArithmetic = coeffNumbers
+            .map((c, idx) => {
+              const sign = c >= 0 ? (idx === 0 ? '' : '+ ') : '- ';
+              return `${sign}${Math.abs(c)}`;
+            })
+            .join(' ');
+
+          arithmeticParts.push(`(${coeffArithmetic})${k}`);
+          if (sumCoeff === 0) {
+            cancellationNotes.push(`$${k}$ terms cancel: $${coeffArithmetic} = 0$`);
+          }
+        }
+      }
+
+      const arithmeticLine = arithmeticParts.join(' ').replace(/^\+\s*/, '');
+      const simplified = (nerdamer as any)(cleanEq).toString();
+      const finalLatex = cleanLatexMath((nerdamer as any)(simplified).toTeX());
+
+      let alignLines = `&${groupedParts} \\\\[4pt] &= ${arithmeticLine}`;
+      if (cancellationNotes.length > 0) {
+        alignLines += ` \\\\[4pt] &= ${finalLatex} \\quad \\text{(${cancellationNotes.join(', ')})}`;
+      } else if (arithmeticLine !== finalLatex) {
+        alignLines += ` \\\\[4pt] &= ${finalLatex}`;
+      }
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Group like terms together and combine their coefficients:',
+        math: `\\begin{aligned} ${alignLines} \\end{aligned}`,
+      });
+
+      // Step 3: Final simplified result
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: 'Write the final simplified result:',
+        math: finalLatex,
+      });
+
+      return {
+        type: 'polynomial',
+        steps,
+        finalAnswer: finalLatex,
+        inputInterpretation: `\\text{Simplify: } ${expressionToLatex(rawEq)}`,
+        numericRoots: [],
+      };
     } else {
       // If no distribution, check if there are simple parentheses with signs to remove (e.g. -26r+(+7r)+(-15p)+(-7p))
       let step1Expr = cleanEq
