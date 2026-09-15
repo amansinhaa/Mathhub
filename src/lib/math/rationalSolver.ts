@@ -558,43 +558,83 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
       denExpr = (nerdamer as any)(`expand((${denL}) * (${denR}))`).toString();
       numExpr = (nerdamer as any)(`expand((${numL}) * (${denR}) - (${numR}) * (${denL}))`).toString();
     } else {
-      const simp = (nerdamer as any)(`simplify(${standardDiff})`);
-      const sym = simp.symbol;
-      const numTerms: string[] = [];
-      const denTerms: string[] = [];
+      // General case: sum of multiple rational fractions (e.g. 1/(x-1) + 1/(x+1) = 1)
+      // Construct true Least Common Denominator (LCD) from unique denominator factors/roots
+      const rawDens = Array.from(new Set(denMatches.map((m) => stripOuterParens(m.replace(/^\//, '').trim()))))
+        .filter((d) => /[a-zA-Z]/.test(d));
 
-      if (sym.multiplier) {
-        const numVal = sym.multiplier.num ? sym.multiplier.num.toString() : '1';
-        const denVal = sym.multiplier.den ? sym.multiplier.den.toString() : '1';
-        if (numVal !== '1') numTerms.push(numVal);
-        if (denVal !== '1') denTerms.push(denVal);
+      const distinctRoots: string[] = [];
+      for (const d of rawDens) {
+        try {
+          const dRoots = (nerdamer as any)(`solve(${d}, ${variable})`).toString()
+            .replace(/[\[\]]/g, '')
+            .split(',')
+            .map((s: string) => s.trim())
+            .filter(Boolean);
+          for (const dr of dRoots) {
+            if (!distinctRoots.includes(dr)) {
+              distinctRoots.push(dr);
+            }
+          }
+        } catch {
+          // ignore
+        }
       }
 
-      if (sym.symbols) {
-        for (const k in sym.symbols) {
-          const s = sym.symbols[k];
-          const pNum = s.power && s.power.num ? s.power.num.toString() : '1';
-          if (pNum.startsWith('-')) {
-            const absP = pNum.replace(/^-/, '');
-            denTerms.push(absP === '1' ? `(${s.value})` : `(${s.value})^${absP}`);
+      if (distinctRoots.length > 0) {
+        denExpr = distinctRoots.map((r) => `(${variable} - (${r}))`).join(' * ');
+      } else {
+        denExpr = rawDens.length > 0 ? rawDens.map((d) => `(${d})`).join(' * ') : '1';
+      }
+
+      // Term-by-term clearing to avoid nerdamer division/expansion artifacts
+      function splitAdditiveTerms(exprStr: string): string[] {
+        const parts: string[] = [];
+        let depth = 0;
+        let cur = '';
+        for (let idx = 0; idx < exprStr.length; idx++) {
+          const ch = exprStr[idx];
+          if (ch === '(') depth++;
+          else if (ch === ')') depth--;
+          if (depth === 0 && (ch === '+' || ch === '-') && idx > 0) {
+            if (cur.trim()) parts.push(cur.trim());
+            cur = ch;
           } else {
-            numTerms.push(pNum === '1' ? `(${s.value})` : `(${s.value})^${pNum}`);
+            cur += ch;
           }
         }
-      } else {
-        numTerms.push(sym.text());
+        if (cur.trim()) parts.push(cur.trim());
+        return parts;
       }
 
-      numExpr = numTerms.length > 0 ? numTerms.join('*') : '0';
-      denExpr = denTerms.length > 0 ? denTerms.join('*') : '1';
+      try {
+        const lhsAdditive = splitAdditiveTerms(cleanLhs);
+        const rhsAdditive = splitAdditiveTerms(cleanRhs);
 
-      // If nerdamer simplified away the denominator completely, reconstruct LCD from denMatches
-      if (denExpr === '1' && denMatches.length > 0) {
-        const rawDens = Array.from(new Set(denMatches.map((m) => stripOuterParens(m.replace(/^\//, '').trim()))));
-        if (rawDens.length > 0) {
-          denExpr = rawDens.map((d) => `(${d})`).join(' * ');
-          numExpr = (nerdamer as any)(`expand((${standardDiff}) * (${denExpr}))`).toString();
-        }
+        const clearTerms = (termsArr: string[]): string[] => {
+          return termsArr.map((t) => {
+            const isNeg = t.trim().startsWith('-');
+            const cleanT = t.replace(/^[+-]/, '').trim();
+            const slashIdx = cleanT.indexOf('/');
+            if (slashIdx !== -1) {
+              const numPart = cleanT.slice(0, slashIdx).trim();
+              const denPart = stripOuterParens(cleanT.slice(slashIdx + 1).trim());
+              const divQuot = (nerdamer as any)(`divide(${denExpr}, ${denPart})`).toString();
+              const termRes = (nerdamer as any)(`expand((${numPart}) * (${divQuot}))`).toString();
+              return isNeg ? `-(${termRes})` : `+(${termRes})`;
+            }
+            const nonFracRes = (nerdamer as any)(`expand((${cleanT}) * (${denExpr}))`).toString();
+            return isNeg ? `-(${nonFracRes})` : `+(${nonFracRes})`;
+          });
+        };
+
+        const clearedL = clearTerms(lhsAdditive);
+        const clearedR = clearTerms(rhsAdditive);
+        const combined = `(${clearedL.join(' ')}) - (${clearedR.join(' ')})`;
+        numExpr = (nerdamer as any)(`expand(${combined})`).toString();
+      } catch {
+        // Fallback to standard difference * LCD
+        numExpr = (nerdamer as any)(`expand((${standardDiff}) * (${denExpr}))`).toString();
       }
     }
 

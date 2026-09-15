@@ -245,9 +245,12 @@ export function solveDerivative(expression: string): SolverResult {
         math: `\\frac{d}{d${variable}}\\left[ ${latexExpr} \\right] = ${finalLatex}`,
       });
     } else {
-      // Single term differentiation
+      // Single term differentiation (monomial or product/quotient/composite)
       let matchedRule = DIFF_RULES.power;
-      if (clean.includes('sin')) matchedRule = DIFF_RULES.sin;
+      // Check if expression is a product of two variable expressions (e.g. x^2 * sin(x))
+      if (clean.includes('*') && (clean.match(new RegExp(variable, 'g')) || []).length >= 2) {
+        matchedRule = DIFF_RULES.product;
+      } else if (clean.includes('sin')) matchedRule = DIFF_RULES.sin;
       else if (clean.includes('cos')) matchedRule = DIFF_RULES.cos;
       else if (clean.includes('tan')) matchedRule = DIFF_RULES.tan;
       else if (clean.includes('exp') || clean.includes('e^')) matchedRule = DIFF_RULES.exp;
@@ -354,10 +357,10 @@ export function solveIntegral(
         explanation: 'Apply the Sum & Difference Rule: integrate each term separately.',
         math: `\\int \\left( ${latexExpr} \\right) \\, d${variable} = ` +
           terms.map((t) => {
-            const cleanT = t.replace(/^\+/, '').trim();
-            const sign = t.startsWith('-') ? '- ' : '+ ';
+            const cleanT = t.replace(/^[+-]/, '').trim();
+            const sign = t.trim().startsWith('-') ? '- ' : '+ ';
             return `${sign}\\int ${(nerdamer as any)(cleanT).toTeX()} \\, d${variable}`;
-          }).join(' ').replace(/^(\+|-)\s*/, (m) => m.startsWith('-') ? '-' : ''),
+          }).join(' ').replace(/^\+\s*/, ''),
         formulaUsed: INT_RULES.sum,
       });
 
