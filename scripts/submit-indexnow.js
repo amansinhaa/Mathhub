@@ -37,7 +37,7 @@ async function submitIndexNow() {
     urlList: urls,
   });
 
-  const endpoints = ['api.indexnow.org', 'www.bing.com'];
+  const endpoints = ['yandex.com', 'api.indexnow.org', 'www.bing.com'];
 
   for (const endpoint of endpoints) {
     try {
