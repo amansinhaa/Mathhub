@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/copy-sitemap.js",
+    "build": "astro build && node scripts/copy-sitemap.js && node scripts/submit-indexnow.js",
+    "indexnow": "node scripts/submit-indexnow.js",
     "preview": "astro preview",
     "check": "astro check",
     "test": "jest",
