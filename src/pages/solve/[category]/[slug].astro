@@ -55,20 +55,36 @@ const relatedProblems = problem.relatedSlugs
 
 const canonical = `https://www.easyequate.com/solve/${problem.category}/${problem.slug}`;
 
+const eduQuestionType =
+  problem.toolType === 'derivative'
+    ? 'Derivative'
+    : problem.toolType === 'integral'
+    ? 'Integral'
+    : problem.category === 'calculus'
+    ? 'Calculus'
+    : problem.category === 'algebra'
+    ? 'Polynomial Equation'
+    : 'Mathematics';
+
 // JSON-LD structured data for Google (MathSolver + FAQPage + HowTo)
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'MathSolver',
+      '@type': ['MathSolver', 'LearningResource'],
       'name': problem.h1,
       'description': problem.metaDescription,
       'url': canonical,
-      'potentialAction': {
-        '@type': 'SolveAction',
-        'target': canonical,
-        'mathExpression': problem.inputExpression,
-      },
+      'inLanguage': 'en',
+      'usageInfo': 'https://www.easyequate.com/privacy-policy',
+      'potentialAction': [
+        {
+          '@type': 'SolveMathAction',
+          'target': `${canonical}?q={math_expression_string}`,
+          'mathExpression-input': 'required name=math_expression_string',
+          'eduQuestionType': [eduQuestionType],
+        },
+      ],
     },
     {
       '@type': 'FAQPage',
