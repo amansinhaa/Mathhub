@@ -1,9 +1,9 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
 const HOST = 'www.easyequate.com';
-const KEY = '813ed80646cca1a21526b48970ce7178';
+const KEY = '9f881cd700de4aef9b450e4605dae36d';
 const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
 
 function getUrls() {
