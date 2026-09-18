@@ -198,7 +198,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: '1/x',
     h1: 'Derivative of 1/x with Steps',
     metaTitle: 'Derivative of 1/x with Steps — d/dx of 1/x',
-    metaDescription: 'Find the derivative of 1/x step by step. Rewrite as x^(-1) and use the power rule to find -1/x².',
+    metaDescription: 'Find the derivative of 1/x step by step. Rewrite the reciprocal as x^(-1) and apply the power rule d/dx[x^n] = n·x^(n-1) to find -1/x².',
     requiredFormula: {
       name: 'Negative Power Rule',
       latex: '\\frac{d}{dx}[x^{-1}] = -1 \\cdot x^{-2} = -\\frac{1}{x^2}',
@@ -303,7 +303,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'cos(2x)',
     h1: 'Derivative of cos(2x) with Steps',
     metaTitle: 'Derivative of cos(2x) with Steps — Chain Rule',
-    metaDescription: 'Differentiate cos(2x) using the chain rule. Shows inner and outer functions yielding -2sin(2x).',
+    metaDescription: 'Differentiate cos(2x) step by step using the Chain Rule. Identifies the inner function u = 2x and outer function cos(u) to yield -2sin(2x).',
     requiredFormula: {
       name: 'Chain Rule for Trigonometry',
       latex: '\\frac{d}{dx}[\\cos(kx)] = -k \\sin(kx)',
@@ -345,7 +345,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'cot(x)',
     h1: 'Derivative of cot(x) with Steps',
     metaTitle: 'Derivative of cot(x) with Steps — d/dx of cot(x)',
-    metaDescription: 'Step-by-step derivative of cot(x). Shows quotient rule derivation proving d/dx[cot(x)] = -csc²(x).',
+    metaDescription: 'Step-by-step derivative of cot(x). Shows quotient rule derivation on cos(x)/sin(x) proving that d/dx[cot(x)] = -csc²(x) with clear step-by-step math.',
     requiredFormula: {
       name: 'Cotangent Derivative Rule',
       latex: '\\frac{d}{dx}[\\cot(x)] = -\\csc^2(x)',
@@ -387,7 +387,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'csc(x)',
     h1: 'Derivative of csc(x) with Steps',
     metaTitle: 'Derivative of csc(x) with Steps — d/dx of csc(x)',
-    metaDescription: 'Differentiate csc(x) step by step. Rewriting as 1/sin(x) shows the solution -csc(x)cot(x).',
+    metaDescription: 'Differentiate csc(x) step by step using the quotient rule or reciprocal identity 1/sin(x) to prove that d/dx[csc(x)] = -csc(x)cot(x) with full steps.',
     requiredFormula: {
       name: 'Cosecant Derivative Rule',
       latex: '\\frac{d}{dx}[\\csc(x)] = -\\csc(x)\\cot(x)',
@@ -450,7 +450,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'x*e^x',
     h1: 'Derivative of x · eˣ with Steps',
     metaTitle: 'Derivative of x·eˣ with Steps — Product Rule',
-    metaDescription: 'Differentiate x·eˣ step by step using the Product Rule. Detailed working yielding e^x(x + 1).',
+    metaDescription: 'Differentiate x·eˣ step by step using the Product Rule. Detailed working with u = x and v = e^x, showing full substitution to yield e^x(x + 1).',
     requiredFormula: {
       name: 'Product Rule',
       latex: '\\frac{d}{dx}[u \\cdot v] = u\'v + uv\'',
@@ -557,7 +557,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'sin(x)',
     h1: 'Integral of sin(x) dx with Steps',
     metaTitle: 'Integral of sin(x) dx with Steps — Antiderivative of sin(x)',
-    metaDescription: 'Find the integral of sin(x) step by step. Learn why the integral of sine is -cos(x) + C.',
+    metaDescription: 'Find the integral of sin(x) step by step. Learn why the antiderivative of sine is -cos(x) + C with clear trigonometric integration rules and steps.',
     requiredFormula: {
       name: 'Sine Integration Rule',
       latex: '\\int \\sin(x) \\, dx = -\\cos(x) + C',
@@ -578,7 +578,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'cos(x)',
     h1: 'Integral of cos(x) dx with Steps',
     metaTitle: 'Integral of cos(x) dx with Steps — Antiderivative of cos(x)',
-    metaDescription: 'Step-by-step antiderivative of cos(x) dx. Proves that ∫ cos(x) dx = sin(x) + C.',
+    metaDescription: 'Step-by-step antiderivative of cos(x) dx. Explains the basic trigonometric integration rule, proving that ∫ cos(x) dx = sin(x) + C with full steps.',
     requiredFormula: {
       name: 'Cosine Integration Rule',
       latex: '\\int \\cos(x) \\, dx = \\sin(x) + C',
@@ -620,7 +620,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: '1/x',
     h1: 'Integral of 1/x dx with Steps',
     metaTitle: 'Integral of 1/x dx with Steps — Antiderivative of 1/x',
-    metaDescription: 'Step-by-step integration of 1/x. Explains why power rule fails for n = -1 and yields ln|x| + C.',
+    metaDescription: 'Step-by-step integration of 1/x dx. Explains why the standard power rule fails for n = -1 and proves that the antiderivative equals ln|x| + C.',
     requiredFormula: {
       name: 'Logarithmic Integration Rule',
       latex: '\\int \\frac{1}{x} \\, dx = \\ln|x| + C',
@@ -662,7 +662,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: '1/x^2',
     h1: 'Integral of 1/x² dx with Steps',
     metaTitle: 'Integral of 1/x² dx with Steps — Antiderivative of 1/x^2',
-    metaDescription: 'Step-by-step antiderivative of 1/x² dx. Rewrite as x^(-2) and apply power rule to find -1/x + C.',
+    metaDescription: 'Step-by-step antiderivative of 1/x² dx. Rewrite using negative exponents as x^(-2) and apply the power rule of integration to find -1/x + C.',
     requiredFormula: {
       name: 'Power Rule for Negative Exponents',
       latex: '\\int x^{-2} \\, dx = \\frac{x^{-1}}{-1} + C = -\\frac{1}{x} + C',
@@ -746,7 +746,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'cos(2x)',
     h1: 'Integral of cos(2x) dx with Steps',
     metaTitle: 'Integral of cos(2x) dx with Steps — u-Substitution',
-    metaDescription: 'Step-by-step integration of cos(2x) dx using u-substitution to obtain (1/2)sin(2x) + C.',
+    metaDescription: 'Step-by-step integration of cos(2x) dx using u-substitution. Shows letting u = 2x and du = 2 dx to reach (1/2)sin(2x) + C with clear explanations.',
     requiredFormula: {
       name: 'Linear Argument Integration',
       latex: '\\int \\cos(kx) \\, dx = \\frac{1}{k}\\sin(kx) + C',
@@ -872,7 +872,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'sin(3x)',
     h1: 'Integral of sin(3x) dx with Steps',
     metaTitle: 'Integral of sin(3x) dx with Steps — u-Substitution',
-    metaDescription: 'Find the integral of sin(3x) dx step by step. Uses substitution to obtain -(1/3)cos(3x) + C.',
+    metaDescription: 'Find the integral of sin(3x) dx step by step. Uses u-substitution with u = 3x to evaluate the trigonometric integral and obtain -(1/3)cos(3x) + C.',
     requiredFormula: {
       name: 'Trig u-Substitution',
       latex: '\\int \\sin(3x) \\, dx = -\\frac{1}{3}\\cos(3x) + C',
@@ -893,7 +893,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: '3x + 5',
     h1: 'Integral of (3x + 5) dx with Steps',
     metaTitle: 'Integral of (3x + 5) dx with Steps',
-    metaDescription: 'Step-by-step antiderivative of (3x + 5) dx. Integrates each linear term to get (3/2)x² + 5x + C.',
+    metaDescription: 'Step-by-step antiderivative of (3x + 5) dx. Integrates each linear and constant term individually to find the solution (3/2)x² + 5x + C with steps.',
     requiredFormula: {
       name: 'Linear Term Integration',
       latex: '\\int (3x + 5) \\, dx = \\frac{3}{2}x^2 + 5x + C',
@@ -914,7 +914,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: '2/x',
     h1: 'Integral of 2/x dx with Steps',
     metaTitle: 'Integral of 2/x dx with Steps — Antiderivative of 2/x',
-    metaDescription: 'Integrate 2/x step by step. Factor out constant 2 and integrate 1/x to get 2·ln|x| + C.',
+    metaDescription: 'Integrate 2/x step by step with complete working. Factor out the constant multiple 2 and integrate 1/x to find the antiderivative 2·ln|x| + C.',
     requiredFormula: {
       name: 'Constant Multiple with Natural Log',
       latex: '\\int \\frac{k}{x} \\, dx = k \\ln|x| + C',
@@ -935,7 +935,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: '5x^4 - 2x^3 + 7',
     h1: 'Integral of (5x⁴ - 2x³ + 7) dx with Steps',
     metaTitle: 'Integral of (5x⁴ - 2x³ + 7) dx with Steps',
-    metaDescription: 'Differentiate a polynomial step by step to find the antiderivative: x⁵ - (1/2)x⁴ + 7x + C.',
+    metaDescription: 'Integrate the polynomial 5x⁴ - 2x³ + 7 step by step. Apply the reverse power rule to each term to find the antiderivative x⁵ - (1/2)x⁴ + 7x + C.',
     requiredFormula: {
       name: 'Power Rule for Polynomials',
       latex: '\\int (5x^4 - 2x^3 + 7) \\, dx = x^5 - \\frac{1}{2}x^4 + 7x + C',
@@ -1189,7 +1189,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'x^2 + 4 = 0',
     h1: 'Solve x² + 4 = 0 with Steps',
     metaTitle: 'Solve x² + 4 = 0 with Steps — Complex Roots ±2i',
-    metaDescription: 'Step-by-step solution for x² + 4 = 0. Shows square root of negative numbers yielding x = ±2i.',
+    metaDescription: 'Step-by-step solution for the quadratic equation x² + 4 = 0. Shows how taking the square root of negative numbers yields imaginary roots x = ±2i.',
     requiredFormula: {
       name: 'Imaginary Numbers Formula',
       latex: 'x^2 = -4 \\implies x = \\pm \\sqrt{-4} = \\pm 2i',
@@ -1315,7 +1315,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'x^2 - 25 = 0',
     h1: 'Solve x² - 25 = 0 with Steps',
     metaTitle: 'Solve x² - 25 = 0 with Steps — Difference of Squares',
-    metaDescription: 'Solve x² - 25 = 0 step by step. Factors into (x - 5)(x + 5) = 0 giving roots x = 5 and x = -5.',
+    metaDescription: 'Solve x² - 25 = 0 step by step. Factors using difference of squares (x - 5)(x + 5) = 0 and square roots to find real roots x = 5 and x = -5.',
     requiredFormula: {
       name: 'Difference of Squares',
       latex: 'x^2 - 25 = (x - 5)(x + 5) = 0',
@@ -1336,7 +1336,7 @@ export const ALL_PROBLEMS: SolvedProblem[] = [
     inputExpression: 'x^2 - 8x + 16 = 0',
     h1: 'Solve x² - 8x + 16 = 0 with Steps',
     metaTitle: 'Solve x² - 8x + 16 = 0 with Steps — Perfect Square',
-    metaDescription: 'Find the repeated root of x² - 8x + 16 = 0. Shows perfect square (x - 4)² = 0 yielding x = 4.',
+    metaDescription: 'Find the repeated root of x² - 8x + 16 = 0 step by step. Shows perfect square factoring (x - 4)² = 0 with discriminant Δ = 0 to yield x = 4.',
     requiredFormula: {
       name: 'Perfect Square (x - k)²',
       latex: '(x - 4)^2 = 0 \\implies x = 4',
