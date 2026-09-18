@@ -1,4 +1,4 @@
-﻿# EasyEquate robots.txt
+# EasyEquate robots.txt
 # Permit search engines and AI answer engines to index public mathematical solutions and tools.
 
 User-agent: *
