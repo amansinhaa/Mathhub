@@ -34,7 +34,7 @@ export function evaluateExpression(
     };
 
     if (angleMode !== 'RAD') {
-      const trigFuncs = ['sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'sinh', 'cosh', 'tanh'];
+      const trigFuncs = ['sin', 'cos', 'tan', 'sec', 'csc', 'cot'];
       const invTrigFuncs = ['asin', 'acos', 'atan', 'asec', 'acsc', 'acot'];
 
       trigFuncs.forEach((fn) => {

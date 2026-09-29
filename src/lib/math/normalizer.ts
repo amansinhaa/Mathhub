@@ -143,6 +143,9 @@ export function normalizeExpression(input: string): string {
   //     Otherwise rule 5 turns 2^2x into 2^2*x which evaluates as (2^2)*x = 4x
   expr = expr.replace(/(?<=\^)([+-]?(?:[0-9]+[a-zA-Z]+|[a-zA-Z]+[0-9]+|[+-][a-zA-Z]+))(?![a-zA-Z0-9_^(])/g, '($1)');
 
+  // Also wrap bare numeric exponents in parentheses to match prompt expectations (e.g. 3x^2 -> 3*x^(2))
+  expr = expr.replace(/\^([0-9]+)(?![0-9.])/g, '^($1)');
+
   // 5. Handle implicit multiplication
   // Known function names to preserve before opening parenthesis
   const reservedFuncs = [

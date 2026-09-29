@@ -314,6 +314,12 @@ export function solveMatrix(
         r++;
         c++;
       }
+
+      m = m.map(row => row.map(v => {
+        if (Math.abs(v - Math.round(v)) < 1e-9) return Math.round(v) + 0;
+        return Number(v.toFixed(4)) + 0;
+      }));
+
       return { operation: op, input: matrixA, result: m, steps };
 
     } else if (op === 'eigenvalues') {

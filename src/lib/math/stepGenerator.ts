@@ -1032,17 +1032,28 @@ export function generateQuadraticSteps(
   } else {
     const realPart = -b / (2 * a);
     const imaginaryPart = Math.sqrt(-delta) / (2 * Math.abs(a));
+    
+    const fracRe = toFraction(realPart);
+    const fracIm = toFraction(imaginaryPart);
+    const dispRe = fracRe && fracRe.d > 1 ? fmtFraction(realPart) : fmt(realPart);
+    const dispIm = fracIm && fracIm.d > 1 ? fmtFraction(imaginaryPart) : fmt(imaginaryPart);
+
+    steps.push({
+      stepNumber: stepCount++,
+      explanation: 'Rewrite the negative square root using the imaginary unit $i = \\sqrt{-1}$:',
+      math: `${variable} = \\frac{${fmt(-b)} \\pm \\sqrt{${fmt(-delta)}}\\;i}{${fmt(2 * a)}}`,
+    });
 
     steps.push({
       stepNumber: stepCount++,
       explanation: 'Simplify the two complex conjugate roots:',
-      math: `${variable} = ${fmt(realPart)} \\pm ${fmt(imaginaryPart)}\\,i`,
+      math: `${variable} = ${dispRe} \\pm ${dispIm === '1' ? '' : dispIm}\\,i`,
     });
 
     steps.push({
       stepNumber: stepCount++,
       explanation: `Verification for complex conjugate pair:`,
-      math: `f(${fmt(realPart)} \\pm ${fmt(imaginaryPart)}i) = (${fmt(a)})(${fmt(realPart)} \\pm ${fmt(imaginaryPart)}i)^2 + (${fmt(b)})(${fmt(realPart)} \\pm ${fmt(imaginaryPart)}i) + (${fmt(c)}) = 0 \\;\\checkmark`,
+      math: `f(${dispRe} \\pm ${dispIm === '1' ? '' : dispIm}i) = (${fmt(a)})(${dispRe} \\pm ${dispIm === '1' ? '' : dispIm}i)^2 + (${fmt(b)})(${dispRe} \\pm ${dispIm === '1' ? '' : dispIm}i) + (${fmt(c)}) = 0 \\;\\checkmark`,
     });
   }
 

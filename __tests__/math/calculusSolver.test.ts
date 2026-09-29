@@ -44,7 +44,7 @@ describe('Calculus Solver', () => {
     it('integrates 1/x to ln|x| + C', () => {
       const res = solveIntegral('1/x');
       expect(res.type).toBe('integral');
-      expect(res.finalAnswer).toContain('log');
+      expect(res.finalAnswer).toContain('ln');
       expect(res.finalAnswer).toContain('+ C');
     });
   });

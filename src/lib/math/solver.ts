@@ -394,13 +394,22 @@ function formatFinalRoots(
 
     roots.complex.forEach((comp, i) => {
       const idx = roots.real.length + i * 2 + 1;
-      const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+      const fracRe = toFraction(comp.re);
+      const fracIm = toFraction(comp.im);
+      const reStr = fracRe && fracRe.d > 1 ? fmtFraction(comp.re) : fmt(comp.re);
+      const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fracIm && fracIm.d > 1 ? fmtFraction(comp.im) : fmt(comp.im)}\\,i`;
       const exactStr =
         Math.abs(comp.re) < 1e-6
           ? `${variable}_{${idx},${idx + 1}} = \\pm ${imStr}`
-          : `${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${imStr}`;
+          : `${variable}_{${idx},${idx + 1}} = ${reStr} \\pm ${imStr}`;
       exactParts.push(exactStr);
-      decimalParts.push(exactStr);
+      
+      const decImStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+      const decStr =
+        Math.abs(comp.re) < 1e-6
+          ? `${variable}_{${idx},${idx + 1}} = \\pm ${decImStr}`
+          : `${variable}_{${idx},${idx + 1}} = ${fmt(comp.re)} \\pm ${decImStr}`;
+      decimalParts.push(decStr);
     });
 
     const exact = exactParts.length > 0 ? exactParts.join(', \\quad ') : `${variable} = 0`;
@@ -425,13 +434,22 @@ function formatFinalRoots(
   });
 
   roots.complex.forEach((comp) => {
-    const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+    const fracRe = toFraction(comp.re);
+    const fracIm = toFraction(comp.im);
+    const reStr = fracRe && fracRe.d > 1 ? fmtFraction(comp.re) : fmt(comp.re);
+    const imStr = Math.abs(comp.im) === 1 ? 'i' : `${fracIm && fracIm.d > 1 ? fmtFraction(comp.im) : fmt(comp.im)}\\,i`;
     const exactStr =
       Math.abs(comp.re) < 1e-6
         ? `\\pm ${imStr}`
-        : `${fmt(comp.re)} \\pm ${imStr}`;
+        : `${reStr} \\pm ${imStr}`;
     exactItems.push(exactStr);
-    decimalItems.push(exactStr);
+    
+    const decImStr = Math.abs(comp.im) === 1 ? 'i' : `${fmt(comp.im)}\\,i`;
+    const decStr =
+      Math.abs(comp.re) < 1e-6
+        ? `\\pm ${decImStr}`
+        : `${fmt(comp.re)} \\pm ${decImStr}`;
+    decimalItems.push(decStr);
   });
 
   const exact = exactItems.length > 0 ? `${variable} = ${exactItems.join(', \\; ')}` : `${variable} = 0`;
@@ -1868,9 +1886,15 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
       } else {
         const realPart = -b / (2 * a);
         const imagPart = Math.sqrt(-delta) / (2 * Math.abs(a));
-        const realStr = Math.abs(realPart) < 1e-6 ? '' : `${fmt(realPart)} \\pm `;
+        
+        const fracRe = toFraction(realPart);
+        const fracIm = toFraction(imagPart);
+        const dispRe = fracRe && fracRe.d > 1 ? fmtFraction(realPart) : fmt(realPart);
+        const dispIm = fracIm && fracIm.d > 1 ? fmtFraction(imagPart) : fmt(imagPart);
+        
+        const realStr = Math.abs(realPart) < 1e-6 ? '' : `${dispRe} \\pm `;
         const pmStr = Math.abs(realPart) < 1e-6 ? '\\pm ' : '';
-        const imStr = Math.abs(imagPart - 1) < 1e-6 ? 'i' : `${fmt(imagPart)}\\,i`;
+        const imStr = Math.abs(imagPart - 1) < 1e-6 ? 'i' : `${dispIm}\\,i`;
         finalAnswer = `${variable} = ${realStr}${pmStr}${imStr}`;
       }
 
@@ -2052,10 +2076,18 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
         steps,
         finalAnswer: `${vars[0]} = ${fmtVal(x)}, \\quad ${vars[1]} = ${fmtVal(y)}`,
       };
+    } else {
+      const detX = vecB[0] * matA[1][1] - vecB[1] * matA[0][1];
+      const detY = matA[0][0] * vecB[1] - matA[1][0] * vecB[0];
+      if (Math.abs(detX) < 1e-9 && Math.abs(detY) < 1e-9) {
+        return { type: 'system', steps, finalAnswer: 'infinite solutions' };
+      } else {
+        return { type: 'system', steps, finalAnswer: 'no solution' };
+      }
     }
   }
 
-  // 3x3 and 4x4: Gaussian elimination
+  // 3x3 and larger: Gaussian elimination
   if (n >= 3) {
     const aug = matA.map((row, i) => [...row.slice(0, n), vecB[i]]);
 
@@ -2072,6 +2104,25 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
           aug[row][j] -= factor * aug[col][j];
         }
       }
+    }
+
+    let isDependent = false;
+    for (let row = 0; row < n; row++) {
+      let allZeros = true;
+      for (let col = 0; col < n; col++) {
+        if (Math.abs(aug[row][col]) > 1e-12) allZeros = false;
+      }
+      if (allZeros) {
+        if (Math.abs(aug[row][n]) > 1e-12) {
+          return { type: 'system', steps, finalAnswer: 'no solution' };
+        } else {
+          isDependent = true;
+        }
+      }
+    }
+
+    if (isDependent) {
+      return { type: 'system', steps, finalAnswer: 'infinite solutions' };
     }
 
     const sol = new Array(n).fill(0);
@@ -2094,7 +2145,7 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
   return {
     type: 'system',
     steps,
-    finalAnswer: '\\text{No unique solution}',
+    finalAnswer: 'no solution',
   };
 }
 

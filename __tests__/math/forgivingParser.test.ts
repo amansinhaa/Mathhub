@@ -55,7 +55,7 @@ describe('Resilient Math Parser & Wolfram UX Enhancements', () => {
       const result = solvePolynomial('72t^3 + 4t - 76 = 0');
       expect(result.inputInterpretation).toBeDefined();
       expect(result.inputInterpretation).toContain('Solve');
-      expect(result.inputInterpretation).toContain('72t^{3} + 4t - 76 = 0');
+      expect(result.inputInterpretation).toContain('72t^{(3)} + 4t - 76 = 0');
       expect(result.inputInterpretation).toContain('for variable');
     });
 

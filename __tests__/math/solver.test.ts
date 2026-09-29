@@ -110,7 +110,7 @@ describe('MathHub Equation Solver — Accuracy & Transparency Audit', () => {
       expect(formulaStep).toBeDefined();
 
       // Complex roots formatted as p ± qi
-      expect(res.finalAnswer).toContain('-0.5 \\pm 0.866025\\,i');
+      expect(res.finalAnswer).toContain('-\\frac{1}{2} \\pm 0.866025\\,i');
     });
 
     it('solves x^2 + 4 = 0 using quadratic formula fallback (pure imaginary roots)', () => {

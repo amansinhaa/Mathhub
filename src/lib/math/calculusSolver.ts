@@ -59,6 +59,11 @@ const DIFF_RULES = {
     latex: '\\frac{d}{dx}[u \\cdot v] = u\'v + uv\'',
     description: 'Derivative of first times second plus first times derivative of second.',
   },
+  chain: {
+    name: 'Chain Rule',
+    latex: '\\frac{d}{dx}[f(g(x))] = f\'(g(x)) \\cdot g\'(x)',
+    description: 'Derivative of the outer function evaluated at the inner function times the derivative of the inner function.',
+  },
 };
 
 /**
@@ -248,8 +253,22 @@ export function solveDerivative(expression: string): SolverResult {
       // Single term differentiation (monomial or product/quotient/composite)
       let matchedRule = DIFF_RULES.power;
       // Check if expression is a product of two variable expressions (e.g. x^2 * sin(x))
+      const hasInnerVar = (inner: string) => inner.includes(variable) && inner !== variable && inner !== `(${variable})`;
+      
       if (clean.includes('*') && (clean.match(new RegExp(variable, 'g')) || []).length >= 2) {
         matchedRule = DIFF_RULES.product;
+      } else if (clean.match(/sin\((.*)\)/) && hasInnerVar(clean.match(/sin\((.*)\)/)![1])) {
+        matchedRule = DIFF_RULES.chain;
+      } else if (clean.match(/cos\((.*)\)/) && hasInnerVar(clean.match(/cos\((.*)\)/)![1])) {
+        matchedRule = DIFF_RULES.chain;
+      } else if (clean.match(/tan\((.*)\)/) && hasInnerVar(clean.match(/tan\((.*)\)/)![1])) {
+        matchedRule = DIFF_RULES.chain;
+      } else if (clean.match(/log\((.*)\)/) && hasInnerVar(clean.match(/log\((.*)\)/)![1])) {
+        matchedRule = DIFF_RULES.chain;
+      } else if (clean.match(/ln\((.*)\)/) && hasInnerVar(clean.match(/ln\((.*)\)/)![1])) {
+        matchedRule = DIFF_RULES.chain;
+      } else if (clean.match(/e\^\((.*)\)/) && hasInnerVar(clean.match(/e\^\((.*)\)/)![1])) {
+        matchedRule = DIFF_RULES.chain;
       } else if (clean.includes('sin')) matchedRule = DIFF_RULES.sin;
       else if (clean.includes('cos')) matchedRule = DIFF_RULES.cos;
       else if (clean.includes('tan')) matchedRule = DIFF_RULES.tan;
@@ -323,7 +342,8 @@ export function solveIntegral(
     const nerdamerExpr = (nerdamer as any)(clean);
     const latexExpr = nerdamerExpr.toTeX();
     const resultInt = (nerdamer as any).integrate(clean, variable);
-    const finalLatex = resultInt.toTeX();
+    let finalLatex = resultInt.toTeX();
+    finalLatex = finalLatex.replace(/\\mathrm\{log\}\\left\(([^)]+)\\right\)/g, '\\ln|$1|');
 
     const isDefinite = lowerLimit !== undefined && upperLimit !== undefined;
 
@@ -370,7 +390,8 @@ export function solveIntegral(
         const termNerd = (nerdamer as any)(cleanT);
         const termInt = (nerdamer as any).integrate(cleanT, variable);
         const termLatex = termNerd.toTeX();
-        const intLatex = termInt.toTeX();
+        let intLatex = termInt.toTeX();
+        intLatex = intLatex.replace(/\\mathrm\{log\}\\left\(([^)]+)\\right\)/g, '\\ln|$1|');
 
         let matchedRule = INT_RULES.power;
         let explanation = `Integrate term $${termLatex}$ using the Power Rule for integration.`;
