@@ -265,11 +265,16 @@ export default function EquationInput() {
         store.setQuadraticMethod(method as any);
       }
     }
-    if (formula && store.equation !== formula) {
-      store.setEquation(formula);
-      setTimeout(() => {
-        useSolverStore.getState().solve();
-      }, 50);
+    if (formula) {
+      const eqChanged = store.equation !== formula;
+      if (eqChanged) {
+        store.setEquation(formula);
+      }
+      if (eqChanged || !store.result) {
+        setTimeout(() => {
+          useSolverStore.getState().solve();
+        }, 50);
+      }
     }
   }, [searchStr]);
 
@@ -834,11 +839,15 @@ export default function EquationInput() {
       {/* ── 3. Primary CTA Button ──────────────────────────────────────────── */}
       <button
         type="submit"
-        disabled={isLoading || (isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim())}
+        aria-busy={isLoading}
+        disabled={isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim()}
         className="w-full py-3 sm:py-3.5 px-5 rounded-2xl bg-[#5D4037] hover:bg-[#4E342E] active:scale-[0.99] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px] sm:min-h-[50px] flex items-center justify-center gap-2 border border-[#795548]/50 cursor-pointer"
       >
         {isLoading ? (
-          'Solving…'
+          <span className="flex items-center justify-center gap-2">
+            <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <span>Solving…</span>
+          </span>
         ) : (
           <>
             <span className="text-base leading-none">{currentAction?.emoji}</span>

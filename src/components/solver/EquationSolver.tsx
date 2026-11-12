@@ -34,34 +34,41 @@ export default function EquationSolver({
   React.useEffect(() => {
     const store = useSolverStore.getState();
 
-    // 1. Prioritize explicit component props
-    if (initialMode && store.solverType !== initialMode) {
-      store.setSolverType(initialMode);
-    }
-    if (initialEquation && store.equation !== initialEquation) {
-      store.setEquation(initialEquation);
-      setTimeout(() => {
-        useSolverStore.getState().solve();
-      }, 50);
-      return;
-    }
-
-    // 2. Parse direct AI/citation query parameters: ?q=... or ?eq=... and ?mode=...
+    // 1. Parse direct AI/citation query parameters: ?q=... or ?eq=... and ?mode=...
+    let queryEq: string | null = null;
+    let queryMode: EquationSolverProps['initialMode'] | null = null;
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      const queryEq = urlParams.get('q') || urlParams.get('eq');
-      const queryMode = urlParams.get('mode') as EquationSolverProps['initialMode'];
+      queryEq = urlParams.get('q') || urlParams.get('eq');
+      queryMode = urlParams.get('mode') as EquationSolverProps['initialMode'];
+    }
 
-      if (queryMode && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic', 'domain_range'].includes(queryMode)) {
-        store.setSolverType(queryMode);
+    // Set mode from query or component prop
+    const targetMode = queryMode || initialMode;
+    if (targetMode && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic', 'domain_range'].includes(targetMode)) {
+      if (store.solverType !== targetMode) {
+        store.setSolverType(targetMode);
       }
+    }
 
-      if (queryEq && queryEq.trim() && store.equation !== queryEq.trim()) {
-        store.setEquation(queryEq.trim());
+    // Determine target equation to solve
+    const targetEquation = queryEq ? queryEq.trim() : (initialEquation ? initialEquation.trim() : null);
+
+    if (targetEquation) {
+      const eqChanged = store.equation !== targetEquation;
+      if (eqChanged) {
+        store.setEquation(targetEquation);
+      }
+      if (eqChanged || !store.result) {
         setTimeout(() => {
           useSolverStore.getState().solve();
-        }, 80);
+        }, 50);
       }
+    } else if (store.equation.trim() && !store.result && !store.isLoading) {
+      // If store has an equation from previous navigation without result, auto-solve
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 80);
     }
   }, [initialMode, initialEquation]);
 
