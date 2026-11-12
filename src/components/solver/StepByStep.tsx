@@ -31,6 +31,8 @@ export default function StepByStep() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [showDecimal, setShowDecimal] = useState(false);
 
+  const [allExpanded, setAllExpanded] = useState(true);
+
   // Keep widgets (steps, graph, number line) collapsed by default when result or problem changes
   useEffect(() => {
     setShowSteps(false);
@@ -38,6 +40,7 @@ export default function StepByStep() {
     setShowNumberLine(false);
     setShowDecimal(false);
     setExpandedSteps({});
+    setAllExpanded(true);
   }, [result, solverType, equation, quadraticMethod]);
 
   if (!result) return null;
@@ -427,7 +430,37 @@ export default function StepByStep() {
 
       {/* 4. Unified Step-by-Step Solution Document Box */}
       {showSteps && result.steps && result.steps.length > 0 && (
-        <div className="bg-[#FBF9F8] dark:bg-[#151515] rounded-2xl border border-[#E0E0E0] dark:border-[#282422] p-5 sm:p-7 shadow-xs space-y-6 animate-fade-in divide-y divide-[#E0E0E0]/80 dark:divide-[#282422]">
+        <div className="bg-[#FBF9F8] dark:bg-[#151515] rounded-2xl border border-[#E0E0E0] dark:border-[#282422] p-4 sm:p-6 shadow-xs space-y-5 animate-fade-in">
+          {/* Step Actions Header Bar */}
+          <div className="flex items-center justify-between pb-3 border-b border-[#E0E0E0] dark:border-[#282422]">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+                Step-by-Step Explanation
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8]">
+                {result.steps.length} Steps
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const nextState = !allExpanded;
+                  setAllExpanded(nextState);
+                  const newExpanded: Record<number, boolean> = {};
+                  result.steps!.forEach((_, i) => {
+                    newExpanded[i] = nextState;
+                  });
+                  setExpandedSteps(newExpanded);
+                }}
+                className="text-xs font-mono text-[#5D4037] dark:text-[#D7CCC8] hover:underline px-2 py-1 rounded bg-white dark:bg-[#202020] border border-[#E0E0E0] dark:border-[#333]"
+              >
+                {allExpanded ? 'Collapse Sub-details' : 'Expand Sub-details'}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-6 divide-y divide-[#E0E0E0]/80 dark:divide-[#282422]">
           {result.steps.map((step, index) => {
             return (
               <div key={index} className={index === 0 ? '' : 'pt-6'}>
@@ -550,6 +583,7 @@ export default function StepByStep() {
               </div>
             );
           })}
+          </div>
         </div>
       )}
     </div>
