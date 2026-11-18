@@ -7,6 +7,17 @@
   "regions": ["bom1"],
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "easyequate.com"
+        }
+      ],
+      "destination": "https://www.easyequate.com/$1",
+      "permanent": true
+    },
+    {
       "source": "/solver",
       "destination": "/equation-solver-with-steps",
       "permanent": true

@@ -1,0 +1,23 @@
+[[redirects]]
+  from = "https://easyequate.com/*"
+  to = "https://www.easyequate.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://easyequate.com/*"
+  to = "https://www.easyequate.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.easyequate.com/*"
+  to = "https://www.easyequate.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/solver"
+  to = "/equation-solver-with-steps"
+  status = 301
+  force = true

@@ -14,7 +14,12 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-    sitemap(),
+    sitemap({
+      filter: (page) =>
+        !page.includes('/test-sandbox') &&
+        !page.includes('/404') &&
+        !page.includes('/test'),
+    }),
   ],
   vite: {
     ssr: {
@@ -22,4 +27,3 @@ export default defineConfig({
     },
   },
 });
-

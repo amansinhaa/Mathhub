@@ -15,11 +15,16 @@ interface Props {
 const {
   title = 'EasyEquate — Free Online Step-by-Step Math Solvers & Calculators',
   description = 'EasyEquate is a free step-by-step math solver and calculator platform featuring scientific calculations, algebra, calculus, 2D graph plotting, and formula sheets.',
-  canonical = Astro.url.href,
+  canonical,
   jsonLd,
 } = Astro.props;
 
-const canonicalUrl = new URL(canonical, 'https://www.easyequate.com').href;
+// Enforce single canonical host (https://www.easyequate.com) and clean trailing slashes
+const rawPath = canonical
+  ? (canonical.startsWith('http') ? new URL(canonical).pathname : canonical)
+  : Astro.url.pathname;
+const cleanPath = rawPath === '/' ? '' : rawPath.replace(/\/+$/, '');
+const canonicalUrl = `https://www.easyequate.com${cleanPath || '/'}`;
 const currentPath = Astro.url.pathname;
 const isHome = currentPath === '/' || currentPath === '';
 
