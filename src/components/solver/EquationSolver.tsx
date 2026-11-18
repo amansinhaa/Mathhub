@@ -5,6 +5,7 @@ import { useSolverStore } from '@/stores/solverStore';
 import EquationInput from './EquationInput';
 import StepByStep from './StepByStep';
 import { FunctionSquare } from 'lucide-react';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
 const EMPTY_STATE_MESSAGES: Record<string, string> = {
   polynomial:  'Enter any equation like  2x + 8 = 20  or  x² - 5x + 6 = 0  to get step-by-step solutions.',
@@ -176,13 +177,17 @@ export default function EquationSolver({
         <div className="w-full flex flex-col gap-3 sm:gap-5">
           {/* Top: Full-Width Input Console */}
           <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3 sm:p-5 md:p-6 shadow-xs transition-colors">
-            <EquationInput />
+            <ErrorBoundary fallbackTitle="Equation Input Error" onReset={() => useSolverStore.getState().forceUnstick()}>
+              <EquationInput />
+            </ErrorBoundary>
           </div>
 
           {/* Bottom: Expansive Full-Width Results & Steps */}
           <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-sm min-h-[200px] sm:min-h-[360px] transition-colors">
             {result ? (
-              <StepByStep />
+              <ErrorBoundary fallbackTitle="Step-by-Step Solution Error" onReset={() => useSolverStore.getState().forceUnstick()}>
+                <StepByStep />
+              </ErrorBoundary>
             ) : (
               <div className="flex flex-col items-center justify-center min-h-[260px] text-center p-8 border border-dashed border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl bg-[#F5F5F5] dark:bg-[#131313]/60">
                 <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EFEBE9] border border-[#D7CCC8] dark:bg-[#24201E] dark:border-[#3E2723] mb-3 text-[#5D4037] dark:text-[#A1887F]">
@@ -200,13 +205,17 @@ export default function EquationSolver({
         <div className="flex flex-col xl:flex-row gap-5 flex-1 min-h-0 items-start">
           {/* Left: Input + Controls */}
           <div className="w-full xl:w-[420px] shrink-0 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
-            <EquationInput />
+            <ErrorBoundary fallbackTitle="Equation Input Error" onReset={() => useSolverStore.getState().forceUnstick()}>
+              <EquationInput />
+            </ErrorBoundary>
           </div>
 
           {/* Right: Results */}
           <div className="flex-1 w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[360px] overflow-y-auto transition-colors">
             {result ? (
-              <StepByStep />
+              <ErrorBoundary fallbackTitle="Step-by-Step Solution Error" onReset={() => useSolverStore.getState().forceUnstick()}>
+                <StepByStep />
+              </ErrorBoundary>
             ) : (
               <div className="flex flex-col items-center justify-center min-h-[300px] text-center p-8 border border-dashed border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl bg-[#F5F5F5] dark:bg-[#131313]/60">
                 <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#EFEBE9] border border-[#D7CCC8] dark:bg-[#24201E] dark:border-[#3E2723] mb-3 text-[#5D4037] dark:text-[#A1887F]">

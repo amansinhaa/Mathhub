@@ -291,6 +291,16 @@ export default function EquationInput() {
   const [showGuide, setShowGuide] = useState(false);
   const [dismissedFixId, setDismissedFixId] = useState<string | null>(null);
 
+  // Debounce equation for assistant analysis and KaTeX preview to preserve instantaneous 60fps typing (INP < 100ms)
+  const [debouncedEquation, setDebouncedEquation] = useState(equation);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedEquation(equation);
+    }, 180);
+    return () => clearTimeout(timer);
+  }, [equation]);
+
   // Reset dismissed fix when equation changes significantly
   useEffect(() => {
     setDismissedFixId(null);
@@ -354,8 +364,8 @@ export default function EquationInput() {
   };
 
   const assistant = React.useMemo(() => {
-    return analyzeInput(equation, solverType);
-  }, [equation, solverType]);
+    return analyzeInput(debouncedEquation, solverType);
+  }, [debouncedEquation, solverType]);
 
   const handleApplyFix = (fix: AutoFix) => {
     if (fix.targetMode && fix.targetMode !== solverType) {
@@ -741,7 +751,7 @@ export default function EquationInput() {
               </div>
               <div className="w-full overflow-x-auto scrollbar-thin py-1 text-[#131313] dark:text-white flex justify-center items-center">
                 <div className="text-sm sm:text-base md:text-lg font-medium tracking-wide max-w-full px-1">
-                  <MathDisplay math={expressionToLatex(equation)} />
+                  <MathDisplay math={expressionToLatex(debouncedEquation)} />
                 </div>
               </div>
             </div>
@@ -845,39 +855,55 @@ export default function EquationInput() {
       )}
 
       {/* ── 3. Primary CTA Button ──────────────────────────────────────────── */}
-      <button
-        type="submit"
-        aria-busy={isLoading}
-        disabled={isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim()}
-        className="w-full py-3 sm:py-3.5 px-5 rounded-2xl bg-[#5D4037] hover:bg-[#4E342E] active:scale-[0.99] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px] sm:min-h-[50px] flex items-center justify-center gap-2 border border-[#795548]/50 cursor-pointer"
-      >
-        {isLoading ? (
-          <span className="flex items-center justify-center gap-2">
-            <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            <span>Solving…</span>
-          </span>
-        ) : (
-          <>
-            <span className="text-base leading-none">{currentAction?.emoji}</span>
-            <span>
-              {solverType === 'domain_range'
-                ? 'Domain'
-                : solverType === 'derivative'
-                ? 'Derivative'
-                : solverType === 'integral'
-                ? 'Integral'
-                : solverType === 'system'
-                ? 'Systems'
-                : solverType === 'inequality'
-                ? 'Solve'
-                : solverType === 'symbolic'
-                ? 'Rearrange'
-                : 'Solve'}
+      <div className="space-y-1.5">
+        <button
+          type="submit"
+          aria-busy={isLoading}
+          disabled={isSystem ? systemEquations.some(eq => !eq.trim()) : !equation.trim()}
+          className="w-full py-3 sm:py-3.5 px-5 rounded-2xl bg-[#5D4037] hover:bg-[#4E342E] active:scale-[0.99] text-white font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[46px] sm:min-h-[50px] flex items-center justify-center gap-2 border border-[#795548]/50 cursor-pointer"
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Solving…</span>
             </span>
-            <span className="text-xs font-normal opacity-85 hidden sm:inline">— Steps ↓</span>
-          </>
+          ) : (
+            <>
+              <span className="text-base leading-none">{currentAction?.emoji}</span>
+              <span>
+                {solverType === 'domain_range'
+                  ? 'Domain'
+                  : solverType === 'derivative'
+                  ? 'Derivative'
+                  : solverType === 'integral'
+                  ? 'Integral'
+                  : solverType === 'system'
+                  ? 'Systems'
+                  : solverType === 'inequality'
+                  ? 'Solve'
+                  : solverType === 'symbolic'
+                  ? 'Rearrange'
+                  : 'Solve'}
+              </span>
+              <span className="text-xs font-normal opacity-85 hidden sm:inline">— Steps ↓</span>
+            </>
+          )}
+        </button>
+
+        {isLoading && (
+          <div className="text-center pt-0.5 animate-fade-in">
+            <button
+              type="button"
+              onClick={() => {
+                useSolverStore.getState().forceUnstick();
+              }}
+              className="text-[11px] font-mono text-[#8D827A] hover:text-[#5D4037] dark:hover:text-[#D7CCC8] underline transition-colors cursor-pointer"
+            >
+              Taking too long? Click here to cancel
+            </button>
+          </div>
         )}
-      </button>
+      </div>
     </form>
   );
 }

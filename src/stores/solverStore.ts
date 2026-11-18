@@ -22,8 +22,9 @@ interface SolverState {
   setSystemVariables: (vars: string[]) => void;
   clearResult: () => void;
   clearError: () => void;
+  forceUnstick: () => void;
   setSolveForVariable: (variable: string) => void;
-  solve: () => void;
+  solve: () => Promise<void>;
 }
 
 export const useSolverStore = create<SolverState>()(
@@ -44,7 +45,7 @@ export const useSolverStore = create<SolverState>()(
           equation,
           error: null,
           isLoading: false,
-          // When equation text changes, clear stale result if it was from a different equation
+          // When equation text changes, always clear stale result to avoid showing wrong answers
           ...(state.result && state.equation !== equation ? { result: null } : {}),
         })),
       setSolverType: (solverType) =>
@@ -78,22 +79,26 @@ export const useSolverStore = create<SolverState>()(
       setSystemVariables: (vars) => set({ systemVariables: vars }),
       clearResult: () => set({ result: null, error: null, isLoading: false }),
       clearError: () => set({ error: null, isLoading: false }),
+      forceUnstick: () => set({ isLoading: false, error: null, result: null }),
       setSolveForVariable: (variable) => set({ solveForVariable: variable, isLoading: false }),
       solve: async () => {
-        set({ isLoading: true, error: null });
+        const stateBefore = get();
+        // Clear any old stale result immediately so wrong/old answer is never displayed during solving
+        set({ isLoading: true, error: null, result: null });
         const { solverType, equation, quadraticMethod, systemEquations, systemVariables, solveForVariable } = get();
 
-        // 5-second safety watchdog so button is never permanently stuck even under unexpected error
+        // Safety watchdog: guarantees button is NEVER stuck longer than 4.5 seconds
         let timeoutFired = false;
         const watchdog = setTimeout(() => {
           timeoutFired = true;
           if (get().isLoading) {
             set({
               isLoading: false,
-              error: 'Calculation timed out. Please check your equation syntax.',
+              result: null,
+              error: 'Calculation took too long or syntax was unrecognized. Please verify your equation format.',
             });
           }
-        }, 5000);
+        }, 4500);
 
         try {
           let result: SolverResult | null = null;
@@ -173,8 +178,16 @@ export const useSolverStore = create<SolverState>()(
           }
         } catch (err: any) {
           clearTimeout(watchdog);
-          const message = err?.message || 'Could not solve the equation. Please check equation syntax (e.g. x^2 - 5x + 6 = 0).';
-          set({ result: null, isLoading: false, error: message });
+          const rawMsg = err?.message || '';
+          let friendlyMessage = 'Could not solve the equation. Please check equation syntax.';
+          if (/division by zero/i.test(rawMsg) || /divide by zero/i.test(rawMsg)) {
+            friendlyMessage = 'Cannot divide by zero. Please check your denominators.';
+          } else if (/negative square root/i.test(rawMsg)) {
+            friendlyMessage = 'Square root of a negative value has no real solution.';
+          } else if (rawMsg) {
+            friendlyMessage = rawMsg;
+          }
+          set({ result: null, isLoading: false, error: friendlyMessage });
         } finally {
           clearTimeout(watchdog);
           if (get().isLoading) {
@@ -185,6 +198,7 @@ export const useSolverStore = create<SolverState>()(
     }),
     {
       name: 'mathhub-solver',
+      version: 2,
       partialize: (state) => ({
         equation: state.equation,
         solverType: state.solverType,
@@ -192,10 +206,15 @@ export const useSolverStore = create<SolverState>()(
         systemEquations: state.systemEquations,
         systemVariables: state.systemVariables,
         solveForVariable: state.solveForVariable,
-        // NEVER persist transient execution state:
-        // isLoading (MUST always be false on load)
-        // error (transient)
-        // result (transient output; never restore stale result from a previous equation!)
+        // NEVER persist transient state: isLoading, error, result
+      }),
+      // Custom merge guarantees that rehydrated state is NEVER in loading mode or has stale result
+      merge: (persistedState: any, currentState: SolverState) => ({
+        ...currentState,
+        ...(persistedState || {}),
+        isLoading: false,
+        error: null,
+        result: null,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

@@ -17,8 +17,9 @@ interface MathDisplayProps {
 /**
  * Robust KaTeX math renderer using katex.renderToString.
  * Handles both block and inline LaTeX expressions with full CSS and error handling.
+ * Wrapped in React.memo to prevent unnecessary re-parsing and DOM reconciliation.
  */
-export function MathDisplay({
+function MathDisplayComponent({
   math,
   block = false,
   className = '',
@@ -66,4 +67,5 @@ export function MathDisplay({
   );
 }
 
+export const MathDisplay = React.memo(MathDisplayComponent);
 export default MathDisplay;
