@@ -39,8 +39,18 @@ export default function EquationSolver({
     let queryMode: EquationSolverProps['initialMode'] | null = null;
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      queryEq = urlParams.get('q') || urlParams.get('eq');
+      queryEq = urlParams.get('q') || urlParams.get('eq') || urlParams.get('formula');
       queryMode = urlParams.get('mode') as EquationSolverProps['initialMode'];
+
+      const eq1 = urlParams.get('eq1');
+      const eq2 = urlParams.get('eq2');
+      if (eq1 && eq2) {
+        store.updateSystemEquation(0, eq1);
+        store.updateSystemEquation(1, eq2);
+        setTimeout(() => {
+          useSolverStore.getState().solve();
+        }, 50);
+      }
     }
 
     // Set mode from query or component prop
@@ -100,8 +110,8 @@ export default function EquationSolver({
                 <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-[#131313] dark:text-white">
                   Equation Solver
                 </h1>
-                <span className="px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] text-[10px] font-mono font-bold uppercase dark:border-[#5D4037]/50">
-                  STEP-BY-STEP
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#8D827A] dark:text-[#A19891]">
+                  Step-by-Step
                 </span>
               </div>
               <p className="text-[11px] text-[#616161] dark:text-[#A19891] hidden sm:block mt-0.5">

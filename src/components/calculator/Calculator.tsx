@@ -24,11 +24,12 @@ export default function Calculator() {
   } = useCalculatorStore();
 
   useEffect(() => {
-    const formula = searchParams.get('formula') || searchParams.get('expr');
+    const formula = searchParams.get('formula') || searchParams.get('expr') || searchParams.get('q');
     if (formula) {
       setExpression(formula);
+      evaluate();
     }
-  }, [searchParams, setExpression]);
+  }, [searchParams, setExpression, evaluate]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -159,12 +159,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
               height={32}
               className="rounded-lg shadow-xs object-contain border border-[#5D4037]/30"
             />
-            <div className="flex flex-col">
-              <span className="font-bold text-sm text-[#131313] dark:text-white font-sans">EasyEquate</span>
-              <span className="text-[10px] font-mono text-[#5D4037] dark:text-[#A19891] uppercase tracking-wider font-semibold">
-                Solvers
-              </span>
-            </div>
+            <span className="font-bold text-sm text-[#131313] dark:text-white font-sans">EasyEquate</span>
           </Link>
 
           <button
@@ -226,34 +221,18 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
           ))}
         </div>
 
-        {/* Drawer Footer Controls & Legal */}
+        {/* Drawer Footer Controls */}
         <div className="p-3 border-t border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAFAFA] dark:bg-[#171717] space-y-2">
           <div className="flex items-center justify-between px-2">
-            <span className="text-[11px] font-mono text-[#757575] dark:text-[#8D827A] flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>All Solvers Ready</span>
+            <span className="text-[11px] font-mono text-[#757575] dark:text-[#8D827A]">
+              Quick Shortcuts
             </span>
             <div className="flex items-center gap-1">
               <ShortcutsModal />
             </div>
           </div>
-
-          <div className="flex items-center justify-around pt-2 border-t border-[#E0E0E0]/60 dark:border-[#2E2825]/60 text-[11px] text-[#757575] dark:text-[#8D827A]">
-            <Link href="/about" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
-              About
-            </Link>
-            <span>•</span>
-            <Link href="/privacy-policy" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
-              Privacy
-            </Link>
-            <span>•</span>
-            <Link href="/terms" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
-              Terms
-            </Link>
-            <span>•</span>
-            <Link href="/contact" className="hover:text-[#5D4037] dark:hover:text-white transition-colors">
-              Contact
-            </Link>
+          <div className="pt-2 border-t border-[#E0E0E0]/60 dark:border-[#2E2825]/60 text-center text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
+            &copy; {new Date().getFullYear()} EasyEquate
           </div>
         </div>
       </aside>

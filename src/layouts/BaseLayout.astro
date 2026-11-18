@@ -13,8 +13,8 @@ interface Props {
 }
 
 const {
-  title = 'Easy Equate (EasyEquate) — Free Online Math & Graphing Studio',
-  description = 'Easy Equate is a free all-in-one mathematics and graphing studio featuring an online scientific calculator, step-by-step polynomial & calculus solver, 2D function plotter, and formula sheets.',
+  title = 'EasyEquate — Free Online Step-by-Step Math Solvers & Calculators',
+  description = 'EasyEquate is a free step-by-step math solver and calculator platform featuring scientific calculations, algebra, calculus, 2D graph plotting, and formula sheets.',
   canonical = Astro.url.href,
   jsonLd,
 } = Astro.props;
@@ -26,8 +26,8 @@ const isHome = currentPath === '/' || currentPath === '';
 const defaultJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'Easy Equate',
-  alternateName: ['EasyEquate', 'Easy Equate Math', 'EasyEquate Studio'],
+  name: 'EasyEquate',
+  alternateName: ['EasyEquate'],
   url: 'https://www.easyequate.com',
   image: 'https://www.easyequate.com/logo.png',
   logo: 'https://www.easyequate.com/logo.png',

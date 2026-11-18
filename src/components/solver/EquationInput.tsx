@@ -258,14 +258,22 @@ export default function EquationInput() {
         store.setSolverType(tab as SolverType);
       }
     }
-    const formula = searchParams.get('formula') || searchParams.get('eq');
+    const formula = searchParams.get('formula') || searchParams.get('eq') || searchParams.get('q');
     const method = searchParams.get('method');
     if (method && ['auto', 'factoring', 'completing_square', 'formula'].includes(method)) {
       if (store.quadraticMethod !== method) {
         store.setQuadraticMethod(method as any);
       }
     }
-    if (formula) {
+    const eq1 = searchParams.get('eq1');
+    const eq2 = searchParams.get('eq2');
+    if (eq1 && eq2) {
+      store.updateSystemEquation(0, eq1);
+      store.updateSystemEquation(1, eq2);
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
+    } else if (formula) {
       const eqChanged = store.equation !== formula;
       if (eqChanged) {
         store.setEquation(formula);

@@ -172,14 +172,14 @@ const WORKSTATIONS = [
 ];
 
 const POPULAR_PROBLEMS = [
-  { label: 'Domain & Range: √(4 - x²)', href: '/domain-and-range-calculator' },
-  { label: 'Quadratic: x² - 5x + 6 = 0', href: '/quadratic-equation-solver' },
-  { label: 'Derivative: d/dx [ 3x² + 5x ]', href: '/derivative-calculator' },
-  { label: 'Integral: ∫ (2x + 1) dx', href: '/integral-calculator' },
-  { label: 'Inequality: x² - 5x + 6 > 0', href: '/inequality-solver' },
-  { label: 'System: 2x + y = 7, x - y = 2', href: '/system-of-equations' },
+  { label: 'Domain & Range: √(4 - x²)', href: '/domain-and-range-calculator?eq=sqrt(4-x%5E2)' },
+  { label: 'Quadratic: x² - 5x + 6 = 0', href: '/quadratic-equation-solver?eq=x%5E2-5x%2B6%3D0' },
+  { label: 'Derivative: d/dx [ 3x² + 5x ]', href: '/derivative-calculator?eq=3x%5E2%2B5x' },
+  { label: 'Integral: ∫ (2x + 1) dx', href: '/integral-calculator?eq=2x%2B1' },
+  { label: 'Inequality: x² - 5x + 6 > 0', href: '/inequality-solver?eq=x%5E2-5x%2B6%3E0' },
+  { label: 'System: 2x + y = 7, x - y = 2', href: '/system-of-equations?eq1=2x%2By%3D7&eq2=x-y%3D2' },
   { label: 'Matrix: 2×2 Inverses', href: '/matrix-solver' },
-  { label: 'Plot: y = sin(x) · cos(x)', href: '/graph' },
+  { label: 'Plot: y = sin(x) · cos(x)', href: '/graph?fn=sin(x)*cos(x)' },
   { label: 'Unit Converter', href: '/unit-converter' },
   { label: 'GCSE Revision Sheet', href: '/formula-sheet/gcse' },
 ];
@@ -197,14 +197,9 @@ const POPULAR_PROBLEMS = [
           height="32"
           class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl shadow-xs border border-[#5D4037]/30 object-contain group-hover:scale-105 transition-transform"
         />
-        <div class="flex flex-col">
-          <span class="font-bold text-sm sm:text-lg text-[#131313] dark:text-white font-sans tracking-tight">
-            EasyEquate
-          </span>
-          <span class="text-[8px] sm:text-[9px] font-mono text-[#5D4037] dark:text-[#A19891] uppercase tracking-wider font-semibold">
-            Studio
-          </span>
-        </div>
+        <span class="font-bold text-base sm:text-xl text-[#131313] dark:text-white font-sans tracking-tight">
+          EasyEquate
+        </span>
       </a>
 
       <!-- Menu Bar on Home -->
@@ -331,19 +326,8 @@ const POPULAR_PROBLEMS = [
                 </div>
               </div>
 
-              <div class="mt-2 sm:mt-3.5 pt-1.5 sm:pt-2.5 border-t border-[#E0E0E0]/80 dark:border-[#2E2825] flex flex-wrap items-center gap-1 sm:gap-1.5">
-                {tool.tags.slice(0, 2).map((tag) => (
-                  <span
-                    class="text-[9px] sm:text-[11px] font-mono font-medium px-1.5 sm:px-2 py-0.5 rounded-md bg-[#F4EFEA] text-[#4E342E] dark:bg-[#2A2320] dark:text-[#EFEBE9] border border-[#D7CCC8]/90 dark:border-[#5D4037]/70 shadow-2xs group-hover:border-[#5D4037]/50 transition-colors truncate max-w-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {tool.tags.length > 2 && (
-                  <span class="hidden sm:inline-flex text-[11px] font-mono font-medium px-2 py-0.5 rounded-md bg-[#F4EFEA] text-[#4E342E] dark:bg-[#2A2320] dark:text-[#EFEBE9] border border-[#D7CCC8]/90 dark:border-[#5D4037]/70 shadow-2xs group-hover:border-[#5D4037]/50 transition-colors">
-                    {tool.tags[2]}
-                  </span>
-                )}
+              <div class="mt-2 sm:mt-3 pt-1.5 sm:pt-2 border-t border-[#E0E0E0]/80 dark:border-[#2E2825] text-[10px] sm:text-[11px] font-mono text-[#757575] dark:text-[#8D827A] truncate">
+                <span class="text-[#5D4037] dark:text-[#D7CCC8] font-medium">Covers:</span> {tool.tags.join(' · ')}
               </div>
             </a>
           );
