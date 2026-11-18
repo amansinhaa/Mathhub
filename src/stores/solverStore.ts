@@ -87,7 +87,7 @@ export const useSolverStore = create<SolverState>()(
         set({ isLoading: true, error: null, result: null });
         const { solverType, equation, quadraticMethod, systemEquations, systemVariables, solveForVariable } = get();
 
-        // Safety watchdog: guarantees button is NEVER stuck longer than 4.5 seconds
+        // Safety watchdog: guarantees button is NEVER stuck longer than 3.5 seconds
         let timeoutFired = false;
         const watchdog = setTimeout(() => {
           timeoutFired = true;
@@ -98,7 +98,7 @@ export const useSolverStore = create<SolverState>()(
               error: 'Calculation took too long or syntax was unrecognized. Please verify your equation format.',
             });
           }
-        }, 4500);
+        }, 3500);
 
         try {
           let result: SolverResult | null = null;
@@ -149,6 +149,9 @@ export const useSolverStore = create<SolverState>()(
 
           if (!timeoutFired) {
             clearTimeout(watchdog);
+            if (result) {
+              result.rawEquation = equation;
+            }
             set({ result, isLoading: false, error: null });
 
             // Sync URL search params for shareability

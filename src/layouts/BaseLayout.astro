@@ -60,6 +60,22 @@ const defaultJsonLd = {
     </script>
     <!-- End Google Tag Manager -->
 
+    <!-- Solver LocalStorage Sanity Check -->
+    <script is:inline>
+      try {
+        var k = 'mathhub-solver';
+        var item = localStorage.getItem(k);
+        if (item) {
+          var data = JSON.parse(item);
+          if (data && data.state && (data.state.isLoading || data.state.result)) {
+            data.state.isLoading = false;
+            data.state.result = null;
+            localStorage.setItem(k, JSON.stringify(data));
+          }
+        }
+      } catch (e) {}
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <title>{title}</title>

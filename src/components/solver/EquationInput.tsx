@@ -312,6 +312,14 @@ export default function EquationInput() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) {
+      // Direct click un-sticks and forces immediate fresh recalculation
+      useSolverStore.getState().forceUnstick();
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
+      return;
+    }
     if (isSystem ? systemEquations.every(eq => eq.trim()) : equation.trim()) {
       solve();
     }

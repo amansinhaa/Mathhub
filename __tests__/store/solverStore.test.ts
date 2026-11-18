@@ -67,5 +67,6 @@ describe('solverStore resilience and state management', () => {
     expect(state.result?.equationType).toBe('quadratic');
     expect(state.result?.finalAnswer).toContain('2');
     expect(state.result?.finalAnswer).toContain('3');
+    expect(state.result?.rawEquation).toBe('x^2 - 5x + 6 = 0');
   });
 });

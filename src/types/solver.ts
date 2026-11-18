@@ -73,5 +73,6 @@ export interface SolverResult {
   inputInterpretation?: string; // LaTeX description of what the engine parsed
   quadraticMethod?: QuadraticMethod;
   natureOfRoots?: string[]; // Parametric/discriminant nature of roots cases
+  rawEquation?: string; // Stored input equation to verify result freshness and prevent stale output
 }
 

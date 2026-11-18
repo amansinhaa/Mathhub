@@ -30,7 +30,13 @@ export default function EquationSolver({
   hideHeader = false,
   wideLayout = false,
 }: EquationSolverProps = {}) {
-  const { solverType, result, setSolverType, setEquation } = useSolverStore();
+  const { solverType, result, isLoading, equation, setSolverType, setEquation } = useSolverStore();
+
+  const hasValidResult = Boolean(
+    result &&
+    !isLoading &&
+    (!result.rawEquation || !equation.trim() || result.rawEquation.trim() === equation.trim())
+  );
 
   React.useEffect(() => {
     const store = useSolverStore.getState();
@@ -184,7 +190,7 @@ export default function EquationSolver({
 
           {/* Bottom: Expansive Full-Width Results & Steps */}
           <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-sm min-h-[200px] sm:min-h-[360px] transition-colors">
-            {result ? (
+            {hasValidResult ? (
               <ErrorBoundary fallbackTitle="Step-by-Step Solution Error" onReset={() => useSolverStore.getState().forceUnstick()}>
                 <StepByStep />
               </ErrorBoundary>
@@ -212,7 +218,7 @@ export default function EquationSolver({
 
           {/* Right: Results */}
           <div className="flex-1 w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[360px] overflow-y-auto transition-colors">
-            {result ? (
+            {hasValidResult ? (
               <ErrorBoundary fallbackTitle="Step-by-Step Solution Error" onReset={() => useSolverStore.getState().forceUnstick()}>
                 <StepByStep />
               </ErrorBoundary>
