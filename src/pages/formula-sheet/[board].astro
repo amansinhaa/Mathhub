@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { boardData, boardIds, type BoardId } from '@/data/formulaSheets/boardData';
 import { ALL_FORMULAS } from '@/data/formulas';
 import FormulaCard from '@/components/formulas/FormulaCard';
+import { groupFormulasBySyllabus } from '@/data/formulaSheets/syllabusTopics';
 
 export function getStaticPaths() {
   return boardIds.map((board) => ({
@@ -18,87 +19,274 @@ if (!data) {
 
 // Filter formulas for this board
 const boardFormulas = ALL_FORMULAS.filter((f) => data.categories.includes(f.category));
+const totalFormulas = boardFormulas.length;
 
-// Group formulas by category
-const groupedFormulas = data.categories.reduce((acc, category) => {
-  acc[category] = boardFormulas.filter((f) => f.category === category);
-  return acc;
-}, {} as Record<string, typeof ALL_FORMULAS>);
+// Group formulas into standardized syllabus modules requested by students & teachers
+const syllabusSections = groupFormulasBySyllabus(boardFormulas, board as BoardId);
 
 const canonical = `https://www.easyequate.com/formula-sheet/${board}`;
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": data.title,
-  "description": data.description,
-  "applicationCategory": "EducationalApplication",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": data.title,
+      "description": data.description,
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "name": `${data.h1} — Complete Formula List`,
+      "description": data.description,
+      "numberOfItems": totalFormulas,
+      "itemListElement": boardFormulas.map((formula, idx) => ({
+        "@type": "ListItem",
+        "position": idx + 1,
+        "name": formula.name,
+        "description": formula.description
+      }))
+    }
+  ]
 };
 ---
 
 <BaseLayout title={data.title} description={data.description} canonical={canonical} jsonLd={jsonLd}>
-  <main class="min-h-screen bg-[#FAFAFA] dark:bg-[#131313] py-12 px-4 sm:px-6 lg:px-8">
+  <main class="min-h-screen bg-[#FAFAFA] dark:bg-[#131313] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      {/* Navigation */}
-      <div class="mb-4 pt-10 sm:pt-0 sm:pl-36 md:pl-44">
+      
+      {/* ── PRINT-ONLY DOCUMENT HEADER (renders exclusively when printed or saved as PDF) ── */}
+      <div class="hidden print:block mb-6 pb-4 border-b-2 border-black">
+        <div class="flex justify-between items-end">
+          <div>
+            <h1 class="text-2xl font-bold text-black">{data.h1}</h1>
+            <p class="text-xs text-gray-700 mt-1 font-medium">
+              EasyEquate Revision Hub &bull; 2026 Syllabus &bull; {totalFormulas} Essential Formulas
+            </p>
+          </div>
+          <div class="text-right text-[10px] text-gray-600 font-mono">
+            <span>Printed from https://www.easyequate.com/formula-sheet/{board}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── NAVIGATION (Screen only) ── */}
+      <div class="mb-4 pt-10 sm:pt-0 sm:pl-36 md:pl-44 no-print">
         <a
           href="/formulas"
-          class="text-[#5D4037] hover:text-[#3E2723] dark:text-[#D7CCC8] dark:hover:text-white text-sm font-medium transition-colors"
+          class="text-[#5D4037] hover:text-[#3E2723] dark:text-[#D7CCC8] dark:hover:text-white text-xs sm:text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
         >
-          &larr; Back to All Formulas
+          <span>&larr;</span>
+          <span>Back to All Formulas</span>
         </a>
       </div>
 
-      {/* Header Section — Compact */}
-      <header class="mb-6 sm:mb-8 sm:pl-36 md:pl-44">
-        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-[#131313] dark:text-white mb-2">
+      {/* ── HEADER SECTION (Screen view) ── */}
+      <header class="mb-6 sm:mb-8 sm:pl-36 md:pl-44 no-print">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/60">
+            2026 Exam Board Revision Hub
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-white text-[#616161] border border-[#E0E0E0] dark:bg-[#1B1B1B] dark:text-[#A19891] dark:border-[#2E2825]">
+            {totalFormulas} Formulas Total
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40">
+            ✓ Interactive Step-by-Step Solvers Included
+          </span>
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#131313] dark:text-white tracking-tight mb-2.5">
           {data.h1}
         </h1>
-        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed max-w-3xl">
+
+        <p class="text-xs sm:text-sm text-[#616161] dark:text-[#A19891] leading-relaxed max-w-3xl mb-4">
           {data.intro}
         </p>
+
+        {/* ── ACTION BAR: Print / Save as PDF + Solver Practice Notice ── */}
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <button
+            type="button"
+            onclick="window.print()"
+            class="px-4 py-2.5 bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#131313] dark:hover:bg-white rounded-xl text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
+            title="Open print dialog to save clean PDF without ads or menus"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            <span>Print / Save as PDF</span>
+          </button>
+
+          <span class="text-xs font-mono text-[#757575] dark:text-[#8D827A] flex items-center gap-1.5 bg-white dark:bg-[#1B1B1B] px-3 py-2 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825]">
+            <span>Tip: Bookmark with</span>
+            <kbd class="px-1.5 py-0.5 bg-[#F5F5F5] dark:bg-[#25201E] border border-[#E0E0E0] dark:border-[#382F2C] rounded text-[10px] font-bold text-[#131313] dark:text-white">Ctrl + D</kbd>
+            <span>for repeat exam revision</span>
+          </span>
+        </div>
       </header>
 
-      {/* Formulas Grid by Category */}
-      <div class="space-y-16">
-        {data.categories.map((categoryKey) => {
-          const formulas = groupedFormulas[categoryKey];
-          if (!formulas || formulas.length === 0) return null;
-          
-          return (
-            <section>
-              <h2 class="text-2xl font-bold text-[#5D4037] dark:text-[#D7CCC8] border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 mb-6 capitalize">
-                {categoryKey.replace(/([A-Z])/g, ' $1').trim()}
-              </h2>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {formulas.map((formula) => (
-                  <FormulaCard formula={formula} client:visible />
-                ))}
+      {/* ── SYLLABUS TOPIC JUMP BAR (Screen view) ── */}
+      <nav aria-label="Syllabus topics" class="mb-10 sm:mb-12 no-print bg-white dark:bg-[#181818] border border-[#E0E0E0] dark:border-[#2A2422] p-3 sm:p-4 rounded-2xl shadow-xs sm:pl-36 md:pl-44">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#F0EAE6] dark:border-[#26201E]">
+          <span class="text-xs font-mono font-bold uppercase tracking-wider text-[#5D4037] dark:text-[#D7CCC8]">
+            Jump to Syllabus Topic:
+          </span>
+          <span class="text-[11px] font-mono text-[#8D827A]">
+            {syllabusSections.length} Core Modules
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          {syllabusSections.map((sec) => (
+            <a
+              href={`#${sec.id}`}
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FBF9F8] hover:bg-[#EFEBE9] dark:bg-[#221D1A] dark:hover:bg-[#342A25] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white rounded-xl text-xs font-semibold transition-all border border-[#E0E0E0] dark:border-[#3E2723]/60 shadow-2xs no-underline"
+            >
+              <span>{sec.icon}</span>
+              <span>{sec.shortLabel}</span>
+              <span class="text-[10px] font-mono opacity-75">({sec.formulas.length})</span>
+            </a>
+          ))}
+        </div>
+      </nav>
+
+      {/* ── FORMULAS ORGANIZED CLEANLY BY SYLLABUS TOPIC ── */}
+      <div class="space-y-14 sm:space-y-16">
+        {syllabusSections.map((section) => (
+          <section id={section.id} class="scroll-mt-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-1.5 border-b-2 border-[#5D4037]/30 dark:border-[#5D4037]/50 pb-2.5 mb-5">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg sm:text-xl">{section.icon}</span>
+                  <h2 class="text-xl sm:text-2xl font-extrabold text-[#131313] dark:text-white tracking-tight">
+                    {section.title}
+                  </h2>
+                </div>
+                <p class="text-xs text-[#616161] dark:text-[#A19891] max-w-2xl leading-relaxed">
+                  {section.description}
+                </p>
               </div>
-            </section>
-          );
-        })}
+              <span class="text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8] bg-[#EFEBE9] dark:bg-[#3E2723] px-2.5 py-1 rounded-lg shrink-0 self-start sm:self-auto no-print">
+                {section.formulas.length} Formulas
+              </span>
+            </div>
+
+            <div class="formula-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {section.formulas.map((formula) => (
+                <FormulaCard formula={formula} client:visible />
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
 
-      {/* Related Boards */}
-      <div class="mt-16 pt-8 border-t border-[#E0E0E0] dark:border-[#2E2825]">
-        <h3 class="text-xl font-bold text-[#131313] dark:text-white mb-4">
-          Related Formula Sheets
-        </h3>
-        <div class="flex flex-wrap gap-3">
+      {/* ── RELATED BOARDS & EXAM HUBS (Screen only) ── */}
+      <div class="mt-16 pt-8 border-t border-[#E0E0E0] dark:border-[#2E2825] no-print">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h3 class="text-lg sm:text-xl font-bold text-[#131313] dark:text-white">
+            Explore Other Exam Board Revision Sheets
+          </h3>
+          <span class="text-xs font-mono text-[#8D827A] hidden sm:inline">2026 Syllabus Aligned</span>
+        </div>
+        <p class="text-xs text-[#616161] dark:text-[#A19891] mb-4">
+          Studying multiple qualifications or looking for specific board specifications? Access complete printable formula sheets:
+        </p>
+        <div class="flex flex-wrap gap-2.5">
           {data.relatedBoards.map((relatedId) => {
             const relatedData = boardData[relatedId];
             if (!relatedData) return null;
             return (
               <a
                 href={`/formula-sheet/${relatedId}`}
-                class="px-4 py-2 bg-[#EFEBE9] hover:bg-[#D7CCC8] dark:bg-[#2E2825] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] rounded-xl text-sm font-medium transition-colors border border-[#E0E0E0] dark:border-[#5D4037]/50"
+                class="px-3.5 py-2 bg-white hover:bg-[#EFEBE9] dark:bg-[#1E1E1E] dark:hover:bg-[#2E2420] text-[#5D4037] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white rounded-xl text-xs sm:text-sm font-semibold transition-all border border-[#E0E0E0] dark:border-[#3E2723]/60 shadow-xs no-underline flex items-center gap-1.5"
               >
-                {relatedData.title}
+                <span>{relatedData.h1}</span>
+                <span class="text-xs">&rarr;</span>
               </a>
             );
           })}
         </div>
       </div>
+
     </div>
   </main>
 </BaseLayout>
+
+<style is:global>
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm;
+    }
+
+    body,
+    html,
+    main {
+      background: #ffffff !important;
+      color: #000000 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+
+    /* Hide website navigation, footers, theme toggle, buttons, and screen-only elements */
+    .no-print,
+    nav,
+    footer,
+    header,
+    button,
+    .ad-banner,
+    .ThemeToggle {
+      display: none !important;
+    }
+
+    /* Formula cards print optimization */
+    .formula-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px !important;
+    }
+
+    .formula-card {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      border: 1px solid #d1d5db !important;
+      border-radius: 8px !important;
+      background: #ffffff !important;
+      box-shadow: none !important;
+      padding: 10px !important;
+    }
+
+    .formula-card h3 {
+      color: #000000 !important;
+      font-size: 13px !important;
+    }
+
+    .formula-card p {
+      color: #374151 !important;
+      font-size: 10.5px !important;
+    }
+
+    /* Crisp rendered math display */
+    .katex {
+      font-size: 1.05em !important;
+      color: #000000 !important;
+    }
+
+    h2 {
+      color: #1f2937 !important;
+      border-bottom: 2px solid #9ca3af !important;
+      padding-bottom: 4px !important;
+      margin-top: 16px !important;
+      margin-bottom: 8px !important;
+      font-size: 16px !important;
+      page-break-after: avoid !important;
+    }
+  }
+</style>

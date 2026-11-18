@@ -165,11 +165,21 @@ export default function StepByStep() {
             <button
               type="button"
               onClick={copyShareLink}
-              className="p-1.5 rounded-lg bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] transition-all border border-[#E0E0E0] dark:border-[#2E2825]"
-              title="Share Link"
-              aria-label="Share problem URL"
+              className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] transition-all border border-[#E0E0E0] dark:border-[#2E2825] flex items-center gap-1.5 cursor-pointer shadow-2xs text-xs font-mono font-medium"
+              title="Copy Shareable Link for classmates"
+              aria-label="Copy Shareable Link"
             >
-              {copiedLink ? <Check size={14} className="text-emerald-600 dark:text-[#81C784]" /> : <Share2 size={14} />}
+              {copiedLink ? (
+                <>
+                  <Check size={14} className="text-emerald-600 dark:text-[#81C784]" />
+                  <span className="text-emerald-600 dark:text-[#81C784] font-semibold">Link Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 size={14} />
+                  <span className="hidden sm:inline">Share Link</span>
+                </>
+              )}
             </button>
 
             {/* Plot in Graph Button */}
@@ -583,6 +593,34 @@ export default function StepByStep() {
               </div>
             );
           })}
+          </div>
+
+          {/* Share Solution with Classmates */}
+          <div className="mt-5 p-3.5 sm:p-4 rounded-xl bg-[#F5F2EF] dark:bg-[#1E1A18] border border-[#E0D7D2] dark:border-[#382F2C] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 text-[#5D4037] dark:text-[#D7CCC8]">
+              <Share2 size={16} className="shrink-0" />
+              <span className="leading-snug">
+                Working on homework or revising with classmates? <strong>Share this exact step-by-step solution:</strong>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={copyShareLink}
+              className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#131313] dark:hover:bg-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0"
+              title="Copy Shareable Link for classmates"
+            >
+              {copiedLink ? (
+                <>
+                  <Check size={14} />
+                  <span>Link Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 size={14} />
+                  <span>Copy Shareable Link</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
