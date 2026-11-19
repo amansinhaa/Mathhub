@@ -108,7 +108,7 @@ const jsonLd = {
           {data.intro}
         </p>
 
-        {/* ── ACTION BAR: Print / Save as PDF + Solver Practice Notice ── */}
+        {/* ── ACTION BAR: Print / Save as PDF + Copy Shareable Link ── */}
         <div class="flex flex-wrap items-center gap-3 pt-1">
           <button
             type="button"
@@ -122,6 +122,23 @@ const jsonLd = {
               <rect x="6" y="14" width="12" height="8"></rect>
             </svg>
             <span>Print / Save as PDF</span>
+          </button>
+
+          <button
+            type="button"
+            id="copy-sheet-link-btn"
+            class="px-3.5 py-2.5 bg-white hover:bg-[#EFEBE9] dark:bg-[#1E1E1E] dark:hover:bg-[#2A2420] text-[#5D4037] dark:text-[#D7CCC8] rounded-xl text-xs sm:text-sm font-bold border border-[#D7CCC8] dark:border-[#5D4037]/60 shadow-xs hover:shadow-sm transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
+            title="Copy shareable link to this formula sheet for classmates"
+            aria-label="Copy Shareable Link"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            <span id="copy-sheet-link-text">Copy Shareable Link</span>
           </button>
 
           <span class="text-xs font-mono text-[#757575] dark:text-[#8D827A] flex items-center gap-1.5 bg-white dark:bg-[#1B1B1B] px-3 py-2 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825]">
@@ -216,6 +233,25 @@ const jsonLd = {
 
     </div>
   </main>
+
+  <script is:inline>
+    document.getElementById('copy-sheet-link-btn')?.addEventListener('click', function () {
+      var currentUrl = window.location.href;
+      navigator.clipboard.writeText(currentUrl).then(function () {
+        var textSpan = document.getElementById('copy-sheet-link-text');
+        if (textSpan) {
+          var original = textSpan.textContent;
+          textSpan.textContent = '✓ Link Copied!';
+          setTimeout(function () {
+            textSpan.textContent = original;
+          }, 2000);
+        }
+      }).catch(function () {
+        // Fallback if clipboard API is denied
+        prompt('Copy formula sheet link:', currentUrl);
+      });
+    });
+  </script>
 </BaseLayout>
 
 <style is:global>
@@ -242,7 +278,10 @@ const jsonLd = {
     header,
     button,
     .ad-banner,
-    .ThemeToggle {
+    .ThemeToggle,
+    #navbar,
+    aside,
+    [aria-label="Open Workstations Menu"] {
       display: none !important;
     }
 

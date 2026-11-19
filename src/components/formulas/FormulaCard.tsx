@@ -3,7 +3,6 @@
 import React from 'react';
 import { FormulaEntry } from '@/types/formula';
 import { MathDisplay } from '@/components/shared/MathDisplay';
-import { useRouter } from '@/components/shared/RouterShim';
 import { ArrowUpRight, Calculator, Sparkles } from 'lucide-react';
 import { latexToAscii } from '@/utils/mathSanitizer';
 import { FORMULA_PRACTICE_MAP } from '@/data/formulaSheets/syllabusTopics';
@@ -14,24 +13,14 @@ import {
 } from './InteractiveMiniCalculators';
 
 export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
-  const router = useRouter();
   const practiceConfig = FORMULA_PRACTICE_MAP[formula.id];
 
-  // Route to calculator with sanitized expression
-  const handleOpenCalculator = () => {
-    const raw = formula.calculatorExpression || latexToAscii(formula.latex);
-    router.push(`/calculator?expr=${encodeURIComponent(raw)}`);
-  };
+  // Fallback solver link with autoSolve
+  const solverHref = practiceConfig
+    ? practiceConfig.url
+    : `/equation-solver-with-steps?eq=${encodeURIComponent(formula.solverExpression || latexToAscii(formula.latex))}&autoSolve=true`;
 
-  // Route to solver with sanitized equation and autoSolve
-  const handleOpenSolver = () => {
-    if (practiceConfig) {
-      router.push(practiceConfig.url);
-      return;
-    }
-    const raw = formula.solverExpression || latexToAscii(formula.latex);
-    router.push(`/equation-solver-with-steps?eq=${encodeURIComponent(raw)}&autoSolve=true`);
-  };
+  const calculatorHref = `/calculator?expr=${encodeURIComponent(formula.calculatorExpression || latexToAscii(formula.latex))}`;
 
   return (
     <div className="formula-card bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full group">
@@ -85,37 +74,29 @@ export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
       </div>
 
       <div className="bg-[#FAFAFA] dark:bg-[#131313] border-t border-[#E0E0E0] dark:border-[#262220] p-2.5 sm:p-3 flex gap-2 no-print">
-        {practiceConfig ? (
-          <a
-            href={practiceConfig.url}
-            className="flex-1 py-2 px-2.5 bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#131313] dark:hover:bg-white rounded-xl transition-all text-center min-h-[36px] flex items-center justify-center gap-1.5 active:scale-95 shadow-xs font-semibold text-xs no-underline"
-            title={`Practice in Solver with exam example: ${practiceConfig.exampleText}`}
-          >
-            <span>Practice in Solver</span>
-            <ArrowUpRight size={13} className="shrink-0" />
-          </a>
-        ) : (
-          <button
-            type="button"
-            onClick={handleOpenSolver}
-            className="flex-1 text-xs font-semibold py-2 px-2.5 bg-white hover:bg-[#EFEBE9] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:bg-[#1B1B1B] dark:hover:bg-[#3E2723]/50 dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-xl transition-all text-[#5D4037] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white text-center min-h-[36px] flex items-center justify-center gap-1 active:scale-95 shadow-xs cursor-pointer"
-            aria-label={`Use ${formula.name} in Solver`}
-          >
-            <span>Practice in Solver</span>
-            <ArrowUpRight size={13} className="text-[#5D4037] dark:text-[#8D827A]" />
-          </button>
-        )}
+        <a
+          href={solverHref}
+          className={
+            practiceConfig
+              ? "flex-1 py-2 px-2.5 bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#131313] dark:hover:bg-white rounded-xl transition-all text-center min-h-[36px] flex items-center justify-center gap-1.5 active:scale-95 shadow-xs font-semibold text-xs no-underline"
+              : "flex-1 text-xs font-semibold py-2 px-2.5 bg-white hover:bg-[#EFEBE9] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:bg-[#1B1B1B] dark:hover:bg-[#3E2723]/50 dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-xl transition-all text-[#5D4037] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white text-center min-h-[36px] flex items-center justify-center gap-1 active:scale-95 shadow-xs no-underline cursor-pointer"
+          }
+          title={practiceConfig ? `Practice in Solver with exam example: ${practiceConfig.exampleText}` : `Practice ${formula.name} in Solver`}
+          aria-label={`Practice ${formula.name} in Solver`}
+        >
+          <span>Practice in Solver</span>
+          <ArrowUpRight size={13} className={practiceConfig ? "shrink-0" : "text-[#5D4037] dark:text-[#8D827A] shrink-0"} />
+        </a>
 
-        <button
-          type="button"
-          onClick={handleOpenCalculator}
-          className="px-3 text-xs font-semibold py-2 bg-white hover:bg-[#EFEBE9] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:bg-[#1B1B1B] dark:hover:bg-[#3E2723]/50 dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-xl transition-all text-[#5D4037] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white text-center min-h-[36px] flex items-center justify-center gap-1 active:scale-95 shadow-xs cursor-pointer shrink-0"
+        <a
+          href={calculatorHref}
+          className="px-3 text-xs font-semibold py-2 bg-white hover:bg-[#EFEBE9] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:bg-[#1B1B1B] dark:hover:bg-[#3E2723]/50 dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-xl transition-all text-[#5D4037] hover:text-[#131313] dark:text-[#D7CCC8] dark:hover:text-white text-center min-h-[36px] flex items-center justify-center gap-1 active:scale-95 shadow-xs cursor-pointer shrink-0 no-underline"
           aria-label={`Use ${formula.name} in Calculator`}
           title="Open in Scientific Calculator"
         >
           <Calculator size={13} className="text-[#5D4037] dark:text-[#8D827A]" />
           <span className="hidden sm:inline">Calculator</span>
-        </button>
+        </a>
       </div>
     </div>
   );

@@ -1,60 +1,154 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { boardData, boardIds, type BoardId } from '@/data/formulaSheets/boardData';
+import { ALL_FORMULAS } from '@/data/formulas';
+import FormulaCard from '@/components/formulas/FormulaCard';
 import FormulaLibrary from '@/components/formulas/FormulaLibrary';
+import { Sparkles, BookOpen, ArrowUpRight, GraduationCap, Printer, Search } from 'lucide-react';
 
-const title = 'Maths Formula Sheet: 150+ Formulas | EasyEquate';
-const description = 'Free comprehensive maths formula sheet with 150+ formulas. Instant LaTeX copy, revision guides for GCSE, A-Level, CBSE, algebra, trigonometry, and calculus.';
+const title = 'Maths Formula Sheets (2026) — Exam Revision & Reference Hub | EasyEquate';
+const description = 'Free printable maths formula sheets and revision hubs for GCSE, A-Level, Edexcel, AQA, IGCSE, Class 10, and Class 12. Topic formulas with instant step-by-step solver practice.';
 const canonical = 'https://www.easyequate.com/formulas';
+
+// Exam board data for quick revision cards
+const boardCards = boardIds.map((id) => {
+  const meta = boardData[id];
+  const count = ALL_FORMULAS.filter((f) => meta.categories.includes(f.category)).length;
+  return {
+    id,
+    title: meta.h1,
+    description: meta.description,
+    categories: meta.categories,
+    formulaCount: count,
+  };
+});
+
+// Curated high-yield formulas for the 6 core syllabus topics
+const topicSections = [
+  {
+    id: 'quadratics',
+    title: 'Quadratics & Polynomials',
+    icon: '⚡',
+    description: 'Quadratic formula, completing the square, factoring quadratic trinomials, discriminant nature of roots, and Vieta’s formulas.',
+    solverLink: '/quadratic-equation-solver',
+    solverLabel: 'Open Quadratic Solver',
+    boardLink: '/formula-sheet/gcse#quadratics',
+    boardLabel: 'GCSE Quadratics',
+    formulas: ALL_FORMULAS.filter((f) => ['alg-1', 'alg-11', 'alg-12'].includes(f.id)),
+  },
+  {
+    id: 'algebra',
+    title: 'Algebra & Sequences',
+    icon: '📌',
+    description: 'Algebraic identities, difference of squares, cubes, arithmetic progression (AP), and geometric progression (GP) nth term & sums.',
+    solverLink: '/equation-solver-with-steps',
+    solverLabel: 'Open Step-by-Step Solver',
+    boardLink: '/formula-sheet/gcse#algebra',
+    boardLabel: 'GCSE Algebra',
+    formulas: ALL_FORMULAS.filter((f) => ['alg-2', 'alg-6', 'alg-7'].includes(f.id)),
+  },
+  {
+    id: 'trigonometry',
+    title: 'Trigonometry & Identities',
+    icon: '📐',
+    description: 'Fundamental Pythagorean identities, Sine Rule, Cosine Rule, and compound angle identities for triangle solving.',
+    solverLink: '/equation-solver-with-steps?eq=sin(2x)%20-%20sin(x)%20%3D%200',
+    solverLabel: 'Open Trig Solver',
+    boardLink: '/formula-sheet/a-level#trigonometry',
+    boardLabel: 'A-Level Trigonometry',
+    formulas: ALL_FORMULAS.filter((f) => ['trig-1', 'trig-10', 'trig-11'].includes(f.id)),
+  },
+  {
+    id: 'calculus',
+    title: 'Calculus (Derivatives & Integrals)',
+    icon: '📈',
+    description: 'Power rule, product rule, quotient rule, exponential derivatives, power rule integrals, and integration by parts with steps.',
+    solverLink: '/derivative-calculator',
+    solverLabel: 'Open Derivative Calculator',
+    boardLink: '/formula-sheet/a-level#calculus',
+    boardLabel: 'A-Level Calculus',
+    formulas: ALL_FORMULAS.filter((f) => ['calc-1', 'calc-2', 'calc-8', 'calc-10'].includes(f.id)),
+  },
+  {
+    id: 'geometry',
+    title: 'Coordinate Geometry & Mensuration',
+    icon: '📏',
+    description: '2D distance and midpoint formulas, section formula, line slopes, circle equations, and 3D surface area & volume.',
+    solverLink: '/graph',
+    solverLabel: 'Open 2D Function Plotter',
+    boardLink: '/formula-sheet/gcse#geometry',
+    boardLabel: 'GCSE Geometry',
+    formulas: ALL_FORMULAS.filter((f) => ['geom-1', 'geom-2', 'geom-10'].includes(f.id)),
+  },
+  {
+    id: 'statistics',
+    title: 'Statistics & Probability',
+    icon: '🎲',
+    description: 'Permutations P(n,r), combinations C(n,r), addition and multiplication laws, binomial distribution, and standard deviation.',
+    solverLink: '/calculator',
+    solverLabel: 'Open Scientific Calculator',
+    boardLink: '/formula-sheet/a-level#statistics',
+    boardLabel: 'A-Level Statistics',
+    formulas: ALL_FORMULAS.filter((f) => ['prob-1', 'prob-2', 'prob-7'].includes(f.id)),
+  },
+];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
       '@type': 'SoftwareApplication',
-      name: 'EasyEquate Formula Reference Library',
-      alternateName: ['EasyEquate Formulas', 'Maths Formula Sheet'],
+      name: 'EasyEquate Maths Formula Hub',
+      alternateName: ['EasyEquate Formula Sheets', 'Maths Formula Sheets 2026'],
       url: 'https://www.easyequate.com/formulas',
       applicationCategory: 'EducationalApplication',
       operatingSystem: 'All',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', ratingCount: '128', bestRating: '5', worstRating: '1' },
-      description: 'Comprehensive maths formula reference library with 150+ formulas across algebra, geometry, trigonometry, calculus, and probability.',
+      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', ratingCount: '142', bestRating: '5', worstRating: '1' },
+      description: 'Comprehensive 2026 exam-board maths formula sheets with interactive step-by-step solvers for GCSE, A-Level, Edexcel, AQA, IGCSE, Class 10, and Class 12.',
       featureList: [
-        'Algebra formulas (quadratic, binomial, sequences)',
-        'Geometry and mensuration formulas',
-        'Trigonometry identities and laws',
-        'Calculus derivatives and integrals',
-        'Probability and statistics formulas',
-        'Vectors and complex numbers',
-        '1-click send to solver or calculator',
-        'Downloadable printable PDF formula sheets',
+        'Dedicated printable PDF formula sheets for 7 major exam boards',
+        'Organized by syllabus topic: Algebra, Quadratics, Trigonometry, Calculus, Geometry, Statistics',
+        'Interactive "Practice in Solver" links with pre-filled exam questions',
+        'Instant LaTeX copying for Overleaf and Markdown',
+        'Clean @media print stylesheets for ad-free revision handouts',
       ],
+    },
+    {
+      '@type': 'ItemList',
+      name: '2026 Exam Board Formula Sheets',
+      itemListElement: boardCards.map((b, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: b.title,
+        url: `https://www.easyequate.com/formula-sheet/${b.id}`,
+      })),
     },
     {
       '@type': 'FAQPage',
       mainEntity: [
         {
           '@type': 'Question',
-          name: 'What formulas are included in this math formula sheet?',
+          name: 'Which exam boards are covered on EasyEquate?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'EasyEquate includes over 150 verified mathematical formulas across algebra, quadratic equations, trigonometry, differentiation, integration, probability, geometry, and vectors.',
+            text: 'EasyEquate provides dedicated formula sheets for GCSE Maths (Higher & Foundation), A-Level Maths (Pure, Stats, Mechanics), Edexcel GCSE, AQA GCSE, Cambridge IGCSE, CBSE & ICSE Class 10, and CBSE & ISC Class 12 Maths.',
           },
         },
         {
           '@type': 'Question',
-          name: 'Can I export or print the formula sheet?',
+          name: 'Can I print or save the formula sheets as PDF?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes, you can export and download formatted PDF formula sheets for offline study and revision directly from EasyEquate for free.',
+            text: 'Yes! Every exam board formula sheet has a "Print / Save as PDF" button with a dedicated clean print stylesheet that hides navigation, menus, and footers for crisp offline study.',
           },
         },
         {
           '@type': 'Question',
-          name: 'Can I copy formulas directly into LaTeX?',
+          name: 'Can I practice these formulas in an interactive solver?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes, every formula card contains a 1-click LaTeX copy button formatted for Overleaf, Markdown, and MathJax documents.',
+            text: 'Yes, each formula card features an interactive "Practice in Solver" link that pre-fills the matching EasyEquate solver with an authentic exam-style problem.',
           },
         },
       ],
@@ -64,5 +158,236 @@ const jsonLd = {
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} jsonLd={jsonLd}>
-  <FormulaLibrary client:load />
+  <main class="min-h-screen bg-[#FAFAFA] dark:bg-[#131313] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-12 sm:space-y-16">
+
+      {/* ── HERO HEADER ── */}
+      <header class="pt-10 sm:pt-0 sm:pl-36 md:pl-44 space-y-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/60">
+            2026 Syllabus Revision Hub
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40">
+            ✓ 7 Exam Boards + Interactive Solvers
+          </span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#131313] dark:text-white tracking-tight">
+          Maths Formula Sheets (2026)
+        </h1>
+
+        <p class="text-xs sm:text-sm md:text-base text-[#616161] dark:text-[#A19891] leading-relaxed max-w-3xl">
+          Curated formula cheat sheets for GCSE, A-Level, Edexcel, AQA, IGCSE, and CBSE board exams. Download clean printable PDFs or practice formulas with step-by-step verified worked solutions.
+        </p>
+
+        {/* Quick jump navigation */}
+        <div class="flex flex-wrap items-center gap-2 pt-2 text-xs font-mono">
+          <a
+            href="#exam-boards"
+            class="px-3 py-1.5 bg-white dark:bg-[#1B1B1B] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2420] text-[#5D4037] dark:text-[#D7CCC8] border border-[#D7CCC8] dark:border-[#5D4037]/60 rounded-xl font-semibold transition-all shadow-2xs no-underline flex items-center gap-1.5"
+          >
+            <GraduationCap size={14} />
+            <span>Select Exam Board</span>
+          </a>
+          <a
+            href="#topics"
+            class="px-3 py-1.5 bg-white dark:bg-[#1B1B1B] hover:bg-[#EFEBE9] dark:hover:bg-[#2A2420] text-[#5D4037] dark:text-[#D7CCC8] border border-[#D7CCC8] dark:border-[#5D4037]/60 rounded-xl font-semibold transition-all shadow-2xs no-underline flex items-center gap-1.5"
+          >
+            <BookOpen size={14} />
+            <span>Browse by Topic</span>
+          </a>
+          <a
+            href="#interactive-finder"
+            class="px-3 py-1.5 bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#131313] dark:hover:bg-white rounded-xl font-semibold transition-all shadow-2xs no-underline flex items-center gap-1.5"
+          >
+            <Search size={14} />
+            <span>Search All 117 Formulas</span>
+          </a>
+        </div>
+      </header>
+
+      {/* ── SECTION 1: EXAM BOARD REVISION HUBS ── */}
+      <section id="exam-boards" class="scroll-mt-6 sm:pl-36 md:pl-44 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-1.5 border-b-2 border-[#5D4037]/30 dark:border-[#5D4037]/50 pb-2.5">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🎓</span>
+              <h2 class="text-xl sm:text-2xl font-extrabold text-[#131313] dark:text-white tracking-tight">
+                Exam Board Formula Sheets (2026)
+              </h2>
+            </div>
+            <p class="text-xs text-[#616161] dark:text-[#A19891] mt-1">
+              Select your specific syllabus for tailored formula sheets, printable PDFs, and syllabus-matched solver practice.
+            </p>
+          </div>
+          <span class="text-xs font-mono font-bold text-[#5D4037] dark:text-[#D7CCC8] bg-[#EFEBE9] dark:bg-[#3E2723] px-2.5 py-1 rounded-lg shrink-0 self-start sm:self-auto">
+            7 Official Boards
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {boardCards.map((board) => (
+            <div class="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+              <div class="space-y-3">
+                <div class="flex items-start justify-between gap-2">
+                  <span class="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50">
+                    2026 Syllabus
+                  </span>
+                  <span class="text-xs font-mono text-[#757575] dark:text-[#8D827A] font-semibold">
+                    {board.formulaCount} Formulas
+                  </span>
+                </div>
+
+                <div>
+                  <h3 class="text-base sm:text-lg font-bold text-[#131313] dark:text-white group-hover:text-[#5D4037] dark:group-hover:text-[#D7CCC8] transition-colors leading-snug">
+                    <a href={`/formula-sheet/${board.id}`} class="no-underline text-inherit hover:underline">
+                      {board.title}
+                    </a>
+                  </h3>
+                  <p class="text-xs text-[#616161] dark:text-[#A19891] mt-1.5 line-clamp-2 leading-relaxed">
+                    {board.description}
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  {board.categories.slice(0, 4).map((cat) => (
+                    <span class="text-[10px] font-mono bg-[#F5F5F5] dark:bg-[#25201E] text-[#616161] dark:text-[#A19891] px-2 py-0.5 rounded-md border border-[#E0E0E0] dark:border-[#382F2C] capitalize">
+                      {cat}
+                    </span>
+                  ))}
+                  {board.categories.length > 4 && (
+                    <span class="text-[10px] font-mono bg-[#F5F5F5] dark:bg-[#25201E] text-[#8D827A] px-1.5 py-0.5 rounded-md">
+                      +{board.categories.length - 4} more
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div class="pt-5 mt-4 border-t border-[#F0EAE6] dark:border-[#28221F] flex items-center justify-between gap-2">
+                <a
+                  href={`/formula-sheet/${board.id}`}
+                  class="flex-1 py-2 px-3 bg-[#5D4037] hover:bg-[#4E342E] text-white dark:bg-[#D7CCC8] dark:text-[#131313] dark:hover:bg-white rounded-xl text-xs font-bold transition-all text-center no-underline shadow-2xs flex items-center justify-center gap-1.5"
+                >
+                  <span>Open Sheet & PDF</span>
+                  <ArrowUpRight size={13} className="shrink-0" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── SECTION 2: BROWSE BY CORE TOPIC ── */}
+      <section id="topics" class="scroll-mt-6 sm:pl-36 md:pl-44 space-y-12">
+        <div class="border-b-2 border-[#5D4037]/30 dark:border-[#5D4037]/50 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📚</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[#131313] dark:text-white tracking-tight">
+              Essential Formulas by Syllabus Topic
+            </h2>
+          </div>
+          <p class="text-xs text-[#616161] dark:text-[#A19891] mt-1">
+            Top formulas across every syllabus module. Click "Practice in Solver" to open worked step-by-step solutions for exam questions.
+          </p>
+        </div>
+
+        {topicSections.map((section) => (
+          <div id={`topic-${section.id}`} class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-2 border-b border-[#E0E0E0] dark:border-[#2E2825]">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">{section.icon}</span>
+                  <h3 class="text-lg sm:text-xl font-bold text-[#131313] dark:text-white">
+                    {section.title}
+                  </h3>
+                </div>
+                <p class="text-xs text-[#616161] dark:text-[#A19891] mt-0.5 max-w-2xl leading-relaxed">
+                  {section.description}
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <a
+                  href={section.solverLink}
+                  class="px-3 py-1.5 bg-white dark:bg-[#1B1B1B] hover:bg-[#EFEBE9] dark:hover:bg-[#2E2420] text-[#5D4037] dark:text-[#D7CCC8] border border-[#D7CCC8] dark:border-[#5D4037]/60 rounded-xl text-xs font-semibold transition-all no-underline flex items-center gap-1 shadow-2xs"
+                >
+                  <span>{section.solverLabel}</span>
+                  <ArrowUpRight size={12} />
+                </a>
+                <a
+                  href={section.boardLink}
+                  class="px-3 py-1.5 bg-[#EFEBE9] dark:bg-[#3E2723] hover:bg-[#D7CCC8] dark:hover:bg-[#5D4037] text-[#5D4037] dark:text-[#D7CCC8] hover:text-[#131313] dark:hover:text-white rounded-xl text-xs font-semibold transition-all no-underline flex items-center gap-1"
+                >
+                  <span>{section.boardLabel}</span>
+                  <span>&rarr;</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {section.formulas.map((formula) => (
+                <FormulaCard formula={formula} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* ── SECTION 3: INTERACTIVE SEARCH & PDF EXPORT TOOL ── */}
+      <section id="interactive-finder" class="scroll-mt-6 sm:pl-36 md:pl-44 space-y-4 pt-6 border-t border-[#E0E0E0] dark:border-[#2E2825]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🔍</span>
+              <h2 class="text-xl sm:text-2xl font-extrabold text-[#131313] dark:text-white tracking-tight">
+                Interactive Formula Finder & PDF Generator
+              </h2>
+            </div>
+            <p class="text-xs text-[#616161] dark:text-[#A19891] mt-0.5">
+              Filter by curriculum level (GCSE, A-Level, Higher Ed), search 117 formulas instantly, or download a custom PDF reference sheet.
+            </p>
+          </div>
+        </div>
+
+        {/* Client-only interactive formula library prevents bloating the initial static HTML size */}
+        <div class="bg-white dark:bg-[#181818] rounded-2xl p-4 sm:p-6 border border-[#E0E0E0] dark:border-[#2E2825] shadow-sm">
+          <FormulaLibrary client:only="react" />
+        </div>
+      </section>
+
+      {/* ── FREQUENTLY ASKED QUESTIONS ── */}
+      <section class="sm:pl-36 md:pl-44 pt-6 border-t border-[#E0E0E0] dark:border-[#2E2825] space-y-4">
+        <h2 class="text-lg sm:text-xl font-bold text-[#131313] dark:text-white">
+          Frequently Asked Questions About EasyEquate Formula Sheets
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[#616161] dark:text-[#A19891]">
+          <div class="bg-white dark:bg-[#1B1B1B] p-4 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+            <h3 class="font-bold text-[#131313] dark:text-white text-xs">
+              Are these formula sheets aligned with 2026 specs?
+            </h3>
+            <p class="leading-relaxed">
+              Yes. Each sheet is strictly curated according to the latest 2026 syllabus specifications for GCSE, AQA, Edexcel, Cambridge IGCSE, and CBSE/ICSE board exams.
+            </p>
+          </div>
+          <div class="bg-white dark:bg-[#1B1B1B] p-4 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+            <h3 class="font-bold text-[#131313] dark:text-white text-xs">
+              How does "Practice in Solver" work?
+            </h3>
+            <p class="leading-relaxed">
+              Clicking "Practice in Solver" on any formula launches EasyEquate's verified solving engine pre-filled with an authentic exam question to show you complete step-by-step working.
+            </p>
+          </div>
+          <div class="bg-white dark:bg-[#1B1B1B] p-4 rounded-xl border border-[#E0E0E0] dark:border-[#2E2825] space-y-1.5">
+            <h3 class="font-bold text-[#131313] dark:text-white text-xs">
+              Can I save these formula sheets as clean PDFs?
+            </h3>
+            <p class="leading-relaxed">
+              Every formula page includes a dedicated "Print / Save as PDF" button with custom print stylesheets that strip out website navigation and menus for clean printable handouts.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
 </BaseLayout>

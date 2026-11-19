@@ -110,7 +110,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
     <>
       {/* Floating Top Floating Hamburger Bar (Visible on all tool pages) */}
       {!isHomePage && (
-        <div className="fixed top-3 left-3 z-50 flex items-center gap-2">
+        <div className="fixed top-3 left-3 z-50 flex items-center gap-2 print:hidden no-print">
           <button
             type="button"
             onClick={() => setIsOpen(true)}
@@ -136,7 +136,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
       {/* Backdrop overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs animate-fade-in transition-opacity"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs animate-fade-in transition-opacity print:hidden no-print"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -145,7 +145,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
       {/* Slide-out Drawer Panel */}
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none',
+          'fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none print:hidden no-print',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
