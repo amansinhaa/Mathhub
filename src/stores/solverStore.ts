@@ -49,7 +49,13 @@ export const useSolverStore = create<SolverState>()(
           ...(state.result && state.equation !== equation ? { result: null } : {}),
         })),
       setSolverType: (solverType) =>
-        set({ solverType, result: null, error: null, isLoading: false }),
+        set({
+          solverType,
+          result: null,
+          error: null,
+          isLoading: false,
+          ...(solverType === 'system' ? { equation: '' } : {}),
+        }),
       setQuadraticMethod: (quadraticMethod) => {
         set({ quadraticMethod, isLoading: false });
         const { equation, solverType } = get();
@@ -204,11 +210,11 @@ export const useSolverStore = create<SolverState>()(
       version: 2,
       partialize: (state) => ({
         equation: state.equation,
-        solverType: state.solverType,
         quadraticMethod: state.quadraticMethod,
         systemEquations: state.systemEquations,
         systemVariables: state.systemVariables,
         solveForVariable: state.solveForVariable,
+        // Do NOT persist solverType so dedicated pages always default to their own initialMode!
         // NEVER persist transient state: isLoading, error, result
       }),
       // Custom merge guarantees that rehydrated state is NEVER in loading mode or has stale result

@@ -65,7 +65,16 @@ export default function EquationSolver({
     if (targetMode && ['polynomial', 'derivative', 'integral', 'system', 'inequality', 'symbolic', 'domain_range'].includes(targetMode)) {
       if (store.solverType !== targetMode) {
         store.setSolverType(targetMode);
+        // Clear old equation when switching modes without a target equation to prevent stale cross-solver leaks
+        if (!queryEq && !initialEquation) {
+          store.setEquation('');
+          store.clearResult();
+        }
       }
+    }
+
+    if (targetMode === 'system' && !queryEq && !initialEquation) {
+      store.setEquation('');
     }
 
     // Determine target equation to solve
@@ -179,7 +188,7 @@ export default function EquationSolver({
           {/* Top: Full-Width Input Console */}
           <div className="w-full bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-3 sm:p-5 md:p-6 shadow-xs transition-colors">
             <ErrorBoundary fallbackTitle="Equation Input Error" onReset={() => useSolverStore.getState().forceUnstick()}>
-              <EquationInput />
+              <EquationInput initialMode={initialMode} />
             </ErrorBoundary>
           </div>
 
@@ -207,7 +216,7 @@ export default function EquationSolver({
           {/* Left: Input + Controls */}
           <div className="w-full xl:w-[420px] shrink-0 bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-2xl p-4 sm:p-5 shadow-sm transition-colors">
             <ErrorBoundary fallbackTitle="Equation Input Error" onReset={() => useSolverStore.getState().forceUnstick()}>
-              <EquationInput />
+              <EquationInput initialMode={initialMode} />
             </ErrorBoundary>
           </div>
 

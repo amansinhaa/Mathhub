@@ -454,5 +454,16 @@ function generateSuggestions(
     });
   }
 
-  return suggestions;
+  // Deduplicate suggestions so no mode (e.g. domain_range or derivative) appears twice
+  const seenModes = new Set<string>();
+  const uniqueSuggestions: SuggestedAction[] = [];
+  for (const s of suggestions) {
+    const key = s.targetMode || s.label;
+    if (!seenModes.has(key)) {
+      seenModes.add(key);
+      uniqueSuggestions.push(s);
+    }
+  }
+
+  return uniqueSuggestions;
 }

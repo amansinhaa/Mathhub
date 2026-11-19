@@ -351,13 +351,13 @@ export function solveIntegral(
     if (isDefinite) {
       steps.push({
         stepNumber: stepNum++,
-        explanation: `Set up the definite integral from $${lowerLimit}$ to $${upperLimit}$ with respect to $${variable}$.`,
+        explanation: `Set up the definite integral $\\int_{${lowerLimit}}^{${upperLimit}} \\left( ${latexExpr} \\right) \\, d${variable}$ with respect to $${variable}$.`,
         math: `\\int_{${lowerLimit}}^{${upperLimit}} \\left( ${latexExpr} \\right) \\, d${variable}`,
       });
     } else {
       steps.push({
         stepNumber: stepNum++,
-        explanation: `Set up the indefinite integral with respect to variable $${variable}$.`,
+        explanation: `Set up the indefinite integral $\\int \\left( ${latexExpr} \\right) \\, d${variable}$ with respect to variable $${variable}$.`,
         math: `\\int \\left( ${latexExpr} \\right) \\, d${variable}`,
         formulaUsed: {
           name: 'Indefinite Integral',
@@ -374,7 +374,7 @@ export function solveIntegral(
       // Step 2: Sum/Difference Rule
       steps.push({
         stepNumber: stepNum++,
-        explanation: 'Apply the Sum & Difference Rule: integrate each term separately.',
+        explanation: `Apply the Sum & Difference Rule: integrate each term separately using $\\int [u \\pm v] \\, d${variable} = \\int u \\, d${variable} \\pm \\int v \\, d${variable}$.`,
         math: `\\int \\left( ${latexExpr} \\right) \\, d${variable} = ` +
           terms.map((t) => {
             const cleanT = t.replace(/^[+-]/, '').trim();
@@ -394,23 +394,23 @@ export function solveIntegral(
         intLatex = intLatex.replace(/\\mathrm\{log\}\\left\(([^)]+)\\right\)/g, '\\ln|$1|');
 
         let matchedRule = INT_RULES.power;
-        let explanation = `Integrate term $${termLatex}$ using the Power Rule for integration.`;
+        let explanation = `Integrate term $\\int ${termLatex} \\, d${variable}$ using the Power Rule for integration.`;
 
         if (!cleanT.includes(variable)) {
           matchedRule = INT_RULES.constant;
-          explanation = `Integrate constant $${termLatex}$ to obtain $${intLatex}$.`;
+          explanation = `Integrate constant $\\int ${termLatex} \\, d${variable}$ to obtain $${intLatex}$.`;
         } else if (cleanT === `1/${variable}` || cleanT === `${variable}^(-1)`) {
           matchedRule = INT_RULES.oneOverX;
-          explanation = `Integrate $\\frac{1}{${variable}}$ using the natural log rule.`;
+          explanation = `Integrate $\\int \\frac{1}{${variable}} \\, d${variable}$ using the natural log rule.`;
         } else if (cleanT.includes('sin')) {
           matchedRule = INT_RULES.sin;
-          explanation = `Integrate $\\sin(${variable})$ to get $-\\cos(${variable})$.`;
+          explanation = `Integrate $\\int \\sin(${variable}) \\, d${variable}$ to get $-\\cos(${variable})$.`;
         } else if (cleanT.includes('cos')) {
           matchedRule = INT_RULES.cos;
-          explanation = `Integrate $\\cos(${variable})$ to get $\\sin(${variable})$.`;
+          explanation = `Integrate $\\int \\cos(${variable}) \\, d${variable}$ to get $\\sin(${variable})$.`;
         } else if (cleanT.includes('exp') || cleanT.includes('e^')) {
           matchedRule = INT_RULES.exp;
-          explanation = `Integrate exponential term $${termLatex}$.`;
+          explanation = `Integrate exponential term $\\int ${termLatex} \\, d${variable}$.`;
         }
 
         steps.push({
@@ -438,7 +438,7 @@ export function solveIntegral(
 
       steps.push({
         stepNumber: stepNum++,
-        explanation: `Apply the ${matchedRule.name} to find the antiderivative.`,
+        explanation: `Apply the ${matchedRule.name} $\\int ${latexExpr} \\, d${variable}$ to find the antiderivative.`,
         math: `F(${variable}) = ${finalLatex}`,
         formulaUsed: matchedRule,
       });

@@ -95,13 +95,13 @@ export default function FunctionAnalysisPanel() {
                 <MathDisplay math={analysis.yIntercept} />
               </span>
             </div>
-            <div className="flex justify-between items-start text-[11px] pt-1 border-t border-[#E0E0E0] dark:border-[#262220]">
-              <span className="text-[#757575] dark:text-[#8D827A] uppercase font-bold text-[10px]">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 text-[11px] pt-1 border-t border-[#E0E0E0] dark:border-[#262220]">
+              <span className="text-[#757575] dark:text-[#8D827A] uppercase font-bold text-[10px] shrink-0">
                 x-Intercepts:
               </span>
-              <span className="text-[#131313] dark:text-white font-semibold text-right">
+              <div className="text-[#131313] dark:text-white font-semibold text-left sm:text-right overflow-x-auto scrollbar-thin max-w-full py-0.5">
                 <MathDisplay math={analysis.xIntercepts.join(', \\; ')} />
-              </span>
+              </div>
             </div>
           </div>
 

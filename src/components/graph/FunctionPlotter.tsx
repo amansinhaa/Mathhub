@@ -1737,6 +1737,8 @@ export default function FunctionPlotter({
                 if (py < plotBox.top + 20 || py > plotBox.top + plotBox.height - 20) return null;
 
                 const badgeY = py - 18 - (idx % 2) * 12;
+                const cleanDisplayExpr = eq.expression.replace(/^(?:f\([a-zA-Z]\)|y)\s*=\s*/i, '').trim();
+
                 return (
                   <g key={`lbl-${eq.id}`} className="transition-all select-none">
                     {/* Anchor Dot */}
@@ -1755,7 +1757,7 @@ export default function FunctionPlotter({
                     <rect
                       x={px + 8}
                       y={badgeY - 8}
-                      width={eq.expression.length * 7 + 55}
+                      width={cleanDisplayExpr.length * 7 + 55}
                       height={18}
                       rx={4}
                       fill="#ffffff"
@@ -1769,7 +1771,7 @@ export default function FunctionPlotter({
                       fill={eq.color}
                       className="font-mono text-[10px] font-bold"
                     >
-                      f(x) = {eq.expression}
+                      f(x) = {cleanDisplayExpr}
                     </text>
                   </g>
                 );

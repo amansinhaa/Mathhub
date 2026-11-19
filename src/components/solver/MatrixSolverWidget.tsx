@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { MatrixOperation, solveMatrix, MatrixResult } from '@/lib/math/matrixSolver';
 import { Plus, Minus, ArrowRightLeft, Sparkles, Hash } from 'lucide-react';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { MathDisplay } from '@/components/shared/MathDisplay';
+import { MathText } from '@/components/shared/MathText';
 
 const OPERATIONS: { value: MatrixOperation; label: string; desc: string; requiresB?: boolean; requiresSquare?: boolean; requiresScalar?: boolean }[] = [
   { value: 'determinant', label: 'det(A)', desc: 'Determinant', requiresSquare: true },
@@ -500,12 +502,14 @@ function MatrixSolverWidgetInner() {
                     {result.steps.map((step, i) => (
                       <div
                         key={i}
-                        className="p-4 bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] text-xs sm:text-sm shadow-2xs space-y-1.5"
+                        className="p-4 bg-white dark:bg-[#181818] rounded-2xl border border-[#E0E0E0] dark:border-[#2E2825] text-xs sm:text-sm shadow-2xs space-y-2 overflow-hidden"
                       >
-                        <p className="text-[#131313] dark:text-white font-medium">{step.explanation}</p>
+                        <div className="text-[#131313] dark:text-white font-medium leading-relaxed">
+                          <MathText text={step.explanation} />
+                        </div>
                         {step.math && (
-                          <div className="font-mono text-[#5D4037] dark:text-[#D7CCC8] overflow-x-auto py-1 text-xs sm:text-sm font-semibold">
-                            {step.math}
+                          <div className="overflow-x-auto py-1 text-xs sm:text-sm font-semibold max-w-full text-[#5D4037] dark:text-[#D7CCC8]">
+                            <MathDisplay math={step.math} block />
                           </div>
                         )}
                       </div>

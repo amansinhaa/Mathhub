@@ -5,7 +5,7 @@ import Link from '@/components/shared/Link';
 import { useSolverStore } from '@/stores/solverStore';
 import { MathDisplay } from '@/components/shared/MathDisplay';
 import { MathText } from '@/components/shared/MathText';
-import { Check, Copy, ChevronDown, Share2, LineChart, Info } from 'lucide-react';
+import { Check, Copy, ChevronDown, Share2, LineChart, Info, Edit3 } from 'lucide-react';
 import dynamic from '@/components/shared/DynamicShim';
 import { extractPlotFunction } from '@/utils/mathSanitizer';
 import { NumberLine, parseNumberLineData } from './NumberLine';
@@ -20,7 +20,7 @@ const FunctionPlotter = dynamic(() => import('@/components/graph/FunctionPlotter
 });
 
 export default function StepByStep() {
-  const { result, solverType, equation, quadraticMethod } = useSolverStore();
+  const { result, solverType, equation, quadraticMethod, systemEquations } = useSolverStore();
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({});
   const [showSteps, setShowSteps] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
@@ -121,18 +121,74 @@ export default function StepByStep() {
       >
         <div className="absolute top-0 left-0 w-1.5 sm:w-2 h-full bg-[#5D4037] dark:bg-[#A1887F]" />
 
-        {/* Clean Problem Header */}
-        {(equation || result.inputInterpretation) && (
-          <div className="mb-2 pb-2 border-b border-[#E0E0E0]/80 dark:border-[#282422] flex items-center justify-between gap-2 text-xs font-mono text-[#616161] dark:text-[#A19891]">
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Info size={13} className="text-[#5D4037] dark:text-[#D7CCC8]" />
-              <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8] uppercase text-[10px] sm:text-xs">Problem:</span>
+        {/* Clean Problem Header with Interactive Edit and Copy Controls */}
+        {(() => {
+          let problemDisplay = '';
+          if (solverType === 'system') {
+            problemDisplay = result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim() ||
+              (systemEquations && systemEquations.filter(Boolean).length > 0 ? systemEquations.filter(Boolean).join(', ') : '');
+          } else if (solverType === 'integral') {
+            const inner = equation || result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim() || '';
+            if (inner.includes('∫') || inner.includes('\\int')) {
+              problemDisplay = inner;
+            } else if (inner) {
+              problemDisplay = `∫ (${inner}) dx`;
+            }
+          } else {
+            problemDisplay = equation || result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim() || '';
+          }
+
+          if (!problemDisplay) return null;
+
+          return (
+            <div className="mb-2 pb-2 border-b border-[#E0E0E0]/80 dark:border-[#282422] flex items-center justify-between gap-2 text-xs font-mono text-[#616161] dark:text-[#A19891]">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Info size={13} className="text-[#5D4037] dark:text-[#D7CCC8]" />
+                <span className="font-bold text-[#5D4037] dark:text-[#D7CCC8] uppercase text-[10px] sm:text-xs">Problem:</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none max-w-full">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const input = document.getElementById('equation') as HTMLInputElement | null;
+                    if (input) {
+                      input.focus();
+                      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }}
+                  className="hover:underline cursor-pointer text-xs font-bold text-[#131313] dark:text-white text-right truncate sm:max-w-none"
+                  title="Click to edit equation in input box"
+                >
+                  {problemDisplay}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const input = document.getElementById('equation') as HTMLInputElement | null;
+                    if (input) {
+                      input.focus();
+                      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#2E2825] transition-all flex items-center gap-1 text-[10px] font-mono font-medium cursor-pointer shrink-0 shadow-2xs"
+                  title="Edit Equation in input box"
+                >
+                  <Edit3 size={11} />
+                  <span>Edit</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={copyQuestion}
+                  className="px-2 py-0.5 rounded-md bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#2E2825] transition-all flex items-center gap-1 text-[10px] font-mono font-medium cursor-pointer shrink-0 shadow-2xs"
+                  title="Copy Problem Equation"
+                >
+                  {copiedQuestion ? <Check size={11} className="text-emerald-600 dark:text-[#81C784]" /> : <Copy size={11} />}
+                  <span>{copiedQuestion ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
             </div>
-            <div className="overflow-x-auto scrollbar-none text-right text-xs font-bold text-[#131313] dark:text-white max-w-full">
-              {equation || result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim()}
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         <div className="flex justify-between items-center gap-2 mb-2">
           <div className="flex items-center gap-1.5 flex-wrap">

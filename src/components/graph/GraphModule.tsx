@@ -59,6 +59,21 @@ export default function GraphModule() {
   const [activeMobileEqId, setActiveMobileEqId] = React.useState<string>(() => equations[0]?.id || 'eq-1');
   const [copiedMobileEq, setCopiedMobileEq] = React.useState(false);
 
+  // Sync ?fn= or ?eq= query params on initial load
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const fn = params.get('fn') || params.get('eq');
+      if (fn) {
+        setInputMode('equation');
+        const first = useGraphStore.getState().equations[0];
+        if (first && first.expression !== fn) {
+          updateEquation(first.id, fn, true);
+        }
+      }
+    }
+  }, []);
+
   const mobileInputRef = React.useRef<HTMLInputElement | null>(null);
   const mobileSelectionRange = React.useRef<{ start: number; end: number } | null>(null);
 
@@ -156,8 +171,8 @@ export default function GraphModule() {
       {/* Unit Circle Modal */}
       <UnitCircleModal isOpen={isUnitCircleOpen} onClose={() => setIsUnitCircleOpen(false)} />
 
-      {/* Top App Bar / Header — Cleared of floating navbar overlap */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2 pt-12 sm:pt-0 sm:pl-36 md:pl-44">
+      {/* Top App Bar / Header — Cleared of floating navbar overlap and theme toggle */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E0E0E0] dark:border-[#2E2825] pb-2 gap-2 pt-12 sm:pt-0 sm:pl-36 md:pl-44 sm:pr-14 md:pr-16">
         <div className="flex flex-col">
           <span className="text-[10px] font-mono font-semibold tracking-widest text-[#757575] dark:text-[#9E9E9E] uppercase">
             EASYEQUATE

@@ -221,7 +221,11 @@ const OPERATION_GUIDES: Record<SolverType, OperationGuide> = {
   },
 };
 
-export default function EquationInput() {
+interface EquationInputProps {
+  initialMode?: SolverType;
+}
+
+export default function EquationInput({ initialMode }: EquationInputProps = {}) {
   const {
     equation,
     setEquation,
@@ -242,6 +246,20 @@ export default function EquationInput() {
     systemVariables,
     setSystemVariables,
   } = useSolverStore();
+
+  // If initialMode prop is provided and differing from store, sync on mount
+  const initialModeSyncedRef = React.useRef(false);
+  if (initialMode && !initialModeSyncedRef.current) {
+    initialModeSyncedRef.current = true;
+    const store = useSolverStore.getState();
+    const tab = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tab') : null;
+    if (!tab && store.solverType !== initialMode) {
+      store.setSolverType(initialMode);
+      if (initialMode === 'system') {
+        store.setEquation('');
+      }
+    }
+  }
 
   const searchParams = useSearchParams();
   const searchStr = searchParams.toString();

@@ -145,21 +145,21 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
       {/* Slide-out Drawer Panel */}
       <aside
         className={clsx(
-          'fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none',
+          'fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Drawer Header */}
-        <div className="p-4 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5" onClick={() => setIsOpen(false)}>
+        <div className="p-4 pl-5 sm:pl-6 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
             <img
               src="/logo.png"
               alt="EasyEquate"
               width={32}
               height={32}
-              className="rounded-lg shadow-xs object-contain border border-[#5D4037]/30"
+              className="rounded-lg shadow-xs object-contain border border-[#5D4037]/30 shrink-0"
             />
-            <span className="font-bold text-sm text-[#131313] dark:text-white font-sans">EasyEquate</span>
+            <span className="font-bold text-sm text-[#131313] dark:text-white font-sans tracking-tight">EasyEquate</span>
           </Link>
 
           <button
@@ -173,7 +173,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
         </div>
 
         {/* Drawer Navigation Links */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-5">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3 space-y-5">
           {TOOL_GROUPS.map((group) => (
             <div key={group.category} className="space-y-1.5">
               <div className="px-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">
@@ -193,13 +193,13 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
                           : 'text-[#616161] hover:bg-[#EFEBE9] hover:text-[#5D4037] dark:text-[#A19891] dark:hover:bg-[#252322] dark:hover:text-white font-medium'
                       )}
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3 min-w-0">
                         <Icon
                           size={18}
                           strokeWidth={isActive ? 2.5 : 2}
                           className="shrink-0 transition-transform group-hover:scale-105"
                         />
-                        <span>{label}</span>
+                        <span className="truncate">{label}</span>
                       </div>
                       {badge && (
                         <span
