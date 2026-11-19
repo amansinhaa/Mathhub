@@ -547,7 +547,7 @@ export default function StepByStep() {
                 Step-by-Step Explanation
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#EFEBE9] dark:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8]">
-                {result.steps.length} Steps
+                {result.steps.length} {result.steps.length === 1 ? 'Step' : 'Steps'}
               </span>
             </div>
             <div className="flex items-center gap-2">

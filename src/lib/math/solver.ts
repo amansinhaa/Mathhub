@@ -27,6 +27,7 @@ import { trySimplifyRationalExpression, trySolveRationalEquation } from './ratio
 import { trySolveExponentialEquation } from './exponentialSolver';
 import { trySolveLogarithmicEquation } from './logarithmicSolver';
 import { trySolveTrigonometricEquation } from './trigonometricSolver';
+import { trySolveUSubstitutionEquation } from './uSubstitutionSolver';
 import { classifyEquation } from './classifier';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -1919,6 +1920,21 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
         absEqResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}`;
       }
       return absEqResult;
+    }
+  }
+
+  // Check if this is a U-Substitution (Quadratic-in-Disguise) Equation
+  // Non-polynomial equations with trig, exp, log, radical functions (e.g. 2sin^2(x) - 3sin(x) + 1 = 0, (ln(x))^2 - 3ln(x) + 2 = 0, x - 5sqrt(x) + 6 = 0)
+  const isPurePolynomial = !/(?:sin|cos|tan|sec|csc|cot|log|ln|sqrt|exp)\b/i.test(cleanEq) &&
+    !/(?:\^x|\^\([^)]*x[^)]*\)|e\^)/i.test(cleanEq);
+  if (!isPurePolynomial) {
+    const uSubResult = trySolveUSubstitutionEquation(cleanEq, equation);
+    if (uSubResult) {
+      if (interpretation.interpreted) {
+        const suffix = uSubResult.type === 'trigonometric' ? ' \\text{ on } [0, 2\\pi)' : '';
+        uSubResult.inputInterpretation = `\\text{Interpreted as: } ${cleanEq.replace(/\*/g, '')} \\text{. Solve for } ${detectVariable(cleanEq)}${suffix}`;
+      }
+      return uSubResult;
     }
   }
 

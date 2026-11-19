@@ -14,7 +14,9 @@ import * as math from 'mathjs';
 import nerdamer from 'nerdamer';
 import type { SolverResult, SolutionStep } from '@/types/solver';
 import { autoBalanceParens, normalizeExpression } from './normalizer';
-import { fmt } from './stepGenerator';
+import { fmt, fmtFraction } from './stepGenerator';
+import { extractCoefficients } from './solver';
+import { trySolveUSubstitutionEquation } from './uSubstitutionSolver';
 
 export interface TrigDetection {
   isTrig: boolean;
@@ -137,7 +139,13 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
   const steps: SolutionStep[] = [];
   let stepNumber = 1;
 
-  // 0. Basic trigonometric equations: a*func(x) = c, e.g. sin(x) = 1/2, cos(x) = 0
+  // 0. Check if this is a quadratic-in-disguise trigonometric equation (e.g. 2sin^2(x) - 3sin(x) + 1 = 0, cos(2x) + sin(x) = 0)
+  const uSubResult = trySolveUSubstitutionEquation(norm, rawEquation);
+  if (uSubResult && uSubResult.type === 'trigonometric') {
+    return uSubResult;
+  }
+
+  // 1. Basic single-term trigonometric equations: a*trig(bx + c) + d = 0 or a*trig(bx + c) = rhs
   let lhsSide = norm;
   let rhsSide = '0';
   if (norm.includes('=')) {
@@ -146,88 +154,131 @@ export function trySolveTrigonometricEquation(equation: string, rawEquation: str
     rhsSide = parts[1].trim();
   }
 
-  const basicMatch = lhsSide.match(/^([+-]?\s*\d*\.?\d*)\s*\*?\s*(sin|cos|tan)\s*\(\s*([a-zA-Z])\s*\)$/i);
-  if (basicMatch) {
-    const rawCoeff = basicMatch[1].replace(/\s+/g, '');
-    let coeff = 1;
-    if (rawCoeff === '-' || rawCoeff === '-1') coeff = -1;
-    else if (rawCoeff === '+' || rawCoeff === '+1') coeff = 1;
-    else if (rawCoeff) {
-      const p = parseFloat(rawCoeff);
-      if (!isNaN(p)) coeff = p;
-    }
-    const trigFunc = basicMatch[2].toLowerCase() as 'sin' | 'cos' | 'tan';
-    const v = basicMatch[3];
+  const diffNorm = rhsSide && rhsSide !== '0' ? `(${lhsSide}) - (${rhsSide})` : lhsSide;
+  const trigTokens = diffNorm.match(/\b(sin|cos|tan)\b/gi) || [];
 
-    let rhsVal: number;
-    try {
-      rhsVal = Number(math.evaluate(rhsSide));
-    } catch {
-      rhsVal = parseFloat(rhsSide);
-    }
+  if (trigTokens.length === 1 && !/\^(?:2|\(2\))/i.test(diffNorm)) {
+    const trigFunc = trigTokens[0].toLowerCase() as 'sin' | 'cos' | 'tan';
+    const matchCall = diffNorm.match(new RegExp('\\b' + trigFunc + '\\s*\\(([^)]+)\\)', 'i'));
+    if (matchCall) {
+      const innerArg = matchCall[1].trim();
+      const replaced = diffNorm.replace(matchCall[0], '(__T)');
+      const remainingVar = new RegExp('\\b' + variable + '\\b', 'i').test(replaced);
+      if (!remainingVar) {
+        const poly = extractCoefficients(replaced, '__T');
+        if (poly && poly.degree === 1 && poly.coeffs.length === 2) {
+          const [coeffA, constD] = poly.coeffs;
+          if (Math.abs(coeffA) > 1e-9) {
+            const targetVal = -constD / coeffA;
+            const targetValLatex = fmtFraction(targetVal);
 
-    if (!isNaN(rhsVal)) {
-      const targetVal = rhsVal / coeff;
+            // Step 1: Isolate the trigonometric function
+            steps.push({
+              stepNumber: stepNumber++,
+              explanation: `Isolate the trigonometric function $\\${trigFunc}(${innerArg})$:`,
+              math: `\\${trigFunc}(${innerArg}) = ${targetValLatex}`,
+            });
 
-      steps.push({
-        stepNumber: stepNumber++,
-        explanation: `Isolate the trigonometric function $\\${trigFunc}(${v})$:`,
-        math: `\\${trigFunc}(${v}) = ${fmt(targetVal)}`,
-      });
+            // Step 2: Check range/domain restrictions
+            const validBounds = trigFunc === 'tan' ? [-Infinity, Infinity] : [-1, 1];
+            if (targetVal < validBounds[0] - 1e-6 || targetVal > validBounds[1] + 1e-6) {
+              steps.push({
+                stepNumber: stepNumber++,
+                explanation: `Verify that the target value lies within the range $[-1, 1]$ of $\\${trigFunc}$. Since $|\\${trigFunc}(${innerArg})| = ${targetValLatex} > 1$, no real solutions exist for $${variable}$ on the unit circle:`,
+                math: `|\\${trigFunc}(${innerArg})| = ${targetValLatex} > 1 \\implies \\text{No real solution on } [0, 2\\pi)`,
+              });
+              return {
+                type: 'trigonometric',
+                equationType: 'trigonometric',
+                steps,
+                finalAnswer: '\\text{No real solution}',
+                numericRoots: [],
+              };
+            }
 
-      const validBounds = trigFunc === 'tan' ? [-Infinity, Infinity] : [-1, 1];
-      if (targetVal < validBounds[0] || targetVal > validBounds[1]) {
-        steps.push({
-          stepNumber: stepNumber++,
-          explanation: `Since $|\\${trigFunc}(${v})| > 1$, there are no real solutions for ${v}.`,
-          math: `\\text{No real solution on } [0, 2\\pi)`,
-        });
-        return {
-          type: 'trigonometric',
-          steps,
-          finalAnswer: '\\text{No real solution}',
-        };
+            steps.push({
+              stepNumber: stepNumber++,
+              explanation: trigFunc === 'tan'
+                ? `Verify that the target value lies within the range of tangent, $(-\\infty, \\infty)$. Real solutions exist:`
+                : `Verify that the target value lies within the range $[-1, 1]$ of $\\${trigFunc}$. Since $-1 \\le ${targetValLatex} \\le 1$, real solutions exist on the unit circle:`,
+              math: trigFunc === 'tan'
+                ? `-\\infty < ${targetValLatex} < \\infty \\quad \\checkmark`
+                : `-1 \\le ${targetValLatex} \\le 1 \\quad \\checkmark`,
+            });
+
+            // Step 3: Reference angle & Quadrant solutions
+            const roots = solveBasicTrig(trigFunc, targetVal);
+            const rootLatexList = roots.map((r) => formatPiAngle(r));
+
+            const absTarget = Math.abs(targetVal);
+            let refAngleVal = 0;
+            if (absTarget > 1e-6) {
+              refAngleVal = trigFunc === 'sin' ? Math.asin(Math.min(1, absTarget)) : trigFunc === 'cos' ? Math.acos(Math.min(1, absTarget)) : Math.atan(absTarget);
+            }
+            const refAngleLatex = formatPiAngle(refAngleVal);
+
+            let quadrantDetails = '';
+            if (Math.abs(targetVal) < 1e-6) {
+              quadrantDetails = `\\${trigFunc}(${innerArg}) = 0 \\implies ${innerArg} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`;
+            } else if (trigFunc === 'cos') {
+              if (targetVal > 0) {
+                quadrantDetails = `\\text{Cosine is positive in Quadrants I and IV:} \\quad \\text{QI: } ${innerArg} = \\alpha = ${refAngleLatex}, \\quad \\text{QIV: } ${innerArg} = 2\\pi - \\alpha = ${formatPiAngle(2 * Math.PI - refAngleVal)}`;
+              } else {
+                quadrantDetails = `\\text{Cosine is negative in Quadrants II and III:} \\quad \\text{QII: } ${innerArg} = \\pi - \\alpha = ${formatPiAngle(Math.PI - refAngleVal)}, \\quad \\text{QIII: } ${innerArg} = \\pi + \\alpha = ${formatPiAngle(Math.PI + refAngleVal)}`;
+              }
+            } else if (trigFunc === 'sin') {
+              if (targetVal > 0) {
+                quadrantDetails = `\\text{Sine is positive in Quadrants I and II:} \\quad \\text{QI: } ${innerArg} = \\alpha = ${refAngleLatex}, \\quad \\text{QII: } ${innerArg} = \\pi - \\alpha = ${formatPiAngle(Math.PI - refAngleVal)}`;
+              } else {
+                quadrantDetails = `\\text{Sine is negative in Quadrants III and IV:} \\quad \\text{QIII: } ${innerArg} = \\pi + \\alpha = ${formatPiAngle(Math.PI + refAngleVal)}, \\quad \\text{QIV: } ${innerArg} = 2\\pi - \\alpha = ${formatPiAngle(2 * Math.PI - refAngleVal)}`;
+              }
+            } else {
+              if (targetVal > 0) {
+                quadrantDetails = `\\text{Tangent is positive in Quadrants I and III:} \\quad \\text{QI: } ${innerArg} = \\alpha = ${refAngleLatex}, \\quad \\text{QIII: } ${innerArg} = \\pi + \\alpha = ${formatPiAngle(Math.PI + refAngleVal)}`;
+              } else {
+                quadrantDetails = `\\text{Tangent is negative in Quadrants II and IV:} \\quad \\text{QII: } ${innerArg} = \\pi - \\alpha = ${formatPiAngle(Math.PI - refAngleVal)}, \\quad \\text{QIV: } ${innerArg} = 2\\pi - \\alpha = ${formatPiAngle(2 * Math.PI - refAngleVal)}`;
+              }
+            }
+
+            steps.push({
+              stepNumber: stepNumber++,
+              explanation: `Find the reference angle $\\alpha = \\operatorname{a${trigFunc}}(|${targetValLatex}|) = ${refAngleLatex}$ and identify the active quadrants where $\\${trigFunc}$ is ${targetVal >= 0 ? 'positive' : 'negative'}:`,
+              math: quadrantDetails,
+            });
+
+            // Step 4: General Periodic & Interval Solution Set
+            let genSolutionsLatex: string[] = [];
+            if (trigFunc === 'sin') {
+              const base = Math.asin(Math.max(-1, Math.min(1, targetVal)));
+              const a1 = formatPiAngle(base < 0 ? base + 2 * Math.PI : base);
+              const a2 = formatPiAngle((Math.PI - base + 2 * Math.PI) % (2 * Math.PI));
+              genSolutionsLatex = [`${a1} + 2\\pi k`, `${a2} + 2\\pi k`];
+            } else if (trigFunc === 'cos') {
+              const base = Math.acos(Math.max(-1, Math.min(1, targetVal)));
+              const a1 = formatPiAngle(base);
+              genSolutionsLatex = [`${a1} + 2\\pi k`, `-${a1} + 2\\pi k`];
+            } else {
+              const base = Math.atan(targetVal);
+              const a1 = formatPiAngle(base < 0 ? base + Math.PI : base);
+              genSolutionsLatex = [`${a1} + \\pi k`];
+            }
+
+            steps.push({
+              stepNumber: stepNumber++,
+              explanation: `Enumerate all concrete solutions within the standard domain $[0, 2\\pi]$ and state the general periodic solutions over $\\mathbb{R}$ ($k \\in \\mathbb{Z}$):`,
+              math: `${variable} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}, \\quad \\text{General: } ${variable} = ${genSolutionsLatex.join(' \\quad \\text{or} \\quad ')}, \\; k \\in \\mathbb{Z}`,
+            });
+
+            return {
+              type: 'trigonometric',
+              equationType: 'trigonometric',
+              steps,
+              finalAnswer: `${variable} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`,
+              numericRoots: roots,
+            };
+          }
+        }
       }
-
-      const roots = solveBasicTrig(trigFunc, targetVal);
-      const rootLatexList = roots.map((r) => formatPiAngle(r));
-
-      // General periodic solutions
-      let genSolutionsLatex: string[] = [];
-      if (trigFunc === 'sin') {
-        const base = Math.asin(targetVal);
-        const a1 = formatPiAngle(base < 0 ? base + 2 * Math.PI : base);
-        const a2 = formatPiAngle((Math.PI - base + 2 * Math.PI) % (2 * Math.PI));
-        genSolutionsLatex = [`${a1} + 2\\pi k`, `${a2} + 2\\pi k`];
-      } else if (trigFunc === 'cos') {
-        const base = Math.acos(targetVal);
-        const a1 = formatPiAngle(base);
-        genSolutionsLatex = [`${a1} + 2\\pi k`, `-${a1} + 2\\pi k`];
-      } else {
-        const base = Math.atan(targetVal);
-        const a1 = formatPiAngle(base < 0 ? base + Math.PI : base);
-        genSolutionsLatex = [`${a1} + \\pi k`];
-      }
-
-      steps.push({
-        stepNumber: stepNumber++,
-        explanation: `Solve for the general periodic solution set over $\\mathbb{R}$ ($k \\in \\mathbb{Z}$):`,
-        math: `${v} = ${genSolutionsLatex.join(' \\quad \\text{or} \\quad ')}, \\quad k \\in \\mathbb{Z}`,
-      });
-
-      steps.push({
-        stepNumber: stepNumber++,
-        explanation: `Enumerate all concrete solutions within the domain $[0, 2\\pi]$:`,
-        math: `${v} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`,
-      });
-
-      return {
-        type: 'trigonometric',
-        equationType: 'trigonometric',
-        steps,
-        finalAnswer: `${v} \\in \\left\\{ ${rootLatexList.join(', \\; ')} \\right\\}`,
-        numericRoots: roots,
-      };
     }
   }
 
