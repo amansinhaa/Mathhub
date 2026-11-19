@@ -83,9 +83,10 @@ export function normalizeExpression(input: string): string {
   expr = expr.replace(/φ/g, 'phi');
   expr = expr.replace(/Δ/g, 'Delta');
 
-  // Ensure cbrt and sqrt with adjacent numbers without parens work: ∛27 -> cbrt(27), √16 -> sqrt(16)
-  expr = expr.replace(/cbrt\s*([0-9.]+)/g, 'cbrt($1)');
-  expr = expr.replace(/sqrt\s*([0-9.]+)/g, 'sqrt($1)');
+  // Ensure cbrt and sqrt without parens work for numbers, variables and shorthand:
+  // e.g. sqrt8 -> sqrt(8), sqrtx -> sqrt(x), cbrtx -> cbrt(x), cbrt27 -> cbrt(27)
+  expr = expr.replace(/(?<![a-zA-Z])cbrt\s*([0-9.]+|[a-zA-Z])(?![a-zA-Z0-9(])/g, 'cbrt($1)');
+  expr = expr.replace(/(?<![a-zA-Z])sqrt\s*([0-9.]+|[a-zA-Z])(?![a-zA-Z0-9(])/g, 'sqrt($1)');
   expr = expr.replace(/\bln\s*\(/g, 'log(');
 
   // 2. Convert Unicode superscripts to ^(digits)
@@ -142,6 +143,9 @@ export function normalizeExpression(input: string): string {
   //     (e.g. 2^2x → 2^(2x), e^2x → e^(2x), 2^-x → 2^(-x), 3^-2x → 3^(-2x))
   //     Otherwise rule 5 turns 2^2x into 2^2*x which evaluates as (2^2)*x = 4x
   expr = expr.replace(/(?<=\^)([+-]?(?:[0-9]+[a-zA-Z]+|[a-zA-Z]+[0-9]+|[+-][a-zA-Z]+))(?![a-zA-Z0-9_^(])/g, '($1)');
+
+  // Wrap function calls in exponent: 4^sqrt(x) -> 4^(sqrt(x)), 2^sin(x) -> 2^(sin(x))
+  expr = expr.replace(/\^((?:sqrt|cbrt|sin|cos|tan|log|ln|exp)\s*\([^()]*(?:\([^()]*\)[^()]*)*\))(?![^(]*\))/g, '^($1)');
 
   // Also wrap bare numeric exponents in parentheses to match prompt expectations (e.g. 3x^2 -> 3*x^(2))
   expr = expr.replace(/\^([0-9]+)(?![0-9.])/g, '^($1)');
@@ -471,6 +475,9 @@ function convertBalancedFunctions(s: string): string {
 export function expressionToLatex(expr: string): string {
   if (!expr || !expr.trim()) return '';
   let tex = expr.trim();
+  tex = tex.replace(/(?<![a-zA-Z])cbrt\s*([0-9.]+|[a-zA-Z])(?![a-zA-Z0-9(])/g, 'cbrt($1)');
+  tex = tex.replace(/(?<![a-zA-Z])sqrt\s*([0-9.]+|[a-zA-Z])(?![a-zA-Z0-9(])/g, 'sqrt($1)');
+  tex = tex.replace(/\^((?:sqrt|cbrt|sin|cos|tan|log|ln|exp)\s*\([^()]*(?:\([^()]*\)[^()]*)*\))(?![^(]*\))/g, '^($1)');
 
   const toTexSingle = (s: string) => {
     let res = convertBalancedFunctions(s);

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MatrixOperation, solveMatrix, MatrixResult } from '@/lib/math/matrixSolver';
 import { Plus, Minus, ArrowRightLeft, Sparkles, Hash } from 'lucide-react';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
 const OPERATIONS: { value: MatrixOperation; label: string; desc: string; requiresB?: boolean; requiresSquare?: boolean; requiresScalar?: boolean }[] = [
   { value: 'determinant', label: 'det(A)', desc: 'Determinant', requiresSquare: true },
@@ -19,7 +20,7 @@ const OPERATIONS: { value: MatrixOperation; label: string; desc: string; require
   { value: 'multiply', label: 'A × B', desc: 'Matrix Multiplication', requiresB: true },
 ];
 
-export default function MatrixSolverWidget() {
+function MatrixSolverWidgetInner() {
   // Custom dimensions for Matrix A
   const [rowsA, setRowsA] = useState<number>(3);
   const [colsA, setColsA] = useState<number>(3);
@@ -517,6 +518,14 @@ export default function MatrixSolverWidget() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MatrixSolverWidget() {
+  return (
+    <ErrorBoundary fallbackTitle="Matrix Solver Error">
+      <MatrixSolverWidgetInner />
+    </ErrorBoundary>
   );
 }
 

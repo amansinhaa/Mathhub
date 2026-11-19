@@ -290,14 +290,24 @@ export default function EquationInput() {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [dismissedFixId, setDismissedFixId] = useState<string | null>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  // Debounce equation for assistant analysis and KaTeX preview to preserve instantaneous 60fps typing (INP < 100ms)
-  const [debouncedEquation, setDebouncedEquation] = useState(equation);
-
+  // 1. Debounce for instantaneous KaTeX preview & badge (180ms) to ensure smooth 60fps typing (INP < 100ms)
+  const [debouncedPreview, setDebouncedPreview] = useState(equation);
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedEquation(equation);
+      setDebouncedPreview(equation);
     }, 180);
+    return () => clearTimeout(timer);
+  }, [equation]);
+
+  // 2. Debounce for yellow syntax warnings / auto-fix banner (1800ms)
+  // Stops flashing syntax warnings while the user is still actively mid-typing!
+  const [debouncedWarningEquation, setDebouncedWarningEquation] = useState(equation);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedWarningEquation(equation);
+    }, 1800);
     return () => clearTimeout(timer);
   }, [equation]);
 
@@ -306,9 +316,46 @@ export default function EquationInput() {
     setDismissedFixId(null);
   }, [equation]);
 
-  const degreeInfo = quickDegreeDetect(equation);
+  const degreeInfo = quickDegreeDetect(debouncedPreview || equation);
   const isDegreeTwo = degreeInfo?.degree === 2;
   const isSystem = solverType === 'system';
+
+  // Visual math toolbar: one-click insert templates
+  const QUICK_KEYPAD_BUTTONS = [
+    { label: '√( )', tooltip: 'Square Root: √( )', prefix: 'sqrt(', suffix: ')' },
+    { label: 'x^□', tooltip: 'Power: x^□', prefix: 'x^(', suffix: ')' },
+    { label: 'a/b', tooltip: 'Fraction: a/b', prefix: '(', suffix: ')/()' },
+    { label: '( )', tooltip: 'Parentheses: ( )', prefix: '(', suffix: ')' },
+    { label: 'π', tooltip: 'Pi Constant: π', prefix: 'π', suffix: '' },
+    { label: 'e^□', tooltip: 'Exponential: e^□', prefix: 'e^(', suffix: ')' },
+    { label: '=', tooltip: 'Equals: =', prefix: ' = ', suffix: '' },
+    { label: '≤', tooltip: 'Less Than or Equal: ≤', prefix: ' <= ', suffix: '' },
+    { label: '≥', tooltip: 'Greater Than or Equal: ≥', prefix: ' >= ', suffix: '' },
+    { label: 'sin', tooltip: 'Sine: sin( )', prefix: 'sin(', suffix: ')' },
+    { label: 'cos', tooltip: 'Cosine: cos( )', prefix: 'cos(', suffix: ')' },
+    { label: 'tan', tooltip: 'Tangent: tan( )', prefix: 'tan(', suffix: ')' },
+  ];
+
+  const handleInsertTemplate = (prefix: string, suffix: string = '') => {
+    const input = inputRef.current;
+    if (!input) {
+      setEquation(equation + prefix + suffix);
+      return;
+    }
+    const start = input.selectionStart ?? equation.length;
+    const end = input.selectionEnd ?? equation.length;
+    const selection = equation.slice(start, end);
+
+    const insertText = prefix + selection + suffix;
+    const nextVal = equation.slice(0, start) + insertText + equation.slice(end);
+    setEquation(nextVal);
+
+    setTimeout(() => {
+      input.focus();
+      const newCursor = selection.length > 0 ? start + insertText.length : start + prefix.length;
+      input.setSelectionRange(newCursor, newCursor);
+    }, 10);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -372,8 +419,8 @@ export default function EquationInput() {
   };
 
   const assistant = React.useMemo(() => {
-    return analyzeInput(debouncedEquation, solverType);
-  }, [debouncedEquation, solverType]);
+    return analyzeInput(debouncedWarningEquation, solverType);
+  }, [debouncedWarningEquation, solverType]);
 
   const handleApplyFix = (fix: AutoFix) => {
     if (fix.targetMode && fix.targetMode !== solverType) {
@@ -590,6 +637,7 @@ export default function EquationInput() {
           {/* Large wide touch-optimized input field */}
           <div className="relative w-full">
             <input
+              ref={inputRef}
               id="equation"
               type="text"
               enterKeyHint="go"
@@ -598,6 +646,12 @@ export default function EquationInput() {
               spellCheck={false}
               value={equation}
               onChange={(e) => setEquation(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
               onPaste={(e) => {
                 const pasted = e.clipboardData.getData('text/plain') || e.clipboardData.getData('text/html');
                 if (pasted) {
@@ -627,6 +681,25 @@ export default function EquationInput() {
                 <X size={16} />
               </button>
             )}
+          </div>
+
+          {/* ── Visual Math Keypad Toolbar ───────────────────────────────── */}
+          <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5 -mt-0.5 select-none">
+            <span className="text-[10px] font-mono font-semibold text-[#8D827A] dark:text-[#A19891] uppercase tracking-wider hidden sm:inline mr-1">
+              Insert:
+            </span>
+            {QUICK_KEYPAD_BUTTONS.map((btn) => (
+              <button
+                key={btn.label}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleInsertTemplate(btn.prefix, btn.suffix)}
+                title={btn.tooltip}
+                className="px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg bg-[#F5F5F5] dark:bg-[#25201E] hover:bg-[#EFEBE9] dark:hover:bg-[#3E2723] active:scale-95 text-[#5D4037] dark:text-[#D7CCC8] border border-[#E0E0E0] dark:border-[#3E2723] font-mono text-xs font-semibold transition-all shrink-0 cursor-pointer shadow-2xs"
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
 
           {/* ── Auto-Fix "Did You Mean?" Banner ─────────────────────────────── */}
@@ -759,7 +832,7 @@ export default function EquationInput() {
               </div>
               <div className="w-full overflow-x-auto scrollbar-thin py-1 text-[#131313] dark:text-white flex justify-center items-center">
                 <div className="text-sm sm:text-base md:text-lg font-medium tracking-wide max-w-full px-1">
-                  <MathDisplay math={expressionToLatex(debouncedEquation)} />
+                  <MathDisplay math={expressionToLatex(debouncedPreview || equation)} />
                 </div>
               </div>
             </div>

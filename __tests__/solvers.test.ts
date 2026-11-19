@@ -3,7 +3,7 @@ import { solveDerivative, solveIntegral } from '../src/lib/math/calculusSolver';
 import { solveDomainAndRange } from '../src/lib/math/domainRangeSolver';
 import { matrixAdd, matrixMultiply, matrixDeterminant, matrixInverse } from '../src/lib/math/matrix';
 import { classifyEquation } from '../src/lib/math/classifier';
-import { quickDegreeDetect } from '../src/lib/math/normalizer';
+import { quickDegreeDetect, normalizeExpression } from '../src/lib/math/normalizer';
 import { analyzeFunction } from '../src/lib/math/functionAnalysis';
 
 describe('EasyEquate Math Solver Engine Hardening (50+ Tricky Test Suite)', () => {
@@ -465,6 +465,29 @@ describe('EasyEquate Math Solver Engine Hardening (50+ Tricky Test Suite)', () =
       const res = solveDomainAndRange('sin(x) * cos(x)');
       expect(res.finalAnswer).toContain('0.5');
       expect(res.finalAnswer).toContain('-0.5');
+    });
+  });
+
+  // ─── 14. Student Shorthand Auto-Normalization ───────────────────────────
+  describe('Student Shorthand Auto-Normalization', () => {
+    it('73. sqrt8 -> sqrt(8)', () => {
+      expect(normalizeExpression('sqrt8')).toBe('sqrt(8)');
+    });
+
+    it('74. sqrtx -> sqrt(x)', () => {
+      expect(normalizeExpression('sqrtx')).toBe('sqrt(x)');
+    });
+
+    it('75. 4^sqrtx -> 4^(sqrt(x))', () => {
+      expect(normalizeExpression('4^sqrtx')).toBe('4^(sqrt(x))');
+    });
+
+    it('76. 2x -> 2*x', () => {
+      expect(normalizeExpression('2x')).toBe('2*x');
+    });
+
+    it('77. 3(x+1) -> 3*(x+1)', () => {
+      expect(normalizeExpression('3(x+1)')).toBe('3*(x+1)');
     });
   });
 });

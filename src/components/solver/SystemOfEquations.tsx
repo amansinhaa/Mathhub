@@ -3,8 +3,9 @@
 import React from 'react';
 import { useSolverStore } from '@/stores/solverStore';
 import { Plus, Trash2 } from 'lucide-react';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 
-export default function SystemOfEquations() {
+function SystemOfEquationsInner() {
   const { 
     systemEquations, 
     updateSystemEquation, 
@@ -23,6 +24,13 @@ export default function SystemOfEquations() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) {
+      useSolverStore.getState().forceUnstick();
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
+      return;
+    }
     solve();
   };
 
@@ -67,7 +75,7 @@ export default function SystemOfEquations() {
           <button
             type="button"
             onClick={addSystemEquation}
-            className="w-full py-2 border border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 text-xs font-mono"
+            className="w-full py-2 border border-dashed border-[#BCAAA4] dark:border-[#3E2723] rounded-xl text-[#5D4037] dark:text-[#A1887F] hover:border-[#5D4037] hover:bg-[#EFEBE9] dark:hover:bg-[#22201F] dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 text-xs font-mono cursor-pointer"
           >
             <Plus size={14} />
             <span>Add Equation</span>
@@ -89,13 +97,44 @@ export default function SystemOfEquations() {
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={isLoading || systemEquations.some(eq => !eq.trim())}
-        className="w-full py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-[#795548]/50"
-      >
-        {isLoading ? 'Solving...' : 'Solve System'}
-      </button>
+      <div className="space-y-1.5">
+        <button
+          type="submit"
+          disabled={systemEquations.some(eq => !eq.trim())}
+          className="w-full py-3 px-5 rounded-xl bg-[#5D4037] hover:bg-[#6D4C41] active:bg-[#4E342E] text-white font-bold text-sm shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-[#795548]/50 cursor-pointer"
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Solving…</span>
+            </span>
+          ) : (
+            'Solve System'
+          )}
+        </button>
+
+        {isLoading && (
+          <div className="text-center pt-0.5 animate-fade-in">
+            <button
+              type="button"
+              onClick={() => {
+                useSolverStore.getState().forceUnstick();
+              }}
+              className="text-[11px] font-mono text-[#8D827A] hover:text-[#5D4037] dark:hover:text-[#D7CCC8] underline transition-colors cursor-pointer"
+            >
+              Taking too long? Click here to cancel
+            </button>
+          </div>
+        )}
+      </div>
     </form>
+  );
+}
+
+export default function SystemOfEquations() {
+  return (
+    <ErrorBoundary fallbackTitle="System of Equations Error" onReset={() => useSolverStore.getState().forceUnstick()}>
+      <SystemOfEquationsInner />
+    </ErrorBoundary>
   );
 }

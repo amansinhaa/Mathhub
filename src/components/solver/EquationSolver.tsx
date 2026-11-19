@@ -81,11 +81,6 @@ export default function EquationSolver({
           useSolverStore.getState().solve();
         }, 50);
       }
-    } else if (store.equation.trim() && !store.result && !store.isLoading) {
-      // If store has an equation from previous navigation without result, auto-solve
-      setTimeout(() => {
-        useSolverStore.getState().solve();
-      }, 80);
     }
   }, [initialMode, initialEquation]);
 
