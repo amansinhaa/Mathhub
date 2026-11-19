@@ -140,7 +140,13 @@ export default function StepByStep() {
               Solution
             </h3>
             <span className="px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase">
-              {!equation.includes('=') && !result.finalAnswer.includes('=') ? 'Simplification' : (result.equationType || result.type)}
+              {result.equationType === 'arithmetic_check'
+                ? 'Arithmetic Check'
+                : result.equationType === 'linear_2var'
+                ? '2-Variable Linear'
+                : !equation.includes('=') && !result.finalAnswer.includes('=')
+                ? 'Simplification'
+                : (result.equationType || result.type)}
             </span>
             {result.type === 'polynomial' && equation.includes('=') && quadraticMethod && quadraticMethod !== 'auto' && (
               <span className="hidden sm:inline px-2 py-0.5 bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/30 dark:bg-[#5D4037]/40 dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-full text-[10px] sm:text-[11px] font-mono font-semibold">
@@ -279,6 +285,43 @@ export default function StepByStep() {
               );
             })()}
           </div>
+
+          {/* 2-Variable Linear Action Buttons */}
+          {result.equationType === 'linear_2var' && (
+            <div className="mt-3 pt-3 border-t border-[#E0E0E0] dark:border-[#282422] flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const store = useSolverStore.getState();
+                  store.setSolverType('symbolic');
+                  store.setSolveForVariable('x');
+                  setTimeout(() => store.solve(), 50);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#2E2825] border border-[#D7CCC8] dark:border-[#3E2723] text-xs font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Solve for x in terms of y</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const store = useSolverStore.getState();
+                  store.setSolverType('symbolic');
+                  store.setSolveForVariable('y');
+                  setTimeout(() => store.solve(), 50);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E1E1E] hover:bg-[#EFEBE9] dark:hover:bg-[#2E2825] border border-[#D7CCC8] dark:border-[#3E2723] text-xs font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8] shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Solve for y in terms of x</span>
+              </button>
+              <Link
+                href={getGraphLink()}
+                className="px-3 py-1.5 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white text-xs font-mono font-semibold shadow-2xs transition-all flex items-center gap-1.5"
+              >
+                <LineChart size={13} />
+                <span>View Graph</span>
+              </Link>
+            </div>
+          )}
 
           {/* If parametric Nature of Roots analysis is present, show it directly in Solution Bar */}
           {result.natureOfRoots && result.natureOfRoots.length > 0 && result.type !== 'domain_range' && (

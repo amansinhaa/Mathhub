@@ -411,12 +411,33 @@ export function solveDomainAndRange(input: string): SolverResult {
         math: `${varName} \\in (-\\infty, \\infty)`,
       });
 
-      rangeInterval = `[-1, 1]`;
-      rangeSetBuilder = `{y \\in \\mathbb{R} \\mid -1 \\le y \\le 1}`;
+      // Numerically find the true amplitude / range over period [0, 2pi]
+      let minVal = Infinity;
+      let maxVal = -Infinity;
+      try {
+        const compiled = math.compile(normalized);
+        for (let t = 0; t <= Math.PI * 2; t += 0.005) {
+          const scope: Record<string, number> = { [varName]: t };
+          const val = Number(compiled.evaluate(scope));
+          if (Number.isFinite(val)) {
+            if (val < minVal) minVal = val;
+            if (val > maxVal) maxVal = val;
+          }
+        }
+      } catch {
+        minVal = -1;
+        maxVal = 1;
+      }
+
+      const rMin = minVal !== Infinity ? Number(minVal.toFixed(3)) : -1;
+      const rMax = maxVal !== -Infinity ? Number(maxVal.toFixed(3)) : 1;
+
+      rangeInterval = `[${rMin}, ${rMax}]`;
+      rangeSetBuilder = `{y \\in \\mathbb{R} \\mid ${rMin} \\le y \\le ${rMax}}`;
       steps.push({
         stepNumber: 3,
-        explanation: `The standard sine and cosine functions oscillate continuously between $-1$ and $1$:`,
-        math: `-1 \\le y \\le 1 \\implies [-1, 1]`,
+        explanation: `Evaluate the bounded extrema over the periodic interval to find the range:`,
+        math: `${rMin} \\le y \\le ${rMax} \\implies [${rMin}, ${rMax}]`,
       });
     }
   }

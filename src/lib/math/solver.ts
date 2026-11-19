@@ -1659,18 +1659,188 @@ export function trySimplifyAlgebraicExpression(cleanEq: string, rawEq: string): 
   }
 }
 
+// ─── Variable-Free Arithmetic Equality Solver ───────────────────────────────
+
+function trySolveVariableFreeEquation(cleanEq: string, originalEq: string): SolverResult | null {
+  if (!cleanEq.includes('=')) return null;
+  const parts = cleanEq.split('=');
+  if (parts.length !== 2) return null;
+
+  const [lhs, rhs] = parts;
+  const reservedLetters = new Set(['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e', 'i']);
+  const tokens = (cleanEq.match(/[a-zA-Z]+/g) || []).filter(t => !reservedLetters.has(t.toLowerCase()));
+  if (tokens.length > 0) return null; // Has variables, not variable-free
+
+  try {
+    const lhsVal = math.evaluate(lhs.trim());
+    const rhsVal = math.evaluate(rhs.trim());
+
+    if (typeof lhsVal !== 'number' || typeof rhsVal !== 'number' || !Number.isFinite(lhsVal) || !Number.isFinite(rhsVal)) {
+      return null;
+    }
+
+    const lhsFmt = fmtFraction(lhsVal);
+    const rhsFmt = fmtFraction(rhsVal);
+    const isTrue = Math.abs(lhsVal - rhsVal) < 1e-9;
+    const finalAnswer = isTrue
+      ? `${lhsFmt} = ${rhsFmt} \\implies \\text{True}`
+      : `${lhsFmt} = ${rhsFmt} \\implies \\text{False}`;
+
+    const lhsLatex = expressionToLatex(lhs.trim());
+    const rhsLatex = expressionToLatex(rhs.trim());
+
+    const steps: SolutionStep[] = [
+      {
+        stepNumber: 1,
+        explanation: 'Evaluate the arithmetic expression on the left-hand side (LHS).',
+        math: `\\text{LHS} = ${lhsLatex} = ${lhsFmt}`,
+      },
+      {
+        stepNumber: 2,
+        explanation: 'Evaluate the arithmetic expression on the right-hand side (RHS).',
+        math: `\\text{RHS} = ${rhsLatex} = ${rhsFmt}`,
+      },
+      {
+        stepNumber: 3,
+        explanation: isTrue
+          ? 'Compare the two sides: both sides evaluate to the exact same value.'
+          : 'Compare the two sides: the left-hand side does not equal the right-hand side.',
+        math: isTrue
+          ? `${lhsFmt} = ${rhsFmt} \\quad (\\text{Statement is True})`
+          : `${lhsFmt} \\neq ${rhsFmt} \\quad (\\text{Statement is False})`,
+      },
+    ];
+
+    return {
+      type: 'polynomial',
+      equationType: 'arithmetic_check',
+      steps,
+      finalAnswer,
+      inputInterpretation: `\\text{Arithmetic Equality Check: } ${lhsLatex} = ${rhsLatex}`,
+      rawEquation: originalEq,
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ─── Two-Variable Linear Equation Solver ────────────────────────────────────
+
+function trySolveTwoVariableLinearEquation(cleanEq: string, originalEq: string): SolverResult | null {
+  if (!cleanEq.includes('=')) return null;
+  const parts = cleanEq.split('=');
+  if (parts.length !== 2) return null;
+
+  const reservedLetters = new Set(['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e', 'i']);
+  const tokens = (cleanEq.match(/[a-zA-Z]+/g) || []).filter(t => !reservedLetters.has(t.toLowerCase()) && t.length === 1);
+  const distinctVars = Array.from(new Set(tokens));
+
+  // Must have exactly two distinct variables (e.g. x and y)
+  if (distinctVars.length !== 2) return null;
+
+  // Make sure neither variable is in an exponent, power >= 2, or radical/trig/log
+  if (/\^[2-9]|\^\([^)]+\)|sqrt|cbrt|\/|sin|cos|tan|log|ln|exp/i.test(cleanEq)) return null;
+
+  const vX = distinctVars.includes('x') ? 'x' : distinctVars[0];
+  const vY = distinctVars.includes('y') ? 'y' : distinctVars.find(v => v !== vX) || distinctVars[1];
+
+  try {
+    const [lhsStr, rhsStr] = parts;
+    const exprStandard = `(${lhsStr}) - (${rhsStr})`;
+    const compiled = math.compile(exprStandard);
+
+    const f00 = Number(compiled.evaluate({ [vX]: 0, [vY]: 0 }));
+    const f10 = Number(compiled.evaluate({ [vX]: 1, [vY]: 0 }));
+    const f01 = Number(compiled.evaluate({ [vX]: 0, [vY]: 1 }));
+    const f11 = Number(compiled.evaluate({ [vX]: 1, [vY]: 1 }));
+
+    const A = f10 - f00;
+    const B = f01 - f00;
+    const C = f00;
+
+    // Linearity check
+    if (Math.abs(f11 - (A + B + C)) > 1e-5) return null;
+    if (Math.abs(A) < 1e-9 || Math.abs(B) < 1e-9) return null;
+
+    const slope = -A / B;
+    const yIntercept = -C / B;
+    const xIntercept = -C / A;
+
+    const slopeFmt = fmtFraction(slope);
+    const yIntFmt = fmtFraction(yIntercept);
+    const xIntFmt = fmtFraction(xIntercept);
+
+    const yLatex = slope === 1 ? `${vX}` : slope === -1 ? `-${vX}` : `${slopeFmt}${vX}`;
+    const yConstSign = yIntercept >= 0 ? `+ ${fmtFraction(Math.abs(yIntercept))}` : `- ${fmtFraction(Math.abs(yIntercept))}`;
+    const slopeInterceptEq = `${vY} = ${yLatex} ${yIntercept !== 0 ? yConstSign : ''}`.trim();
+
+    const invSlope = -B / A;
+    const invSlopeFmt = fmtFraction(invSlope);
+    const xLatex = invSlope === 1 ? `${vY}` : invSlope === -1 ? `-${vY}` : `${invSlopeFmt}${vY}`;
+    const xConstSign = xIntercept >= 0 ? `+ ${fmtFraction(Math.abs(xIntercept))}` : `- ${fmtFraction(Math.abs(xIntercept))}`;
+    const xInTermsOfY = `${vX} = ${xLatex} ${xIntercept !== 0 ? xConstSign : ''}`.trim();
+
+    const steps: SolutionStep[] = [
+      {
+        stepNumber: 1,
+        explanation: `Identify as a linear equation in two variables ($${vX}$ and $${vY}$) and convert to standard form $Ax + By = C$.`,
+        math: `${fmt(A)}${vX} ${B >= 0 ? '+' : '-'} ${fmt(Math.abs(B))}${vY} = ${fmt(-C)}`,
+      },
+      {
+        stepNumber: 2,
+        explanation: 'Calculate the slope $m$ and the coordinate axis intercepts.',
+        math: `\\begin{aligned} \\text{Slope } m: \\quad & m = -\\frac{A}{B} = ${slopeFmt} \\\\[4pt] \\text{y-intercept } (0, y): \\quad & \\left(0, \\; ${yIntFmt}\\right) \\\\[4pt] \\text{x-intercept } (x, 0): \\quad & \\left(${xIntFmt}, \\; 0\\right) \\end{aligned}`,
+      },
+      {
+        stepNumber: 3,
+        explanation: `Solve for $${vY}$ in terms of $${vX}$ (slope-intercept form):`,
+        math: slopeInterceptEq,
+      },
+      {
+        stepNumber: 4,
+        explanation: `Solve for $${vX}$ in terms of $${vY}$:`,
+        math: xInTermsOfY,
+      },
+    ];
+
+    const finalAnswer = `${slopeInterceptEq} \\quad \\left(m = ${slopeFmt},\\; \\text{y-int} = ${yIntFmt},\\; \\text{x-int} = ${xIntFmt}\\right)`;
+
+    return {
+      type: 'polynomial',
+      equationType: 'linear_2var',
+      steps,
+      finalAnswer,
+      inputInterpretation: `\\text{Two-Variable Linear Equation: } ${expressionToLatex(cleanEq)}`,
+      rawEquation: originalEq,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ─── Main Solver Functions ──────────────────────────────────────────────────
 
 function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
   let cleanEq = equation.trim();
   cleanEq = autoBalanceParens(cleanEq);
 
-  // If user entered function notation: y = f(x) or f(x) = ... to solve for roots / x-intercepts
-  let functionNotation = false;
-  if (/^(?:y|f\s*\(\s*x\s*\))\s*=/i.test(cleanEq)) {
-    const rhsPart = cleanEq.replace(/^(?:y|f\s*\(\s*x\s*\))\s*=/i, '').trim();
+  // 1. Variable-free arithmetic equality check (e.g. 3 = 1 - 2(-7))
+  const varFreeResult = trySolveVariableFreeEquation(cleanEq, equation);
+  if (varFreeResult) {
+    return varFreeResult;
+  }
+
+  // 2. Two-variable linear equation (e.g. y = 10 - 3x, 3x + 2y = 12)
+  const twoVarResult = trySolveTwoVariableLinearEquation(cleanEq, equation);
+  if (twoVarResult) {
+    return twoVarResult;
+  }
+
+  // 3. Function / curve root solving notation: y = f(x) or f(x) = ... to solve for roots / x-intercepts
+  // (Note: two-variable linear equations like y = 10 - 3x have already been handled above)
+  if (/^(?:y|f\s*\(\s*[a-zA-Z]\s*\))\s*=/i.test(cleanEq)) {
+    const rhsPart = cleanEq.replace(/^(?:y|f\s*\(\s*[a-zA-Z]\s*\))\s*=/i, '').trim();
     if (/[a-zA-Z]/.test(rhsPart)) {
-      functionNotation = true;
       cleanEq = `${rhsPart} = 0`;
     }
   }

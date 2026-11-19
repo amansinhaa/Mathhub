@@ -2,6 +2,9 @@ import { solvePolynomial, solveSystem, solveInequality, solveSymbolic } from '..
 import { solveDerivative, solveIntegral } from '../src/lib/math/calculusSolver';
 import { solveDomainAndRange } from '../src/lib/math/domainRangeSolver';
 import { matrixAdd, matrixMultiply, matrixDeterminant, matrixInverse } from '../src/lib/math/matrix';
+import { classifyEquation } from '../src/lib/math/classifier';
+import { quickDegreeDetect } from '../src/lib/math/normalizer';
+import { analyzeFunction } from '../src/lib/math/functionAnalysis';
 
 describe('EasyEquate Math Solver Engine Hardening (50+ Tricky Test Suite)', () => {
   // ─── 1. Quadratic Equations (10 tests) ──────────────────────────────────
@@ -389,6 +392,79 @@ describe('EasyEquate Math Solver Engine Hardening (50+ Tricky Test Suite)', () =
       expect(res.result[0][1]).toBeCloseTo(1);
       expect(res.result[1][0]).toBeCloseTo(1.5);
       expect(res.result[1][1]).toBeCloseTo(-0.5);
+    });
+  });
+
+  // ─── 10. Variable-Free Equations (Arithmetic Check) ────────────────────
+  describe('Variable-Free Equations (Arithmetic Equality Checks)', () => {
+    it('64. 3 = 1 - 2(-7) -> False (3 = 15 -> False, never x = 0)', () => {
+      const res = solvePolynomial('3 = 1 - 2(-7)');
+      expect(res.equationType).toBe('arithmetic_check');
+      expect(res.finalAnswer).toContain('False');
+      expect(res.finalAnswer).not.toContain('x = 0');
+    });
+
+    it('65. 2 + 3 * 4 = 14 -> True (14 = 14 -> True)', () => {
+      const res = solvePolynomial('2 + 3 * 4 = 14');
+      expect(res.equationType).toBe('arithmetic_check');
+      expect(res.finalAnswer).toContain('True');
+    });
+  });
+
+  // ─── 11. Two-Variable Linear Equations ─────────────────────────────────
+  describe('Two-Variable Linear Equations', () => {
+    it('66. y = 10 - 3x -> slope -3, y-intercept 10, x-intercept 10/3', () => {
+      const res = solvePolynomial('y = 10 - 3x');
+      expect(res.equationType).toBe('linear_2var');
+      expect(res.finalAnswer).toContain('-3');
+      expect(res.finalAnswer).toContain('10');
+      expect(res.finalAnswer).not.toContain('x = 0');
+    });
+
+    it('67. 3x + 2y = 12 -> slope -3/2, y-intercept 6, x-intercept 4', () => {
+      const res = solvePolynomial('3x + 2y = 12');
+      expect(res.equationType).toBe('linear_2var');
+      expect(res.finalAnswer).toContain('6');
+      expect(res.finalAnswer).toContain('4');
+    });
+  });
+
+  // ─── 12. Expression Classifier & Badges ────────────────────────────────
+  describe('Expression Classifier & Normalizer Badges', () => {
+    it('68. sin(2x) is classified as trigonometric (never Linear)', () => {
+      expect(classifyEquation('sin(2x)')).toBe('trigonometric');
+      const badge = quickDegreeDetect('sin(2x)');
+      expect(badge?.label).toContain('Trigonometric');
+      expect(badge?.label).not.toContain('Linear');
+    });
+
+    it('69. x^2 * e^x is classified as exponential (never Quadratic)', () => {
+      expect(classifyEquation('x^2 * e^x')).toBe('exponential');
+      const badge = quickDegreeDetect('x^2 * e^x');
+      expect(badge?.label).toContain('Exponential');
+      expect(badge?.label).not.toContain('Quadratic');
+    });
+
+    it('70. 5 * 6^3(x) is classified as exponential (never Linear)', () => {
+      expect(classifyEquation('5 * 6^3(x)')).toBe('exponential');
+      const badge = quickDegreeDetect('5 * 6^3(x)');
+      expect(badge?.label).toContain('Exponential');
+      expect(badge?.label).not.toContain('Linear');
+    });
+  });
+
+  // ─── 13. 2D Graph Plotter Function Analysis ───────────────────────────
+  describe('2D Graph Plotter Function Analysis (Range & Asymptotes)', () => {
+    it('71. y = sin(x) * cos(x) bounded range [-0.5, 0.5] and no horizontal asymptote', () => {
+      const analysis = analyzeFunction('sin(x) * cos(x)');
+      expect(analysis.range).toBe('[-0.5, \\; 0.5]');
+      expect(analysis.asymptotes.horizontal).toEqual(['\\text{None}']);
+    });
+
+    it('72. solveDomainAndRange for sin(x) * cos(x) gives range [-0.5, 0.5]', () => {
+      const res = solveDomainAndRange('sin(x) * cos(x)');
+      expect(res.finalAnswer).toContain('0.5');
+      expect(res.finalAnswer).toContain('-0.5');
     });
   });
 });

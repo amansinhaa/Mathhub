@@ -99,12 +99,32 @@ export function analyzeFunction(
   const horizontal: string[] = [];
   const slant: string[] = [];
 
-  const yPosInf = evalAt(10000);
-  const yNegInf = evalAt(-10000);
+  // Multi-point convergence check for horizontal asymptote as x -> +inf
+  const testPointsPos = [10000, 10050, 10100, 20000, 50000];
+  const evalPos = testPointsPos.map(evalAt).filter((y): y is number => y !== null && isFinite(y));
+  if (evalPos.length === testPointsPos.length && Math.abs(evalPos[0]) < 1000) {
+    const diffsPos = evalPos.map(y => Math.abs(y - evalPos[0]));
+    const maxDiffPos = Math.max(...diffsPos);
+    // Only accept as asymptote if function strictly converges without oscillation
+    if (maxDiffPos < 1e-3) {
+      const limPos = Number(evalPos[0].toFixed(3));
+      horizontal.push(`y = ${limPos}`);
+    }
+  }
 
-  if (yPosInf !== null && isFinite(yPosInf) && Math.abs(yPosInf) < 1000) {
-    const limPos = Number(yPosInf.toFixed(3));
-    horizontal.push(`y = ${limPos}`);
+  // Multi-point convergence check as x -> -inf
+  const testPointsNeg = [-10000, -10050, -10100, -20000, -50000];
+  const evalNeg = testPointsNeg.map(evalAt).filter((y): y is number => y !== null && isFinite(y));
+  if (evalNeg.length === testPointsNeg.length && Math.abs(evalNeg[0]) < 1000) {
+    const diffsNeg = evalNeg.map(y => Math.abs(y - evalNeg[0]));
+    const maxDiffNeg = Math.max(...diffsNeg);
+    if (maxDiffNeg < 1e-3) {
+      const limNeg = Number(evalNeg[0].toFixed(3));
+      const strNeg = `y = ${limNeg}`;
+      if (!horizontal.includes(strNeg)) {
+        horizontal.push(strNeg);
+      }
+    }
   }
 
   // Slant asymptote check: m = lim f(x)/x, b = lim (f(x) - mx)
@@ -126,7 +146,26 @@ export function analyzeFunction(
 
   // 6. Range estimation
   let range = '(-\\infty, \\infty)';
-  if (horizontal.length > 0 && vAsyms.length > 0) {
+
+  // Check if trigonometric bounded function (e.g. sin(x)*cos(x), sin(x), cos(x))
+  const isTrigBounded = /(?:sin|cos)/i.test(expr) && !/(?:tan|sec|csc|cot)/i.test(expr) && !/x\s*\*/.test(expr);
+  if (isTrigBounded) {
+    let minVal = Infinity;
+    let maxVal = -Infinity;
+    // Scan over two periods [0, 4*pi] with fine resolution
+    for (let x = 0; x <= Math.PI * 4; x += 0.005) {
+      const y = evalAt(x);
+      if (y !== null && isFinite(y)) {
+        if (y < minVal) minVal = y;
+        if (y > maxVal) maxVal = y;
+      }
+    }
+    if (minVal !== Infinity && maxVal !== -Infinity) {
+      const rMin = Number(minVal.toFixed(3));
+      const rMax = Number(maxVal.toFixed(3));
+      range = `[${rMin}, \\; ${rMax}]`;
+    }
+  } else if (horizontal.length > 0 && vAsyms.length > 0) {
     const hVal = parseFloat(horizontal[0].replace('y =', '').trim());
     if (!isNaN(hVal)) {
       range = `y \\neq ${hVal}`;

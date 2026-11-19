@@ -321,44 +321,71 @@ export function quickDegreeDetect(input: string): { degree: number; label: strin
   if (!input || !input.trim()) return null;
   const clean = normalizeExpression(input);
 
-  // Detect ODEs (y', dy/dx, y'')
+  // 1. Detect ODEs (y', dy/dx, y'')
   if (/y''|y'|dy\/dx|d\^2y\/dx\^2/i.test(input)) {
     return { degree: 0, label: 'Differential Equation (ODE)' };
   }
 
-  // Detect radical expressions/equations
-  if (/sqrt|cbrt|√|∛/.test(clean)) {
-    if (clean.includes('=')) {
-      return { degree: 0, label: 'Radical Equation' };
-    }
-    return { degree: 0, label: 'Radical Expression' };
-  }
-
-  // Detect transcendental equations (exponential, trig, log with equals)
-  if (/(?:exp\b|e\^|\bsin\b|\bcos\b|\btan\b|\bln\b|\blog\b)/i.test(clean) && clean.includes('=')) {
-    return { degree: 0, label: 'Transcendental Equation' };
-  }
-
-  // Detect parametric equations (e.g. 2x^2 + 3x - m + 2)
-  const alphaTokens = (clean.match(/[a-zA-Z]+/g) || []).filter(
-    (t) => t.length === 1 && !/^(sin|cos|tan|log|ln|exp|sqrt|abs|pi|e|i)$/i.test(t)
-  );
-  const uniqueVars = Array.from(new Set(alphaTokens));
-  if (uniqueVars.length > 1) {
-    return { degree: 0, label: 'Parametric Equation' };
-  }
-
-  // Extract variables: must have single-letter variables not part of functions (sin, cos, sqrt, etc.)
+  // 2. Extract single-letter variables not part of reserved math names
   const reserved = new Set([
     'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
-    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e'
+    'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e', 'i'
   ]);
   const tokens = clean.match(/[a-zA-Z]+/g) || [];
   const varsFound = new Set(tokens.filter((t) => t.length === 1 && !reserved.has(t.toLowerCase())));
   const hasVariable = varsFound.size > 0;
 
-  // If there is NO variable, this is just arithmetic numbers, NOT an algebraic equation!
-  if (!hasVariable) return null;
+  // 3. Variable-free arithmetic check (e.g. 3 = 1 - 2(-7))
+  if (!hasVariable) {
+    if (clean.includes('=')) {
+      return { degree: 0, label: 'Arithmetic Check (True/False)' };
+    }
+    return null;
+  }
+
+  // 4. Detect Trigonometric (sin, cos, tan, etc.) - BEFORE polynomial degrees
+  if (/\b(?:sin|cos|tan|sec|csc|cot|asin|acos|atan)\b/i.test(clean)) {
+    return { degree: 0, label: clean.includes('=') ? 'Trigonometric Equation' : 'Trigonometric Function' };
+  }
+
+  // 5. Detect Logarithmic (log, ln) - BEFORE polynomial degrees
+  if (/\b(?:log|ln)\b/i.test(clean)) {
+    return { degree: 0, label: clean.includes('=') ? 'Logarithmic Equation' : 'Logarithmic Function' };
+  }
+
+  // 6. Detect Exponential (e^x, x^2 * e^x, 2^(x+1), 5 * 6^3(x), 6^(3x), exp(x)) - BEFORE polynomial degrees
+  if (
+    /(?:exp\s*\(|\be\s*\^|[0-9.]+\s*\^\s*(?:\(?\s*[^)]*[a-zA-Z]|\d*\s*\(?[^)]*[a-zA-Z]))/i.test(clean) ||
+    /(?:exp\s*\(|\be\s*\^|[0-9.]+\s*\^\s*\d*\s*\(?[^)]*[a-zA-Z])/i.test(input)
+  ) {
+    return { degree: 0, label: clean.includes('=') ? 'Exponential Equation' : 'Exponential Function' };
+  }
+
+  // 7. Detect Radical expressions/equations
+  if (/sqrt|cbrt|√|∛|\^0\.5|\^\(1\/2\)|\^\(1\/3\)/i.test(clean)) {
+    return { degree: 0, label: clean.includes('=') ? 'Radical Equation' : 'Radical Expression' };
+  }
+
+  // 8. Detect Rational expressions/equations (variable in denominator or negative exponent)
+  if (/\/\s*\(?[^)]*[a-zA-Z]|\^-\d+|\^-\([0-9]+\)/.test(clean)) {
+    return { degree: 0, label: clean.includes('=') ? 'Rational Equation' : 'Rational Function' };
+  }
+
+  // 9. Detect 2-Variable Linear Equations (e.g. y = 10 - 3x, 3x + 2y = 12)
+  if (varsFound.size === 2 && clean.includes('=')) {
+    const hasPowers = /\^[2-9]|\^\([^)]+\)/.test(clean);
+    const varArr = Array.from(varsFound);
+    const hasProductVars = new RegExp(`${varArr[0]}\\s*\\*?\\s*${varArr[1]}|${varArr[1]}\\s*\\*?\\s*${varArr[0]}`).test(clean);
+    if (!hasPowers && !hasProductVars) {
+      return { degree: 1, label: '2-Variable Linear Equation' };
+    }
+    return { degree: 0, label: 'Parametric Equation' };
+  }
+
+  // 10. Detect parametric equations (e.g. 2x^2 + 3x - m + 2)
+  if (varsFound.size > 2) {
+    return { degree: 0, label: 'Parametric Equation' };
+  }
 
   // Detect multivariate or algebraic expressions without equals
   if (!clean.includes('=')) {

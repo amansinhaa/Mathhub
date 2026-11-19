@@ -1,6 +1,7 @@
 export type SolverType =
   | 'polynomial'
   | 'linear'
+  | 'linear_2var'
   | 'quadratic'
   | 'rational'
   | 'radical'
@@ -14,10 +15,12 @@ export type SolverType =
   | 'inequality'
   | 'symbolic'
   | 'ode'
-  | 'domain_range';
+  | 'domain_range'
+  | 'arithmetic_check';
 
 export type EquationType =
   | 'linear'
+  | 'linear_2var'
   | 'quadratic'
   | 'polynomial'
   | 'rational'
@@ -29,7 +32,8 @@ export type EquationType =
   | 'system'
   | 'inequality'
   | 'ode'
-  | 'domain_range';
+  | 'domain_range'
+  | 'arithmetic_check';
 
 export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';
 
