@@ -135,7 +135,7 @@ export default function StepByStep() {
               problemDisplay = `∫ (${inner}) dx`;
             }
           } else {
-            problemDisplay = equation || result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim() || '';
+            problemDisplay = equation || result.inputInterpretation?.replace(/\\text\{[^}]*\}|\{|\}/g, '').trim() || (result as any).rawEquation || '';
           }
 
           if (!problemDisplay) return null;
@@ -345,6 +345,12 @@ export default function StepByStep() {
           {/* 2-Variable Linear Action Buttons */}
           {result.equationType === 'linear_2var' && (
             <div className="mt-3 pt-3 border-t border-[#E0E0E0] dark:border-[#282422] flex flex-wrap items-center gap-2">
+              <Link
+                href={`/system-of-equations?eq1=${encodeURIComponent(equation || (result as any).rawEquation || '')}&tab=system`}
+                className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-mono font-semibold shadow-2xs transition-all flex items-center gap-1.5"
+              >
+                <span>Solve System with 2nd Equation</span>
+              </Link>
               <button
                 type="button"
                 onClick={() => {
@@ -674,10 +680,10 @@ export default function StepByStep() {
                           {step.subSteps.map((sub, sIdx) => (
                             <div
                               key={sIdx}
-                              className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl p-3 shadow-2xs"
+                              className="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] dark:border-[#2E2825] rounded-xl p-3 shadow-2xs break-words whitespace-normal min-w-0"
                             >
-                              <div className="text-xs font-semibold text-[#5D4037] dark:text-[#D7CCC8] mb-1">
-                                {sub.title}
+                              <div className="text-xs font-semibold text-[#5D4037] dark:text-[#D7CCC8] mb-1 break-words whitespace-normal min-w-0">
+                                <MathText text={sub.title} />
                               </div>
                               <div className="overflow-x-auto text-xs sm:text-sm font-mono text-[#131313] dark:text-white">
                                 <MathDisplay math={sub.math} />

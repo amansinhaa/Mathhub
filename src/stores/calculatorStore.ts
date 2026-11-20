@@ -37,7 +37,7 @@ export const useCalculatorStore = create<CalculatorState>()(
       history: [],
       memory: { value: 0, hasValue: false },
       angleMode: 'DEG',
-      isScientificMode: false,
+      isScientificMode: true,
       isError: false,
 
       setExpression: (expr) => set({ expression: expr }),

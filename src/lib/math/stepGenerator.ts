@@ -150,7 +150,7 @@ export function evalPoly(coeffs: number[], x: number): number {
 }
 
 /** Format evaluation of f(x0) showing substituted terms and result. */
-function formatPolyEvaluation(coeffs: number[], x0: number, variable: string): string {
+function formatPolyEvaluation(coeffs: number[], x0: number, variable: string, includePrefix: boolean = true): string {
   const degree = coeffs.length - 1;
   const terms: string[] = [];
   const evalTerms: string[] = [];
@@ -175,7 +175,8 @@ function formatPolyEvaluation(coeffs: number[], x0: number, variable: string): s
 
   const isRoot = Math.abs(evalPoly(coeffs, x0)) < 1e-6;
   const checkMark = isRoot ? ' = 0 \\;\\checkmark' : ` = ${fmt(evalPoly(coeffs, x0))}`;
-  return `f(${fmt(x0)}) = ${terms.join(' ')} = ${evalTerms.join(' ')}${checkMark}`;
+  const prefix = includePrefix ? `f(${fmt(x0)}) = ` : '';
+  return `${prefix}${terms.join(' ')} = ${evalTerms.join(' ')}${checkMark}`;
 }
 
 // ─── POLYNOMIAL DIVISION GENERATORS (LONG DIVISION & SYNTHETIC DIVISION) ────
@@ -1181,7 +1182,7 @@ export function generateCubicSteps(
     steps.push({
       stepNumber: stepCount++,
       explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). Testing $${variable} = ${r0Disp}$, we find $f(${r0Disp}) = 0$, which proves that $(${r0SignStr})$ is a factor by the Factor Theorem.`,
-      math: `\\begin{aligned} f(${r0Disp}) &= ${formatPolyEvaluation([a, b, c, d], r0, variable)} \\\\[4pt] &\\implies (${r0SignStr}) \\text{ is a factor} \\end{aligned}`,
+      math: `\\begin{aligned} f(${r0Disp}) &= ${formatPolyEvaluation([a, b, c, d], r0, variable, false)} \\\\[4pt] &\\implies (${r0SignStr}) \\text{ is a factor} \\end{aligned}`,
     });
 
     // Step 3: Polynomial Division (Long Division + Synthetic Division side-by-side)
@@ -1580,7 +1581,7 @@ export function generateQuarticSteps(
     steps.push({
       stepNumber: stepCount++,
       explanation: `Apply the Rational Root Theorem (a way to test for simple fraction/whole-number roots before trying harder methods). Testing $${variable} = ${r1DispStr}$, we find $f(${r1DispStr}) = 0$, which proves that $(${divisor1Str})$ is a factor by the Factor Theorem.`,
-      math: `\\begin{aligned} f(${r1DispStr}) &= ${formatPolyEvaluation(coeffs, r1, variable)} \\\\[4pt] &\\implies (${divisor1Str}) \\text{ is a factor} \\end{aligned}`,
+      math: `\\begin{aligned} f(${r1DispStr}) &= ${formatPolyEvaluation(coeffs, r1, variable, false)} \\\\[4pt] &\\implies (${divisor1Str}) \\text{ is a factor} \\end{aligned}`,
     });
 
     // Synthetic division to degree 3
@@ -1694,7 +1695,7 @@ export function generateQuarticSteps(
       steps.push({
         stepNumber: stepCount++,
         explanation: `Find a root of the depressed cubic factor $${q3Poly} = 0$ using the Factor Theorem. Testing $${variable} = ${r2DispStr}$, we find $f(${r2DispStr}) = 0$, so $(${divisor2Str})$ is another factor.`,
-        math: `\\begin{aligned} f(${r2DispStr}) &= ${formatPolyEvaluation(q3, r2, variable)} \\\\[4pt] &\\implies (${divisor2Str}) \\text{ is a factor} \\end{aligned}`,
+        math: `\\begin{aligned} f(${r2DispStr}) &= ${formatPolyEvaluation(q3, r2, variable, false)} \\\\[4pt] &\\implies (${divisor2Str}) \\text{ is a factor} \\end{aligned}`,
       });
 
       // Synthetic division to degree 2

@@ -285,12 +285,14 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
     }
     const eq1 = searchParams.get('eq1');
     const eq2 = searchParams.get('eq2');
-    if (eq1 && eq2) {
-      store.updateSystemEquation(0, eq1);
-      store.updateSystemEquation(1, eq2);
-      setTimeout(() => {
-        useSolverStore.getState().solve();
-      }, 50);
+    if (eq1 || eq2) {
+      if (eq1) store.updateSystemEquation(0, eq1);
+      if (eq2) store.updateSystemEquation(1, eq2);
+      if (eq1 && eq2) {
+        setTimeout(() => {
+          useSolverStore.getState().solve();
+        }, 50);
+      }
     } else if (formula) {
       const eqChanged = store.equation !== formula;
       if (eqChanged) {
@@ -323,11 +325,16 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
   // Stops flashing syntax warnings while the user is still actively mid-typing!
   const [debouncedWarningEquation, setDebouncedWarningEquation] = useState(equation);
   useEffect(() => {
+    // If input is empty or if user just removed '=' on inequality solver, clear immediately without waiting 1800ms
+    if (!equation.trim() || (!equation.includes('=') && solverType === 'inequality')) {
+      setDebouncedWarningEquation(equation);
+      return;
+    }
     const timer = setTimeout(() => {
       setDebouncedWarningEquation(equation);
     }, 1800);
     return () => clearTimeout(timer);
-  }, [equation]);
+  }, [equation, solverType]);
 
   // Reset dismissed fix when equation changes significantly
   useEffect(() => {
@@ -437,8 +444,12 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
   };
 
   const assistant = React.useMemo(() => {
-    return analyzeInput(debouncedWarningEquation, solverType);
-  }, [debouncedWarningEquation, solverType]);
+    const res = analyzeInput(debouncedWarningEquation, solverType);
+    if (res.fix?.id === 'mode-mismatch-equation' && !equation.includes('=')) {
+      return { ...res, hasFix: false, fix: null };
+    }
+    return res;
+  }, [debouncedWarningEquation, solverType, equation]);
 
   const handleApplyFix = (fix: AutoFix) => {
     if (fix.targetMode && fix.targetMode !== solverType) {
@@ -703,7 +714,7 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
 
           {/* ── Visual Math Keypad Toolbar ───────────────────────────────── */}
           <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5 -mt-0.5 select-none">
-            <span className="text-[10px] font-mono font-semibold text-[#8D827A] dark:text-[#A19891] uppercase tracking-wider hidden sm:inline mr-1">
+            <span className="text-[10px] font-mono font-semibold text-[#8D827A] dark:text-[#A19891] uppercase tracking-wider hidden sm:inline mr-1 select-none pointer-events-none">
               Insert:
             </span>
             {QUICK_KEYPAD_BUTTONS.map((btn) => (
@@ -722,9 +733,20 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
 
           {/* ── Auto-Fix "Did You Mean?" Banner ─────────────────────────────── */}
           {assistant.hasFix && assistant.fix && !dismissedFixId && (
-            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-amber-50/95 dark:bg-[#261E17] border border-amber-200/90 dark:border-amber-800/60 shadow-2xs animate-fade-in text-xs">
-              <div className="flex items-center gap-2 pr-2 overflow-hidden">
-                <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => handleApplyFix(assistant.fix!)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleApplyFix(assistant.fix!);
+                }
+              }}
+              className="group flex items-center justify-between p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-amber-50/95 dark:bg-[#261E17] border border-amber-200/90 dark:border-amber-800/60 shadow-2xs hover:bg-amber-100/90 dark:hover:bg-[#33271d] hover:border-amber-300 dark:hover:border-amber-700/80 animate-fade-in text-xs cursor-pointer transition-colors"
+            >
+              <div className="flex items-center gap-2 pr-2 overflow-hidden flex-1 min-w-0">
+                <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 shrink-0 group-hover:scale-105 transition-transform" />
                 <div className="truncate">
                   <span className="font-bold text-amber-950 dark:text-amber-100 font-mono text-xs sm:text-sm">
                     {assistant.fix.label}
@@ -734,17 +756,23 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
                 <button
                   type="button"
-                  onClick={() => handleApplyFix(assistant.fix!)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleApplyFix(assistant.fix!);
+                  }}
                   className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-mono text-xs font-bold shadow-xs transition-all cursor-pointer"
                 >
                   Fix ✨
                 </button>
                 <button
                   type="button"
-                  onClick={() => setDismissedFixId(assistant.fix!.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDismissedFixId(assistant.fix!.id);
+                  }}
                   className="p-1 rounded-lg text-amber-600/70 hover:text-amber-900 dark:text-amber-400/70 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-900/40 transition-colors cursor-pointer"
                   title="Dismiss"
                 >

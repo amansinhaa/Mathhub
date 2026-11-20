@@ -51,12 +51,14 @@ export default function EquationSolver({
 
       const eq1 = urlParams.get('eq1');
       const eq2 = urlParams.get('eq2');
-      if (eq1 && eq2) {
-        store.updateSystemEquation(0, eq1);
-        store.updateSystemEquation(1, eq2);
-        setTimeout(() => {
-          useSolverStore.getState().solve();
-        }, 50);
+      if (eq1 || eq2) {
+        if (eq1) store.updateSystemEquation(0, eq1);
+        if (eq2) store.updateSystemEquation(1, eq2);
+        if (eq1 && eq2) {
+          setTimeout(() => {
+            useSolverStore.getState().solve();
+          }, 50);
+        }
       }
     }
 

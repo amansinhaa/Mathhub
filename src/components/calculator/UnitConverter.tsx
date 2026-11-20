@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   UNIT_CATEGORIES,
   convertUnit,
@@ -20,20 +20,34 @@ export default function UnitConverter() {
   const [currencyRates, setCurrencyRates] = useState<Record<string, number>>({});
   const [isLoadingRates, setIsLoadingRates] = useState<boolean>(false);
 
-  // Update unit selectors when category changes
+  const isFirstRender = useRef(true);
+  const prevCategory = useRef(category);
+
+  // Update unit selectors only when category actually changes (prevents input typing resetting toUnit)
   useEffect(() => {
-    if (category === 'currency') {
-      setFromUnit('USD');
-      setToUnit('EUR');
-      loadCurrencyRates();
-    } else {
-      const units = getUnitsByCategory(category);
-      if (units.length >= 2) {
-        setFromUnit(units[0].symbol);
-        setToUnit(units[1].symbol);
-      } else if (units.length === 1) {
-        setFromUnit(units[0].symbol);
-        setToUnit(units[0].symbol);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (category === 'currency') {
+        loadCurrencyRates();
+      }
+      return;
+    }
+
+    if (prevCategory.current !== category) {
+      prevCategory.current = category;
+      if (category === 'currency') {
+        setFromUnit('USD');
+        setToUnit('EUR');
+        loadCurrencyRates();
+      } else {
+        const units = getUnitsByCategory(category);
+        if (units.length >= 2) {
+          setFromUnit(units[0].symbol);
+          setToUnit(units[1].symbol);
+        } else if (units.length === 1) {
+          setFromUnit(units[0].symbol);
+          setToUnit(units[0].symbol);
+        }
       }
     }
   }, [category]);
@@ -81,7 +95,7 @@ export default function UnitConverter() {
   };
 
   const currentUnits = category === 'currency'
-    ? CURRENCY_LIST.map((c) => ({ name: `${c.code} (${c.name})`, symbol: c.code, category: 'currency' }))
+    ? CURRENCY_LIST.map((c) => ({ name: `${c.code} — ${c.name}`, symbol: c.code, category: 'currency' }))
     : getUnitsByCategory(category);
 
   return (
@@ -95,7 +109,7 @@ export default function UnitConverter() {
             type="button"
             onClick={loadCurrencyRates}
             disabled={isLoadingRates}
-            className="flex items-center gap-1.5 text-xs text-[#5D4037] hover:text-white bg-[#EFEBE9] hover:bg-[#5D4037] dark:text-[#D7CCC8] dark:hover:text-white dark:bg-[#3E2723] dark:hover:bg-[#5D4037] px-2.5 py-1 rounded-lg transition-colors border border-[#D7CCC8] dark:border-[#5D4037]/60"
+            className="flex items-center gap-1.5 text-xs text-[#5D4037] hover:text-white bg-[#EFEBE9] hover:bg-[#5D4037] dark:text-[#D7CCC8] dark:hover:text-white dark:bg-[#3E2723] dark:hover:bg-[#5D4037] px-2.5 py-1 rounded-lg transition-colors border border-[#D7CCC8] dark:border-[#5D4037]/60 cursor-pointer"
           >
             <RefreshCw size={12} className={isLoadingRates ? 'animate-spin' : ''} />
             <span>Refresh Rates</span>
@@ -103,14 +117,14 @@ export default function UnitConverter() {
         )}
       </div>
 
-      {/* Category selector */}
-      <div className="flex overflow-x-auto gap-1.5 mb-5 pb-1 scrollbar-none">
+      {/* Category selector - Wraps cleanly so Currency never clips */}
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-5 pb-1">
         {UNIT_CATEGORIES.map((cat) => (
           <button
             key={cat.name}
             type="button"
             onClick={() => setCategory(cat.name)}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize whitespace-nowrap transition-all border ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize whitespace-nowrap transition-all border shrink-0 cursor-pointer ${
               category === cat.name
                 ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
                 : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#262220]'
@@ -122,7 +136,7 @@ export default function UnitConverter() {
         <button
           type="button"
           onClick={() => setCategory('currency')}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize whitespace-nowrap transition-all border ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold capitalize whitespace-nowrap transition-all border shrink-0 cursor-pointer ${
             category === 'currency'
               ? 'bg-[#5D4037] text-white border-[#795548] shadow-xs'
               : 'bg-[#F5F5F5] text-[#616161] border-[#E0E0E0] hover:text-[#131313] hover:bg-[#EFEBE9] dark:bg-[#131313] dark:text-[#A19891] dark:border-[#2E2825] dark:hover:text-white dark:hover:bg-[#262220]'
@@ -144,7 +158,7 @@ export default function UnitConverter() {
           >
             {currentUnits.map((u) => (
               <option key={u.symbol} value={u.symbol} className="bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white">
-                {u.name} ({u.symbol})
+                {category === 'currency' ? u.name : `${u.name} (${u.symbol})`}
               </option>
             ))}
           </select>
@@ -162,7 +176,7 @@ export default function UnitConverter() {
           <button
             type="button"
             onClick={swapUnits}
-            className="p-3 rounded-full bg-[#F5F5F5] hover:bg-[#5D4037] text-[#5D4037] hover:text-white border border-[#E0E0E0] dark:bg-[#131313] dark:hover:bg-[#5D4037] dark:text-[#D7CCC8] dark:border-[#3E2723] transition-all active:scale-95 shadow-sm"
+            className="p-3 rounded-full bg-[#F5F5F5] hover:bg-[#5D4037] text-[#5D4037] hover:text-white border border-[#E0E0E0] dark:bg-[#131313] dark:hover:bg-[#5D4037] dark:text-[#D7CCC8] dark:border-[#3E2723] transition-all active:scale-95 shadow-sm cursor-pointer"
             title="Swap Units"
             aria-label="Swap Units"
           >
@@ -180,7 +194,7 @@ export default function UnitConverter() {
           >
             {currentUnits.map((u) => (
               <option key={u.symbol} value={u.symbol} className="bg-white dark:bg-[#1B1B1B] text-[#131313] dark:text-white">
-                {u.name} ({u.symbol})
+                {category === 'currency' ? u.name : `${u.name} (${u.symbol})`}
               </option>
             ))}
           </select>

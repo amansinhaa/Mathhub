@@ -24,6 +24,13 @@ export default function Calculator() {
   } = useCalculatorStore();
 
   useEffect(() => {
+    // Default /calculator to scientific mode on load
+    if (!isScientificMode) {
+      toggleScientificMode();
+    }
+  }, []);
+
+  useEffect(() => {
     const formula = searchParams.get('formula') || searchParams.get('expr') || searchParams.get('q');
     if (formula) {
       setExpression(formula);
@@ -81,8 +88,8 @@ export default function Calculator() {
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Action Controls - Margin right prevents overlap with fixed ThemeToggle */}
+        <div className="flex items-center gap-1.5 sm:gap-2 mr-12 sm:mr-14">
           <button
             type="button"
             onClick={toggleScientificMode}

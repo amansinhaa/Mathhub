@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from '@/components/shared/Link';
 import { usePathname } from '@/components/shared/RouterShim';
 import {
@@ -82,6 +83,11 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
   const routerPathname = usePathname();
   const pathname = currentPath || routerPathname;
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close the drawer when navigating to a new route
   useEffect(() => {
@@ -133,109 +139,116 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
         </div>
       )}
 
-      {/* Backdrop overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs animate-fade-in transition-opacity print:hidden no-print"
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Slide-out Drawer Panel */}
-      <aside
-        className={clsx(
-          'fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none print:hidden no-print',
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        )}
-      >
-        {/* Drawer Header */}
-        <div className="p-4 pl-5 sm:pl-6 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
-            <img
-              src="/logo.png"
-              alt="EasyEquate"
-              width={32}
-              height={32}
-              className="rounded-lg shadow-xs object-contain border border-[#5D4037]/30 shrink-0"
+      {/* Slide-out Tools Drawer Portal (Mounted to document.body to prevent containing-block shift) */}
+      {mounted && typeof document !== 'undefined' && createPortal(
+        <>
+          {/* Backdrop overlay */}
+          {isOpen && (
+            <div
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs animate-fade-in transition-opacity print:hidden no-print"
+              onClick={() => setIsOpen(false)}
+              aria-hidden="true"
             />
-            <span className="font-bold text-sm text-[#131313] dark:text-white font-sans tracking-tight">EasyEquate</span>
-          </Link>
+          )}
 
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="p-1.5 rounded-lg text-[#616161] hover:text-[#131313] hover:bg-[#F5F5F5] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#2A2827] transition-colors cursor-pointer"
-            aria-label="Close menu"
+          {/* Slide-out Drawer Panel */}
+          <aside
+            aria-hidden={!isOpen}
+            className={clsx(
+              'fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none print:hidden no-print',
+              isOpen ? 'translate-x-0' : '-translate-x-full invisible pointer-events-none'
+            )}
           >
-            <X size={18} />
-          </button>
-        </div>
+            {/* Drawer Header */}
+            <div className="p-4 pl-5 sm:pl-6 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+                <img
+                  src="/logo.png"
+                  alt="EasyEquate"
+                  width={32}
+                  height={32}
+                  className="rounded-lg shadow-xs object-contain border border-[#5D4037]/30 shrink-0"
+                />
+                <span className="font-bold text-sm text-[#131313] dark:text-white font-sans tracking-tight">EasyEquate</span>
+              </Link>
 
-        {/* Drawer Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3 space-y-5">
-          {TOOL_GROUPS.map((group) => (
-            <div key={group.category} className="space-y-1.5">
-              <div className="px-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">
-                {group.category}
-              </div>
-              <div className="space-y-0.5">
-                {group.items.map(({ href, label, icon: Icon, badge }) => {
-                  const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      className={clsx(
-                        'flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all duration-150 group',
-                        isActive
-                          ? 'bg-[#5D4037] text-white font-semibold shadow-xs'
-                          : 'text-[#616161] hover:bg-[#EFEBE9] hover:text-[#5D4037] dark:text-[#A19891] dark:hover:bg-[#252322] dark:hover:text-white font-medium'
-                      )}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Icon
-                          size={18}
-                          strokeWidth={isActive ? 2.5 : 2}
-                          className="shrink-0 transition-transform group-hover:scale-105"
-                        />
-                        <span className="truncate">{label}</span>
-                      </div>
-                      {badge && (
-                        <span
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 rounded-lg text-[#616161] hover:text-[#131313] hover:bg-[#F5F5F5] dark:text-[#A19891] dark:hover:text-white dark:hover:bg-[#2A2827] transition-colors cursor-pointer"
+                aria-label="Close menu"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Drawer Navigation Links */}
+            <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3 space-y-5">
+              {TOOL_GROUPS.map((group) => (
+                <div key={group.category} className="space-y-1.5">
+                  <div className="px-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">
+                    {group.category}
+                  </div>
+                  <div className="space-y-0.5">
+                    {group.items.map(({ href, label, icon: Icon, badge }) => {
+                      const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                      return (
+                        <Link
+                          key={href}
+                          href={href}
                           className={clsx(
-                            'text-[10px] font-mono px-1.5 py-0.5 rounded',
+                            'flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all duration-150 group',
                             isActive
-                              ? 'bg-[#3E2723] text-[#D7CCC8]'
-                              : 'bg-[#F5F5F5] text-[#757575] dark:bg-[#22201F] dark:text-[#8D827A]'
+                              ? 'bg-[#5D4037] text-white font-semibold shadow-xs'
+                              : 'text-[#616161] hover:bg-[#EFEBE9] hover:text-[#5D4037] dark:text-[#A19891] dark:hover:bg-[#252322] dark:hover:text-white font-medium'
                           )}
                         >
-                          {badge}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
+                          <div className="flex items-center gap-3 min-w-0">
+                            <Icon
+                              size={18}
+                              strokeWidth={isActive ? 2.5 : 2}
+                              className="shrink-0 transition-transform group-hover:scale-105"
+                            />
+                            <span className="truncate">{label}</span>
+                          </div>
+                          {badge && (
+                            <span
+                              className={clsx(
+                                'text-[10px] font-mono px-1.5 py-0.5 rounded',
+                                isActive
+                                  ? 'bg-[#3E2723] text-[#D7CCC8]'
+                                  : 'bg-[#F5F5F5] text-[#757575] dark:bg-[#22201F] dark:text-[#8D827A]'
+                              )}
+                            >
+                              {badge}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Drawer Footer Controls */}
+            <div className="p-3 border-t border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAFAFA] dark:bg-[#171717] space-y-2">
+              <div className="flex items-center justify-between px-2">
+                <span className="text-[11px] font-mono text-[#757575] dark:text-[#8D827A]">
+                  Quick Shortcuts
+                </span>
+                <div className="flex items-center gap-1">
+                  <ShortcutsModal />
+                </div>
+              </div>
+              <div className="pt-2 border-t border-[#E0E0E0]/60 dark:border-[#2E2825]/60 text-center text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
+                &copy; {new Date().getFullYear()} EasyEquate
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Drawer Footer Controls */}
-        <div className="p-3 border-t border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAFAFA] dark:bg-[#171717] space-y-2">
-          <div className="flex items-center justify-between px-2">
-            <span className="text-[11px] font-mono text-[#757575] dark:text-[#8D827A]">
-              Quick Shortcuts
-            </span>
-            <div className="flex items-center gap-1">
-              <ShortcutsModal />
-            </div>
-          </div>
-          <div className="pt-2 border-t border-[#E0E0E0]/60 dark:border-[#2E2825]/60 text-center text-[10px] font-mono text-[#757575] dark:text-[#8D827A]">
-            &copy; {new Date().getFullYear()} EasyEquate
-          </div>
-        </div>
-      </aside>
+          </aside>
+        </>,
+        document.body
+      )}
     </>
   );
 }

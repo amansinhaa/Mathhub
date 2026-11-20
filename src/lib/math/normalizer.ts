@@ -47,7 +47,7 @@ export function normalizeExpression(input: string): string {
   expr = expr.replace(/[−–—]/g, '-');    // Unicode minus, en-dash, em-dash
   expr = expr.replace(/＝/g, '=');       // Fullwidth equals
   expr = expr.replace(/π/g, 'pi');
-  expr = expr.replace(/∛/g, 'cbrt');  // Cube root symbol
+  expr = expr.replace(/[∛]|³√/g, 'cbrt');  // Cube root symbol
   expr = expr.replace(/√/g, 'sqrt');  // Square root symbol
 
   // LaTeX conversions
@@ -517,7 +517,7 @@ export function formatExpressionForDisplay(rawExpr: string): string {
   let str = rawExpr;
 
   // Functions to exact unicode symbols
-  str = str.replace(/\bcbrt\s*\(/g, '∛(');
+  str = str.replace(/\b(cbrt|∛)\s*\(/g, '³√(');
   str = str.replace(/\bsqrt\s*\(/g, '√(');
   str = str.replace(/\basin\s*\(/g, 'sin⁻¹(');
   str = str.replace(/\bacos\s*\(/g, 'cos⁻¹(');

@@ -58,7 +58,7 @@ export default function Keypad() {
     { label: 'tanh', val: 'tanh(' },
     { label: 'i', val: 'i' },
     { label: '√', val: '√(' },
-    { label: '∛', val: '∛(' },
+    { label: '³√', val: 'cbrt(' },
     { label: 'xʸ', val: '^' },
     { label: 'n!', val: '!' },
     { label: 'log', val: 'log(' },
