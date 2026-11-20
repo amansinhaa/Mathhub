@@ -853,6 +853,30 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
                   <MathDisplay math={expressionToLatex(debouncedPreview || equation)} />
                 </div>
               </div>
+              {(() => {
+                const ambigMatch = equation.match(/(?<![a-zA-Z0-9_])([+-]?\d+)\s*\/\s*(\d+)\s*([a-zA-Z])\b/);
+                if (!ambigMatch) return null;
+                const altEq = equation.replace(/(?<![a-zA-Z0-9_])([+-]?\d+)\s*\/\s*(\d+)\s*([a-zA-Z])\b/, '$1/($2$3)');
+                return (
+                  <div className="mt-2 pt-2 border-t border-[#EAE5E2] dark:border-[#282321] flex items-center justify-between gap-2 flex-wrap text-xs">
+                    <span className="text-[#8D827A] dark:text-[#A19891]">
+                      Did you mean <span className="font-mono font-semibold text-[#5D4037] dark:text-[#D7CCC8]">{ambigMatch[1]}/({ambigMatch[2]}{ambigMatch[3]})</span>?
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEquation(altEq);
+                        if (inputRef && inputRef.current) {
+                          inputRef.current.value = altEq;
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-[#EFEBE9] dark:bg-[#25201E] hover:bg-[#D7CCC8] dark:hover:bg-[#3E2723] text-[#5D4037] dark:text-[#D7CCC8] font-mono text-[11px] font-semibold transition-all cursor-pointer shadow-2xs"
+                    >
+                      Click to switch
+                    </button>
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>

@@ -61,19 +61,20 @@ export function fmt(n: number): string {
 }
 
 /** Try to represent a floating point number as a simple fraction {n, d}. */
-export function toFraction(val: number, maxDenominator: number = 100): { n: number; d: number } | null {
+export function toFraction(val: number, maxDenominator: number = 1000): { n: number; d: number } | null {
   if (!Number.isFinite(val) || isNaN(val)) return null;
   const sign = val < 0 ? -1 : 1;
   const absVal = Math.abs(val);
   const rounded = Math.round(absVal);
-  if (Math.abs(absVal - rounded) < 1e-6) {
+  if (Math.abs(absVal - rounded) < 1e-9) {
     return { n: sign * rounded, d: 1 };
   }
 
-  // Check common small denominators
-  for (let d = 2; d <= maxDenominator; d++) {
+  // Check common small denominators up to 1000 with 1e-9 precision
+  const maxDen = Math.min(maxDenominator, 1000);
+  for (let d = 2; d <= maxDen; d++) {
     const n = Math.round(absVal * d);
-    if (Math.abs(absVal - n / d) < 1e-6) {
+    if (Math.abs(absVal - n / d) < 1e-9) {
       const g = gcd(n, d);
       return { n: sign * (n / g), d: d / g };
     }
@@ -1972,11 +1973,21 @@ export function generateSystemSteps(
         math: `${variables[0]} = \\frac{${fmt(constants[0] * matrix[1][1] - matrix[0][1] * constants[1])}}{${fmt(det)}} = ${fmt(x)}, \\quad ${variables[1]} = \\frac{${fmt(matrix[0][0] * constants[1] - constants[0] * matrix[1][0])}}{${fmt(det)}} = ${fmt(y)}`,
       });
     } else {
-      steps.push({
-        stepNumber: stepCount++,
-        explanation: 'The determinant is zero — the system has no unique solution (dependent or inconsistent).',
-        math: `\\det(A) = 0`,
-      });
+      const detX = constants[0] * matrix[1][1] - matrix[0][1] * constants[1];
+      const detY = matrix[0][0] * constants[1] - constants[0] * matrix[1][0];
+      if (Math.abs(detX) < 1e-9 && Math.abs(detY) < 1e-9) {
+        steps.push({
+          stepNumber: stepCount++,
+          explanation: 'The determinant is zero and the equations represent the same line: there are infinitely many solutions (dependent system).',
+          math: `\\det(A) = 0, \\; D_{${variables[0]}} = 0, \\; D_{${variables[1]}} = 0 \\implies \\text{Dependent system (infinitely many solutions)}`,
+        });
+      } else {
+        steps.push({
+          stepNumber: stepCount++,
+          explanation: 'The determinant is zero and the lines are parallel with different intercepts: there is no solution (inconsistent system).',
+          math: `\\det(A) = 0, \\; D_{${variables[0]}} = ${fmt(detX)} \\neq 0 \\implies \\text{Inconsistent system (parallel lines, no solution)}`,
+        });
+      }
     }
   } else {
     steps.push({

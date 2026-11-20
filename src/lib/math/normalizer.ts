@@ -168,6 +168,9 @@ export function normalizeExpression(input: string): string {
   // Letter with space before digit: i 2x → i*2x
   expr = expr.replace(/([a-zA-Z])\s+(\d)/g, '$1*$2');
 
+  // Fraction with variable attached in handwriting: e.g. -8/5x -> (-8/5)*x, -17/10n -> (-17/10)*n
+  expr = expr.replace(/(?<![a-zA-Z0-9_])([+-]?\d+)\s*\/\s*(\d+)\s*([a-zA-Z])\b/g, '($1/$2)*$3');
+
   // Digit followed by letter: 3x → 3*x
   expr = expr.replace(/(\d)([a-zA-Z])/g, '$1*$2');
 

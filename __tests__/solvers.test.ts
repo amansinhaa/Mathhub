@@ -490,4 +490,74 @@ describe('EasyEquate Math Solver Engine Hardening (50+ Tricky Test Suite)', () =
       expect(normalizeExpression('3(x+1)')).toBe('3*(x+1)');
     });
   });
+
+  // ─── 15. Engine Hardening & Bug Fix Suite (11 Target Cases) ───────────
+  describe('Engine Hardening & Bug Fix Suite (11 Target Cases)', () => {
+    it('78. 2(x+1)=2x+2 -> Identity (All real numbers), never x = 0', () => {
+      const res = solvePolynomial('2(x+1)=2x+2');
+      expect(res.finalAnswer).toContain('All real numbers');
+      expect(res.finalAnswer).not.toBe('x = 0');
+    });
+
+    it('79. x+1=x+2 -> Contradiction (No solution), never x = 0', () => {
+      const res = solvePolynomial('x+1=x+2');
+      expect(res.finalAnswer).toContain('No solution');
+      expect(res.finalAnswer).not.toBe('x = 0');
+    });
+
+    it('80. 1/(x-2)+1=(x-1)/(x-2) -> All real numbers except x = 2', () => {
+      const res = solvePolynomial('1/(x-2)+1=(x-1)/(x-2)');
+      expect(res.finalAnswer).toContain('All real numbers except');
+      expect(res.finalAnswer).toContain('2');
+    });
+
+    it('81. ln(x-1)=2 -> exact x = e^{2}+1 and decimal approx 8.3891', () => {
+      const res = solvePolynomial('ln(x-1)=2');
+      expect(res.finalAnswer).toContain('e^{2}+1');
+      expect(res.decimalAnswer).toContain('8.3891');
+    });
+
+    it('82. -8/5x-18/5=-2/5x+58/5 -> cleanly solves to x = -38/3', () => {
+      const res = solvePolynomial('-8/5x-18/5=-2/5x+58/5');
+      expect(res.finalAnswer).toBe('x = -\\frac{38}{3}');
+      expect(res.numericRoots?.[0]).toBeCloseTo(-38 / 3, 4);
+    });
+
+    it('83. 17=-17/10n -> defaults to (-17/10)*n with n = -10', () => {
+      const res = solvePolynomial('17=-17/10n');
+      expect(res.finalAnswer).toBe('n = -10');
+      expect(res.numericRoots).toContain(-10);
+    });
+
+    it('84. 8/(2/3) -> pure arithmetic evaluated to 12', () => {
+      const res = solvePolynomial('8/(2/3)');
+      expect(res.type).toBe('arithmetic');
+      expect(res.finalAnswer).toBe('12');
+    });
+
+    it('85. (7x^(2)-2x)+(4x^(2)-x) -> simplifies to 11x^2 - 3x with roots', () => {
+      const res = solvePolynomial('(7x^(2)-2x)+(4x^(2)-x)');
+      expect(res.finalAnswer).toBe('11x^2 - 3x');
+      expect(res.steps.some((s) => s.explanation.includes('If setting the simplified expression equal to zero') || s.math.includes('If set'))).toBe(true);
+      expect(res.numericRoots).toEqual(expect.arrayContaining([0, expect.closeTo(3 / 11, 4)]));
+    });
+
+    it('86. Derivative of (x^2+1)/(x-1) -> Quotient Rule', () => {
+      const res = solveDerivative('(x^2+1)/(x-1)');
+      expect(res.steps.some((s) => s.formulaUsed?.name === 'Quotient Rule')).toBe(true);
+    });
+
+    it('87. Integral of x*e^x -> Integration by Parts with + C', () => {
+      const res = solveIntegral('x*e^x');
+      expect(res.steps.some((s) => s.formulaUsed?.name === 'Integration by Parts')).toBe(true);
+      expect(res.steps.some((s) => s.math.includes('+ C'))).toBe(true);
+      expect(res.finalAnswer).toContain('+ C');
+    });
+
+    it('88. Parallel system 2x+y=5, 2x+y=8 -> No solution with parallel explanation', () => {
+      const res = solveSystem(['2x+y=5', '2x+y=8'], ['x', 'y']);
+      expect(res.finalAnswer).toContain('No solution');
+      expect(res.steps.some((s) => s.explanation.includes('parallel'))).toBe(true);
+    });
+  });
 });

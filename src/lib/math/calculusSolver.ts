@@ -64,6 +64,11 @@ const DIFF_RULES = {
     latex: '\\frac{d}{dx}[f(g(x))] = f\'(g(x)) \\cdot g\'(x)',
     description: 'Derivative of the outer function evaluated at the inner function times the derivative of the inner function.',
   },
+  quotient: {
+    name: 'Quotient Rule',
+    latex: '\\frac{d}{dx}\\left[\\frac{u}{v}\\right] = \\frac{u\'v - uv\'}{v^2}',
+    description: 'Derivative of the numerator times denominator minus numerator times derivative of denominator, all divided by denominator squared.',
+  },
 };
 
 /**
@@ -104,6 +109,11 @@ const INT_RULES = {
     name: 'Exponential Integration',
     latex: '\\int e^x \\, dx = e^x + C',
     description: 'The integral of e^x is e^x + C.',
+  },
+  byParts: {
+    name: 'Integration by Parts',
+    latex: '\\int u \\, dv = u \\cdot v - \\int v \\, du',
+    description: 'Integration by parts is used to integrate products of algebraic, exponential, logarithmic, and trigonometric functions.',
   },
 };
 
@@ -255,7 +265,9 @@ export function solveDerivative(expression: string): SolverResult {
       // Check if expression is a product of two variable expressions (e.g. x^2 * sin(x))
       const hasInnerVar = (inner: string) => inner.includes(variable) && inner !== variable && inner !== `(${variable})`;
       
-      if (clean.includes('*') && (clean.match(new RegExp(variable, 'g')) || []).length >= 2) {
+      if (clean.includes('/') && clean.split('/').slice(1).some(part => part.includes(variable))) {
+        matchedRule = DIFF_RULES.quotient;
+      } else if (clean.includes('*') && (clean.match(new RegExp(variable, 'g')) || []).length >= 2) {
         matchedRule = DIFF_RULES.product;
       } else if (clean.match(/sin\((.*)\)/) && hasInnerVar(clean.match(/sin\((.*)\)/)![1])) {
         matchedRule = DIFF_RULES.chain;
@@ -425,13 +437,25 @@ export function solveIntegral(
       steps.push({
         stepNumber: stepNum++,
         explanation: 'Combine all term antiderivatives.',
-        math: `F(${variable}) = ${finalLatex}`,
+        math: isDefinite ? `F(${variable}) = ${finalLatex}` : `F(${variable}) = ${finalLatex} + C`,
       });
     } else {
       // Single term integration
       let matchedRule = INT_RULES.power;
-      if (clean === `1/${variable}` || clean === `${variable}^(-1)`) matchedRule = INT_RULES.oneOverX;
-      else if (clean.includes('sin')) matchedRule = INT_RULES.sin;
+      const isProductWithVar = (clean.includes('*') || /^[a-zA-Z0-9()]+\s*(?:e\^|exp|sin|cos|ln|log)/.test(clean)) &&
+        (clean.match(new RegExp(variable, 'g')) || []).length >= 2;
+      const isLogWithVar = clean.includes('ln') || clean.includes('log');
+
+      if (
+        (clean.includes('e^') || clean.includes('exp') || clean.includes('sin') || clean.includes('cos')) &&
+        isProductWithVar
+      ) {
+        matchedRule = INT_RULES.byParts;
+      } else if (isLogWithVar && clean.includes(variable)) {
+        matchedRule = INT_RULES.byParts;
+      } else if (clean === `1/${variable}` || clean === `${variable}^(-1)`) {
+        matchedRule = INT_RULES.oneOverX;
+      } else if (clean.includes('sin')) matchedRule = INT_RULES.sin;
       else if (clean.includes('cos')) matchedRule = INT_RULES.cos;
       else if (clean.includes('exp') || clean.includes('e^')) matchedRule = INT_RULES.exp;
       else if (!clean.includes(variable)) matchedRule = INT_RULES.constant;
@@ -439,7 +463,7 @@ export function solveIntegral(
       steps.push({
         stepNumber: stepNum++,
         explanation: `Apply the ${matchedRule.name} $\\int ${latexExpr} \\, d${variable}$ to find the antiderivative.`,
-        math: `F(${variable}) = ${finalLatex}`,
+        math: isDefinite ? `F(${variable}) = ${finalLatex}` : `F(${variable}) = ${finalLatex} + C`,
         formulaUsed: matchedRule,
       });
     }

@@ -20,11 +20,14 @@ export function classifyEquation(rawInput: string, specifiedVar?: string): Equat
   const norm = normalizeExpression(rawInput);
   const v = specifiedVar || detectVariable(rawInput);
 
-  // 1. Variable-free arithmetic equality check (e.g. 3 = 1 - 2(-7))
+  // 1. Variable-free arithmetic evaluation or equality check (e.g. 8/(2/3) or 3 = 1 - 2(-7))
   const reservedLetters = new Set(['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'log', 'ln', 'exp', 'sqrt', 'cbrt', 'abs', 'pi', 'e', 'i']);
   const allLetterTokens = (rawInput.match(/[a-zA-Z]+/g) || []).filter(t => !reservedLetters.has(t.toLowerCase()));
-  if (allLetterTokens.length === 0 && rawInput.includes('=')) {
-    return 'arithmetic_check';
+  if (allLetterTokens.length === 0) {
+    if (rawInput.includes('=')) {
+      return 'arithmetic_check';
+    }
+    return 'arithmetic';
   }
 
   // 2. System of equations (commas or semicolons separating equations with =)

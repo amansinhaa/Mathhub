@@ -13,6 +13,7 @@ import {
   toFraction,
   evalPoly,
   gcd,
+  formatPolynomial,
 } from './stepGenerator';
 import { evaluate } from 'mathjs';
 import * as math from 'mathjs';
@@ -144,7 +145,7 @@ export function extractCoefficients(
         coeffs.shift();
       }
       const degree = coeffs.length - 1;
-      if (degree >= 1 && coeffs.every((num: number) => Number.isFinite(num) && !isNaN(num))) {
+      if (degree >= 0 && coeffs.every((num: number) => Number.isFinite(num) && !isNaN(num))) {
         return { degree, coeffs };
       }
     }
@@ -159,6 +160,10 @@ export function extractCoefficients(
     const v = evalAt(expr, variable, i);
     if (isNaN(v) || !isFinite(v)) return null;
     vals.push(v);
+  }
+
+  if (vals.every((v) => Math.abs(v - vals[0]) < 1e-4)) {
+    return { degree: 0, coeffs: [Math.round(vals[0] * 1e6) / 1e6] };
   }
 
   const diffs: number[][] = [vals.slice()];
@@ -1822,8 +1827,10 @@ function trySolveTwoVariableLinearEquation(cleanEq: string, originalEq: string):
 // ─── Main Solver Functions ──────────────────────────────────────────────────
 
 function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto'): SolverResult {
+  const hadEquals = equation.includes('=');
   let cleanEq = equation.trim();
   cleanEq = autoBalanceParens(cleanEq);
+  cleanEq = normalizeExpression(cleanEq);
 
   // 1. Variable-free arithmetic equality check (e.g. 3 = 1 - 2(-7))
   const varFreeResult = trySolveVariableFreeEquation(cleanEq, equation);
@@ -1831,13 +1838,63 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     return varFreeResult;
   }
 
-  // 2. Two-variable linear equation (e.g. y = 10 - 3x, 3x + 2y = 12)
+  // 2. Radical simplification without = (e.g. sqrt(50) -> 5\sqrt{2})
+  if (!hadEquals) {
+    const radicalResult = trySimplifyRadicalExpression(cleanEq, equation);
+    if (radicalResult) {
+      return radicalResult;
+    }
+  }
+
+  // 3. Pure arithmetic without = and no variables (e.g. 8/(2/3))
+  const reservedWords = new Set([
+    'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
+    'log', 'ln', 'exp', 'sqrt', 'abs', 'ceil', 'floor', 'round', 'sign',
+    'pi', 'PI', 'e', 'i', 'nthRoot', 'pow', 'mod'
+  ]);
+  const varTokens = cleanEq.match(/[a-zA-Z]+/g) || [];
+  const hasVariable = varTokens.some(tok => tok.length === 1 && !reservedWords.has(tok));
+
+  if (!hadEquals && !hasVariable) {
+    let evalVal: number;
+    try {
+      evalVal = Number(math.evaluate(cleanEq));
+    } catch {
+      try {
+        evalVal = Number((nerdamer as any)(cleanEq).evaluate().text());
+      } catch {
+        evalVal = NaN;
+      }
+    }
+    if (!isNaN(evalVal) && isFinite(evalVal)) {
+      const frac = toFraction(evalVal);
+      const exactStr = frac && frac.d > 1 ? fmtFraction(evalVal) : fmt(evalVal);
+      const decStr = frac && frac.d > 1 ? fmt(evalVal) : undefined;
+      return {
+        type: 'arithmetic',
+        equationType: 'arithmetic',
+        steps: [
+          {
+            stepNumber: 1,
+            explanation: 'Evaluate the arithmetic expression following standard order of operations (PEMDAS):',
+            math: `${expressionToLatex(equation)} = ${exactStr}`,
+          },
+        ],
+        finalAnswer: exactStr,
+        decimalAnswer: decStr,
+        numericRoots: [evalVal],
+        inputInterpretation: `\\text{Evaluate arithmetic expression: } ${expressionToLatex(equation)}`,
+      };
+    }
+  }
+
+  // 3. Two-variable linear equation (e.g. y = 10 - 3x, 3x + 2y = 12)
   const twoVarResult = trySolveTwoVariableLinearEquation(cleanEq, equation);
   if (twoVarResult) {
     return twoVarResult;
   }
 
-  // 3. Function / curve root solving notation: y = f(x) or f(x) = ... to solve for roots / x-intercepts
+  // 4. Function / curve root solving notation: y = f(x) or f(x) = ... to solve for roots / x-intercepts
   // (Note: two-variable linear equations like y = 10 - 3x have already been handled above)
   if (/^(?:y|f\s*\(\s*[a-zA-Z]\s*\))\s*=/i.test(cleanEq)) {
     const rhsPart = cleanEq.replace(/^(?:y|f\s*\(\s*[a-zA-Z]\s*\))\s*=/i, '').trim();
@@ -1848,11 +1905,6 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
 
   // If expression without = contains radicals or rational expressions, simplify directly
   if (!cleanEq.includes('=')) {
-    const radicalResult = trySimplifyRadicalExpression(cleanEq, equation);
-    if (radicalResult) {
-      return radicalResult;
-    }
-
     const rationalResult = trySimplifyRationalExpression(cleanEq, equation);
     if (rationalResult) {
       return rationalResult;
@@ -1861,6 +1913,77 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     const algebraicResult = trySimplifyAlgebraicExpression(cleanEq, equation);
     if (algebraicResult) {
       return algebraicResult;
+    }
+
+    // Algebraic expressions without = that have like terms or parentheses to simplify (e.g. (7x^(2)-2x)+(4x^(2)-x))
+    if (hasVariable) {
+      const varName = detectVariable(cleanEq);
+      const polyNoEq = extractCoefficients(cleanEq, varName);
+      if (polyNoEq && polyNoEq.degree >= 1) {
+        const simplifiedPolyStr = formatPolynomial(polyNoEq.coeffs, varName);
+        const isAlreadyCanonical = cleanEq.replace(/[\s*()]/g, '') === simplifiedPolyStr.replace(/[\s*()]/g, '');
+        if (!isAlreadyCanonical) {
+          let rootsStr = '';
+          const numRoots: number[] = [];
+          if (polyNoEq.degree === 1) {
+            const [a, b] = polyNoEq.coeffs;
+            const r = -b / a;
+            numRoots.push(r);
+            const f = toFraction(r);
+            rootsStr = `${varName} = ${f && f.d > 1 ? fmtFraction(r) : fmt(r)}`;
+          } else if (polyNoEq.degree === 2) {
+            const [a, b, c] = polyNoEq.coeffs;
+            const d = b * b - 4 * a * c;
+            if (d >= 0) {
+              const sqD = Math.sqrt(d);
+              const r1 = (-b - sqD) / (2 * a);
+              const r2 = (-b + sqD) / (2 * a);
+              const sorted = [r1, r2].sort((x, y) => x - y);
+              numRoots.push(sorted[0]);
+              const f1 = toFraction(sorted[0]);
+              const d1 = f1 && f1.d > 1 ? fmtFraction(sorted[0]) : fmt(sorted[0]);
+              if (Math.abs(r1 - r2) < 1e-8) {
+                rootsStr = `${varName} = ${d1}`;
+              } else {
+                numRoots.push(sorted[1]);
+                const f2 = toFraction(sorted[1]);
+                const d2 = f2 && f2.d > 1 ? fmtFraction(sorted[1]) : fmt(sorted[1]);
+                rootsStr = `${varName} = ${d1}, \\; ${d2}`;
+              }
+            }
+          }
+
+          const steps: SolutionStep[] = [
+            {
+              stepNumber: 1,
+              explanation: 'Expand parentheses and combine like terms by grouping coefficients of matching powers:',
+              math: `\\begin{aligned} &${expressionToLatex(equation)} \\\\[4pt] &= ${simplifiedPolyStr} \\end{aligned}`,
+            },
+            {
+              stepNumber: 2,
+              explanation: 'Write the final simplified polynomial expression:',
+              math: simplifiedPolyStr,
+            },
+          ];
+
+          if (rootsStr) {
+            steps.push({
+              stepNumber: 3,
+              explanation: `If setting the simplified expression equal to zero ($${simplifiedPolyStr} = 0$), solve for roots:`,
+              math: `\\text{If set } = 0: \\quad ${rootsStr}`,
+            });
+          }
+
+          return {
+            type: 'polynomial',
+            equationType: polyNoEq.degree === 1 ? 'linear' : polyNoEq.degree === 2 ? 'quadratic' : 'polynomial',
+            steps,
+            finalAnswer: simplifiedPolyStr,
+            numericRoots: numRoots,
+            inputInterpretation: `\\text{Simplify: } ${expressionToLatex(equation)}`,
+          };
+        }
+      }
     }
   }
 
@@ -2018,6 +2141,64 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
 
   // Extract exact polynomial coefficients and degree
   const poly = extractCoefficients(standardExpr, variable);
+
+  if (poly && poly.degree === 0) {
+    const [b] = poly.coeffs;
+    if (Math.abs(b) < 1e-9) {
+      const steps: SolutionStep[] = [
+        {
+          stepNumber: 1,
+          explanation: 'Subtract the right-hand side from both sides and combine like terms:',
+          math: `\\begin{aligned} \\text{Given equation:} \\quad & ${expressionToLatex(lhsTrim)} = ${expressionToLatex(rhsTrim || '0')} \\\\[4pt] \\text{Move all terms to LHS:} \\quad & (${expressionToLatex(lhsTrim)}) - (${expressionToLatex(rhsTrim || '0')}) = 0 \\\\[4pt] \\text{Combine like terms:} \\quad & 0 = 0 \\end{aligned}`,
+        },
+        {
+          stepNumber: 2,
+          explanation: 'Analyze the resulting statement:',
+          math: `0 = 0 \\quad \\text{is an identity that is true for all real values of } ${variable}.`,
+        },
+        {
+          stepNumber: 3,
+          explanation: 'State the final solution set:',
+          math: `${variable} \\in \\mathbb{R} \\quad \\text{(All real numbers)}`,
+        },
+      ];
+      return {
+        type: 'polynomial',
+        equationType: 'linear',
+        steps,
+        finalAnswer: '\\text{All real numbers}',
+        numericRoots: [],
+        inputInterpretation: interpretationLatex,
+      };
+    } else {
+      const bStr = fmt(b);
+      const steps: SolutionStep[] = [
+        {
+          stepNumber: 1,
+          explanation: 'Subtract the right-hand side from both sides and combine like terms:',
+          math: `\\begin{aligned} \\text{Given equation:} \\quad & ${expressionToLatex(lhsTrim)} = ${expressionToLatex(rhsTrim || '0')} \\\\[4pt] \\text{Move all terms to LHS:} \\quad & (${expressionToLatex(lhsTrim)}) - (${expressionToLatex(rhsTrim || '0')}) = 0 \\\\[4pt] \\text{Combine like terms:} \\quad & ${bStr} = 0 \\end{aligned}`,
+        },
+        {
+          stepNumber: 2,
+          explanation: 'Analyze the resulting statement:',
+          math: `${bStr} = 0 \\quad \\text{is a contradiction (false for all values of } ${variable}).`,
+        },
+        {
+          stepNumber: 3,
+          explanation: 'Conclude that no value of $' + variable + '$ satisfies the equation:',
+          math: '\\text{No solution } (\\emptyset)',
+        },
+      ];
+      return {
+        type: 'polynomial',
+        equationType: 'linear',
+        steps,
+        finalAnswer: '\\text{No solution}',
+        numericRoots: [],
+        inputInterpretation: interpretationLatex,
+      };
+    }
+  }
 
   if (poly && poly.degree >= 1) {
     const { degree, coeffs } = poly;
@@ -2266,9 +2447,9 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
       const detX = vecB[0] * matA[1][1] - vecB[1] * matA[0][1];
       const detY = matA[0][0] * vecB[1] - matA[1][0] * vecB[0];
       if (Math.abs(detX) < 1e-9 && Math.abs(detY) < 1e-9) {
-        return { type: 'system', steps, finalAnswer: 'infinite solutions' };
+        return { type: 'system', steps, finalAnswer: '\\text{Infinitely many solutions}' };
       } else {
-        return { type: 'system', steps, finalAnswer: 'no solution' };
+        return { type: 'system', steps, finalAnswer: '\\text{No solution}' };
       }
     }
   }
@@ -2300,7 +2481,7 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
       }
       if (allZeros) {
         if (Math.abs(aug[row][n]) > 1e-12) {
-          return { type: 'system', steps, finalAnswer: 'no solution' };
+          return { type: 'system', steps, finalAnswer: '\\text{No solution}' };
         } else {
           isDependent = true;
         }
@@ -2308,7 +2489,7 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
     }
 
     if (isDependent) {
-      return { type: 'system', steps, finalAnswer: 'infinite solutions' };
+      return { type: 'system', steps, finalAnswer: '\\text{Infinitely many solutions}' };
     }
 
     const sol = new Array(n).fill(0);
@@ -2331,7 +2512,7 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
   return {
     type: 'system',
     steps,
-    finalAnswer: 'no solution',
+    finalAnswer: '\\text{No solution}',
   };
 }
 

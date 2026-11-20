@@ -33,7 +33,8 @@ export default function FractionCalculator() {
   const num2 = parseInt(n2, 10);
   const den2 = parseInt(d2, 10);
 
-  const isValid = !isNaN(num1) && !isNaN(den1) && den1 !== 0 && !isNaN(num2) && !isNaN(den2) && den2 !== 0;
+  const isZeroDen = (!isNaN(den1) && den1 === 0) || (!isNaN(den2) && den2 === 0);
+  const isValid = !isNaN(num1) && !isNaN(den1) && !isNaN(num2) && !isNaN(den2) && !isZeroDen;
 
   // Calculation details
   let rawNum = 0;
@@ -156,6 +157,13 @@ export default function FractionCalculator() {
           />
         </div>
       </div>
+
+      {/* Zero Denominator Error */}
+      {isZeroDen && (
+        <div className="p-4 rounded-xl bg-red-50 dark:bg-[#3E2723]/40 border border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-300 text-xs sm:text-sm font-mono flex items-center gap-2">
+          <span className="font-bold">Error:</span> Denominator cannot be zero.
+        </div>
+      )}
 
       {/* Result Display */}
       {isValid && (

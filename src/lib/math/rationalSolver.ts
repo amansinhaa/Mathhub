@@ -147,7 +147,7 @@ export function isRationalExpression(expr: string): boolean {
   if (clean.includes('÷') || clean.includes('\\div')) return true;
 
   // For slash (/), at least one denominator must contain a variable (e.g. /x or /(x-1))
-  const denMatches = clean.match(/\/\s*(\([^)]+\)|[a-zA-Z0-9^+-]+)/g) || [];
+  const denMatches = clean.match(/\/\s*(\([^)]+\)|[a-zA-Z0-9^]+)/g) || [];
   const hasVarInDen = denMatches.some((d) => /[a-zA-Z]/.test(d));
   if (!hasVarInDen) {
     return false;
@@ -477,7 +477,7 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
     const standardDiff = `(${lhs}) - (${rhs})`;
 
     // Check denominators to find domain restrictions
-    const denMatches = cleanEq.match(/\/\s*(\([^)]+\)|[a-zA-Z0-9^+-]+)/g) || [];
+    const denMatches = cleanEq.match(/\/\s*(\([^)]+\)|[a-zA-Z0-9^]+)/g) || [];
     const restrictionsSet = new Set<string>();
     const denList = Array.from(new Set(denMatches.map((m) => stripOuterParens(m.replace(/^\//, '').trim()))))
       .filter((d) => /[a-zA-Z]/.test(d));
@@ -694,6 +694,48 @@ export function trySolveRationalEquation(cleanEq: string, rawEq: string): Solver
         explanation: 'Factor the resulting polynomial equation:',
         math: `${numFactoredTeX} = 0`,
       });
+    }
+
+    // Check if the numerator is identically zero (0 = 0) or non-zero constant (contradiction)
+    const isZeroIdentity = numExpandedStr === '0' || Math.abs(parseRationalNumber(numExpandedStr)) < 1e-9;
+    const isNonZeroConstant = !numExpandedStr.includes(variable) && !isZeroIdentity && !isNaN(parseRationalNumber(numExpandedStr));
+
+    if (isZeroIdentity) {
+      const finalAnswer = restrictions.length > 0
+        ? `\\text{All real numbers except } ${restrictions.map((r) => `${variable} = ${cleanLatex((nerdamer as any)(r).toTeX())}`).join(', ')}`
+        : '\\text{All real numbers}';
+
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: restrictions.length > 0
+          ? `The equation simplifies to an identity $0 = 0$, which holds for all real numbers except the domain restrictions ($${variable} \\neq ${restrictions.join(', ')}$).`
+          : 'The equation simplifies to an identity $0 = 0$, which holds for all real numbers.',
+        math: finalAnswer,
+      });
+
+      return {
+        type: 'rational',
+        steps,
+        finalAnswer,
+        inputInterpretation: `\\text{Solve rational equation: } ${expressionToLatex(cleanEq)}`,
+        numericRoots: [],
+      };
+    }
+
+    if (isNonZeroConstant) {
+      const finalAnswer = '\\text{No solution}';
+      steps.push({
+        stepNumber: stepNumber++,
+        explanation: `The equation simplifies to a contradiction $${numExpandedTeX} = 0$, which is impossible. Therefore, no solution exists.`,
+        math: '\\emptyset \\quad (\\text{No solution})',
+      });
+      return {
+        type: 'rational',
+        steps,
+        finalAnswer,
+        inputInterpretation: `\\text{Solve rational equation: } ${expressionToLatex(cleanEq)}`,
+        numericRoots: [],
+      };
     }
 
     // Step: Solve the polynomial numerator

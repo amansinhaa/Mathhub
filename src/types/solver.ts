@@ -16,6 +16,7 @@ export type SolverType =
   | 'symbolic'
   | 'ode'
   | 'domain_range'
+  | 'arithmetic'
   | 'arithmetic_check';
 
 export type EquationType =
@@ -33,6 +34,7 @@ export type EquationType =
   | 'inequality'
   | 'ode'
   | 'domain_range'
+  | 'arithmetic'
   | 'arithmetic_check';
 
 export type QuadraticMethod = 'auto' | 'factoring' | 'completing_square' | 'formula';

@@ -149,6 +149,9 @@ export function trySolveLogarithmicEquation(
   let displayEq: string;
   try {
     displayEq = nerdamer(cleanEq).toTeX().replace(/\\log_\{([^}]+)\}\s*\\cdot\s*/g, '\\log_{$1}');
+    if (originallyHadLn) {
+      displayEq = displayEq.replace(/\\mathrm\{log\}/g, '\\ln').replace(/\\log\b/g, '\\ln');
+    }
   } catch {
     displayEq = cleanEq;
   }
@@ -250,12 +253,15 @@ export function trySolveLogarithmicEquation(
   // log_b(Y) = c <=> Y = b^c
   let rhsPowerVal: number;
   let rhsPowerLatex: string;
+  let rhsPowerSym: string;
   if (commonBaseStr === 'e') {
     rhsPowerVal = Math.exp(constantRhs);
     rhsPowerLatex = constantRhs === 0 ? '1' : 'e^{' + constantRhs + '}';
+    rhsPowerSym = constantRhs === 0 ? '1' : '__E_POW__';
   } else {
     rhsPowerVal = Math.pow(commonBaseVal, constantRhs);
     rhsPowerLatex = constantRhs === 0 ? '1' : commonBaseStr + '^{' + constantRhs + '} = ' + rhsPowerVal;
+    rhsPowerSym = String(rhsPowerVal);
   }
 
   steps.push({
@@ -268,11 +274,11 @@ export function trySolveLogarithmicEquation(
   // If combinedArg is of the form P(x)/Q(x) = rhsPowerVal, cross-multiply: P(x) - rhsPowerVal * Q(x) = 0
   let algEquation = '';
   if (denExpr !== '1') {
-    algEquation = `(${numExpr}) - (${rhsPowerVal}) * (${denExpr}) = 0`;
+    algEquation = `(${numExpr}) - (${rhsPowerSym}) * (${denExpr}) = 0`;
   } else {
-    algEquation = `(${numExpr}) - (${rhsPowerVal}) = 0`;
+    algEquation = `(${numExpr}) - (${rhsPowerSym}) = 0`;
   }
-  return finishLogSolution(algEquation, allTerms, variable, steps, stepNumber);
+  return finishLogSolution(algEquation, allTerms, variable, steps, stepNumber, commonBaseStr === 'e' ? constantRhs : undefined);
 }
 
 /**
@@ -283,7 +289,8 @@ function finishLogSolution(
   allTerms: LogTerm[],
   variable: string,
   steps: SolutionStep[],
-  startStepNumber: number
+  startStepNumber: number,
+  eConstant?: number
 ): SolverResult | null {
   let stepNumber = startStepNumber;
 
@@ -394,19 +401,27 @@ function finishLogSolution(
     if (rawRoots.length === 0) return null;
 
     for (const rStr of rawRoots) {
-      let num = NaN;
-      try {
-        const evalRes = math.evaluate(rStr);
-        num = typeof evalRes === 'number' ? evalRes : parseFloat(rStr);
-      } catch {
-        num = parseFloat(rStr);
+      let rResolved = rStr;
+      if (rStr.includes('__E_POW__')) {
+        const eExpr = eConstant !== undefined
+          ? (Number.isInteger(eConstant) ? `e^${eConstant}` : `e^(${eConstant})`)
+          : 'e';
+        rResolved = (nerdamer as any)(rStr.replace(/__E_POW__/g, eExpr)).expand().toString();
       }
 
-      let latex = rStr;
+      let num = NaN;
       try {
-        latex = nerdamer(rStr).toTeX();
+        const evalRes = math.evaluate(rResolved);
+        num = typeof evalRes === 'number' ? evalRes : parseFloat(rResolved);
       } catch {
-        latex = rStr;
+        num = parseFloat(rResolved);
+      }
+
+      let latex = rResolved;
+      try {
+        latex = nerdamer(rResolved).toTeX();
+      } catch {
+        latex = rResolved;
       }
 
       if (!isNaN(num)) {
@@ -495,6 +510,17 @@ function finishLogSolution(
     validRoots.length === 1 ? variable + ' = ' + v.latex : variable + '_' + (i + 1) + ' = ' + v.latex
   );
 
+  const hasSymbolic = validRoots.some((v) => /[a-zA-Z]/.test(v.latex));
+  const decimalAnswer = hasSymbolic
+    ? validRoots
+        .map((v, i) =>
+          (validRoots.length === 1 ? variable : variable + '_' + (i + 1)) +
+          ' \\approx ' +
+          (Number.isInteger(v.num) ? String(v.num) : v.num.toFixed(4))
+        )
+        .join(', \\quad ')
+    : undefined;
+
   steps.push({
     stepNumber: stepNumber++,
     explanation: 'Collect the final valid real solution' + (validRoots.length > 1 ? 's' : '') + ':',
@@ -505,6 +531,7 @@ function finishLogSolution(
     type: 'logarithmic',
     steps,
     finalAnswer: finalStrs.join(', \\quad '),
+    decimalAnswer,
     numericRoots: validRoots.map((v) => v.num),
   };
 }
