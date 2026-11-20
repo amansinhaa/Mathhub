@@ -294,15 +294,11 @@ export default function EquationInput({ initialMode }: EquationInputProps = {}) 
         }, 50);
       }
     } else if (formula) {
-      const eqChanged = store.equation !== formula;
-      if (eqChanged) {
-        store.setEquation(formula);
-      }
-      if (eqChanged || !store.result) {
-        setTimeout(() => {
-          useSolverStore.getState().solve();
-        }, 50);
-      }
+      store.setEquation(formula);
+      // Auto-solve whenever equation is passed via URL query (?eq=...)
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
     }
   }, [searchStr]);
 

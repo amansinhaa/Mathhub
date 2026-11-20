@@ -83,15 +83,11 @@ export default function EquationSolver({
     const targetEquation = queryEq ? queryEq.trim() : (initialEquation ? initialEquation.trim() : null);
 
     if (targetEquation) {
-      const eqChanged = store.equation !== targetEquation;
-      if (eqChanged) {
-        store.setEquation(targetEquation);
-      }
-      if (eqChanged || !store.result) {
-        setTimeout(() => {
-          useSolverStore.getState().solve();
-        }, 50);
-      }
+      store.setEquation(targetEquation);
+      // Auto-solve whenever targetEquation is provided via URL query (?eq=...) or initial prop
+      setTimeout(() => {
+        useSolverStore.getState().solve();
+      }, 50);
     }
   }, [initialMode, initialEquation]);
 

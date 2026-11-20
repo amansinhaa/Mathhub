@@ -12,15 +12,30 @@ import {
   TriangleLawCalculator,
 } from './InteractiveMiniCalculators';
 
-export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
+export default function FormulaCard({
+  formula,
+  board,
+}: {
+  formula: FormulaEntry;
+  board?: string;
+}) {
   const practiceConfig = FORMULA_PRACTICE_MAP[formula.id];
+  const isInternationalBoard = Boolean(
+    board && ['gcse', 'a-level', 'edexcel', 'aqa', 'igcse'].includes(board)
+  );
 
   // Fallback solver link with autoSolve
   const solverHref = practiceConfig
     ? practiceConfig.url
-    : `/equation-solver-with-steps?eq=${encodeURIComponent(formula.solverExpression || latexToAscii(formula.latex))}&autoSolve=true`;
+    : `/equation-solver-with-steps?eq=${encodeURIComponent(formula.solverExpression || latexToAscii(formula.latex))}`;
 
   const calculatorHref = `/calculator?expr=${encodeURIComponent(formula.calculatorExpression || latexToAscii(formula.latex))}`;
+
+  const displayTags = isInternationalBoard
+    ? formula.tags.filter(
+        (t) => !['class10', 'class12', 'class-10', 'class-12', 'cbse', 'icse'].includes(t.toLowerCase())
+      )
+    : formula.tags;
 
   return (
     <div className="formula-card bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full group">
@@ -30,9 +45,14 @@ export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
             {formula.name}
           </h3>
           <div className="flex items-center gap-1 shrink-0 no-print">
-            {formula.level && (
+            {!isInternationalBoard && formula.level && (
               <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1.5 py-0.5 bg-[#F5F5F5] text-[#5D4037] border border-[#E0E0E0] dark:bg-[#131313] dark:text-[#D7CCC8] dark:border-[#2E2825] rounded-md">
                 {formula.level === 'class10' ? 'Class 10' : formula.level === 'class12' ? 'Class 12' : 'Higher Ed'}
+              </span>
+            )}
+            {isInternationalBoard && (
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1.5 py-0.5 bg-[#F5F5F5] text-[#5D4037] border border-[#E0E0E0] dark:bg-[#131313] dark:text-[#D7CCC8] dark:border-[#2E2825] rounded-md">
+                {board === 'a-level' ? 'A-Level' : board === 'igcse' ? 'IGCSE' : 'GCSE'}
               </span>
             )}
             <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 bg-[#EFEBE9] text-[#5D4037] border border-[#D7CCC8] dark:bg-[#3E2723] dark:text-[#D7CCC8] dark:border-[#5D4037]/50 rounded-md">
@@ -49,8 +69,10 @@ export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
           </div>
         )}
 
-        <div className="my-2.5 py-3 px-2 overflow-x-auto text-center flex justify-center items-center flex-1 bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#262220] rounded-xl max-w-full text-sm text-[#131313] dark:text-white">
-          <MathDisplay math={formula.latex} block />
+        <div className="my-2.5 py-3 px-3 overflow-x-auto scrollbar-thin max-w-full w-full bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#262220] rounded-xl text-center text-sm text-[#131313] dark:text-white">
+          <div className="inline-block max-w-full overflow-x-auto scrollbar-thin">
+            <MathDisplay math={formula.latex} block className="overflow-x-auto max-w-full" />
+          </div>
         </div>
 
         <p className="text-xs text-[#616161] dark:text-[#A19891] mb-3 leading-relaxed">
@@ -65,7 +87,7 @@ export default function FormulaCard({ formula }: { formula: FormulaEntry }) {
         </div>
 
         <div className="flex flex-wrap gap-1 mt-auto pt-2 no-print">
-          {formula.tags.map((tag) => (
+          {displayTags.map((tag) => (
             <span key={tag} className="text-[10px] font-mono bg-[#F5F5F5] text-[#757575] border border-[#E0E0E0] dark:bg-[#131313] dark:text-[#8D827A] dark:border-[#262220] px-2 py-0.5 rounded-md">
               #{tag}
             </span>
