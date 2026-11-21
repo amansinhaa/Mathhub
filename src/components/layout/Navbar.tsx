@@ -154,14 +154,23 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
           {/* Slide-out Drawer Panel */}
           <aside
             aria-hidden={!isOpen}
+            style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              margin: 0,
+              transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+              maxWidth: '85vw',
+            }}
             className={clsx(
-              'fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none print:hidden no-print',
-              isOpen ? 'translate-x-0' : '-translate-x-full invisible pointer-events-none'
+              'fixed inset-y-0 left-0 top-0 bottom-0 m-0 z-50 w-72 sm:w-80 bg-white dark:bg-[#1B1B1B] border-r border-[#E0E0E0] dark:border-[#2E2825] shadow-2xl flex flex-col justify-between transition-transform duration-300 ease-out select-none print:hidden no-print',
+              isOpen ? 'translate-x-0 pointer-events-auto' : '-translate-x-full invisible pointer-events-none'
             )}
           >
             {/* Drawer Header */}
-            <div className="p-4 pl-5 sm:pl-6 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+            <div className="p-4 pl-6 sm:pl-7 border-b border-[#E0E0E0] dark:border-[#2E2825] flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-3.5" onClick={() => setIsOpen(false)}>
                 <img
                   src="/logo.png"
                   alt="EasyEquate"
@@ -183,10 +192,10 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
             </div>
 
             {/* Drawer Navigation Links */}
-            <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3 space-y-5">
+            <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-5">
               {TOOL_GROUPS.map((group) => (
                 <div key={group.category} className="space-y-1.5">
-                  <div className="px-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">
+                  <div className="px-3 text-[10px] font-mono font-bold uppercase tracking-wider text-[#757575] dark:text-[#8D827A]">
                     {group.category}
                   </div>
                   <div className="space-y-0.5">
@@ -197,13 +206,13 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
                           key={href}
                           href={href}
                           className={clsx(
-                            'flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all duration-150 group',
+                            'flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all duration-150 group',
                             isActive
                               ? 'bg-[#5D4037] text-white font-semibold shadow-xs'
                               : 'text-[#616161] hover:bg-[#EFEBE9] hover:text-[#5D4037] dark:text-[#A19891] dark:hover:bg-[#252322] dark:hover:text-white font-medium'
                           )}
                         >
-                          <div className="flex items-center gap-3 min-w-0">
+                          <div className="flex items-center gap-3.5 min-w-0">
                             <Icon
                               size={18}
                               strokeWidth={isActive ? 2.5 : 2}
@@ -214,7 +223,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
                           {badge && (
                             <span
                               className={clsx(
-                                'text-[10px] font-mono px-1.5 py-0.5 rounded',
+                                'text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0 ml-2',
                                 isActive
                                   ? 'bg-[#3E2723] text-[#D7CCC8]'
                                   : 'bg-[#F5F5F5] text-[#757575] dark:bg-[#22201F] dark:text-[#8D827A]'
@@ -232,7 +241,7 @@ export function Navbar({ currentPath }: { currentPath?: string }) {
             </div>
 
             {/* Drawer Footer Controls */}
-            <div className="p-3 border-t border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAFAFA] dark:bg-[#171717] space-y-2">
+            <div className="p-4 pl-6 border-t border-[#E0E0E0] dark:border-[#2E2825] bg-[#FAFAFA] dark:bg-[#171717] space-y-2">
               <div className="flex items-center justify-between px-2">
                 <span className="text-[11px] font-mono text-[#757575] dark:text-[#8D827A]">
                   Quick Shortcuts

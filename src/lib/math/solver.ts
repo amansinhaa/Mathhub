@@ -1894,6 +1894,15 @@ function _solvePolynomialRaw(equation: string, method: QuadraticMethod = 'auto')
     return twoVarResult;
   }
 
+  // Check if expression is an inequality (<, <=, >, >=)
+  if (/(?:<=|>=|<|>|\\leq|\\le|\\geq|\\ge)/.test(cleanEq) && !cleanEq.includes('=>')) {
+    try {
+      return solveInequality(equation);
+    } catch {
+      // fall through
+    }
+  }
+
   // 4. Function / curve root solving notation: y = f(x) or f(x) = ... to solve for roots / x-intercepts
   // (Note: two-variable linear equations like y = 10 - 3x have already been handled above)
   if (/^(?:y|f\s*\(\s*[a-zA-Z]\s*\))\s*=/i.test(cleanEq)) {
@@ -2516,7 +2525,328 @@ export function solveSystem(equations: string[], variables: string[]): SolverRes
   };
 }
 
+/**
+ * Solves absolute value inequalities of the form:
+ * |A| < c, |A| <= c, |A| > c, |A| >= c (including k|A| and |A| + d).
+ */
+export function trySolveAbsoluteValueInequality(inequality: string): SolverResult | null {
+  let cleanIneq = inequality.trim();
+  // Standardize LaTeX and abs notation
+  cleanIneq = cleanIneq.replace(/\\left\|/g, '|').replace(/\\right\|/g, '|');
+  cleanIneq = cleanIneq.replace(/\\leq|\\le/g, '<=').replace(/\\geq|\\ge/g, '>=');
+  cleanIneq = cleanIneq.replace(/abs\(([^)]+)\)/g, '|$1|');
+  cleanIneq = autoBalanceParens(cleanIneq);
+
+  // Check if expression contains absolute value signs
+  if (!cleanIneq.includes('|')) return null;
+
+  // Detect inequality relation in order of specificity
+  let rel = '';
+  if (cleanIneq.includes('>=')) rel = '>=';
+  else if (cleanIneq.includes('<=')) rel = '<=';
+  else if (cleanIneq.includes('>')) rel = '>';
+  else if (cleanIneq.includes('<')) rel = '<';
+
+  if (!rel) return null;
+
+  const parts = cleanIneq.split(rel);
+  if (parts.length !== 2) return null;
+
+  let lhs = parts[0].trim();
+  let rhs = parts[1].trim();
+
+  // If LHS doesn't have | but RHS does, swap and flip relation
+  if (!lhs.includes('|') && rhs.includes('|')) {
+    const tmp = lhs;
+    lhs = rhs;
+    rhs = tmp;
+    rel = rel === '<=' ? '>=' : rel === '<' ? '>' : rel === '>=' ? '<=' : '<';
+  }
+
+  // If both or neither have |, not a standard single-abs inequality
+  if (!lhs.includes('|') || rhs.includes('|')) return null;
+
+  let insideA = '';
+  let isolatedRhs = rhs;
+
+  const pureAbsMatch = lhs.match(/^\|([^|]+)\|$/);
+  const coeffAbsMatch = lhs.match(/^([+-]?\d*(?:\.\d+)?)\*?\|([^|]+)\|$/);
+
+  if (pureAbsMatch) {
+    insideA = pureAbsMatch[1].trim();
+  } else if (coeffAbsMatch && coeffAbsMatch[1] && coeffAbsMatch[1] !== '+' && coeffAbsMatch[1] !== '-') {
+    const coeff = parseFloat(coeffAbsMatch[1]);
+    if (!isNaN(coeff) && Math.abs(coeff) > 1e-9) {
+      insideA = coeffAbsMatch[2].trim();
+      isolatedRhs = `(${rhs}) / (${coeff})`;
+      if (coeff < 0) {
+        // Dividing by a negative coefficient flips the inequality sign
+        rel = rel === '<=' ? '>=' : rel === '<' ? '>' : rel === '>=' ? '<=' : '<';
+      }
+    } else {
+      return null;
+    }
+  } else {
+    const addMatch = lhs.match(/^\|([^|]+)\|\s*([+-]\s*[^|]+)$/);
+    if (addMatch) {
+      insideA = addMatch[1].trim();
+      const extra = addMatch[2].trim();
+      isolatedRhs = `(${rhs}) - (${extra})`;
+    } else {
+      return null;
+    }
+  }
+
+  if (!insideA) return null;
+
+  let c: number;
+  try {
+    const evalC = math.evaluate(isolatedRhs);
+    if (typeof evalC !== 'number' || !Number.isFinite(evalC)) return null;
+    c = evalC;
+  } catch {
+    return null;
+  }
+
+  const varName = detectVariable(insideA) || 'x';
+  const poly = extractCoefficients(insideA, varName);
+  if (!poly || poly.degree !== 1) return null;
+  const [a, b] = poly.coeffs;
+  if (Math.abs(a) < 1e-9) return null;
+
+  const isStrict = rel === '<' || rel === '>';
+  const isLess = rel === '<' || rel === '<=';
+  const relLatex = rel === '>=' ? '\\geq' : rel === '<=' ? '\\leq' : rel;
+  const displayLhs = `\\left|${expressionToLatex(insideA)}\\right|`;
+  const displayRhs = fmt(c);
+  const interpretationLatex = `\\text{Solve } ${displayLhs} ${relLatex} ${displayRhs} \\text{ for variable } ${varName}`;
+
+  const fmtVal = (v: number): string => {
+    if (Math.abs(v - Math.round(v)) < 1e-9) return Math.round(v).toString();
+    const frac = toFraction(v, 100);
+    if (frac && frac.d > 1) {
+      return frac.n < 0 ? `-\\frac{${Math.abs(frac.n)}}{${frac.d}}` : `\\frac{${frac.n}}{${frac.d}}`;
+    }
+    return Number(v.toFixed(4)).toString();
+  };
+
+  const steps: SolutionStep[] = [];
+  let stepNum = 1;
+
+  // Case 1: RHS is negative (c < 0)
+  if (c < 0) {
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: 'Isolate the absolute value inequality:',
+      math: `${displayLhs} ${relLatex} ${displayRhs}`,
+    });
+
+    if (isLess) {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `By definition, the absolute value of any real expression is non-negative ($|u| \\geq 0$). Since the right-hand side is negative (${displayRhs} < 0), no real value of $${varName}$ can satisfy this inequality.`,
+        math: `|u| \\geq 0 \\quad \\text{for all } u \\in \\mathbb{R} \\implies \\text{No solution } (\\emptyset)`,
+      });
+      return {
+        type: 'inequality',
+        equationType: 'inequality',
+        steps,
+        finalAnswer: '\\text{No solution}',
+        numericRoots: [],
+        inputInterpretation: interpretationLatex,
+      };
+    } else {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `By definition, the absolute value of any real expression is non-negative ($|u| \\geq 0$). Since any non-negative number is strictly greater than any negative number (${displayRhs} < 0), this inequality is satisfied for all real numbers.`,
+        math: `|u| \\geq 0 > ${displayRhs} \\implies ${varName} \\in \\mathbb{R}`,
+      });
+      return {
+        type: 'inequality',
+        equationType: 'inequality',
+        steps,
+        finalAnswer: `${varName} \\in \\mathbb{R}`,
+        numericRoots: [],
+        inputInterpretation: interpretationLatex,
+      };
+    }
+  }
+
+  // Case 2: RHS is zero (c === 0)
+  if (Math.abs(c) < 1e-9) {
+    const root = -b / a;
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: 'Isolate the absolute value inequality:',
+      math: `${displayLhs} ${relLatex} 0`,
+    });
+
+    if (rel === '<') {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: 'The absolute value $|u|$ cannot be strictly less than 0.',
+        math: '\\text{No solution}',
+      });
+      return {
+        type: 'inequality',
+        equationType: 'inequality',
+        steps,
+        finalAnswer: '\\text{No solution}',
+        numericRoots: [],
+        inputInterpretation: interpretationLatex,
+      };
+    } else if (rel === '<=') {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: 'Since $|u| \\geq 0$, $|u| \\leq 0$ is only true when $u = 0$:',
+        math: `${expressionToLatex(insideA)} = 0 \\implies ${varName} = ${fmtVal(root)}`,
+      });
+      return {
+        type: 'inequality',
+        equationType: 'inequality',
+        steps,
+        finalAnswer: `${varName} = ${fmtVal(root)}`,
+        numericRoots: [root],
+        inputInterpretation: interpretationLatex,
+      };
+    } else if (rel === '>') {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: 'Since $|u| \\geq 0$, $|u| > 0$ holds for all real numbers except where $u = 0$:',
+        math: `${varName} \\neq ${fmtVal(root)} \\iff ${varName} \\in (-\\infty, ${fmtVal(root)}) \\cup (${fmtVal(root)}, \\infty)`,
+      });
+      return {
+        type: 'inequality',
+        equationType: 'inequality',
+        steps,
+        finalAnswer: `${varName} \\neq ${fmtVal(root)}`,
+        numericRoots: [root],
+        inputInterpretation: interpretationLatex,
+      };
+    } else {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: 'The absolute value $|u| \\geq 0$ is always non-negative, which holds for all real numbers:',
+        math: `${varName} \\in \\mathbb{R}`,
+      });
+      return {
+        type: 'inequality',
+        equationType: 'inequality',
+        steps,
+        finalAnswer: `${varName} \\in \\mathbb{R}`,
+        numericRoots: [],
+        inputInterpretation: interpretationLatex,
+      };
+    }
+  }
+
+  // Case 3: c > 0 and `<` or `<=` (Compound Inequality)
+  if (isLess) {
+    const val1 = (-c - b) / a;
+    const val2 = (c - b) / a;
+    const L = Math.min(val1, val2);
+    const R = Math.max(val1, val2);
+
+    const opLatex = isStrict ? '<' : '\\leq';
+    const lBr = isStrict ? '(' : '[';
+    const rBr = isStrict ? ')' : ']';
+    const intervalStr = `${lBr}${fmtVal(L)}, \\; ${fmtVal(R)}${rBr}`;
+    const ansLatex = `${fmtVal(L)} ${opLatex} ${varName} ${opLatex} ${fmtVal(R)}`;
+
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: `Apply the absolute value rule: for $c > 0$, $|u| ${opLatex} c$ is equivalent to the compound inequality $-c ${opLatex} u ${opLatex} c$.`,
+      math: `${displayLhs} ${opLatex} ${displayRhs} \\iff -${displayRhs} ${opLatex} ${expressionToLatex(insideA)} ${opLatex} ${displayRhs}`,
+    });
+
+    const aDisplay = Math.abs(a - 1) < 1e-9 ? varName : Math.abs(a + 1) < 1e-9 ? `-${varName}` : `${fmt(a)}${varName}`;
+
+    if (Math.abs(b) > 1e-9) {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `Isolate the variable term by subtracting $${fmt(b)}$ from all three parts:`,
+        math: `-${displayRhs} - (${fmt(b)}) ${opLatex} ${aDisplay} ${opLatex} ${displayRhs} - (${fmt(b)}) \\implies ${fmt(-c - b)} ${opLatex} ${aDisplay} ${opLatex} ${fmt(c - b)}`,
+      });
+    }
+
+    if (Math.abs(a - 1) > 1e-9) {
+      steps.push({
+        stepNumber: stepNum++,
+        explanation: `Divide all three parts by $${fmt(a)}$${a < 0 ? ' (dividing by a negative number reverses the direction of the inequality signs)' : ''}:`,
+        math: ansLatex,
+      });
+    }
+
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: 'State the final solution in compound inequality and interval notation:',
+      math: `${ansLatex} \\quad \\iff \\quad ${varName} \\in ${intervalStr}`,
+    });
+
+    return {
+      type: 'inequality',
+      equationType: 'inequality',
+      steps,
+      finalAnswer: ansLatex,
+      numericRoots: [L, R],
+      inputInterpretation: interpretationLatex,
+    };
+  }
+
+  // Case 4: c > 0 and `>` or `>=` (Disjunction / Union)
+  {
+    const val1 = (-c - b) / a;
+    const val2 = (c - b) / a;
+    const r1 = Math.min(val1, val2);
+    const r2 = Math.max(val1, val2);
+
+    const opLeft = isStrict ? '<' : '\\leq';
+    const opRight = isStrict ? '>' : '\\geq';
+    const lBr = isStrict ? '(' : '[';
+    const rBr = isStrict ? ')' : ']';
+    const intervalStr = `(-\\infty, \\; ${fmtVal(r1)}${rBr} \\cup ${lBr}${fmtVal(r2)}, \\; \\infty)`;
+    const ansLatex = `${varName} ${opLeft} ${fmtVal(r1)} \\quad \\text{or} \\quad ${varName} ${opRight} ${fmtVal(r2)}`;
+
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: `Apply the absolute value rule: for $c > 0$, $|u| ${opRight} c$ is equivalent to two separate inequalities: $u ${opLeft} -c$ or $u ${opRight} c$.`,
+      math: `${displayLhs} ${opRight} ${displayRhs} \\iff ${expressionToLatex(insideA)} ${opLeft} -${displayRhs} \\quad \\text{or} \\quad ${expressionToLatex(insideA)} ${opRight} ${displayRhs}`,
+    });
+
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: `Solve the first inequality ($${expressionToLatex(insideA)} ${opLeft} -${displayRhs}$):`,
+      math: `${expressionToLatex(insideA)} ${opLeft} -${displayRhs} \\implies ${varName} ${opLeft} ${fmtVal(r1)}`,
+    });
+
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: `Solve the second inequality ($${expressionToLatex(insideA)} ${opRight} ${displayRhs}$):`,
+      math: `${expressionToLatex(insideA)} ${opRight} ${displayRhs} \\implies ${varName} ${opRight} ${fmtVal(r2)}`,
+    });
+
+    steps.push({
+      stepNumber: stepNum++,
+      explanation: 'Combine both solution intervals using union notation:',
+      math: `${ansLatex} \\quad \\iff \\quad ${varName} \\in ${intervalStr}`,
+    });
+
+    return {
+      type: 'inequality',
+      equationType: 'inequality',
+      steps,
+      finalAnswer: ansLatex,
+      numericRoots: [r1, r2],
+      inputInterpretation: interpretationLatex,
+    };
+  }
+}
+
 export function solveInequality(inequality: string): SolverResult {
+  // Check for absolute value inequality BEFORE polynomial coefficient extraction
+  const absResult = trySolveAbsoluteValueInequality(inequality);
+  if (absResult) return absResult;
+
   let cleanIneq = autoBalanceParens(inequality.trim());
   cleanIneq = normalizeExpression(cleanIneq);
   

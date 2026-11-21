@@ -194,9 +194,11 @@ const jsonLd = {
               </span>
             </div>
 
-            <div class="formula-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div class="formula-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 min-w-0 w-full">
               {section.formulas.map((formula) => (
-                <FormulaCard formula={formula} board={board} client:visible />
+                <div class="min-w-0 w-full flex">
+                  <FormulaCard formula={formula} board={board} client:visible />
+                </div>
               ))}
             </div>
           </section>

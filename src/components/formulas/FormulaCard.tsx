@@ -38,8 +38,8 @@ export default function FormulaCard({
     : formula.tags;
 
   return (
-    <div className="formula-card bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full group">
-      <div className="p-4 sm:p-5 flex-1 flex flex-col">
+    <div className="formula-card bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full group min-w-0 w-full">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col min-w-0">
         <div className="flex justify-between items-start mb-2 gap-2">
           <h3 className="font-bold text-sm sm:text-base text-[#131313] dark:text-white leading-snug group-hover:text-[#5D4037] dark:group-hover:text-[#D7CCC8] transition-colors">
             {formula.name}
@@ -62,16 +62,16 @@ export default function FormulaCard({
         </div>
 
         {practiceConfig && (
-          <div className="mb-2 flex items-center gap-1.5 text-[11px] font-mono text-[#5D4037] dark:text-[#D7CCC8] bg-[#FDFBF7] dark:bg-[#201B18] px-2.5 py-1 rounded-lg border border-[#EFEBE9] dark:border-[#3E2723]/60 no-print">
+          <div className="mb-2 flex items-center gap-1.5 text-[11px] font-mono text-[#5D4037] dark:text-[#D7CCC8] bg-[#FDFBF7] dark:bg-[#201B18] px-2.5 py-1 rounded-lg border border-[#EFEBE9] dark:border-[#3E2723]/60 no-print min-w-0">
             <Sparkles size={12} className="text-[#8D6E63] shrink-0" />
-            <span className="font-semibold">{practiceConfig.badgeLabel || 'Exam Problem'}:</span>
+            <span className="font-semibold shrink-0">{practiceConfig.badgeLabel || 'Exam Problem'}:</span>
             <span className="font-bold text-[#131313] dark:text-white truncate">{practiceConfig.exampleText}</span>
           </div>
         )}
 
-        <div className="my-2.5 py-3 px-3 overflow-x-auto scrollbar-thin max-w-full w-full bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#262220] rounded-xl text-center text-sm text-[#131313] dark:text-white">
-          <div className="inline-block max-w-full overflow-x-auto scrollbar-thin">
-            <MathDisplay math={formula.latex} block className="overflow-x-auto max-w-full" />
+        <div className="my-2.5 py-3 px-3 overflow-x-auto scrollbar-thin max-w-full w-full bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#262220] rounded-xl text-center text-xs sm:text-sm text-[#131313] dark:text-white min-w-0">
+          <div className="w-full max-w-full overflow-x-auto scrollbar-thin">
+            <MathDisplay math={formula.latex} block className="overflow-x-auto max-w-full text-xs sm:text-sm" />
           </div>
         </div>
 

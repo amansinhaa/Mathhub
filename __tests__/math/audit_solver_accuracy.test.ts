@@ -130,6 +130,35 @@ describe('Math Solver Accuracy Audit', () => {
       // roots -2, 2, a < 0, > 0 => -2 < x < 2
       expect(res.finalAnswer).toBe('-2 < x < 2');
     });
+
+    test('Absolute value inequality <=: |x - 3| <= 5', () => {
+      const res = solveInequality('|x - 3| <= 5');
+      expect(res.finalAnswer).toBe('-2 \\leq x \\leq 8');
+      expect(res.numericRoots).toEqual([-2, 8]);
+      expect(res.steps.length).toBeGreaterThanOrEqual(3);
+      expect(res.steps[res.steps.length - 1].math).toContain('[-2, \\; 8]');
+    });
+
+    test('Absolute value inequality >: |2x + 1| > 7', () => {
+      const res = solveInequality('|2x + 1| > 7');
+      expect(res.finalAnswer).toBe('x < -4 \\quad \\text{or} \\quad x > 3');
+      expect(res.numericRoots).toEqual([-4, 3]);
+      expect(res.steps.length).toBeGreaterThanOrEqual(3);
+      expect(res.steps[res.steps.length - 1].math).toContain('(-\\infty, \\; -4)');
+      expect(res.steps[res.steps.length - 1].math).toContain('(3, \\; \\infty)');
+    });
+
+    test('Absolute value inequality with negative RHS: |x| < -2', () => {
+      const res = solveInequality('|x| < -2');
+      expect(res.finalAnswer).toBe('\\text{No solution}');
+      expect(res.numericRoots).toEqual([]);
+    });
+
+    test('Absolute value inequality with negative RHS >=: |x| >= -2', () => {
+      const res = solveInequality('|x| >= -2');
+      expect(res.finalAnswer).toBe('x \\in \\mathbb{R}');
+      expect(res.numericRoots).toEqual([]);
+    });
   });
 
   describe('6. NumberLine data parsing accuracy', () => {

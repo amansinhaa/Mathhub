@@ -129,9 +129,17 @@
   }
 }
 
-/* KaTeX overrides */
+/* KaTeX overrides & responsive container rules */
+.katex-display {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  max-width: 100% !important;
+  scrollbar-width: thin;
+}
+
 .katex {
   color: inherit !important;
+  max-width: 100%;
 }
 
 /* Scrollbar styling */

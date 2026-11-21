@@ -326,7 +326,7 @@ const jsonLd = {
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-w-0 w-full">
               {section.formulas.map((formula) => {
                 const practiceConfig = FORMULA_PRACTICE_MAP[formula.id];
                 const solverHref = practiceConfig
@@ -334,8 +334,8 @@ const jsonLd = {
                   : `/equation-solver-with-steps?eq=${encodeURIComponent(formula.solverExpression || latexToAscii(formula.latex))}`;
 
                 return (
-                  <div class="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group">
-                    <div class="space-y-2">
+                  <div class="bg-white dark:bg-[#1B1B1B] border border-[#E0E0E0] hover:border-[#D7CCC8] dark:border-[#2E2825] dark:hover:border-[#5D4037]/60 rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-xs hover:shadow-md transition-all group min-w-0 w-full">
+                    <div class="space-y-2 min-w-0">
                       <div class="flex items-start justify-between gap-2">
                         <h4 class="font-bold text-sm text-[#131313] dark:text-white leading-snug group-hover:text-[#5D4037] dark:group-hover:text-[#D7CCC8] transition-colors">
                           {formula.name}
@@ -346,16 +346,16 @@ const jsonLd = {
                       </div>
 
                       {practiceConfig && (
-                        <div class="flex items-center gap-1.5 text-[11px] font-mono text-[#5D4037] dark:text-[#D7CCC8] bg-[#FDFBF7] dark:bg-[#201B18] px-2.5 py-1 rounded-lg border border-[#EFEBE9] dark:border-[#3E2723]/60">
+                        <div class="flex items-center gap-1.5 text-[11px] font-mono text-[#5D4037] dark:text-[#D7CCC8] bg-[#FDFBF7] dark:bg-[#201B18] px-2.5 py-1 rounded-lg border border-[#EFEBE9] dark:border-[#3E2723]/60 min-w-0">
                           <Sparkles size={12} className="text-[#8D6E63] shrink-0" />
-                          <span class="font-semibold">{practiceConfig.badgeLabel || 'Exam Problem'}:</span>
+                          <span class="font-semibold shrink-0">{practiceConfig.badgeLabel || 'Exam Problem'}:</span>
                           <span class="font-bold text-[#131313] dark:text-white truncate">{practiceConfig.exampleText}</span>
                         </div>
                       )}
 
-                      <div class="my-2 py-2.5 px-3 bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#262220] rounded-xl overflow-x-auto max-w-full text-center text-sm text-[#131313] dark:text-white">
-                        <div class="inline-block max-w-full overflow-x-auto scrollbar-thin">
-                          <MathDisplay math={formula.latex} block className="overflow-x-auto max-w-full" />
+                      <div class="my-2 py-2.5 px-3 bg-[#F5F5F5] dark:bg-[#131313] border border-[#E0E0E0] dark:border-[#262220] rounded-xl overflow-x-auto max-w-full w-full text-center text-xs sm:text-sm text-[#131313] dark:text-white min-w-0">
+                        <div class="w-full max-w-full overflow-x-auto scrollbar-thin">
+                          <MathDisplay math={formula.latex} block className="overflow-x-auto max-w-full text-xs sm:text-sm" />
                         </div>
                       </div>
 
